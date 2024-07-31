@@ -1,0 +1,80 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Google Login</h5>
+                        <p class="card-text">Sign in using your Google account.</p>
+                        <form method="post" asp-area="" asp-controller="Auth" asp-action="GoogleLogin">
+                            <button type="submit" class="btn btn-danger btn-block">
+                                <i class="fab fa-google"></i> Login With Google
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Facebook Login</h5>
+                        <p class="card-text">Sign in using your Facebook account.</p>
+                        <form method="post" asp-area="" asp-controller="Auth" asp-action="FacebookLogin">
+                            <button type="submit" class="btn btn-primary btn-block">
+                                <i class="fab fa-facebook"></i> Login With Facebook
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Microsoft Login</h5>
+                        <p class="card-text">Sign in using your Microsoft account.</p>
+                        <form method="post" asp-area="" asp-controller="Auth" asp-action="MicrosoftLogin">
+                            <button type="submit" class="btn btn-primary btn-block">
+                                <i class="fab fa-microsoft"></i> Login With Microsoft
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Microsoft 365 Login</h5>
+                        <p class="card-text">Sign in using your Microsoft 365 account.</p>
+                        <form method="post" asp-area="" asp-controller="Auth" asp-action="Microsoft365Login">
+                            <button type="submit" class="btn btn-primary btn-block">
+                                <i class="fab fa-microsoft"></i> Login With Microsoft 365
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
