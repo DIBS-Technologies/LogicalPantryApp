@@ -1,0 +1,111 @@
+﻿@model IEnumerable<LogicalPantry.DTOs.UserDtos.UserDto>
+
+@{
+    ViewData["Title"] = "Manage Users";
+}
+
+@Html.AntiForgeryToken()
+
+<h1>Manage Users</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Allow</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.FullName</td>
+                <td>@user.Email</td>
+                <td>
+                    <input type="checkbox" class="allow-checkbox" data-user-id="@user.Id" @(user.IsAllow ? "checked" : "") />
+                </td>
+                <td>
+                    <a href="javascript:void(0);" class="delete-user-link" data-user-id="@user.Id" style="text-decoration: underline; color: blue;">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var csrfToken = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+            var checkboxes = document.querySelectorAll(".allow-checkbox");
+            var deleteLinks = document.querySelectorAll(".delete-user-link");
+
+            checkboxes.forEach(function (checkbox) {
+                checkbox.addEventListener("change", function () {
+                    var userId = this.getAttribute("data-user-id");
+                    var isAllow = this.checked;
+
+                    fetch('/User/UpdateUserAllowStatus', {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "RequestVerificationToken": csrfToken
+                        },
+                        body: JSON.stringify({ Id: userId, IsAllow: isAllow })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok.');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            console.log("User updated successfully");
+                        } else {
+                            console.error("Error updating user:", data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                    });
+                });
+            });
+
+            deleteLinks.forEach(function (link) {
+                link.addEventListener("click", function () {
+                    var userId = this.getAttribute("data-user-id");
+
+                    fetch('/User/DeleteUser', {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "RequestVerificationToken": csrfToken
+                        },
+                        body: JSON.stringify({ Id: userId })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok.');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            var row = link.closest("tr");
+                            row.parentNode.removeChild(row);
+                            console.log("User deleted successfully");
+                        } else {
+                            console.error("Error deleting user:", data.message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                    });
+                });
+            });
+        });
+    </script>
+}
