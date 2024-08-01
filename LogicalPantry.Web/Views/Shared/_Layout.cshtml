@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims;
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -7,32 +8,153 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/LogicalPantry.Web.styles.css" asp-append-version="true" />
+
+    <link href="/css/default-main.css" rel="stylesheet" />
+    <link href="~/css/styles.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="~/js/jquery-3.5.1.min.js"></script>
+ 
     <style>
-        .nav-links {
-            display: flex;
-            justify-content: space-between;
-            gap: 15px;
+        .sidenav-light {
+            background-color: #fff;
+            color: #1f2d41;
         }
 
-        .nav-link {
-            text-decoration: none;
-            color: #ffffff;
+            .sidenav-light .sidenav-menu .nav-link:hover {
+                color: #0061f2;
+            }
+
+        .sidenav .sidenav-menu .nav .sidenav-menu-heading {
+            padding: 1.75rem 1rem 0.75rem;
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
     </style>
 </head>
-<body class="nav-fixed">
+
+
+ </header>
+
+    <body class="nav-fixed">
+
+        <nav class="topnav navbar navbar-expand shadow navbar-light bg-white" id="sidenavAccordion">
+            <img src="~/Image/Demo.jpeg" id="logoImage"style="width: 116px;padding-left: 10px;opacity:80%" />
+            <div class="UserName" >
+             <p>User.Claims.FirstOrDefault(c => c.Type == "name")?.Value</p>
+            </div>
+        </nav>
+        <div id="layoutSidenav">
+            <div id="layoutSidenav_nav">
+            <nav class="sidenav shadow-right sidenav-light">
+                    <div class="sidenav-menu">
+                        <div class="nav accordion" id="accordionSidenav">
+
+                            <div class="sidenav-menu-heading">Main Menu</div>
+                            <a class="nav-link collapsed " id="menuIndex" asp-action="Index" asp-controller="TimeSlots">
+                                <div class="nav-link-icon "><i data-feather="activity"></i></div>
+                                Pickup Slots
+                            </a>
+                            <a class="nav-link collapsed " id="menuIndex" asp-action="Index" asp-controller="Tenat">
+                                <div class="nav-link-icon"><i data-feather="activity"></i></div>
+                                Information
+                            </a>
+                            <a class="nav-link collapsed " id="menuIndex" asp-action="Index" asp-controller="User">
+                                <div class="nav-link-icon"><i data-feather="activity"></i></div>
+                                Users
+                            </a>
+                        </div>
+                    </div>
+                    <div class="sidenav-footer">
+                        <div class="sidenav-footer-content">
+                            <div>
+                                @if (User.Identity.IsAuthenticated)
+                                {
+                                    var userEmail = User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value;
+                                    var userName = User.FindFirstValue(ClaimTypes.Name) ?? User.Claims.FirstOrDefault(c => c.Type == "name")?.Value;
+
+                                    <div class="sidenav-footer-subtitle">Logged in as:</div>
+                                    <div class="sidenav-footer-title">@userName</div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+            <div id="layoutSidenav_content">
+                <main>
+                    <main role="main" class="pb-3">
+                        @RenderBody()
+                    </main>
+                </main>
+                @* <footer class="footer mt-auto footer-light custom-footer">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-6 small">
+                                Copyright &#xA9; Logical Pantry
+                            </div>
+                        </div>
+                    </div>
+                </footer> *@
+            </div>
+        </div>
+        <script src="~/js/bootstrap.bundle.js"></script>
+        <script src="~/js/scripts.js"></script>
+        <script src="~/js/jquery.datatables.min.js"></script>
+        <script src="~/js/datatables.bootstrap4.min.js"></script>
+        <script src="~/js/moment.min.js"></script>
+        <script src="~/js/daterangepicker.min.js"></script>
+        <script src="~/js/all.min.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        <script src="~/js/feather.min.js"></script>
+        @section Scripts {
+        <script>
+        $(document).ready(function () {
+        
+
+            var sideNav = $("#layoutSidenav");
+                if(User.Identity.Name == "User")
+                {
+                   sideNav.hide();
+                
+                }
+
+            $.ajax({
+                url: "Tenant/GetImage",
+                method: "Get",
+                data: {
+                        tenantEmail: userEmail
+                },
+                    success: function (data) {
+                        $("#logoImage").attr("src", data.ImageUrl)
+                    }
+                    ,
+                    error: {
+                        console.writeline("Cannot find Image src");
+                    }
+
+                });
+
+        });
+
+        </script>
+        }
+       
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js" crossorigin="anonymous"></script>
+        @await RenderSectionAsync("Scripts", required: false)
+        @await RenderSectionAsync("Styles", required: false)
    
-    </header>
 
- 
-
-    <footer class="bg-secondary text-light py-2 fixed-bottom text-center">
+    <footer class=" text-light py-2 fixed-bottom text-center">
         <div class="container">
-            <p class="mb-0">&copy; @DateTime.Now.Year - LogicalPantry</p>
+            <p class="mb-0"style="color:black">&copy; @DateTime.Now.Year - LogicalPantry</p>
         </div>
     </footer>
 
-  
-    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+

@@ -9,6 +9,15 @@ namespace LogicalPantry.Web.Controllers
     {
 
 
+        public async Task<IActionResult> GetImage(string userEmail)
+        {
+
+            var imageUrl = "~\\Image\\Demo.jpeg";
+
+
+            return Json(new { ImageUrl = imageUrl });
+        }
+
     }
 }
 
