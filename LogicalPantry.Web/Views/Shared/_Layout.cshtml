@@ -21,36 +21,10 @@
     </style>
 </head>
 <body class="nav-fixed">
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-secondary bg-gradient text-light border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <div class="d-flex justify-content-between align-items-center w-100">
-                    <!-- Left corner: Logo -->
-                    <div class="navbar-brand">
-                        <img src="@ViewData["LogoUrl"]" alt="Logo" style="height: 100px;" />
-                    </div>
-
-                    <!-- Middle: Page name -->
-                    <div class="mx-auto text-center">
-                        <h1 class="mb-0">@ViewData["PageName"]</h1>
-                    </div>
-
-                    <!-- Right corner: Navigation links -->
-                    <div class="nav-links">
-                        <a class="nav-link" href="@Url.Action("Index", "TimeSlots")">Pickup Slot</a>
-                        <a class="nav-link" href="@Url.Action("Index", "Donation")">Donation</a>
-                        <a class="nav-link" href="@Url.Action("loginView", "Auth")">Login</a>
-                    </div>
-                </div>
-            </div>
-        </nav>
+   
     </header>
 
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+ 
 
     <footer class="bg-secondary text-light py-2 fixed-bottom text-center">
         <div class="container">
@@ -58,9 +32,7 @@
         </div>
     </footer>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js" asp-append-version="true"></script>
+  
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
