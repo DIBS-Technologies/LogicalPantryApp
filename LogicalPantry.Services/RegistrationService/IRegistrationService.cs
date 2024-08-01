@@ -11,5 +11,6 @@ namespace LogicalPantry.Services.RegistrationService
     public interface IRegistrationService
     {
         Task<ServiceResponse<bool>> RegisterUser(UserDto user);
+        Task<ServiceResponse<bool>> CheckEmailIsExist(string email);
     }
 }

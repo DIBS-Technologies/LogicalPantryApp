@@ -17,10 +17,16 @@ namespace LogicalPantry.Web.Controllers
         {
             return View();
         }
-
+        [HttpPost]
         public object Register(UserDto user) 
         {
             var response=_registrationService.RegisterUser(user).Result;
+            return response;
+        }
+        [HttpGet]
+        public object ValidateEmail(string emailId) 
+        {
+            var response = _registrationService.CheckEmailIsExist(emailId);
             return response;
         }
     }
