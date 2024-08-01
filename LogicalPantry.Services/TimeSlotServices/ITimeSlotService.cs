@@ -11,10 +11,13 @@ namespace LogicalPantry.Services.TimeSlotServices
 {
     public interface ITimeSlotService
     {
-        Task<TimeSlot> GetTimeSlotByIdAsync(int timeSlotId);
-        Task<ServiceResponse<TimeSlotDto>> AddTimeSlotAsync(TimeSlotDto timeSlotDto);
-        Task<ServiceResponse<List<TimeSlotDto>>> GetTimeSlotsAsync();
-        Task<ServiceResponse<bool>> UpdateTimeSlotAsync(TimeSlotDto timeSlotDto);
-        Task<ServiceResponse<bool>> DeleteTimeSlotAsync(int id);
+        Task<List<TimeSlotDto>> GetTimeSlotsAsync();
+        //Task AddTimeSlotAsync1(TimeSlotDto timeSlotDto);
+
+        Task DeleteTimeSlotAsync(long id);
+
+        Task UpdateTimeSlotAsync(TimeSlotDto timeSlotDto);
+
+        Task AddTimeSlotAsync(TimeSlotDto timeSlotDto);
     }
 }
