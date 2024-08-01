@@ -12,5 +12,6 @@ namespace LogicalPantry.Services.InformationService
     public interface IInformationService
     {
         Task<ServiceResponse<TenantDto>> GetTenant(int tenantId);
+        Task<ServiceResponse<bool>> PostTenant(TenantDto tenantDto);
     }
 }

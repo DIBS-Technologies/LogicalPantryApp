@@ -4,7 +4,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>disable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <BaseOutputPath>E:\JayantTRAQR\MVC Template\LogicalPantry.Web\LogicalPantry.Web\bin\Debug\net7.0</BaseOutputPath>
+    <BaseOutputPath>D:\Sagar\LogicalPantryApp\LogicalPantry.Web\obj\Debug</BaseOutputPath>
     <UserSecretsId>c3433a88-7d35-4141-ad50-87fc6bd85bb9</UserSecretsId>
   </PropertyGroup>
 
