@@ -13,6 +13,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using LogicalPantry.Web.Helper;
 using LogicalPantry.DTOs.UserDtos;
+using LogicalPantry.DTOs.UserDtos;
 using System.Security.Claims;
 
 namespace LogicalPantry.Web.Controllers
@@ -20,9 +21,47 @@ namespace LogicalPantry.Web.Controllers
     [Route("User")]
     public class UserController : Controller
     {
-       
+        IUserService _userService;
+        public UserController(IUserService userService)
+        {
+            _userService = userService;
+        }
+
+        public IActionResult Index()
+        {
+            return View();
+        }
+        [HttpGet]
+        public object GetAllusers()
+        {
+            var response = _userService.GetAllRegisteredUsersAsync().Result;
+            return response;
+        }
+
+        public object GetUserbyId(int tenentId) 
+        {
+            var response = _userService.GetUserByIdAsync(tenentId).Result;
+            return response;
+        }
+        [HttpGet]
+        public object GetUsersbyTimeSlot(DateTime timeslot, int tenentId) 
+        {
+            var response = _userService.GetUsersbyTimeSlot(timeslot,tenentId).Result;
+            return response;
+        }
+        [HttpPost]
+        public object PutUserStatus(List<UserAllowStatusDto> userDto)
+        {
+            if (userDto == null)
+            {
+                var response = _userService.UpdateUserAllowStatusAsync(userDto).Result;
+                return response;
+
+            }
+            else { return null; }
 
 
+        }
     }
 
 
