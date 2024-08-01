@@ -27,6 +27,46 @@ namespace LogicalPantry.Services.RegistrationService
             this.mapper = mapper;
             this.dataContext = dataContext;
         }
+
+        public async Task<ServiceResponse<bool>> CheckEmailIsExist(string email)
+        {
+            var response = new ServiceResponse<bool>();
+
+            // Validate input
+            if (string.IsNullOrEmpty(email))
+            {
+                response.Success = false;
+                response.Message = "Email cannot be null or empty.";
+                response.Data = false;
+                return response;
+            }
+
+            try
+            {
+                // Check if the email exists in the Users table
+                bool emailExists = await dataContext.Users
+                    .AnyAsync(u => u.Email.Equals(email, StringComparison.OrdinalIgnoreCase));
+
+                // Set response based on the existence of the email
+                response.Success = true;
+                response.Data = emailExists;
+                response.Message = emailExists ? "Email exists." : "Email does not exist.";
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (optional)
+                logger.LogError(ex, "Error checking if email exists");
+
+                // Return a generic error response
+                response.Success = false;
+                response.Message = $"An error occurred while checking the email: {ex.Message}";
+                response.Data = false;
+            }
+
+            return response;
+        }
+
+
         public async Task<ServiceResponse<bool>> RegisterUser(UserDto userDto)
         {
             var response = new ServiceResponse<bool>();

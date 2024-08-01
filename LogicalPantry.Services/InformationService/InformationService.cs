@@ -76,5 +76,60 @@ namespace LogicalPantry.Services.InformationService
             return response;
         }
 
+        public async Task<ServiceResponse<bool>> PostTenant(TenantDto tenantDto)
+        {
+            var response = new ServiceResponse<bool>();
+
+            // Validate input
+            if (tenantDto == null || tenantDto.Id <= 0)
+            {
+                response.Success = false;
+                response.Message = "Invalid tenant data provided.";
+                return response;
+            }
+
+            try
+            {
+                // Fetch the existing tenant from the database
+                var tenant = await dataContext.Tenants
+                    .FirstOrDefaultAsync(t => t.Id == tenantDto.Id);
+
+                // Check if the tenant exists
+                if (tenant == null)
+                {
+                    response.Success = false;
+                    response.Message = "Tenant not found.";
+                    return response;
+                }
+
+                // Update the tenant information
+                tenant.PaypalId = tenantDto.PaypalId;
+                tenant.PageName = tenantDto.PageName;
+                tenant.Logo = tenantDto.Logo;
+                tenant.Timezone = tenantDto.Timezone;
+
+                dataContext.Tenants.Update(tenant);
+
+                // Save changes to the database
+                await dataContext.SaveChangesAsync();
+
+                // Return a successful response
+                response.Success = true;
+                response.Data = true; // Indicating success
+                response.Message = "Tenant updated successfully.";
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (optional)
+                logger.LogError(ex, "Error updating tenant");
+
+                // Return a generic error response
+                response.Success = false;
+                response.Message = $"An error occurred while updating the tenant: {ex.Message}";
+            }
+
+            return response;
+        }
+
     }
 }
