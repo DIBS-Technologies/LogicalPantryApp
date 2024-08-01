@@ -22,74 +22,149 @@ namespace LogicalPantry.Services.UserServices
         {
             _context = context;
 
+        private readonly ILogger<UserService> logger;// Dependency injection for ILogger
+        private readonly IMapper mapper;// Dependency injection for IMapper
+        private readonly ApplicationDataContext dataContext; // Dependency injection for DataContext
 
-        }
-        public List<UserDto> Get(int tenentId)
+        // Constructor with dependency injection
+        public UserService(ILogger<UserService> logger, IMapper mapper, ApplicationDataContext dataContext)
         {
-            if (tenentId == 0) return null;
-            try
-            {
-                var result = (from u in _context.Users
-                              where u.TenantId == tenentId
-                              select new UserDto
-                              {
-                                  Id = u.Id,
-                                  FullName = u.FullName,
-                                  Email = u.Email,
-                                  PhoneNumber = u.PhoneNumber,
-                                  IsAllow = u.IsAllow
-                              }).ToList();
-
-                return result;
-            }
-            catch (Exception ex) { throw; }
+            this.logger = logger;
+            this.mapper = mapper;
+            this.dataContext = dataContext;
         }
 
-        public List<UserDto> GetUsersbyTimeSlot(DateTime timeSlot, int tenentId)
+        public async Task<ServiceResponse<IEnumerable<UserDto>>> GetAllRegisteredUsersAsync()
         {
-            throw new NotImplementedException();
-        }
-
-        public string Post(List<UserDto> users)
-        {
-            if (users == null || !users.Any())
-            {
-                return "No users to update.";
-            }
+            var response = new ServiceResponse<IEnumerable<UserDto>>();
 
             try
             {
-                // Extract user IDs from the list of DTOs
-                var userIds = users.Select(u => u.Id).ToList();
-
-                // Retrieve the existing users from the database synchronously
-                var existingUsers = _context.Users
-                    .Where(u => userIds.Contains(u.Id))
-                    .ToList();
-
-                // Update the properties of existing users
-                foreach (var userDto in users)
-                {
-                    var existingUser = existingUsers.FirstOrDefault(u => u.Id == userDto.Id);
-                    if (existingUser != null)
+                var users = await dataContext.Users
+                    .Where(u => u.IsRegistered)
+                    .Select(u => new UserDto
                     {
-                        existingUser.FullName = userDto.FullName;
-                        existingUser.Email = userDto.Email;
-                        existingUser.PhoneNumber = userDto.PhoneNumber;
-                        existingUser.IsAllow = userDto.IsAllow;
-                    }
-                }
+                        Id = u.Id,
+                        FullName = u.FullName,
+                        Email = u.Email,
+                        PhoneNumber = u.PhoneNumber,
+                        Address = u.Address,
+                        IsAllow = u.IsAllow,
+                        IsRegistered = u.IsRegistered
+                    }).ToListAsync();
 
-                // Save changes to the database synchronously
-                _context.SaveChanges();
-
-                return "Users updated successfully.";
+                response.Data = users;
+                response.Success = true;
             }
             catch (Exception ex)
             {
-                // Optional: Log the exception (ex) if needed
-                throw new ApplicationException("An error occurred while updating users.", ex);
+                response.Success = false;
+                response.Message = $"Error fetching users: {ex.Message}";
             }
+
+            return response;
         }
+
+        public async Task<ServiceResponse<UserDto>> GetUserByIdAsync(int id)
+        {
+            var response = new ServiceResponse<UserDto>();
+
+            try
+            {
+                var user = await dataContext.Users
+                    .Where(u => u.Id == id)
+                    .Select(u => new UserDto
+                    {
+                        Id = u.Id,
+                        FullName = u.FullName,
+                        Email = u.Email,
+                        PhoneNumber = u.PhoneNumber,
+                        Address = u.Address,
+                        IsAllow = u.IsAllow,
+                        IsRegistered = u.IsRegistered
+                    }).FirstOrDefaultAsync();
+
+                if (user == null)
+                {
+                    response.Success = false;
+                    response.Message = "User not found.";
+                }
+                else
+                {
+                    response.Data = user;
+                    response.Success = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"Error fetching user: {ex.Message}";
+            }
+
+            return response;
+        }
+
+        public async Task<ServiceResponse<bool>> DeleteUserAsync(int id)
+        {
+            var response = new ServiceResponse<bool>();
+
+            try
+            {
+                var user = await dataContext.Users.FindAsync(id);
+
+                if (user == null)
+                {
+                    response.Success = false;
+                    response.Message = "User not found.";
+                    return response;
+                }
+
+                //dataContext.Users.Remove(user);
+                //await dataContext.SaveChangesAsync();
+
+                response.Data = true;
+                response.Success = true;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"Error deleting user: {ex.Message}";
+            }
+
+            return response;
+        }
+
+        public async Task<ServiceResponse<UserDto>> UpdateUserAsync(UserDto userDto)
+        {
+            var response = new ServiceResponse<UserDto>();
+
+            try
+            {
+                var user = await dataContext.Users.FindAsync(userDto.Id);
+                if (user == null)
+                {
+                    response.Success = false;
+                    response.Message = "User not found.";
+                    return response;
+                }
+
+                user.IsAllow = userDto.IsAllow;
+                dataContext.Users.Update(user);
+                await dataContext.SaveChangesAsync();
+
+                response.Data = userDto;
+                response.Success = true;
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"Error updating user: {ex.Message}";
+            }
+
+            return response;
+        }
+
+      
+        
     }
 }

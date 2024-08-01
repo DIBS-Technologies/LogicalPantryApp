@@ -7,51 +7,32 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/LogicalPantry.Web.styles.css" asp-append-version="true" />
+    <style>
+        .nav-links {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #ffffff;
+        }
+    </style>
 </head>
-<body>
-
-@if (!ViewContext.RouteData.Values["controller"].Equals("Auth") && !ViewContext.RouteData.Values["action"].Equals("loginView"))
-{
-    <header>
-        <nav  class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-secondary bg-gradient text-light border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>   
-                        <li class="nav-item">
-                            <a class="nav-link text-light"  asp-controller="User" asp-action="GetAllUser">User</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-light" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </nav>
+<body class="nav-fixed">
+   
     </header>
-}
 
-<div class="container">
-    <main role="main" class="pb-3">
-            @RenderBody()
-    </main>
-</div>
+ 
 
-<footer class="bg-secondary text-light py-2 fixed-bottom text-center">
-    <div class="container">
-        <p class="mb-0">&copy; 2024 - LogicalPantry</p>
-    </div>
-</footer>
+    <footer class="bg-secondary text-light py-2 fixed-bottom text-center">
+        <div class="container">
+            <p class="mb-0">&copy; @DateTime.Now.Year - LogicalPantry</p>
+        </div>
+    </footer>
 
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="~/js/site.js" asp-append-version="true"></script>
+  
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

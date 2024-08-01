@@ -10,6 +10,15 @@ namespace LogicalPantry.Services.UserServices
 {
     public interface IUserService
     {
+        Task<ServiceResponse<IEnumerable<UserDto>>> GetAllRegisteredUsersAsync();
+        Task<ServiceResponse<UserDto>> GetUserByIdAsync(int id);
+        Task<ServiceResponse<UserDto>> UpdateUserAsync(UserDto userDto);
+        Task<ServiceResponse<bool>> DeleteUserAsync(int id);
+        Task<UserDto> GetUserByEmailAsync(string email);
+
+       // Task<User> GetOrCreateUserAsync(string email, string name, int tenantId);
+        Task<ServiceResponse<bool>> UpdateUserAllowStatusAsync(UserAllowStatusDto userAllowStatusDto);
+
         List<UserDto> Get(int tenentId);
         List<UserDto> GetUsersbyTimeSlot(DateTime timeSlot, int tenentId);
         string Post(List<UserDto> user);

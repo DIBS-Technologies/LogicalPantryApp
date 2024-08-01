@@ -20,20 +20,20 @@ namespace LogicalPantry.Web.Controllers
         {
             _logger = logger;
         }
-        [Authorize(Roles =UserSystemRoles.User)]
+       
         public IActionResult Index()
         {
 
             return View();
         }
 
-        [Authorize(Roles = UserSystemRoles.User)]
+       
         public IActionResult Privacy()
         {
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+       
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

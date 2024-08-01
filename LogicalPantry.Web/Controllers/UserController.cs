@@ -13,9 +13,12 @@ using System.Linq;
 using Microsoft.AspNetCore.Authorization;
 using LogicalPantry.Web.Helper;
 using LogicalPantry.DTOs.UserDtos;
+using LogicalPantry.DTOs.UserDtos;
+using System.Security.Claims;
 
 namespace LogicalPantry.Web.Controllers
 {
+    [Route("User")]
     public class UserController : Controller
     {
         IUserService _userService;
