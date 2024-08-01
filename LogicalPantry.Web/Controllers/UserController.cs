@@ -32,25 +32,29 @@ namespace LogicalPantry.Web.Controllers
             return View();
         }
         [HttpGet]
-        public object GetAllusers(int tenentId)
+        public object GetAllusers()
         {
-            List<UserDto> userDtos = new List<UserDto>();
-            userDtos = _userService.Get(tenentId);
-            return userDtos;
+            var response = _userService.GetAllRegisteredUsersAsync().Result;
+            return response;
+        }
+
+        public object GetUserbyId(int tenentId) 
+        {
+            var response = _userService.GetUserByIdAsync(tenentId).Result;
+            return response;
         }
         [HttpGet]
         public object GetUsersbyTimeSlot(DateTime timeslot, int tenentId) 
         {
-            List<UserDto> userDtos = new List<UserDto>();
-            userDtos = _userService.GetUsersbyTimeSlot(timeslot,tenentId);
-            return userDtos;
+            var response = _userService.GetUsersbyTimeSlot(timeslot,tenentId).Result;
+            return response;
         }
         [HttpPost]
-        public object Post(List<UserDto> userDto)
+        public object PutUserStatus(List<UserAllowStatusDto> userDto)
         {
             if (userDto == null)
             {
-                var response = _userService.Post(userDto);
+                var response = _userService.UpdateUserAllowStatusAsync(userDto).Result;
                 return response;
 
             }

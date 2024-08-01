@@ -170,24 +170,116 @@ namespace LogicalPantry.Services.UserServices
             throw new NotImplementedException();
         }
 
-        public Task<ServiceResponse<bool>> UpdateUserAllowStatusAsync(UserAllowStatusDto userAllowStatusDto)
+        public async Task<ServiceResponse<bool>> UpdateUserAllowStatusAsync(List<UserAllowStatusDto> userAllowStatusDtos)
         {
-            throw new NotImplementedException();
+            var response = new ServiceResponse<bool>();
+
+            if (userAllowStatusDtos == null || !userAllowStatusDtos.Any())
+            {
+                response.Success = false;
+                response.Message = "No users to update.";
+                return response;
+            }
+
+            try
+            {
+                // Extract user IDs from the list of DTOs
+                var userIds = userAllowStatusDtos
+                    .Where(dto => dto.IsAllow)
+                    .Select(dto => dto.Id)
+                    .ToList();
+
+                if (!userIds.Any())
+                {
+                    response.Success = false;
+                    response.Message = "No users with AllowStatus set to true.";
+                    return response;
+                }
+
+                // Fetch users matching the IDs from the database
+                var usersToUpdate = await dataContext.Users
+                    .Where(u => userIds.Contains(u.Id))
+                    .ToListAsync();
+
+                // Update the 'IsAllow' status for matching users
+                foreach (var userDto in userAllowStatusDtos)
+                {
+                    if (userDto.IsAllow) // Only update users with AllowStatus true
+                    {
+                        var user = usersToUpdate.FirstOrDefault(u => u.Id == userDto.Id);
+                        if (user != null)
+                        {
+                            user.IsAllow = userDto.IsAllow;
+                        }
+                    }
+                }
+
+                // Save changes to the database
+                await dataContext.SaveChangesAsync();
+
+                response.Data = true;
+                response.Success = true;
+                response.Message = "User allow status updated successfully.";
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"Error updating user allow status: {ex.Message}";
+            }
+
+            return response;
         }
 
-        public List<UserDto> Get(int tenentId)
+
+
+
+
+
+
+
+        public async Task<ServiceResponse<IEnumerable<UserDto>>> GetUsersbyTimeSlot(DateTime timeSlot, int tenantId)
         {
-            throw new NotImplementedException();
+            var response = new ServiceResponse<IEnumerable<UserDto>>();
+
+            try
+            {
+                // Retrieve users matching the tenantId and where IsRegistered is true
+                var users = await dataContext.Users
+                    .Where(u => u.TenantId == tenantId && u.IsRegistered)
+                    .Select(u => new UserDto
+                    {
+                        Id = u.Id,
+                        FullName = u.FullName,
+                        Email = u.Email,
+                        PhoneNumber = u.PhoneNumber,
+                        IsAllow = u.IsAllow
+                    })
+                    .ToListAsync();
+
+                // Check if any users are found
+                if (!users.Any())
+                {
+                    response.Success = false;
+                    response.Message = "No registered users found for the specified tenant.";
+                    response.Data = Enumerable.Empty<UserDto>();
+                }
+                else
+                {
+                    response.Data = users;
+                    response.Success = true;
+                    response.Message = "Users retrieved successfully.";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"Error fetching users: {ex.Message}";
+                response.Data = Enumerable.Empty<UserDto>();
+            }
+
+            return response;
         }
 
-        public List<UserDto> GetUsersbyTimeSlot(DateTime timeSlot, int tenentId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public string Post(List<UserDto> user)
-        {
-            throw new NotImplementedException();
-        }
+        
     }
 }
