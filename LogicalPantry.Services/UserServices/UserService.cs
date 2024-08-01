@@ -21,6 +21,7 @@ namespace LogicalPantry.Services.UserServices
         public UserService(ApplicationDataContext context)
         {
             _context = context;
+        }
 
         private readonly ILogger<UserService> logger;// Dependency injection for ILogger
         private readonly IMapper mapper;// Dependency injection for IMapper
@@ -164,7 +165,29 @@ namespace LogicalPantry.Services.UserServices
             return response;
         }
 
-      
-        
+        public Task<UserDto> GetUserByEmailAsync(string email)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<ServiceResponse<bool>> UpdateUserAllowStatusAsync(UserAllowStatusDto userAllowStatusDto)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<UserDto> Get(int tenentId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public List<UserDto> GetUsersbyTimeSlot(DateTime timeSlot, int tenentId)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string Post(List<UserDto> user)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
