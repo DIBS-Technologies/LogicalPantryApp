@@ -14,6 +14,9 @@ using LogicalPantry.Services.RoleServices;
 using LogicalPantry.Services.UserServices;
 using NLog.Extensions.Logging;
 using System;
+using LogicalPantry.Services.TimeSlotServices;
+using LogicalPantry.Services.TenantServices;
+using LogicalPantry.Services.TimeSlotSignupServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -78,6 +81,13 @@ builder.Services.AddAuthentication(options =>
 // Add scoped services for dependency injection
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
+
+
+
+
+
+
 
 // Add AutoMapper for object mapping
 builder.Services.AddAutoMapper(typeof(Startup));
