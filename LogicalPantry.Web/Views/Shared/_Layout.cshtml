@@ -1,38 +1,23 @@
 ﻿<!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - LogicalPantry.Web</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/LogicalPantry.Web.styles.css" asp-append-version="true" />
-    <style>
-        .nav-links {
-            display: flex;
-            justify-content: space-between;
-            gap: 15px;
-        }
-
-        .nav-link {
-            text-decoration: none;
-            color: #ffffff;
-        }
-    </style>
+    <title>@ViewData["Title"] - My Application</title>
+    <link rel="stylesheet" href="~/css/site.css" />
+    <script src="~/js/site.js"></script>
 </head>
-<body class="nav-fixed">
-   
+<body>
+    <header>
+        <nav>
+            <!-- Navigation items go here -->
+        </nav>
     </header>
-
- 
-
-    <footer class="bg-secondary text-light py-2 fixed-bottom text-center">
-        <div class="container">
-            <p class="mb-0">&copy; @DateTime.Now.Year - LogicalPantry</p>
-        </div>
+    <div class="container">
+        @RenderBody()
+    </div>
+    <footer>
+        <p>&copy; 2024 - My Application</p>
     </footer>
-
-  
-    @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
