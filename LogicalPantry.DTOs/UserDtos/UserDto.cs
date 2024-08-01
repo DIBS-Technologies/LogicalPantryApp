@@ -16,5 +16,6 @@ namespace LogicalPantry.DTOs.UserDtos
         public string Address { get; set; }
         public bool IsAllow { get; set; }
         public bool IsRegistered { get; set; }
+        public bool Attended { get; set; }
     }
 }
