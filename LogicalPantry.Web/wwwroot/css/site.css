@@ -108,20 +108,20 @@ a {
 }
 
 
-/*Swapnil*/
+Swapnil
 
 @charset "UTF-8";
-/*!
+!
 * Start Bootstrap - SB Admin Pro v1.2.0 (https://shop.startbootstrap.com/product/sb-admin-pro)
 * Copyright 2013-2020 Start Bootstrap
 * Licensed under SEE_LICENSE (https://github.com/StartBootstrap/sb-admin-pro/blob/master/LICENSE)
-*/
-/*!
+
+!
  * Bootstrap v4.5.0 (https://getbootstrap.com/)
  * Copyright 2011-2020 The Bootstrap Authors
  * Copyright 2011-2020 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- */
+ 
 :root {
     --blue: #0061f2;
     --indigo: #5800e8;
@@ -783,7 +783,7 @@ pre {
         outline: none !important;
     }
 
-/*Custom CSS*/
+Custom CSS
 
 #successMessage {
     color: green !important;
@@ -3260,7 +3260,7 @@ pre {
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.5;
-    color: #687281; /*687281*/
+    color: #687281; 687281
     background-color: #fff;
     background-clip: padding-box;
     border: 1px solid #c5ccd6;
@@ -22630,7 +22630,7 @@ body {
     .btnLink .table-bordered td {
         border: none;
     }
-/****************** Auto Complete  CSS ****************************/
+***************** Auto Complete  CSS ***************************
 .ui-autocomplete {
     position: absolute;
     top: 100%;
@@ -22659,7 +22659,7 @@ body {
         clear: both;
         font-weight: normal;
         line-height: 1.42857143;
-        /*color: #333333;*/
+        color: #333333;
         white-space: nowrap;
     }
 

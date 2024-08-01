@@ -7,13 +7,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>@ViewData["Title"]</title>
- 
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css">
     <link rel="stylesheet" href="~/css/jquery-calendar.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css">
+    <link href="https://www.jqueryscript.net/css/jquerysctipttop.css" rel="stylesheet" type="text/css">
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.22.1/min/moment-with-locales.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-touchswipe@1.6.18/jquery.touchSwipe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/eonasdan-bootstrap-datetimepicker@4.17.47/build/js/bootstrap-datetimepicker.min.js"></script>
+
+    <script src="~/js/jquery-calendar.min.js"></script>
+
+    <link href="~/css/jquery-calendar.min.css" rel="stylesheet" />
     <style>
         .calendar-header {
             margin-bottom: 20px;
@@ -142,20 +151,20 @@
                     </div>
                 </div>
             </div>
+    </div>
 
-        <script src="~/lib/jquery/dist/jquery.min.js"></script>
-        <script src="~/js/jquery-calendar.min.js"></script>
-        <script src="~/jquery.touchswipe/jquery.touchswipe.min.js"></script>
-        <script src="~/jquery.touchswipe/jquery.touchswipe.js"></script>
-
-        <script src="~/lib/bootstrap/bootstrap/js/bootstrap.bundle.min.js"></script>
-        <script src="~/js/moment.js/moment-with-locales.min.js"></script>
+    @section Scripts {
+        <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/moment@2.22.1/min/moment-with-locales.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/jquery-touchswipe@1.6.18/jquery.touchSwipe.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/eonasdan-bootstrap-datetimepicker@4.17.47/build/js/bootstrap-datetimepicker.min.js"></script>
 
         <script>
             $(document).ready(function () {
-                $('#calendar').calendar({
+                $('#calendar').Calendar({
                     tmpl_path: '/tmpls/',
-                    events_source: '/TimeSlot/GetEvents', // This should point to the backend endpoint that returns events
+                        events_source: '/TimeSlot/Calendar',
                     view: 'month',
                     tmpl_cache: false,
                     onAfterViewLoad: function (view) {
@@ -174,36 +183,36 @@
                     $('#eventModal').modal('show');
                 });
 
-                $('#saveEventBtn').on('click', function () {
-                    var title = $('#eventTitle').val();
-                    var startDateTime = $('#eventStart').val();
-                    var endDateTime = $('#eventEnd').val();
+                // $('#saveEventBtn').on('click', function () {
+                //     var title = $('#eventTitle').val();
+                //     var startDateTime = $('#eventStart').val();
+                //     var endDateTime = $('#eventEnd').val();
 
-                    if (title && startDateTime && endDateTime) {
-                        var newEvent = {
-                            title: title,
-                            start: startDateTime,
-                            end: endDateTime
-                        };
+                //     if (title && startDateTime && endDateTime) {
+                //         var newEvent = {
+                //             title: title,
+                //             start: startDateTime,
+                //             end: endDateTime
+                //         };
 
-                        // Make AJAX call to save the event to the backend
-                        $.ajax({
-                            url: '/TimeSlot/AddEvent',
-                            type: 'POST',
-                            contentType: 'application/json',
-                            data: JSON.stringify(newEvent),
-                            success: function () {
-                                $('#calendar').calendar('view');
-                                $('#eventModal').modal('hide');
-                            },
-                            error: function (xhr, status, error) {
-                                alert('Error saving event: ' + error);
-                            }
-                        });
-                    } else {
-                        alert('Please fill in all fields');
-                    }
-                });
+                //         // Make AJAX call to save the event to the backend
+                //         $.ajax({
+                //             url: '/TimeSlot/AddEvent',
+                //             type: 'POST',
+                //             contentType: 'application/json',
+                //             data: JSON.stringify(newEvent),
+                //             success: function () {
+                //                 $('#calendar').calendar('view');
+                //                 $('#eventModal').modal('hide');
+                //             },
+                //             error: function (xhr, status, error) {
+                //                 alert('Error saving event: ' + error);
+                //             }
+                //         });
+                //     } else {
+                //         alert('Please fill in all fields');
+                //     }
+                // });
 
                 $('#deleteEventBtn').on('click', function () {
                     // Handle event deletion logic here
@@ -216,6 +225,7 @@
                 console.log("Selected event type:", selectedEventType);
             }
         </script>
-    </div>
+
+        }
 </body>
 </html>

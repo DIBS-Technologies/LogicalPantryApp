@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace LogicalPantry.Services.TenantServices
 {
-    public class TenantService
+    public class TenantService :ITenantService
     {
         private readonly ILogger<TenantService> logger;
         private readonly IMapper mapper;

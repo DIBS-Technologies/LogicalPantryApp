@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Mvc;
+
 using Microsoft.Extensions.Logging;
 
 using LogicalPantry.Services.RoleServices;
@@ -15,6 +15,9 @@ using LogicalPantry.Web.Helper;
 using LogicalPantry.DTOs.UserDtos;
 using LogicalPantry.DTOs.UserDtos;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
+using LogicalPantry.DTOs.TimeSlotDtos;
+using LogicalPantry.Models.Models;
 
 namespace LogicalPantry.Web.Controllers
 {
@@ -32,10 +35,11 @@ namespace LogicalPantry.Web.Controllers
             return View();
         }
         [HttpGet]
-        public object GetAllusers()
+        [Route("ManageUsers")]
+        public async Task<IActionResult> ManageUsers()
         {
-            var response = _userService.GetAllRegisteredUsersAsync().Result;
-            return response;
+            var response = _userService.GetAllRegisteredUsersAsync().Result.Data;
+            return View(response);
         }
 
         public object GetUserbyId(int tenentId) 

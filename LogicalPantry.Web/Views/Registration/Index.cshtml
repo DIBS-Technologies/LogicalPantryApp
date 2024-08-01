@@ -1,0 +1,219 @@
+﻿@model LogicalPantry.Models.Models.User
+
+@{
+    ViewData["Title"] = "Create Tenant";
+}
+
+<style>
+    .dataTables_wrapper .dataTables_scrollHeadInner table.dataTable thead th {
+        text-align: left !important; /* Align all headers to the left */
+    }
+
+    .text-center {
+        text-align: center; /* Align text in specific columns to the center */
+    }
+
+    .text-left {
+        text-align: left !important;
+    }
+
+    h5 {
+        color: white;
+    }
+
+    .mt-n5, .my-n5 {
+        margin-top: 2rem !important;
+    }
+
+    @@media (min-width: 1500px) {
+        .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+            max-width: 1200px;
+        }
+    }
+    
+    #saveButtonDiv {
+        display: flex;
+        justify-content: end;
+    }
+
+    .card-header {
+        justify-content: center;
+        color: black;
+    }
+
+    .card .card-header {
+        font-weight: 500;
+        font-size: 22px;
+    }
+
+    .saveButton {
+        background-color: #1A2A52;
+        color: white;
+        border-radius: 5px;
+        border: none;
+        font-size: 1rem;
+        padding: 0.5rem 2rem 0.5rem 2rem;
+        margin-top: 1rem;
+    }
+
+    .card {
+        width: 100%;
+        max-width: 600px;
+        margin: auto;
+    }
+</style>
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<div class="container mt-n10" style="margin-top: 3rem !important;">
+    <div class="row">
+        <div class="col-lg-9">
+            <div id="default">
+                <div class="card mb-4" style="min-width: 250px;">
+                    <div class="card-header">
+                        Registration
+                    </div>
+                    <div class="card-body">
+                        <div class="sbp-preview">
+                            <div class="sbp-preview-content">
+                                <form method="post" id="register" action="/Registration/Register">
+                                    <div class="form-group">
+                                        <label for="FullName">Name<span class="mandatory">*</span></label>
+                                        <input name="FullName" class="form-control" id="FullName" placeholder="Enter Name" />
+                                        <span class="text-danger errorfont" id="name-error"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="Address">Address<span class="mandatory">*</span></label>
+                                        <input name="Address" class="form-control" id="Address" placeholder="Enter Address" />
+                                        <span class="text-danger errorfont" id="address-error"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="Email">Email<span class="mandatory">*</span></label>
+                                        <input type="email" name="Email" class="form-control" id="Email" placeholder="Enter Email" />
+                                        <span class="text-danger errorfont" id="email-error"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="PhoneNumber">Phone Number<span class="mandatory">*</span></label>
+                                        <input type="tel" name="PhoneNumber" class="form-control" id="PhoneNumber" placeholder="Enter Phone Number" />
+                                        <span class="text-danger errorfont" id="phone-error"></span>
+                                    </div>
+
+                                    <div id="saveButtonDiv">
+                                        <button class="saveButton" type="submit" onclick="return validateForm();">Register</button>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<script>
+    $(document).ready(function() {
+        $('#FullName, #Address, #Email, #PhoneNumber').on('blur change keyup', function() {
+            validateForm();
+        });
+
+        $('#Email').on('blur change keyup', function() {
+            var email = $(this).val();
+            if (email.trim() !== "" && isValidEmail(email)) {
+                checkEmailExist(email);
+            }
+        });
+
+        $('#PhoneNumber').on('blur change keyup', function() {
+            var phnNo = $(this).val();
+            if (phnNo.length >= 10) {
+                validateForm();
+            }
+        });
+    });
+
+    function validateForm() {
+        // Reset error messages
+        $("#name-error").text("");
+        $("#address-error").text("");
+        $("#email-error").text("");
+        $("#phone-error").text("");
+
+        // Validate fields
+        var isValid = true;
+
+        var name = $("#FullName").val();
+        if (name.trim() === "") {
+            $("#name-error").text("Name is required.");
+            isValid = false;
+        }
+
+        var address = $("#Address").val();
+        if (address.trim() === "") {
+            $("#address-error").text("Address is required.");
+            isValid = false;
+        }
+
+        var email = $("#Email").val();
+        if (email.trim() === "") {
+            $("#email-error").text("Email is required.");
+            isValid = false;
+        } else if (!isValidEmail(email)) {
+            $("#email-error").text("Invalid Email format.");
+            isValid = false;
+        }
+
+        var phoneNumber = $("#PhoneNumber").val();
+        if (phoneNumber.trim() === "") {
+            $("#phone-error").text("Phone Number is required.");
+            isValid = false;
+        } else if (!isValidPhoneNumber(phoneNumber)) {
+            $("#phone-error").text("Invalid Phone Number format.");
+            isValid = false;
+        }
+
+        if (!isValid) {
+            $('#saveButtonDiv .saveButton').prop('disabled', true);
+        } else {
+            $('#saveButtonDiv .saveButton').prop('disabled', false);
+        }
+
+        return isValid;
+    }
+
+    function isValidEmail(email) {
+        var emailRegex = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+        return emailRegex.test(email);
+    }
+
+    function isValidPhoneNumber(phoneNumber) {
+        var phoneRegex = /^\d{10}$/;
+        return phoneRegex.test(phoneNumber);
+    }
+
+    function checkEmailExist(email) {
+        $.ajax({
+            url: '/Registration/CheckEmailExist',
+            type: 'POST',
+            data: { email: email },
+            success: function(response) {
+                if (response.exists) {
+                    $("#email-error").text("Email already exists.");
+                    $('#saveButtonDiv .saveButton').prop('disabled', true);
+                } else {
+                    $("#email-error").text("");
+                    validateForm();
+                }
+            },
+            error: function() {
+                console.error("An error occurred while checking email existence.");
+            }
+        });
+    }
+</script>

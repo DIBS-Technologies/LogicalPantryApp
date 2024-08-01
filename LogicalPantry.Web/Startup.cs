@@ -41,7 +41,7 @@ public class Startup
         services.AddScoped<IInformationService, InformationService>();
         services.AddScoped<IRegistrationService, RegistrationService>();
         services.AddScoped<ITimeSlotSignupService, TimeSlotSignupService>();
-
+       
         // Add AutoMapper
         services.AddAutoMapper(typeof(Startup));
 

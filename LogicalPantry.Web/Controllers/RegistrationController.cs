@@ -17,7 +17,7 @@ namespace LogicalPantry.Web.Controllers
         {
             return View();
         }
-
+        [HttpPost]
         public object Register(UserDto user) 
         {
             var response=_registrationService.RegisterUser(user).Result;

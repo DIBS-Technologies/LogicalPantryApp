@@ -1,22 +1,13 @@
-using Autofac.Core;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Facebook;
-using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using LogicalPantry.Models.Models;
 using LogicalPantry.Services.RoleServices;
 using LogicalPantry.Services.UserServices;
 using NLog.Extensions.Logging;
-using System;
 using LogicalPantry.Services.TimeSlotServices;
 using LogicalPantry.Services.TenantServices;
-using LogicalPantry.Services.TimeSlotSignupServices;
+using LogicalPantry.Services.RegistrationService;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -82,7 +73,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
-
+builder.Services.AddScoped<IRegistrationService , RegistrationService>();
 
 
 
