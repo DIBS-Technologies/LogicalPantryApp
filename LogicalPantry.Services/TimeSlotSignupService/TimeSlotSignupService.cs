@@ -1,55 +1,74 @@
-﻿using LogicalPantry.DTOs.TimeSlotSignupDtos;
+﻿using AutoMapper;
+using LogicalPantry.DTOs;
+using LogicalPantry.DTOs.TimeSlotSignupDtos;
 using LogicalPantry.DTOs.UserDtos;
 using LogicalPantry.Models.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace LogicalPantry.Services.TimeSlotSignupService
 {
-    public class TimeSlotSignupService: ITimeSlotSignupService
+    public class TimeSlotSignupService : ITimeSlotSignupService
     {
-        private readonly ApplicationDataContext _context;
-        public TimeSlotSignupService(ApplicationDataContext context)
+        private readonly ILogger<TimeSlotSignupService> logger; // Dependency injection for ILogger
+        private readonly IMapper mapper; // Dependency injection for IMapper
+        private readonly ApplicationDataContext dataContext; // Dependency injection for DataContext
+
+        // Constructor with dependency injection
+        public TimeSlotSignupService(ILogger<TimeSlotSignupService> logger, IMapper mapper, ApplicationDataContext dataContext)
         {
-            _context = context;
+            this.logger = logger;
+            this.mapper = mapper;
+            this.dataContext = dataContext;
         }
-        public List<UserDto> GetUserbyTimeSlot(DateTime timeslot)
+
+        public async Task<ServiceResponse<IEnumerable<UserDto>>> GetUserbyTimeSlot(DateTime timeslot)
         {
+            var response = new ServiceResponse<IEnumerable<UserDto>>();
             try
             {
-                List<UserDto> userDtos = new List<UserDto>();
-                 userDtos = (from ts in _context.TimeSlots
-                              join u in _context.Users on ts.UserId equals u.Id
-                              join t in _context.TimeSlotSignups
-                                  on new { ts.UserId } equals new { t.UserId } into tsSignup
-                              from t in tsSignup.DefaultIfEmpty()
-                              where ts.StartTime == timeslot
-                              select new UserDto
-                              {
-                                  PhoneNumber = u.PhoneNumber,
-                                  Email = u.Email,
-                                  FullName = u.FullName,
-                                  Attended = t != null ? t.Attended : false // Set Attendies based on presence in TimeSlotSignups
-                              }).ToList();
+                var userDtos = await (from ts in dataContext.TimeSlots
+                                      join u in dataContext.Users on ts.UserId equals u.Id
+                                      join t in dataContext.TimeSlotSignups
+                                          on new { ts.UserId } equals new { t.UserId } into tsSignup
+                                      from t in tsSignup.DefaultIfEmpty()
+                                      where ts.StartTime == timeslot
+                                      select new UserDto
+                                      {
+                                          PhoneNumber = u.PhoneNumber,
+                                          Email = u.Email,
+                                          FullName = u.FullName,
+                                          Attended = t != null ? t.Attended : false // Set Attended based on presence in TimeSlotSignups
+                                      }).ToListAsync();
 
-                return userDtos;
-
+                response.Data = userDtos;
+                response.Success = true;
+                response.Message = "Users fetched successfully.";
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                logger.LogError(ex, "Error fetching users by time slot");
+                response.Success = false;
+                response.Message = $"Error fetching users: {ex.Message}";
             }
-            
+
+            return response;
         }
 
-        public string PostTimeSlotSignup(List<TimeSlotSignupDto> users)
+        public async Task<ServiceResponse<string>> PostTimeSlotSignup(List<TimeSlotSignupDto> users)
         {
-            if (users == null) return string.Empty;
+            var response = new ServiceResponse<string>();
+            if (users == null || !users.Any())
+            {
+                response.Success = false;
+                response.Message = "No users to update.";
+                return response;
+            }
+
             try
             {
                 var timeSlotSignups = users.Select(dto => new TimeSlotSignup
@@ -60,19 +79,22 @@ namespace LogicalPantry.Services.TimeSlotSignupService
                 }).ToList();
 
                 // Add entities to the context
-                _context.TimeSlotSignups.AddRange(timeSlotSignups);
+                await dataContext.TimeSlotSignups.AddRangeAsync(timeSlotSignups);
 
                 // Save changes to the database asynchronously
-                _context.SaveChangesAsync();
+                await dataContext.SaveChangesAsync();
 
-                return "Success"; // Return a success message or result
+                response.Success = true;
+                response.Message = "Time Slot Signup updated successfully.";
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                throw;
+                logger.LogError(ex, "Error posting time slot signups");
+                response.Success = false;
+                response.Message = $"Error posting time slot signups: {ex.Message}";
             }
-            
+
+            return response;
         }
     }
 }

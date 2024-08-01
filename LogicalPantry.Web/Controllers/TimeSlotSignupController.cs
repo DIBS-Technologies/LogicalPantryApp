@@ -23,21 +23,27 @@ namespace LogicalPantry.Web.Controllers
             return View();
         }
         [HttpGet]
-        public List<UserDto> GetUsersbyTimeSlot(DateTime timeSlot) 
+        public object GetUsersbyTimeSlot(DateTime timeSlot) 
         {
+            if (timeSlot == default)
+            {
+                return BadRequest(new { Message = "Invalid time slot provided." });
+            }
 
-            List<UserDto> users = new List<UserDto>();
-            //HttpClient client = new HttpClient();
-            //client.GetAsync();
-            List<UserDto> response = _repositoryService.GetUserbyTimeSlot(timeSlot);
-            return users;
+            var response = _repositoryService.GetUserbyTimeSlot(timeSlot).Result;
+            return response;
         }
         [HttpPost]
-        public string Post(List<TimeSlotSignupDto> timeSlotSignupDtos) 
+        public object Post(List<TimeSlotSignupDto> timeSlotSignupDtos) 
         {
-           var response = _repositoryService.PostTimeSlotSignup(timeSlotSignupDtos);
+            if (timeSlotSignupDtos == null || !timeSlotSignupDtos.Any())
+            {
+                return BadRequest(new { Message = "No time slot signups provided." });
+            }
+
+            var response = _repositoryService.PostTimeSlotSignup(timeSlotSignupDtos);
             
-            return String.IsNullOrEmpty(response)?string.Empty:response;
+            return response;
         }
     }
 }
