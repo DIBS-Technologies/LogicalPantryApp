@@ -18,6 +18,8 @@ namespace LogicalPantry.Services.TimeSlotServices
 
         Task UpdateTimeSlotAsync(TimeSlotDto timeSlotDto);
 
-        Task AddTimeSlotAsync(TimeSlotDto timeSlotDto);
+        Task<bool> AddTimeSlotAsync(TimeSlotDto timeSlotDto);
+
+        Task<IEnumerable<TimeSlot>> GetAllEventsAsync();
     }
 }
