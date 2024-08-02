@@ -6,11 +6,13 @@ using LogicalPantry.Services.UserServices;
 using NLog.Extensions.Logging;
 using LogicalPantry.Services.TimeSlotServices;
 using LogicalPantry.Services.TenantServices;
+using LogicalPantry.Services.TimeSlotSignupServices;
+using System.Configuration;
+using LogicalPantry.DTOs.PayPalSettingDtos;
 using LogicalPantry.Services.RegistrationService;
 using Autofac.Core;
 using LogicalPantry.Services.InformationService;
 using LogicalPantry.Services.TimeSlotSignupService;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -80,6 +82,10 @@ builder.Services.AddScoped<IRegistrationService , RegistrationService>();
 builder.Services.AddScoped<IInformationService, InformationService>();
 builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 //builder.Services.AddScoped<ITimeSlotSignupService, TimeSlotSignupService>();
+builder.Services.Configure<PayPalDto>(builder.Configuration.GetSection("PayPal"));
+
+
+
 
 //builder.Services.AddScoped<ITenantService,TenantService>();
 

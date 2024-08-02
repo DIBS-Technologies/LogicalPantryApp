@@ -1,5 +1,4 @@
-﻿
-using LogicalPantry.DTOs.TimeSlotDtos;
+﻿using LogicalPantry.DTOs.TimeSlotDtos;
 using LogicalPantry.DTOs.UserDtos;
 using LogicalPantry.Services.TimeSlotServices;
 using LogicalPantry.Services.UserServices;
@@ -30,23 +29,28 @@ namespace LogicalPantry.Web.Controllers
             // Fetch events from the service
             var timeSlots = await _timeSlotService.GetTimeSlotsAsync();
 
-            var model = new CalendarViewModel
-            {
-                TenantDto = timeSlots
-            };
-
-            return View(model);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> AddEvent(TimeSlotDto timeSlotDto)
+        [HttpPost("AddEvent")]
+        public async Task<IActionResult> AddEvent([FromBody] TimeSlotDto timeSlotDto)
         {
+            if (timeSlotDto == null)
+            {
+                return BadRequest("Event data is null.");
+            }
+
             if (ModelState.IsValid)
             {
-                await _timeSlotService.AddTimeSlotAsync(timeSlotDto);
-                return RedirectToAction(nameof(Calendar));
+                var success = await _timeSlotService.AddTimeSlotAsync(timeSlotDto);
+
+                if (success)
+                {
+                    return Ok(); // Return a success response
+                }
+                else
+                {
+                    return StatusCode(500, "An error occurred while saving the time slot. Please try again."); // Return a server error response
+                }
             }
-            return View("Error"); // Handle the error case appropriately
+            return BadRequest(ModelState); // Return a bad request response with validation errors
         }
 
 
@@ -97,5 +101,71 @@ namespace LogicalPantry.Web.Controllers
             }
             return BadRequest();
         }
+
+
+        [HttpGet("Calendar")]
+        public async Task<IActionResult> Calendar()
+        {
+            _logger.LogInformation("Calendar page accessed");
+
+            // Fetch events from the database
+            var events = await _timeSlotService.GetAllEventsAsync();
+
+            // Log the number of events fetched
+            _logger.LogInformation($"Fetched {events.Count()} events from the database.");
+
+            // Log details of each event
+            foreach (var e in events)
+            {
+                _logger.LogInformation($"Event: Start={e.StartTime}, End={e.EndTime}, Title={e.TimeSlotName}");
+            }
+
+            // Map to your event model
+            var calendarEvents = events.Select(e => new Event
+            {
+                Start = ToUnixTimestamp(e.StartTime),
+                End = ToUnixTimestamp(e.EndTime),
+                Title = e.TimeSlotName,
+            }).ToList();
+
+            // Log the number of events mapped
+            _logger.LogInformation($"Mapped {calendarEvents.Count} events to calendar event model.");
+
+            var model = new CalendarViewModel
+            {
+                Events = calendarEvents
+            };
+
+            return View(model);
+        }
+
+
+
+
+        // Helper method to get the start of the current week (Sunday)
+        private DateTimeOffset GetStartOfWeek(DateTimeOffset dateTime)
+        {
+            int diff = (int)dateTime.DayOfWeek - (int)DayOfWeek.Sunday;
+            return dateTime.AddDays(-diff).Date;
+        }
+
+        // Helper method to convert DateTimeOffset to Unix timestamp (seconds)
+        private long ToUnixTimestamp(DateTimeOffset dateTime)
+        {
+            return dateTime.ToUnixTimeSeconds();
+        }
+
+
+
+
+        
+
     }
+
+
+    
+
+
+   
+
 }

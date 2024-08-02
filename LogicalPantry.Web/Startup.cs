@@ -15,6 +15,7 @@ using LogicalPantry.Services.TimeSlotSignupService;
 using Microsoft.EntityFrameworkCore.Internal;
 using LogicalPantry.Services.RegistrationService;
 using LogicalPantry.Services.TenantServices;
+using System.Globalization;
 public class Startup
 {
     public IConfiguration Configuration { get; }
