@@ -41,7 +41,7 @@
         .footer-custom {
             background-color: #fff; 
             color: #1f2d41;
-        }
+        } 
 
         .sidenav-light .sidenav-menu .nav-link:hover {
             color: #0061f2;
@@ -94,6 +94,7 @@
 
                                 <div class="sidenav-footer-subtitle">Logged in as:</div>
                                 <div class="sidenav-footer-title" style="color:black;">@userName</div>
+                                <input id="tenatId"type="hidden" value="" />
                             }
                         </div>
                     </div>
@@ -116,12 +117,14 @@
     @section Scripts {
         <script>
             $(document).ready(function () {
+
                 var userEmail = '@User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value';
                 $.ajax({
-                    url: "/Tenant/GetImage",
+                    url: "/Infromation/Get",
                     method: "GET",
-                    data: { tenantEmail: userEmail },
+                    data: { tenantid:"1" },
                     success: function (data) {
+                        debugger
                         $("#logoImage").attr("src", data.ImageUrl);
                     },
                     error: function () {

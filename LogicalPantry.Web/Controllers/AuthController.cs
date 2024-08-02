@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using LogicalPantry.Models.Models;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.AspNetCore.Http;
 namespace LogicalPantry.Web.Controllers
 {
     public class AuthController : Controller
@@ -207,6 +208,8 @@ namespace LogicalPantry.Web.Controllers
                 var userName = claims.Where(x => x.Issuer == claimsIdentity.AuthenticationType).Select(x => x.Value).Skip(4).FirstOrDefault();
                 var userExisist = await _userServices.GetUserByEmailAsync(userName);
 
+                //HttpContext.Session.SetString("UserId", userExisist.Data.Id.ToString()); 
+                                                                      
                 await HttpContext.SignInAsync(result.Principal);
 
                 return userExisist.Success;

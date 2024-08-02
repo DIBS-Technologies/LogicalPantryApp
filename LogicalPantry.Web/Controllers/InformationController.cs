@@ -18,10 +18,10 @@ namespace LogicalPantry.Web.Controllers
             return View();
         }
         [HttpGet]
-        public object Get(int tenantid) 
+        public object Get(string tenantid) 
         {
-            if (tenantid == 0) { return null; }
-            var response=_informationService.GetTenant(tenantid).Result;
+            if (int.Parse(tenantid) == 0) { return null; }
+            var response=_informationService.GetTenant(int.Parse(tenantid)).Result;
             return response;
         }
 
@@ -33,9 +33,7 @@ namespace LogicalPantry.Web.Controllers
         }
 
 
-        // Display the form for editing
-        [HttpPost("AddTenat")]
-        public async Task<IActionResult> EditTenant(int id)
+        public async Task<IActionResult> AddTenant2(int id)
         {
             var response = _informationService.GetTenant(id);
             if (response.Result.Success)
@@ -48,16 +46,15 @@ namespace LogicalPantry.Web.Controllers
         }
 
         // Handle form submission
-        [HttpPost("EditTenant")]
-        public async Task<IActionResult> EditTenant(TenantDto tenantDto, IFormFile LogoFile)
+        [HttpPost("AddTenant")]
+        public async Task<IActionResult> AddTenant(TenantDto tenantDto, IFormFile LogoFile)
         {
-            if (ModelState.IsValid)
-            {
+            
                 if (LogoFile != null && LogoFile.Length > 0)
                 {
                     // Generate a unique file name to avoid conflicts
                     var fileName = Guid.NewGuid().ToString() + Path.GetExtension(LogoFile.FileName);
-                    var filePath = Path.Combine("wwwroot/Pages", fileName);
+                    var filePath = Path.Combine("wwwroot\\Image", fileName);
 
                     // Save the file
                     using (var stream = new FileStream(filePath, FileMode.Create))
@@ -66,20 +63,20 @@ namespace LogicalPantry.Web.Controllers
                     }
 
                     // Update the tenantDto with the new logo path
-                    tenantDto.Logo = "/Pages/" + fileName;
+                    tenantDto.Logo = "/Image/" + fileName;
                 }
 
                 var response = await _informationService.PostTenant(tenantDto);
                 if (response.Success)
                 {
                     // Redirect to the GET method to display the updated data
-                    return RedirectToAction(nameof(EditTenant), new { id = tenantDto.Id });
+                    return RedirectToAction(nameof(AddTenant2), new { id = tenantDto.Id });
                 }
                 else
                 {
                     ModelState.AddModelError("", response.Message);
                 }
-            }
+            
 
             return View(tenantDto);
         }

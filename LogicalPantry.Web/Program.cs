@@ -6,7 +6,7 @@ using LogicalPantry.Services.UserServices;
 using NLog.Extensions.Logging;
 using LogicalPantry.Services.TimeSlotServices;
 using LogicalPantry.Services.TenantServices;
-using LogicalPantry.Services.TimeSlotSignupServices;
+
 using System.Configuration;
 using LogicalPantry.DTOs.PayPalSettingDtos;
 using LogicalPantry.Services.RegistrationService;

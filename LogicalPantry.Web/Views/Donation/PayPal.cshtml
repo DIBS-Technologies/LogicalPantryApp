@@ -5,51 +5,153 @@
     ViewData["Title"] = "Pay with PayPal";
 }
 
-<h2>@ViewData["Title"]</h2>
-
-<!-- Input field for donation amount -->
-<form id="donation-form">
-    <label for="amount">Enter amount to donate:</label>
-    <input type="number" id="amount" name="amount" step="0.01" min="0" required />
-    <button type="button" id="pay-button">Pay with PayPal</button>
-</form>
-
-<!-- Container for PayPal button -->
-<div id="paypal-button-container"></div>
-
-<script src="https://www.paypal.com/sdk/js?client-id=@Configuration["PayPal:ClientId"]"></script>
-<script>
-    document.getElementById('pay-button').addEventListener('click', function () {
-        var amount = document.getElementById('amount').value;
-        if (amount <= 0) {
-            alert('Please enter a valid amount.');
-            return;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .card {
+            width: 100%;
+            max-width: 800px; /* Increase card width for larger screens */
+            margin: auto;
+            padding: 1.5rem; /* Add some padding inside the card */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
         }
 
-        // Render the PayPal button with the user-specified amount
-        paypal.Buttons({
-            createOrder: function (data, actions) {
-                return actions.order.create({
-                    purchase_units: [{
-                        amount: {
-                            value: amount // Use the user input amount
-                        }
-                    }]
-                });
-            },
-            onApprove: function (data, actions) {
-                return actions.order.capture().then(function (details) {
-                    alert('Transaction completed by ' + details.payer.name.given_name);
-                    // Optionally, redirect to a success page or update the UI here
-                });
-            },
-            onCancel: function (data) {
-                alert('Transaction was cancelled');
-            },
-            onError: function (err) {
-                console.error(err);
-                alert('An error occurred during the transaction');
+        .card-header {
+            text-align: center;
+            font-weight: 500;
+            font-size: 22px;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 0.5rem;
             }
-        }).render('#paypal-button-container'); // Renders the PayPal button into the container
-    });
-</script>
+
+            .form-group .form-control {
+                width: 100%;
+            }
+
+        @@media (min-width: 992px) {
+            .form-group {
+                display: flex;
+                align-items: center;
+            }
+
+                .form-group label {
+                    flex: 0 0 150px;
+                    max-width: 150px;
+                    margin-bottom: 0;
+                }
+
+                .form-group .form-control {
+                    flex: 1 1 auto;
+                }
+        }
+
+        .saveButton {
+            background-color: #1A2A52;
+            color: white;
+            border-radius: 5px;
+            border: none;
+            font-size: 1rem;
+            padding: 0.5rem 2rem;
+            margin-top: 1rem;
+        }
+
+        #saveButtonDiv {
+            display: flex;
+            justify-content: end;
+        }
+    </style>
+</head>
+<body>
+    <!-- Input field for donation amount -->
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        Pay with PayPal
+                    </div>
+                    <div class="card-body">
+                        <form id="hiddenForm">
+                        <div class="form-group">
+                            <label for="amount">Enter amount to donate:</label>
+                            <input type="number" id="amount" name="amount" step="0.01" min="0" required />
+                            @*   <span class="text-danger errorfont" id="FullName-error"></span> *@
+                        </div>
+                        <div id="saveButtonDiv">
+                            <button class="saveButton" id="pay-button" onclick="hideForm()">Pay with PayPal</button>
+                        </div>
+                        </form>
+                        <!-- Container for PayPal button -->
+                        <div id="paypal-button-container"></div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="https://www.paypal.com/sdk/js?client-id=@Configuration["PayPal:ClientId"]"></script>
+
+
+    <script>
+        <script src="https://www.paypal.com/sdk/js?client-id=@Configuration["PayPal:ClientId"]" ></script>
+
+    <script>
+        document.getElementById('pay-button').addEventListener('click', function (event) {
+            event.preventDefault(); // Prevent the default form submission
+            var amount = document.getElementById('amount').value;
+
+            if (amount <= 0) {
+                alert('Please enter a valid amount.');
+                return;
+            }
+
+            // Hide the form and show the PayPal button container
+            document.getElementById('hiddenForm').style.display = 'none';
+            document.getElementById('paypal-button-container').style.display = 'block';
+
+            // Render the PayPal button with the user-specified amount
+            paypal.Buttons({
+                createOrder: function (data, actions) {
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                value: amount // Use the user input amount
+                            }
+                        }]
+                    });
+                },
+                onApprove: function (data, actions) {
+                    return actions.order.capture().then(function (details) {
+                        alert('Transaction completed by ' + details.payer.name.given_name);
+                    });
+                },
+                onCancel: function (data) {
+                    alert('Transaction was cancelled');
+                },
+                onError: function (err) {
+                    console.error(err);
+                    alert('An error occurred during the transaction');
+                }
+            }).render('#paypal-button-container'); // Renders the PayPal button into the container
+        });
+    </script>
+
+</body>
+</html>
+

@@ -70,26 +70,52 @@ namespace LogicalPantry.Web.Controllers
 
         }
 
-
-        [HttpPost]
-        [Route("UpdateUserAsync")]
-        public object UpdateUserAsync( string jsonString)
+        [HttpGet("session")]
+        public IActionResult GetSessionData()
         {
+            var userEmail = HttpContext.Session.GetString("UserEmail");
+            var userName = HttpContext.Session.GetString("UserName");
 
-            var updatedNotificationList = JsonConvert.DeserializeObject<UserAllowStatusDto>(jsonString);
+            if (string.IsNullOrEmpty(userEmail) || string.IsNullOrEmpty(userName))
+            {
+                return NotFound();
+            }
 
-            var userDto = new UserDto { Id = updatedNotificationList.Id, IsAllow = updatedNotificationList.IsAllow };
+            return Ok(new { UserEmail = userEmail, UserName = userName });
+        }
+
+        [Route("UpdateUser")]
+        public async Task<IActionResult> UpdateUser(string updatedNotificationList)
+        {
+            if (updatedNotificationList == null)
+            {
+                return BadRequest("Invalid data.");
+            }
+
+            var updatedNotificationListObject = JsonConvert.DeserializeObject<UserAllowStatusDto>(updatedNotificationList);
+
+            var userDto = new UserDto { Id = updatedNotificationListObject.Id, IsAllow = updatedNotificationListObject.IsAllow };
 
 
             if (userDto != null)
             {
                 var response = _userService.UpdateUserAsync(userDto).Result;
-                return response;
 
+                if (response != null)
+                {
+                    @TempData["MessageClass"] = "alert-success";
+                    @TempData["SuccessMessageUser"] = "User Saved Successfully";
+
+                    return Ok(new { success = true });
+                }
+                else
+                {
+                    @TempData["MessageClass"] = "alert-success";
+                    @TempData["SuccessMessageUser"] = "Internal server error.";
+                    return StatusCode(500, "Internal server error.");
+                }
             }
-            else { return null; }
-
-
+            return Ok(new { success = false });
         }
 
 

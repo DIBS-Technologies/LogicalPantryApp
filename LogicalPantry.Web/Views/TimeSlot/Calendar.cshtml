@@ -19,9 +19,6 @@
 
 
 
-
-
-
     <style>
         /* Custom styles for spacing and header */
         .calendar-header {
@@ -182,63 +179,6 @@
             <script src="~/jquery.touchswipe/jquery.touchswipe.min.js"></script>
             <link rel="stylesheet" href="~/css/jquery-calendar.min.css">
             <script src="~/js/jquery-calendar.min.js"></script>
-
-
-           @*  <script>
-                $(document).ready(function () {
-                    debugger;
-
-                    // Initialize the calendar with events from the server
-                    var events = @Html.Raw(Json.Serialize(Model.Events));
-                    console.log('Fetched events:', events);
-
-                    var calendar = $('#calendar').Calendar({
-                       // locale: 'en',
-                        weekday: {
-                            timeline: {
-                                intervalMinutes: 30,
-                                fromHour: 9
-                            }
-                        },
-                        events: events,
-                        // Add more options or customization as needed
-                    }).init();
-
-
-                    $('#saveEventBtn').on('click', function () {
-                        var eventData = {
-                            timeSlotName: $('#eventTitle').val(),
-                            startTime: $('#eventStart').val(),
-                            endTime: $('#eventEnd').val()
-                        };
-
-                        $.ajax({
-                            url: '/TimeSlot/AddEvent',
-                            type: 'POST',
-                            contentType: 'application/json',
-                            data: JSON.stringify(eventData),
-                            success: function (response) {
-                                alert('Event added successfully!');
-                                $('#eventModal').modal('hide');
-                                // Optionally, refresh the calendar or update the UI
-                            },
-                            error: function (xhr, status, error) {
-                                alert('Error adding event: ' + error);
-                            }
-                        });
-                    });
-
-                    // $('#deleteEventBtn').on('click', function () {
-                    //     // Logic to handle event deletion
-                    // });
-
-                    // function handleSelectChange() {
-                    //     var selectedValue = document.getElementById('eventSelect').value;
-                    //     console.log('Selected Event ID:', selectedValue);
-                    // }
-                });
-            </script>
- *@
 
 
             <script>

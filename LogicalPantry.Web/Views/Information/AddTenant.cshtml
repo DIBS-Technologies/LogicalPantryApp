@@ -33,7 +33,7 @@
             width: 100%;
         }
 
-        @@media (min-width: 992px) {
+       /*  @@media (min-width: 992px) {
             .form-group {
                 display: flex;
                 align-items: center;
@@ -48,7 +48,7 @@
             .form-group .form-control {
                 flex: 1 1 auto;
             }
-        }
+        } */
 
         .saveButton {
             background-color: #1A2A52;
@@ -75,7 +75,7 @@
                         Information
                     </div>
                     <div class="card-body">
-                        <form method="post" id="createUser" action="/Tenant/EditTenant" enctype="multipart/form-data">
+                        <form method="post" id="createUser" action="/Information/AddTenant" enctype="multipart/form-data">
                             <div class="form-group">
                                 <label for="logo">Logo<span class="mandatory">*</span></label>
                                 <input type="file" name="LogoFile" class="form-control-file" id="logo" />
@@ -185,7 +185,13 @@
                 $("#timeZone-error").text("").hide();
             }
 
-            $(".saveButton").prop("disabled", !isValid);
+            if (isValid) {
+
+                $(".saveButton").prop("disabled", !isValid);
+            }else{
+                $(".saveButton").prop("disabled", isValid);
+            }
+           
             return isValid;
         }
 

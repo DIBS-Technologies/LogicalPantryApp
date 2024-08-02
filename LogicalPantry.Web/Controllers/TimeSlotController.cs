@@ -21,14 +21,7 @@ namespace LogicalPantry.Web.Controllers
             _timeSlotService = timeSlotService;
         }
 
-        [HttpGet("Calendar")]
-        public async Task<IActionResult> Calendar()
-        {
-            _logger.LogInformation("Calendar page accessed");
-
-            // Fetch events from the service
-            var timeSlots = await _timeSlotService.GetTimeSlotsAsync();
-
+       
         [HttpPost("AddEvent")]
         public async Task<IActionResult> AddEvent([FromBody] TimeSlotDto timeSlotDto)
         {
@@ -143,7 +136,7 @@ namespace LogicalPantry.Web.Controllers
 
 
         // Helper method to get the start of the current week (Sunday)
-        private DateTimeOffset GetStartOfWeek(DateTimeOffset dateTime)
+        public DateTimeOffset GetStartOfWeek(DateTimeOffset dateTime)
         {
             int diff = (int)dateTime.DayOfWeek - (int)DayOfWeek.Sunday;
             return dateTime.AddDays(-diff).Date;

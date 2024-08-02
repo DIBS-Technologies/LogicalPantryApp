@@ -218,18 +218,18 @@
 
             $(".inp-cbx").on("change", function () {
                 var checkbox = $(this);
-                var userId = + checkbox.data("user-id");
+                var userId = checkbox.data("user-id");
                 console.log(userId);
                 var isChecked = checkbox.prop("checked");
 
-         
+                var updatedNotificationList =  JSON.stringify({Id : userId ,IsAllow : isChecked });
+
                 $.ajax({
-                    url: '@Url.Action("UpdateUserAsync", "User")',
-                    type: 'POST',
-                    data: JSON.stringify({Id : userId ,IsAllow : isChecked }),
+                    url: "/User/UpdateUser?updatedNotificationList="+updatedNotificationList,
+                    data: updatedNotificationList,
                     dataType : "json",
                     success: function (response) {
-                        
+                        debugger
                         if (response.success) {
                             console.log("User status updated successfully.");
                            
