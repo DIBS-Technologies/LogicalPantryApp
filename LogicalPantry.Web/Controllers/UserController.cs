@@ -18,6 +18,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using LogicalPantry.DTOs.TimeSlotDtos;
 using LogicalPantry.Models.Models;
+using Newtonsoft.Json;
 
 namespace LogicalPantry.Web.Controllers
 {
@@ -68,6 +69,32 @@ namespace LogicalPantry.Web.Controllers
 
 
         }
+
+
+        [HttpPost]
+        [Route("UpdateUserAsync")]
+        public object UpdateUserAsync( string jsonString)
+        {
+
+            var updatedNotificationList = JsonConvert.DeserializeObject<UserAllowStatusDto>(jsonString);
+
+            var userDto = new UserDto { Id = updatedNotificationList.Id, IsAllow = updatedNotificationList.IsAllow };
+
+
+            if (userDto != null)
+            {
+                var response = _userService.UpdateUserAsync(userDto).Result;
+                return response;
+
+            }
+            else { return null; }
+
+
+        }
+
+
+
+
     }
 
 

@@ -20,6 +20,14 @@ namespace LogicalPantry.Web.Controllers
         }
 
 
+        public IActionResult Index(string pageName)
+        {
+
+            return View();
+        }
+
+
+
         [HttpGet]
         [Route("AddTenant")]
         public IActionResult AddTenant()

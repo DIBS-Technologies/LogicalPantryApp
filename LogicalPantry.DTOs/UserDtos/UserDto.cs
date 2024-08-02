@@ -18,5 +18,6 @@ namespace LogicalPantry.DTOs.UserDtos
         public bool IsAllow { get; set; }
         public bool IsRegistered { get; set; }
         public bool Attended { get; set; }
+
     }
 }

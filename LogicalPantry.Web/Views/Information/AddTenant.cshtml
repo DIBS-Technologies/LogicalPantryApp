@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -57,6 +59,11 @@
             padding: 0.5rem 2rem;
             margin-top: 1rem;
         }
+
+        #saveButtonDiv {
+            display: flex;
+            justify-content: end;
+        }
     </style>
 </head>
 <body>
@@ -80,8 +87,11 @@
                                 <span class="text-danger" id="name-error"></span>
                             </div>
                             <div class="form-group">
+                                @{
+                                    var userEmails = User.FindFirstValue(ClaimTypes.Email);
+                                }
                                 <label for="email">Email<span class="mandatory">*</span></label>
-                                <input type="email" name="AdminEmail" class="form-control" id="email" />
+                                <input type="email" value="@userEmails" name="AdminEmail" class="form-control" id="email"  disabled />
                                 <span class="text-danger" id="email-error"></span>
                             </div>
                             <div class="form-group">
@@ -94,7 +104,7 @@
                                 <select name="Timezone" class="form-control" id="timeZone"></select>
                                 <span class="text-danger" id="timeZone-error"></span>
                             </div>
-                            <div>
+                            <div id="saveButtonDiv">
                                 <button class="saveButton" type="submit" onclick="return validateForm();">Save</button>
                             </div>
                         </form>

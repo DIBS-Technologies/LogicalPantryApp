@@ -151,7 +151,7 @@
                                     <td>@user.FullName</td>
                                     <td>@user.Email</td>
                                     <td class="leave-td">
-                                        <!-- checkbox START-->
+                                        
                                         <div class="checkbox-wrapper-4">
                                             <input class="inp-cbx" type="checkbox" id="allowCheckbox_@user.Id" data-user-id="@user.Id" @(user.IsAllow ? "checked" : "") />
                                             <label class="cbx" for="allowCheckbox_@user.Id">
@@ -167,11 +167,12 @@
                                                 </symbol>
                                             </svg>
                                         </div>
-                                        <!-- checkbox END-->
+                                    
                                     </td>
                                     <td class="text-center">
                                         <a href="#" class="deleteHref" onclick="deleteUser('@user.Id')">Delete</a>
                                     </td>
+                             
                                 </tr>
                             }
                         </tbody>
@@ -217,20 +218,24 @@
 
             $(".inp-cbx").on("change", function () {
                 var checkbox = $(this);
-                var userId = checkbox.data("user-id");
+                var userId = + checkbox.data("user-id");
+                console.log(userId);
                 var isChecked = checkbox.prop("checked");
 
+         
                 $.ajax({
-                    url: '@Url.Action("UpdateUserAsync", "User")', // Replace "User" with your controller name
+                    url: '@Url.Action("UpdateUserAsync", "User")',
                     type: 'POST',
-                    data: JSON.stringify({ userId: userId, isAllow: isChecked }),
-                    contentType: 'application/json; charset=utf-8',
-                    dataType: 'json',
+                    data: JSON.stringify({Id : userId ,IsAllow : isChecked }),
+                    dataType : "json",
                     success: function (response) {
+                        
                         if (response.success) {
                             console.log("User status updated successfully.");
+                           
                         } else {
                             console.error("Error updating user status.");
+                           
                         }
                     },
                     error: function (xhr, status, error) {

@@ -1,6 +1,8 @@
 ﻿
 using LogicalPantry.DTOs.TimeSlotDtos;
+using LogicalPantry.DTOs.UserDtos;
 using LogicalPantry.Services.TimeSlotServices;
+using LogicalPantry.Services.UserServices;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LogicalPantry.Web.Controllers
@@ -11,6 +13,8 @@ namespace LogicalPantry.Web.Controllers
 
         private readonly ILogger<TimeSlotController> _logger;
         private readonly ITimeSlotService _timeSlotService;
+        private readonly IUserService _userSercvice;
+
 
         public TimeSlotController(ILogger<TimeSlotController> logger, ITimeSlotService timeSlotService)
         {
@@ -46,7 +50,18 @@ namespace LogicalPantry.Web.Controllers
         }
 
 
-          
+        [HttpGet]
+        [Route("EditTimeSlotUser")]
+        public async Task<IActionResult> EditTimeSlotUser(string id)
+        {
+
+            //var response = _userSercvice.GetUsersbyTimeSlot().Result;
+            var userDtos = new List<UserDto>(); 
+            return View(userDtos); // Handle the error case appropriately
+        }
+
+
+
         private long ToUnixTimestamp(DateTime dateTime)
         {
             return ((DateTimeOffset)dateTime).ToUnixTimeSeconds();

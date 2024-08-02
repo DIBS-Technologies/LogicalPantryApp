@@ -1,0 +1,254 @@
+﻿@model IEnumerable<LogicalPantry.DTOs.UserDtos.UserDto>
+
+@{
+    ViewData["Title"] = "Edit Time Slot Users";
+}
+
+@Html.AntiForgeryToken()
+
+<head>
+    <link href="~/css/style.css" rel="stylesheet" />
+    <style>
+        td {
+            max-width: 200px; /* Adjust the max-width as per your layout */
+            white-space: normal;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .text-center {
+            text-align: center; /* Align text in specific columns to the center */
+        }
+
+        .text-left {
+            text-align: left !important;
+        }
+
+        .input-error {
+            color: red;
+            font-size: 13px;
+        }
+
+        #successMessageBatch {
+            color: green;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        td {
+            max-width: 200px; /* Adjust the max-width as per your layout */
+            white-space: normal;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .mt-n5, .my-n5 {
+            margin-top: 2rem !important;
+        }
+
+        .datatable table.dataTable thead, .datatable table.dataTable tfoot {
+            color: #000000;
+        }
+
+        .dataTables_wrapper .dataTables_scrollHeadInner table.dataTable thead th {
+            text-align: left !important; /* Align all headers to the left */
+        }
+
+        .text-center {
+            text-align: center; /* Align text in specific columns to the center */
+        }
+
+        .text-left {
+            text-align: left !important;
+        }
+
+        table.dataTable.nowrap th, table.dataTable.nowrap td {
+            white-space: normal;
+        }
+
+        .datatable table.dataTable thead, .datatable table.dataTable tfoot {
+            color: #121212;
+        }
+
+        #successMessageUser {
+            color: green !important;
+            font-size: 13px;
+            text-align: left !important;
+        }
+
+        .mt-n10, .my-n10 {
+            margin-top: -10rem !important;
+        }
+
+        .sidenav-light {
+            background-color: #fff;
+            color: #1f2d41;
+        }
+
+            .sidenav-light .sidenav-menu .nav-link:hover {
+                color: #0061f2;
+            }
+
+        .sidenav .sidenav-menu .nav .sidenav-menu-heading {
+            padding: 1.75rem 1rem 0.75rem;
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .footer-custom {
+            background-color: #fff;
+            color: #1f2d41;
+        }
+
+        .sidenav-light .sidenav-menu .nav-link:hover {
+            color: black;
+            background-color: #f1f1f1;
+            border-radius: 0.2rem;
+            margin: 0rem 0.5rem 0rem 0.75rem;
+            padding-left: 0.5rem !important;
+        }
+
+        #saveButtonDiv {
+            display: flex;
+            justify-content: end;
+        }
+    </style>
+</head>
+
+<main>
+    <header class="page-header pb-10">
+        <div class="container">
+            <div class="page-header-content pt-4">
+                <div class="row align-items-center justify-content-between">
+                    <div class="col-auto mt-4">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container mt-n10">
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <div style="font-size:25px"><!--Add Time Slot Here--></div>
+            </div>
+
+            <div class="card-body">
+                @if (!string.IsNullOrEmpty(TempData["SuccessMessageBatch"] as string))
+                {
+                    <div id="successMessageBatch" class="alert">
+                        @TempData["SuccessMessageBatch"]
+                    </div>
+                }
+
+                @if (!string.IsNullOrEmpty(TempData["ErrorMessageBatch"] as string))
+                {
+                    <div id="errorMessageBatch" class="alert">
+                        @TempData["ErrorMessageBatch"]
+                    </div>
+                }
+
+                <table class="table table-bordered table-hover" id="userTable" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Allow</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model)
+                        {
+                            <tr>
+                                <td>@user.FullName</td>
+                                <td>@user.Email</td>
+                                <td>@user.PhoneNumber</td>
+                                <td>
+                                    
+                                    <div class="checkbox-wrapper-4">
+                                        <input class="inp-cbx" type="checkbox" id="allowCheckbox_@user.Id" data-user-id="@user.Id" @(user.IsAllow ? "checked" : "") />
+                                        <label class="cbx" for="allowCheckbox_@user.Id">
+                                            <span>
+                                                <svg width="12px" height="10px">
+                                                    <use xlink:href="#check-4"></use>
+                                                </svg>
+                                            </span>
+                                        </label>
+                                        <svg class="inline-svg">
+                                            <symbol id="check-4" viewBox="0 0 12 10">
+                                                <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+                                            </symbol>
+                                        </svg>
+                                    </div>
+                                  
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+                <div id="saveButtonDiv">
+                    <button class="saveButton" type="submit" >Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $(".inp-cbx").on("change", function () {
+                var checkbox = $(this);
+                var userId = checkbox.data("user-id");
+                var isChecked = checkbox.prop("checked");
+
+                
+                var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '{}');
+                userStatuses[userId] = isChecked;
+                sessionStorage.setItem('userStatuses', JSON.stringify(userStatuses));
+            });
+
+            $(".saveButton").on("click", function () {
+                var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '{}');
+                $.ajax({
+                    url: '@Url.Action("UpdateUserStatuses", "User")', 
+                    type: 'POST',
+                    data: JSON.stringify(userStatuses),
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.success) {
+                            $('#successMessageBatch').text('Changes saved successfully.').fadeIn().delay(3000).fadeOut();
+                            sessionStorage.removeItem('userStatuses'); // Clear session storage after successful save
+                        } else {
+                            $('#errorMessageBatch').text('Error saving changes.').fadeIn().delay(3000).fadeOut();
+                        }
+                    },
+                    error: function () {
+                        $('#errorMessageBatch').text('Error saving changes.').fadeIn().delay(3000).fadeOut();
+                    }
+                });
+            });
+        });
+    </script>
+}

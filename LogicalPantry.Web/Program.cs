@@ -77,12 +77,11 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
 builder.Services.AddScoped<IRegistrationService , RegistrationService>();
-
 builder.Services.AddScoped<IInformationService, InformationService>();
 builder.Services.AddScoped<IRegistrationService, RegistrationService>();
-builder.Services.AddScoped<ITimeSlotSignupService, TimeSlotSignupService>();
+//builder.Services.AddScoped<ITimeSlotSignupService, TimeSlotSignupService>();
 
-
+//builder.Services.AddScoped<ITenantService,TenantService>();
 
 
 // Add AutoMapper for object mapping
@@ -119,7 +118,7 @@ app.UseAuthorization(); // Enable authorization middleware
 // Configure default controller route
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Auth}/{action=loginView}/{id?}");
 
 app.Run();
 

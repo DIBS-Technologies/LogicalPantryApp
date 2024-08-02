@@ -44,7 +44,7 @@
         }
 
         .sidenav-light .sidenav-menu .nav-link:hover {
-            color: black;
+            color: #0061f2;
             background-color: #f1f1f1;
             border-radius: 0.2rem;
             margin: 0rem 0.5rem 0rem 0.75rem;
@@ -54,13 +54,13 @@
 </head>
 <body class="nav-fixed">
     <nav class="topnav navbar navbar-expand shadow navbar-light bg-white" id="sidenavAccordion">
-        <img src="~/Image/Demo.jpeg" id="logoImage" style="width: 116px; padding-left: 10px; opacity:80%" />
+        <img src="~/Image/Demo.jpeg" id="logoImage" style="width: 95px; padding-left: 10px; opacity:100%" />
         <div class="UserName">
             @if (User.Identity.IsAuthenticated)
             {
                 var userEmail = User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value;
                 var userName = User.FindFirstValue(ClaimTypes.Name) ?? User.Claims.FirstOrDefault(c => c.Type == "name")?.Value;
-                <p>@userName</p>
+                @* <p>@userName</p> *@
             }
         </div>
     </nav>
@@ -74,7 +74,7 @@
                             <div class="nav-link-icon"><i data-feather="activity"></i></div>
                             Pickup Slots
                         </a>
-                        <a class="nav-link collapsed" id="menuIndex" asp-action="Index" asp-controller="Tenant">
+                        <a class="nav-link collapsed" id="menuIndex" href="/Information/AddTenant">
                             <div class="nav-link-icon"><i data-feather="activity"></i></div>
                             Information
                         </a>
@@ -93,7 +93,7 @@
                                 var userName = User.FindFirstValue(ClaimTypes.Name) ?? User.Claims.FirstOrDefault(c => c.Type == "name")?.Value;
 
                                 <div class="sidenav-footer-subtitle">Logged in as:</div>
-                                <div class="sidenav-footer-title">@userName</div>
+                                <div class="sidenav-footer-title" style="color:black;">@userName</div>
                             }
                         </div>
                     </div>

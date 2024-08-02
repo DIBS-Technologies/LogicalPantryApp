@@ -1,5 +1,5 @@
 ﻿@model LogicalPantry.Models.Models.User
-
+@using System.Security.Claims;
 @{
     ViewData["Title"] = "Create Tenant";
 }
@@ -64,6 +64,11 @@
             padding: 0.5rem 2rem;
             margin-top: 1rem;
         }
+
+        #saveButtonDiv {
+            display: flex;
+            justify-content: end;
+        }
     </style>
 </head>
 <body>
@@ -79,22 +84,24 @@
                             <div class="form-group">
                                 <label for="FullName">Name<span class="mandatory">*</span></label>
                                 <input name="FullName" class="form-control" id="FullName" placeholder="Enter Name" />
-                                <span class="text-danger errorfont" id="name-error"></span>
+                              @*   <span class="text-danger errorfont" id="FullName-error"></span> *@
                             </div>
                             <div class="form-group">
                                 <label for="Address">Address<span class="mandatory">*</span></label>
                                 <input name="Address" class="form-control" id="Address" placeholder="Enter Address" />
-                                <span class="text-danger errorfont" id="address-error"></span>
+                               @*  <span class="text-danger errorfont" id="Address-error"></span> *@
                             </div>
                             <div class="form-group">
-                                <label for="Email">Email<span class="mandatory">*</span></label>
-                                <input type="email" name="Email" class="form-control" id="Email" placeholder="Enter Email" />
-                                <span class="text-danger errorfont" id="email-error"></span>
+                                <label for="Email">Email<span class="mandatory">*</span></label>@{
+                                    var userEmails = User.FindFirstValue(ClaimTypes.Email);
+                                }
+                                <input type="email" name="Email" value="@userEmails" class="form-control" id="Email" placeholder="Enter Email" disabled />
+                                @* <span class="text-danger errorfont" id="Email-error"></span> *@
                             </div>
                             <div class="form-group">
                                 <label for="PhoneNumber">Phone Number<span class="mandatory">*</span></label>
                                 <input type="tel" name="PhoneNumber" class="form-control" id="PhoneNumber" placeholder="Enter Phone Number" />
-                                <span class="text-danger errorfont" id="phone-error"></span>
+                                @* <span class="text-danger errorfont" id="PhoneNumber-error"></span> *@
                             </div>
 
                             <div id="saveButtonDiv">
@@ -120,8 +127,10 @@
             var isValid = true;
             var id = $(field).attr('id');
             var value = $(field).val().trim();
+            debugger
             var errorId = '#' + id + '-error';
 
+            debugger
             switch (id) {
                 case 'FullName':
                     if (value === "") {

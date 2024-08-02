@@ -20,5 +20,7 @@ namespace LogicalPantry.Services.TenantServices
 
         Task<ServiceResponse<TenantDto>> GetTenantByIdAsync(int id);
         Task<ServiceResponse<TenantDto>> UpdateTenantAsync(TenantDto tenantDto);
+
+
     }
 }
