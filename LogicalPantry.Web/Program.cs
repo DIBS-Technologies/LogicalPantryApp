@@ -16,7 +16,9 @@ using NLog.Extensions.Logging;
 using System;
 using LogicalPantry.Services.TimeSlotServices;
 using LogicalPantry.Services.TenantServices;
-
+using LogicalPantry.Services.TimeSlotSignupServices;
+using System.Configuration;
+using LogicalPantry.DTOs.PayPalSettingDtos;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -82,7 +84,7 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
-
+builder.Services.Configure<PayPalDto>(builder.Configuration.GetSection("PayPal"));
 
 
 
@@ -123,7 +125,7 @@ app.UseAuthorization(); // Enable authorization middleware
 // Configure default controller route
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=timeslot}/{action=Calendar}/{id?}");
 
 app.Run();
 

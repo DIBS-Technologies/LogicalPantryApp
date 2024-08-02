@@ -52,18 +52,47 @@ namespace LogicalPantry.Services.TimeSlotServices
 
 
 
-        public async Task AddTimeSlotAsync(TimeSlotDto timeSlotDto)
+        public async Task<bool> AddTimeSlotAsync(TimeSlotDto timeSlotDto)
         {
-            var timeSlot = new TimeSlot
+            try
             {
-                TimeSlotName = timeSlotDto.TimeSlotName,
-                StartTime = timeSlotDto.StartTime,
-                EndTime = timeSlotDto.EndTime
-            };
+                // Check for overlapping time slots
+                var overlappingTimeSlot = await _context.TimeSlots
+                    .Where(ts => ts.TenantId == timeSlotDto.TenantId
+                                && ts.UserId == timeSlotDto.UserId
+                                && ts.StartTime.Date == timeSlotDto.StartTime.Date
+                                && (ts.StartTime < timeSlotDto.EndTime && ts.EndTime > timeSlotDto.StartTime))
+                    .FirstOrDefaultAsync();
 
-            _context.TimeSlots.Add(timeSlot);
-            await _context.SaveChangesAsync();
+                if (overlappingTimeSlot != null)
+                {
+                    throw new InvalidOperationException("This time slot overlaps with an existing time slot on the same day.");
+                }
+
+                var timeSlot = new TimeSlot
+                {
+                    TimeSlotName = timeSlotDto.TimeSlotName,
+                    StartTime = timeSlotDto.StartTime,
+                    EndTime = timeSlotDto.EndTime,
+                    UserId = timeSlotDto.UserId,
+                    TenantId = timeSlotDto.TenantId
+                };
+
+                _context.TimeSlots.Add(timeSlot);
+                await _context.SaveChangesAsync();
+
+                return true; // Indicate that the operation was successful
+            }
+            catch (Exception ex)
+            {
+                // Log the exception for debugging
+                Console.Error.WriteLine(ex);
+
+                // Return false to indicate failure
+                return false;
+            }
         }
+
 
         public async Task UpdateTimeSlotAsync(TimeSlotDto timeSlotDto)
         {
@@ -87,16 +116,11 @@ namespace LogicalPantry.Services.TimeSlotServices
             }
         }
 
-
-
-
-
-
-
-
-
-
-
+        public async Task<IEnumerable<TimeSlot>> GetAllEventsAsync()
+        {
+            // Fetch events from the TimeSlot table
+            return await _context.TimeSlots.ToListAsync();
+        }
 
 
 

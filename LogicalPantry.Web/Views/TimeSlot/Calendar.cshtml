@@ -1,33 +1,42 @@
 ﻿@model LogicalPantry.DTOs.TimeSlotDtos.CalendarViewModel
+
 @{
     ViewData["Title"] = "Calendar";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Adjust the layout path if necessary
 }
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8">
     <title>@ViewData["Title"]</title>
- 
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Include necessary CSS -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css">
     <link rel="stylesheet" href="~/css/jquery-calendar.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+
+
+
+
+
     <style>
+        /* Custom styles for spacing and header */
         .calendar-header {
             margin-bottom: 20px;
         }
 
         .dropdown-menu {
-            max-height: 2.5rem;
-            overflow-y: auto;
-            white-space: nowrap;
-            width: 200px;
+            max-height: 2.5rem; /* Adjust height to show only one item at a time */
+            overflow-y: auto; /* Add vertical scrollbar if needed */
+            white-space: nowrap; /* Prevent text wrapping */
+            width: 200px; /* Adjust width as needed */
         }
 
         .dropdown-item {
-            white-space: nowrap;
+            white-space: nowrap; /* Prevent text wrapping */
         }
 
         .dropdown {
@@ -80,35 +89,57 @@
             transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
         }
     </style>
+
+
+
+
+
+
 </head>
 <body>
     <div class="container-fluid px-4">
+        <!-- Calendar Header -->
         <div class="row calendar-header">
             <div class="col">
                 <h1>Calendar View</h1>
             </div>
+
             <div class="row">
                 <div class="col-6">
-                    <!-- Add Event Button -->
-                    <button type="button" class="btn btn-success" id="addEventBtn">Add Event</button>
-                </div>
-                <div class="col-6" style="padding-left:2px;">
+                    <button type="button" class="btn btn-success" id="addEventBtn">
+                        Add Event
+                    </button>
+                </div><div class="col-6" style="padding-left:2px;">
                     <!-- Dropdown for event list -->
                     <div class="dropdown d-inline">
                         <select id="eventSelect" class="form-control" onchange="handleSelectChange()">
                             <option value="" selected disabled>Type</option>
-                            <option value="1" data-title="Food Pickup">Food Pickup</option>
-                            <option value="2" data-title="Volunteer">Volunteer</option>
-                            <option value="3" data-title="Appointment">Appointment</option>
+                            <option value="1" data-title="Food Pickup">
+                                Food Pickup
+                            </option>
+                            <option value="2" data-title="Volunteer">
+                                Volunteer
+                            </option>
+                            <option value="3" data-title="Appointment">
+                                Appointment
+                            </option>
+                            <!-- Add more events as needed -->
                         </select>
+
+
                     </div>
+
                 </div>
             </div>
+
+
+            <!-- Calendar and modal here -->
             <div class="row">
                 <div class="col">
                     <div id="calendar"></div>
                 </div>
             </div>
+
             <!-- Bootstrap Modal for Event Details -->
             <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel" aria-hidden="true">
                 <div class="modal-dialog" role="document">
@@ -143,79 +174,153 @@
                 </div>
             </div>
 
-        <script src="~/lib/jquery/dist/jquery.min.js"></script>
-        <script src="~/js/jquery-calendar.min.js"></script>
-        <script src="~/jquery.touchswipe/jquery.touchswipe.min.js"></script>
-        <script src="~/jquery.touchswipe/jquery.touchswipe.js"></script>
 
-        <script src="~/lib/bootstrap/bootstrap/js/bootstrap.bundle.min.js"></script>
-        <script src="~/js/moment.js/moment-with-locales.min.js"></script>
+            <script src="~/lib/jquery/dist/jquery.min.js"></script>
+            <script src="~/lib/bootstrap/bootstrap/js/bootstrap.bundle.min.js"></script>
+            <script src="~/js/moment.js/moment-with-locales.min.js"></script>
+            <script src="~/jquery.touchswipe/jquery.touchswipe.min.js"></script>
+            <link rel="stylesheet" href="~/css/jquery-calendar.min.css">
+            <script src="~/js/jquery-calendar.min.js"></script>
 
-        <script>
-            $(document).ready(function () {
-                $('#calendar').calendar({
-                    tmpl_path: '/tmpls/',
-                    events_source: '/TimeSlot/GetEvents', // This should point to the backend endpoint that returns events
-                    view: 'month',
-                    tmpl_cache: false,
-                    onAfterViewLoad: function (view) {
-                        $('.page-header h3').text(this.getTitle());
-                        $('.btn-group button').removeClass('active');
-                        $('button[data-calendar-view="' + view + '"]').addClass('active');
-                    },
-                    classes: {
-                        months: {
-                            general: 'label'
-                        }
-                    }
-                });
 
-                $('#addEventBtn').on('click', function () {
-                    $('#eventModal').modal('show');
-                });
+           @*  <script>
+                $(document).ready(function () {
+                    debugger;
 
-                $('#saveEventBtn').on('click', function () {
-                    var title = $('#eventTitle').val();
-                    var startDateTime = $('#eventStart').val();
-                    var endDateTime = $('#eventEnd').val();
+                    // Initialize the calendar with events from the server
+                    var events = @Html.Raw(Json.Serialize(Model.Events));
+                    console.log('Fetched events:', events);
 
-                    if (title && startDateTime && endDateTime) {
-                        var newEvent = {
-                            title: title,
-                            start: startDateTime,
-                            end: endDateTime
+                    var calendar = $('#calendar').Calendar({
+                       // locale: 'en',
+                        weekday: {
+                            timeline: {
+                                intervalMinutes: 30,
+                                fromHour: 9
+                            }
+                        },
+                        events: events,
+                        // Add more options or customization as needed
+                    }).init();
+
+
+                    $('#saveEventBtn').on('click', function () {
+                        var eventData = {
+                            timeSlotName: $('#eventTitle').val(),
+                            startTime: $('#eventStart').val(),
+                            endTime: $('#eventEnd').val()
                         };
 
-                        // Make AJAX call to save the event to the backend
                         $.ajax({
                             url: '/TimeSlot/AddEvent',
                             type: 'POST',
                             contentType: 'application/json',
-                            data: JSON.stringify(newEvent),
-                            success: function () {
-                                $('#calendar').calendar('view');
+                            data: JSON.stringify(eventData),
+                            success: function (response) {
+                                alert('Event added successfully!');
                                 $('#eventModal').modal('hide');
+                                // Optionally, refresh the calendar or update the UI
                             },
                             error: function (xhr, status, error) {
-                                alert('Error saving event: ' + error);
+                                alert('Error adding event: ' + error);
                             }
                         });
-                    } else {
-                        alert('Please fill in all fields');
+                    });
+
+                    // $('#deleteEventBtn').on('click', function () {
+                    //     // Logic to handle event deletion
+                    // });
+
+                    // function handleSelectChange() {
+                    //     var selectedValue = document.getElementById('eventSelect').value;
+                    //     console.log('Selected Event ID:', selectedValue);
+                    // }
+                });
+            </script>
+ *@
+
+
+            <script>
+                $(document).ready(function () {
+                    // Initialize the calendar with events from the server
+                    var events = @Html.Raw(Json.Serialize(Model.Events));
+                    console.log('Fetched events:', events);
+
+                    var calendar = $('#calendar').Calendar({
+                        // locale: 'en',
+                        weekday: {
+                            timeline: {
+                                intervalMinutes: 30,
+                                fromHour: 9
+                            }
+                        },
+                        events: events,
+                        onEventClick: function (event) {
+                            fetchEventDetails(event.id);
+                        }
+                    }).init();
+
+                    $('#saveEventBtn').on('click', function () {
+                        var eventData = {
+                            id: $('#eventId').val(),
+                            timeSlotName: $('#eventTitle').val(),
+                            startTime: $('#eventStart').val(),
+                            endTime: $('#eventEnd').val()
+                        };
+
+                        $.ajax({
+                            url: '/TimeSlot/AddEvent',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(eventData),
+                            success: function (response) {
+                                alert('Event added successfully!');
+                                $('#eventModal').modal('hide');
+                                // Optionally, refresh the calendar or update the UI
+                            },
+                            error: function (xhr, status, error) {
+                                alert('Error adding event: ' + error);
+                            }
+                        });
+                    });
+
+                    function fetchEventDetails(eventId) {
+                        $.ajax({
+                            url: '/TimeSlot/GetEventDetails/' + eventId,
+                            type: 'GET',
+                            success: function (event) {
+                                $('#eventId').val(event.id);
+                                $('#eventTitle').val(event.timeSlotName);
+                                $('#eventStart').val(event.startTime);
+                                $('#eventEnd').val(event.endTime);
+                                $('#eventModal').modal('show');
+                            },
+                            error: function (xhr, status, error) {
+                                alert('Error fetching event details: ' + error);
+                            }
+                        });
                     }
-                });
 
-                $('#deleteEventBtn').on('click', function () {
-                    // Handle event deletion logic here
+                    $('#deleteEventBtn').on('click', function () {
+                        var eventId = $('#eventId').val();
+                        if (confirm('Are you sure you want to delete this event?')) {
+                            $.ajax({
+                                url: '/TimeSlot/DeleteEvent/' + eventId,
+                                type: 'POST',
+                                success: function (response) {
+                                    alert('Event deleted successfully!');
+                                    $('#eventModal').modal('hide');
+                                    // Optionally, refresh the calendar or update the UI
+                                },
+                                error: function (xhr, status, error) {
+                                    alert('Error deleting event: ' + error);
+                                }
+                            });
+                        }
+                    });
                 });
-            });
+            </script>
 
-            function handleSelectChange() {
-                // Implement your logic to handle the event selection from the dropdown
-                var selectedEventType = $('#eventSelect').val();
-                console.log("Selected event type:", selectedEventType);
-            }
-        </script>
-    </div>
+
 </body>
 </html>
