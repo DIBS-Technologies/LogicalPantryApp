@@ -40,19 +40,21 @@ namespace LogicalPantry.Web.Controllers
 
         public object GetUserbyId(int tenentId) 
         {
+            if(tenentId == 0)return null;
             var response = _userService.GetUserByIdAsync(tenentId).Result;
             return response;
         }
         [HttpGet]
         public object GetUsersbyTimeSlot(DateTime timeslot, int tenentId) 
         {
+            if(tenentId == 0 || timeslot == null) return null;
             var response = _userService.GetUsersbyTimeSlot(timeslot,tenentId).Result;
             return response;
         }
         [HttpPost]
         public object PutUserStatus(List<UserAllowStatusDto> userDto)
         {
-            if (userDto == null)
+            if (userDto != null)
             {
                 var response = _userService.UpdateUserAllowStatusAsync(userDto).Result;
                 return response;

@@ -10,6 +10,10 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
+using LogicalPantry.Services.InformationService;
+using LogicalPantry.Services.TimeSlotSignupService;
+using Microsoft.EntityFrameworkCore.Internal;
+using LogicalPantry.Services.RegistrationService;
 using System.Globalization;
 public class Startup
 {
@@ -35,6 +39,9 @@ public class Startup
 
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IRoleService, RoleService>();
+        services.AddScoped<IInformationService, InformationService>();
+        services.AddScoped<IRegistrationService, RegistrationService>();
+        services.AddScoped<ITimeSlotSignupService, TimeSlotSignupService>();
 
         // Add AutoMapper
         services.AddAutoMapper(typeof(Startup));

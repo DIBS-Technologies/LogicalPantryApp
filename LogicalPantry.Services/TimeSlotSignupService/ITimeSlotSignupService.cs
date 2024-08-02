@@ -1,4 +1,5 @@
-﻿using LogicalPantry.DTOs.TimeSlotSignupDtos;
+﻿using LogicalPantry.DTOs;
+using LogicalPantry.DTOs.TimeSlotSignupDtos;
 using LogicalPantry.DTOs.UserDtos;
 using LogicalPantry.Models.Models;
 using System;
@@ -11,7 +12,7 @@ namespace LogicalPantry.Services.TimeSlotSignupService
 {
     public interface ITimeSlotSignupService
     {
-        List<UserDto> GetUserbyTimeSlot(DateTime timeslot);
-        string PostTimeSlotSignup(List<TimeSlotSignupDto> users);
+        Task<ServiceResponse< IEnumerable<UserDto>>> GetUserbyTimeSlot(DateTime timeslot);
+        Task<ServiceResponse<string>> PostTimeSlotSignup(List<TimeSlotSignupDto> users);
     }
 }
