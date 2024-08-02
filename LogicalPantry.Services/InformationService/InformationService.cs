@@ -131,5 +131,51 @@ namespace LogicalPantry.Services.InformationService
             return response;
         }
 
+        /// <summary>
+        /// For anonymous page - 2-08-2024 kunal karne
+        /// </summary>
+        /// <param name="PageName"></param>
+        /// <returns></returns>
+        public async Task<ServiceResponse<TenantDto>> GetTenantPageNameForUserAsync(string PageName)
+        {
+            var response = new ServiceResponse<TenantDto>();
+
+            try
+            {
+                var TenantPageName = await dataContext.Tenants.Where(p => p.PageName == PageName)
+                                                                     .FirstOrDefaultAsync();
+
+                if (TenantPageName != null)
+                {
+                    var tenantId = TenantPageName.Id;
+
+                    var tenant = await dataContext.Tenants.FindAsync(tenantId);
+
+                    if (tenant != null)
+                    {
+                        response.Data = new TenantDto
+                        {
+                            Id = tenant.Id,
+                            TenantName = tenant.TenantName,
+                            AdminEmail = tenant.AdminEmail,
+                            PaypalId = tenant.PaypalId,
+                            PageName = tenant.PageName,
+                            Logo = tenant.Logo,
+                            Timezone = tenant.Timezone
+
+                        };
+
+                        response.Success = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"Error retrieving tenant: {ex.Message}";
+            }
+            return response;
+        }
+
     }
 }
