@@ -14,6 +14,7 @@ using LogicalPantry.Services.InformationService;
 using LogicalPantry.Services.TimeSlotSignupService;
 using Microsoft.EntityFrameworkCore.Internal;
 using LogicalPantry.Services.RegistrationService;
+using LogicalPantry.Services.TenantServices;
 public class Startup
 {
     public IConfiguration Configuration { get; }
@@ -41,6 +42,7 @@ public class Startup
         services.AddScoped<IInformationService, InformationService>();
         services.AddScoped<IRegistrationService, RegistrationService>();
         services.AddScoped<ITimeSlotSignupService, TimeSlotSignupService>();
+        services.AddScoped<ITenantService,TenantService>();
        
         // Add AutoMapper
         services.AddAutoMapper(typeof(Startup));

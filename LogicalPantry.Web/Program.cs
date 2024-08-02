@@ -7,6 +7,9 @@ using NLog.Extensions.Logging;
 using LogicalPantry.Services.TimeSlotServices;
 using LogicalPantry.Services.TenantServices;
 using LogicalPantry.Services.RegistrationService;
+using Autofac.Core;
+using LogicalPantry.Services.InformationService;
+using LogicalPantry.Services.TimeSlotSignupService;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -75,7 +78,9 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
 builder.Services.AddScoped<IRegistrationService , RegistrationService>();
 
-
+builder.Services.AddScoped<IInformationService, InformationService>();
+builder.Services.AddScoped<IRegistrationService, RegistrationService>();
+builder.Services.AddScoped<ITimeSlotSignupService, TimeSlotSignupService>();
 
 
 

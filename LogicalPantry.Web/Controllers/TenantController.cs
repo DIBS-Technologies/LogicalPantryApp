@@ -9,11 +9,14 @@ namespace LogicalPantry.Web.Controllers
     public class TenantController : Controller
     {
 
-        private readonly IInformationService _tenantService;
+        private readonly ITenantService _tenantService;
+        private readonly IInformationService _infotenantService;
 
-        public TenantController(IInformationService tenantService)
+
+        public TenantController(ITenantService tenantService, IInformationService infotenantService)
         {
             _tenantService = tenantService;
+            _infotenantService = infotenantService;
         }
 
 
@@ -29,14 +32,14 @@ namespace LogicalPantry.Web.Controllers
         [HttpPost("AddTenat")]
         public async Task<IActionResult> EditTenant(int id)
         {
-            //var tenantResponse = await _tenantService.Get(id);
-            //if (tenantResponse.Success)
-            //{
-            //    return View(tenantResponse.Data);
-            //}
+            var tenantResponse = await _tenantService.GetTenantByIdAsync(id);
+            if (tenantResponse.Success)
+            {
+                return View(tenantResponse.Data);
+            }
 
-            //// Handle the case where the tenant is not found
-            //return NotFound(tenantResponse.Message);
+            //Handle the case where the tenant is not found
+            return NotFound(/*tenantResponse.Message*/);
         }
 
         // Handle form submission
@@ -61,7 +64,7 @@ namespace LogicalPantry.Web.Controllers
                     tenantDto.Logo = "/Pages/" + fileName;
                 }
 
-                var response = await _tenantService.(tenantDto);
+                var response = await _infotenantService.PostTenant(tenantDto);
                 if (response.Success)
                 {
                     // Redirect to the GET method to display the updated data
