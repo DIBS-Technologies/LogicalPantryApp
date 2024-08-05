@@ -10,7 +10,7 @@
     <link href="~/css/style.css" rel="stylesheet" />
     <style>
         td {
-            max-width: 200px; /* Adjust the max-width as per your layout */
+            max-width: 200px;
             white-space: normal;
         }
 
@@ -21,7 +21,7 @@
         }
 
         .text-center {
-            text-align: center; /* Align text in specific columns to the center */
+            text-align: center; 
         }
 
         .text-left {
@@ -40,7 +40,7 @@
         }
 
         td {
-            max-width: 200px; /* Adjust the max-width as per your layout */
+            max-width: 200px;
             white-space: normal;
         }
 
@@ -59,11 +59,10 @@
         }
 
         .dataTables_wrapper .dataTables_scrollHeadInner table.dataTable thead th {
-            text-align: left !important; /* Align all headers to the left */
-        }
+            text-align: left !important; 
 
         .text-center {
-            text-align: center; /* Align text in specific columns to the center */
+            text-align: center;
         }
 
         .text-left {
@@ -148,7 +147,7 @@
     <div class="container mt-n10">
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <div style="font-size:25px"><!--Add Time Slot Here--></div>
+                <div style="font-size:25px"></div>
             </div>
 
             <div class="card-body">
@@ -239,7 +238,7 @@
                     success: function (response) {
                         if (response.success) {
                             $('#successMessageBatch').text('Changes saved successfully.').fadeIn().delay(3000).fadeOut();
-                            sessionStorage.removeItem('userStatuses'); // Clear session storage after successful save
+                            sessionStorage.removeItem('userStatuses'); 
                         } else {
                             $('#errorMessageBatch').text('Error saving changes.').fadeIn().delay(3000).fadeOut();
                         }

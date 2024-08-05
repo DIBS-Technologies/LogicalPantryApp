@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LogicalPantry.DTOs.UserDtos;
 
 namespace LogicalPantry.Services.TimeSlotServices
 {
@@ -23,5 +24,7 @@ namespace LogicalPantry.Services.TimeSlotServices
         Task<IEnumerable<TimeSlot>> GetAllEventsAsync();
 
         Task<int?> GetTimeSlotIdAsync(DateTime startTime, DateTime endTime, string title);
+
+       
     }
 }

@@ -187,10 +187,6 @@ namespace LogicalPantry.Web.Controllers
             if (result.Succeeded)
                 {
 
-
-                // service : database check user exisist in user table take role from userRole table join role table if not exisist 
-                //  
-
                 // get the identity details from the authenticated result
                 var claimsIdentity = (ClaimsIdentity)result.Principal.Identity;
                 // add user role from database to the claim
@@ -208,8 +204,9 @@ namespace LogicalPantry.Web.Controllers
                 var userName = claims.Where(x => x.Issuer == claimsIdentity.AuthenticationType).Select(x => x.Value).Skip(4).FirstOrDefault();
                 var userExisist = await _userServices.GetUserByEmailAsync(userName);
 
-                //HttpContext.Session.SetString("UserId", userExisist.Data.Id.ToString()); 
-                                                                      
+
+                HttpContext.Response.Headers.Add("TenantId", userExisist.Data.TenantId.ToString());
+
                 await HttpContext.SignInAsync(result.Principal);
 
                 return userExisist.Success;

@@ -16,10 +16,11 @@ namespace LogicalPantry.Web.Controllers
         private readonly IUserService _userSercvice;
 
 
-        public TimeSlotController(ILogger<TimeSlotController> logger, ITimeSlotService timeSlotService)
+        public TimeSlotController(ILogger<TimeSlotController> logger, ITimeSlotService timeSlotService,IUserService userService)
         {
             _logger = logger;
             _timeSlotService = timeSlotService;
+            _userSercvice = userService;
         }
 
        
@@ -53,7 +54,7 @@ namespace LogicalPantry.Web.Controllers
         public async Task<IActionResult> EditTimeSlotUser(string id)
         {
 
-            //var response = _userSercvice.GetUsersbyTimeSlot().Result;
+            var response =  _userSercvice.GetUsersbyTimeSlotId(int.Parse(id)).Result;
             var userDtos = new List<UserDto>(); 
             return View(userDtos); // Handle the error case appropriately
         }
