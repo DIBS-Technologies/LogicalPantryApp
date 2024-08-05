@@ -241,17 +241,7 @@ namespace LogicalPantry.Services.UserServices
         //    //    return response;
         //    //}
 
-        //    //try
-        //    //{
-        //    //    var timeSlotSignups = users.Select(dto => new TimeSlotSignup
-        //    //    {
-        //    //        TimeSlotId = dto.TimeSlotId,
-        //    //        UserId = dto.UserId,
-        //    //        Attended = dto.Attended
-        //    //    }).ToList();
 
-        //    //    // Add entities to the context
-        //    //    await dataContext.TimeSlotSignups.AddRangeAsync(timeSlotSignups);
 
         //    //    // Save changes to the database asynchronously
         //    //    await dataContext.SaveChangesAsync();
@@ -282,8 +272,6 @@ namespace LogicalPantry.Services.UserServices
             try
             {
                 // Retrieve users matching the tenantId and where IsRegistered is true
-
-                // select user id from timeSlots with timeSlotId join user table and return these user info 
                 var users = await dataContext.Users
                     .Where(u => u.TenantId == tenantId && u.IsRegistered)
                     .Select(u => new UserDto
