@@ -26,6 +26,8 @@ namespace LogicalPantry.Services.UserServices
 
         Task<ServiceResponse<IEnumerable<UserDto>>> GetUsersbyTimeSlotId(int timeSlotId);
 
+        Task<ServiceResponse<int>> GetUserIdByEmail(string email);
+
 
 
     }

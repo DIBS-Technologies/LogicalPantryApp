@@ -84,6 +84,7 @@ builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
 builder.Services.AddScoped<IRegistrationService , RegistrationService>();
 builder.Services.AddScoped<IInformationService, InformationService>();
 builder.Services.AddScoped<IRegistrationService, RegistrationService>();
+builder.Services.AddScoped<ITimeSlotSignupService, TimeSlotSignupService>();
 //builder.Services.AddScoped<ITimeSlotSignupService, TimeSlotSignupService>();
 builder.Services.Configure<PayPalDto>(builder.Configuration.GetSection("PayPal"));
 

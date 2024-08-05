@@ -184,6 +184,27 @@ namespace LogicalPantry.Web.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+        [HttpPost("GetUserIdByEmail")]
+        public async Task<IActionResult> GetUserIdByEmail([FromBody] UserDto dto)
+        {
+            if (dto == null || string.IsNullOrEmpty(dto.Email))
+            {
+                return BadRequest(new { Message = "Invalid email." });
+            }
+
+            var response = await _userService.GetUserIdByEmail(dto.Email);
+
+            if (response.Success)
+            {
+                return Ok(new { UserId = response.Data });
+            }
+            else
+            {
+                return StatusCode(500, response);
+            }
+        }
+
+
 
     }
 
