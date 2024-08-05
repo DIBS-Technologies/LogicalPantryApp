@@ -16,14 +16,15 @@ namespace LogicalPantry.Web.Controllers
         public TimeSlotSignupController(ITimeSlotSignupService repositoryService)
         {
             _repositoryService = repositoryService;
-
         }
+
         public IActionResult Index()
         {
             return View();
         }
+
         [HttpGet]
-        public object GetUsersbyTimeSlot(DateTime timeSlot) 
+        public object GetUsersbyTimeSlot(DateTime timeSlot)
         {
             if (timeSlot == default)
             {
@@ -33,17 +34,25 @@ namespace LogicalPantry.Web.Controllers
             var response = _repositoryService.GetUserbyTimeSlot(timeSlot).Result;
             return response;
         }
-        [HttpPost]
-        public object Post(List<TimeSlotSignupDto> timeSlotSignupDtos) 
+
+        [HttpPost("AddTimeSlotSignUps")]
+        public async Task<IActionResult> AddTimeSlotSignUps([FromBody] TimeSlotSignupDto dto)
         {
-            if (timeSlotSignupDtos == null || !timeSlotSignupDtos.Any())
+            if (dto == null)
             {
-                return BadRequest(new { Message = "No time slot signups provided." });
+                return BadRequest(new { Message = "Invalid signup data." });
             }
 
-            var response = _repositoryService.PostTimeSlotSignup(timeSlotSignupDtos);
-            
-            return response;
+            var response = await _repositoryService.PostTimeSlotSignup(new List<TimeSlotSignupDto> { dto });
+
+            if (response.Success)
+            {
+                return Ok(response);
+            }
+            else
+            {
+                return StatusCode(500, response);
+            }
         }
     }
 }

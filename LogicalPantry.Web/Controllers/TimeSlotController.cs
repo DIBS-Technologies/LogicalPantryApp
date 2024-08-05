@@ -1,4 +1,5 @@
 ﻿using LogicalPantry.DTOs.TimeSlotDtos;
+using LogicalPantry.DTOs.TimeSlotSignupDtos;
 using LogicalPantry.Services.TimeSlotServices;
 using Microsoft.AspNetCore.Mvc;
 
@@ -139,9 +140,28 @@ namespace LogicalPantry.Web.Controllers
 
 
 
-        
+        [HttpPost]
+        public async Task<IActionResult> GetTimeSlotId([FromBody] TimeSlotDto request)
+        {
+            if (request == null)
+            {
+                return BadRequest("Invalid request data.");
+            }
 
+            var timeSlotId = await _timeSlotService.GetTimeSlotIdAsync(request.StartTime, request.EndTime, request.TimeSlotName);
+
+            if (timeSlotId.HasValue)
+            {
+                return Ok(new { TimeSlotId = timeSlotId });
+            }
+            else
+            {
+                return NotFound("Time slot not found.");
+            }
+        }
     }
+
+}
 
 
     
@@ -149,4 +169,4 @@ namespace LogicalPantry.Web.Controllers
 
    
 
-}
+
