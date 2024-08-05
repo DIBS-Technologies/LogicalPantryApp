@@ -14,6 +14,7 @@ using LogicalPantry.Services.InformationService;
 using LogicalPantry.Services.TimeSlotSignupService;
 using Microsoft.EntityFrameworkCore.Internal;
 using LogicalPantry.Services.RegistrationService;
+using LogicalPantry.Services.TenantServices;
 using System.Globalization;
 public class Startup
 {
@@ -42,7 +43,8 @@ public class Startup
         services.AddScoped<IInformationService, InformationService>();
         services.AddScoped<IRegistrationService, RegistrationService>();
         services.AddScoped<ITimeSlotSignupService, TimeSlotSignupService>();
-
+        services.AddScoped<ITenantService,TenantService>();
+       
         // Add AutoMapper
         services.AddAutoMapper(typeof(Startup));
 
@@ -72,7 +74,7 @@ public class Startup
         {
             endpoints.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=timeslot}/{action=Calendar}/{id?}"); 
+                pattern: "{controller=Home}/{action=Index}/{id?}");
         });
     }
 }

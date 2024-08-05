@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Linq;
 using LogicalPantry.DTOs.UserDtos;
+using LogicalPantry.Models.Models.Enums;
 
 namespace LogicalPantry.Services.UserServices
 {
@@ -165,10 +166,44 @@ namespace LogicalPantry.Services.UserServices
             return response;
         }
 
-        public Task<UserDto> GetUserByEmailAsync(string email)
-        {
-            throw new NotImplementedException();
-        }
+        //public async Task<UserDto> CheckUserExisist(string email)
+        //{
+        //    var response = new ServiceResponse<Task<UserDto>>();
+
+        //    //if (email == null)
+        //    //{
+        //    //    response.Success = false;
+        //    //    response.Message = "No users to update.";
+        //    //    return response;
+        //    //}
+
+        //    //try
+        //    //{
+        //    //    var timeSlotSignups = users.Select(dto => new TimeSlotSignup
+        //    //    {
+        //    //        TimeSlotId = dto.TimeSlotId,
+        //    //        UserId = dto.UserId,
+        //    //        Attended = dto.Attended
+        //    //    }).ToList();
+
+        //    //    // Add entities to the context
+        //    //    await dataContext.TimeSlotSignups.AddRangeAsync(timeSlotSignups);
+
+        //    //    // Save changes to the database asynchronously
+        //    //    await dataContext.SaveChangesAsync();
+
+        //    //    response.Success = true;
+        //    //    response.Message = "Time Slot Signup updated successfully.";
+        //    //}
+        //    //catch (Exception ex)
+        //    //{
+        //    //    logger.LogError(ex, "Error posting time slot signups");
+        //    //    response.Success = false;
+        //    //    response.Message = $"Error posting time slot signups: {ex.Message}";
+        //    //}
+
+        //    return response;
+        //}
 
         public async Task<ServiceResponse<bool>> UpdateUserAllowStatusAsync(List<UserAllowStatusDto> userAllowStatusDtos)
         {
@@ -276,6 +311,97 @@ namespace LogicalPantry.Services.UserServices
                 response.Message = $"Error fetching users: {ex.Message}";
                 response.Data = Enumerable.Empty<UserDto>();
             }
+
+            return response;
+        }
+
+        public async Task<ServiceResponse<UserDto>> GetUserByEmailAsync(string email)
+        {
+            var response = new ServiceResponse<UserDto>();
+
+            try
+            {
+                // Retrieve users matching the tenantId and where IsRegistered is true
+                var users =await dataContext.Users
+                    .Where(u => u.Email == email)
+                    .Select(u => new UserDto
+                    {
+                        Id = u.Id,
+                        FullName = u.FullName,
+                        Email = u.Email,
+                        PhoneNumber = u.PhoneNumber,
+                        IsAllow = u.IsAllow
+                    })
+                    .ToListAsync();
+
+                var getUserRole = dataContext.UserRoles
+                    .Where(u => u.UserId != users.First().Id).Select(x=> x.UserId).ToListAsync().Result;
+
+                if (getUserRole.Count == 0)
+                {
+                    // Create a new user entity
+                    var newUser = new User
+                    {
+                        TenantId = 1,
+                        FullName = string.Empty,
+                        Address = string.Empty,
+                        Email = email,
+                        PhoneNumber = string.Empty,
+                        IsAllow = false,
+                        IsRegistered = false
+                    };
+
+                    // Add the new user to the database
+                   dataContext.Users.Add(newUser);
+
+                   dataContext.SaveChanges();
+
+                    var usersUpdate = dataContext.Users
+                    .Where(u => u.Email == email)
+                    .Select(u => new UserDto
+                    {
+                        Id = u.Id,
+                        FullName = u.FullName,
+                        Email = u.Email,
+                        PhoneNumber = u.PhoneNumber,
+                        IsAllow = u.IsAllow
+                    }).First()
+                    ;
+
+                    var role = new UserRole
+                    {
+                        UserId = usersUpdate.Id,
+                        RoleId = (int)UserRoleEnum.User
+
+                    };
+                    dataContext.UserRoles.Add(role);
+
+                    await dataContext.SaveChangesAsync();
+
+                    var user = new UserDto
+                    {
+                        Id = newUser.Id,
+                        FullName = newUser.FullName,
+                        Email = newUser.Email,
+                        PhoneNumber = newUser.PhoneNumber,
+                        IsAllow = newUser.IsAllow
+                    };
+
+
+
+                    response.Data = user; // Indicating success
+                    response.Success = true;
+                    response.Message = "User registered successfully.";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"Error registering user: {ex.Message}";
+                response.Data = null; // Indicating failure
+            }
+
+
 
             return response;
         }

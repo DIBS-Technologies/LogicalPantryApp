@@ -13,5 +13,15 @@ namespace LogicalPantry.Services.InformationService
     {
         Task<ServiceResponse<TenantDto>> GetTenant(int tenantId);
         Task<ServiceResponse<bool>> PostTenant(TenantDto tenantDto);
+
+        Task<Tenant> GetTenantByIdentifierAsync(string identifier);
+
+        Task<TenantDto> GetTenantFromDatabaseAsync(int tenantId);
+
+        Task<int> GetTenantIdForUserAsync(string email);
+
+        Task<ServiceResponse<TenantDto>> GetTenantByIdAsync(int id);
+        Task<ServiceResponse<TenantDto>> UpdateTenantAsync(TenantDto tenantDto);
+
     }
 }

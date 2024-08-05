@@ -10,6 +10,9 @@
         public const string HOME = "Home";
         public const string AUTH = "Auth";
         public const string USER = "User";
+        public const string Registration = "Registration";
+
+
 
     }
 

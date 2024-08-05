@@ -1,4 +1,5 @@
 ﻿using LogicalPantry.DTOs.TenantDtos;
+using LogicalPantry.Services.InformationService;
 using LogicalPantry.Services.TenantServices;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,14 +10,26 @@ namespace LogicalPantry.Web.Controllers
     {
 
         private readonly ITenantService _tenantService;
+        private readonly IInformationService _infotenantService;
 
-        public TenantController(ITenantService tenantService)
+
+        public TenantController(ITenantService tenantService, IInformationService infotenantService)
         {
             _tenantService = tenantService;
+            _infotenantService = infotenantService;
         }
 
 
+        public IActionResult Index(string pageName)
+        {
+
+            return View();
+        }
+
+
+
         [HttpGet]
+        [Route("AddTenant")]
         public IActionResult AddTenant()
         {
             return View();
@@ -24,7 +37,7 @@ namespace LogicalPantry.Web.Controllers
 
 
         // Display the form for editing
-        [HttpGet("EditTenant/{id}")]
+        [HttpPost("AddTenat")]
         public async Task<IActionResult> EditTenant(int id)
         {
             var tenantResponse = await _tenantService.GetTenantByIdAsync(id);
@@ -33,12 +46,12 @@ namespace LogicalPantry.Web.Controllers
                 return View(tenantResponse.Data);
             }
 
-            // Handle the case where the tenant is not found
-            return NotFound(tenantResponse.Message);
+            //Handle the case where the tenant is not found
+            return NotFound(/*tenantResponse.Message*/);
         }
 
         // Handle form submission
-        [HttpPost("EditTenant/{id}")]
+        [HttpPost("EditTenant")]
         public async Task<IActionResult> EditTenant(TenantDto tenantDto, IFormFile LogoFile)
         {
             if (ModelState.IsValid)
@@ -59,7 +72,7 @@ namespace LogicalPantry.Web.Controllers
                     tenantDto.Logo = "/Pages/" + fileName;
                 }
 
-                var response = await _tenantService.UpdateTenantAsync(tenantDto);
+                var response = await _infotenantService.PostTenant(tenantDto);
                 if (response.Success)
                 {
                     // Redirect to the GET method to display the updated data

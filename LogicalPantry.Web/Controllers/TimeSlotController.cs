@@ -1,6 +1,8 @@
 ﻿using LogicalPantry.DTOs.TimeSlotDtos;
+using LogicalPantry.DTOs.UserDtos;
 using LogicalPantry.DTOs.TimeSlotSignupDtos;
 using LogicalPantry.Services.TimeSlotServices;
+using LogicalPantry.Services.UserServices;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LogicalPantry.Web.Controllers
@@ -11,6 +13,8 @@ namespace LogicalPantry.Web.Controllers
 
         private readonly ILogger<TimeSlotController> _logger;
         private readonly ITimeSlotService _timeSlotService;
+        private readonly IUserService _userSercvice;
+
 
         public TimeSlotController(ILogger<TimeSlotController> logger, ITimeSlotService timeSlotService)
         {
@@ -18,8 +22,7 @@ namespace LogicalPantry.Web.Controllers
             _timeSlotService = timeSlotService;
         }
 
-     
-
+       
         [HttpPost("AddEvent")]
         public async Task<IActionResult> AddEvent([FromBody] TimeSlotDto timeSlotDto)
         {
@@ -45,6 +48,15 @@ namespace LogicalPantry.Web.Controllers
         }
 
 
+        [HttpGet]
+        [Route("EditTimeSlotUser")]
+        public async Task<IActionResult> EditTimeSlotUser(string id)
+        {
+
+            //var response = _userSercvice.GetUsersbyTimeSlot().Result;
+            var userDtos = new List<UserDto>(); 
+            return View(userDtos); // Handle the error case appropriately
+        }
 
 
 
@@ -125,7 +137,7 @@ namespace LogicalPantry.Web.Controllers
 
 
         // Helper method to get the start of the current week (Sunday)
-        private DateTimeOffset GetStartOfWeek(DateTimeOffset dateTime)
+        public DateTimeOffset GetStartOfWeek(DateTimeOffset dateTime)
         {
             int diff = (int)dateTime.DayOfWeek - (int)DayOfWeek.Sunday;
             return dateTime.AddDays(-diff).Date;

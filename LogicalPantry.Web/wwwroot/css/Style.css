@@ -1,127 +1,15 @@
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
-body {
-  margin-bottom: 60px;
-}
-
-
-td {
-    max-width: 200px;
-    WHITE-SPACE: NORMAL;
-}
-
-
-
-td {
-    color: #242424;
-}
-
-.deleteHref {
-    color: red;
-}
-
-.editHref {
-    color: blue;
-}
-
-
-.sidenav-footer-title {
-    color: white;
-}
-
-.sidenav-light .sidenav-footer {
-    background-color: rgb(27 42 81);
-}
-
-.card-header {
-    padding: 1rem 1.35rem;
-    margin-bottom: 0;
-    background-color: #1b2a51;
-    border-bottom: 1px solid rgba(31, 45, 65, 0.125);
-}
-
-.sidenav .sidenav-menu .nav .sidenav-menu-heading {
-    padding: 1.75rem 1rem 0.75rem;
-    font-size: 0.8rem;
-    font-weight: bold;
-    letter-spacing: 0.05em;
-}
-
-.sidenav .sidenav-menu .nav .nav-link {
-    display: flex;
-    align-items: center;
-    line-height: normal;
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
-    position: relative;
-    color: white;
-}
-
-a {
-    color: #707070;
-    text-decoration: none;
-    background-color: transparent;
-}
-
-.sidenav .sidenav-menu .nav .sidenav-menu-heading {
-    padding: 1.75rem 1rem 0.75rem;
-    font-size: 0.8rem;
-    font-weight: bold;
-    letter-spacing: 0.05em;
-    color: white;
-}
-
-.sidenav-light .sidenav-footer .sidenav-footer-subtitle {
-    color: #ffffff;
-}
-
-.sidenav-light {
-    color: #eff3f9;
-}
-
-.nav-links {
-    display: flex;
-    justify-content: space-between;
-    gap: 15px;
-}
-
-.nav-link {
-    text-decoration: none;
-    color: #ffffff;
-}
-
-
-Swapnil
-
-@charset "UTF-8";
-!
+﻿@charset "UTF-8";
+/*!
 * Start Bootstrap - SB Admin Pro v1.2.0 (https://shop.startbootstrap.com/product/sb-admin-pro)
 * Copyright 2013-2020 Start Bootstrap
 * Licensed under SEE_LICENSE (https://github.com/StartBootstrap/sb-admin-pro/blob/master/LICENSE)
-
-!
+*/
+/*!
  * Bootstrap v4.5.0 (https://getbootstrap.com/)
  * Copyright 2011-2020 The Bootstrap Authors
  * Copyright 2011-2020 Twitter, Inc.
  * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)
- 
+ */
 :root {
     --blue: #0061f2;
     --indigo: #5800e8;
@@ -186,53 +74,6 @@ Swapnil
 *::before,
 *::after {
     box-sizing: border-box;
-}
-
-
-.sidenav-light {
-    background-color: #1A2A52;
-    color: #eff3f9;
-}
-
-.card-header {
-    padding: 1rem 1.35rem;
-    margin-bottom: 0;
-    background-color: #1b2a51;
-    border-bottom: 1px solid rgba(31, 45, 65, 0.125);
-}
-
-.sidenav .sidenav-menu .nav .sidenav-menu-heading {
-    padding: 1.75rem 1rem 0.75rem;
-    font-size: 0.8rem;
-    font-weight: bold;
-    letter-spacing: 0.05em;
-}
-
-.sidenav-light {
-    background-color: #f5f8fb;
-    color: #f5f8fb;
-}
-
-    .sidenav-light .sidenav-footer {
-        background-color: rgb(245 248 251);
-    }
-
-.sidenav .sidenav-menu .nav .sidenav-menu-heading {
-    padding: 1.75rem 1rem 0.75rem;
-    font-size: 0.8rem;
-    font-weight: bold;
-    letter-spacing: 0.05em;
-    color: black;
-}
-
-.sidenav .sidenav-menu .nav .nav-link {
-    display: flex;
-    align-items: center;
-    line-height: normal;
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
-    position: relative;
-    color: black;
 }
 
 html {
@@ -414,6 +255,7 @@ caption {
 th {
     text-align: inherit;
 }
+
 
 label {
     display: inline-block;
@@ -671,7 +513,7 @@ mark,
 }
 
     .blockquote-footer::before {
-        content: "��";
+        content: "— ";
     }
 
 .img-fluid {
@@ -783,7 +625,7 @@ pre {
         outline: none !important;
     }
 
-Custom CSS
+/*Custom CSS*/
 
 #successMessage {
     color: green !important;
@@ -813,6 +655,14 @@ Custom CSS
 #saveButtonDiv {
     display: flex;
     justify-content: center;
+}
+
+.activeNavLink {
+    color: #1A2A52 !important;
+    background-color: #FFFFFF;
+    border-radius: 0.2rem;
+    margin: Ørem 0.5rem Ørem 0.75rem;
+    padding-left: 0.25rem !important;
 }
 
 .goBack {
@@ -2305,17 +2155,16 @@ Custom CSS
     border: 1px solid #e3e6ec;
 }
 
-    .table-bordered th,
-    .table-bordered td {
+    .table-bordered th, .table-bordered td {
         border: 1px solid #e3e6ec;
-        max-width: 250px !important;
     }
-
 
     .table-bordered thead th,
     .table-bordered thead td {
         border-bottom-width: 2px;
+        word-wrap: break-word !important;
     }
+
 
 .table-borderless th,
 .table-borderless td,
@@ -2376,6 +2225,7 @@ Custom CSS
     .table-hover .table-secondary:hover > th {
         background-color: #c9a3ea;
     }
+
 
 .table-success,
 .table-success > th,
@@ -3260,7 +3110,7 @@ Custom CSS
     font-size: 1rem;
     font-weight: 400;
     line-height: 1.5;
-    color: #687281; 687281
+    color: #687281; /*687281*/
     background-color: #fff;
     background-clip: padding-box;
     border: 1px solid #c5ccd6;
@@ -19748,6 +19598,41 @@ body {
             box-shadow: 0 0 0 0.2rem rgba(88, 114, 167, 0.5);
         }
 
+.btn-outlook {
+    color: #fff;
+    background-color: #0072C6;
+    border-color: #0072C6;
+}
+
+    .btn-outlook:hover {
+        color: #fff;
+        background-color: #0064b9;
+        border-color: #23aaeb;
+    }
+
+    .btn-outlook:focus, .btn-outlook.focus {
+        color: #fff;
+        background-color: #0064b9;
+        border-color: #23aaeb;
+        box-shadow: 0 0 0 0.2rem rgba(88, 114, 167, 0.5);
+    }
+
+    .btn-outlook.disabled, .btn-outlook:disabled {
+        color: #fff;
+        background-color: #0072C6;
+        border-color: #0072C6;
+    }
+
+    .btn-outlook:not(:disabled):not(.disabled):active, .btn-outlook:not(:disabled):not(.disabled).active, .show > .btn-outlook.dropdown-toggle {
+        color: #fff;
+        background-color: #23aaeb;
+        border-color: #293e6a;
+    }
+
+        .btn-outlook:not(:disabled):not(.disabled):active:focus, .btn-outlook:not(:disabled):not(.disabled).active:focus, .show > .btn-outlook.dropdown-toggle:focus {
+            box-shadow: 0 0 0 0.2rem rgba(88, 114, 167, 0.5);
+        }
+
 .btn-github {
     color: #fff;
     background-color: #333333;
@@ -20514,6 +20399,7 @@ body {
                 padding: 1.75rem 1rem 0.75rem;
                 font-size: 0.7rem;
                 font-weight: bold;
+                text-transform: uppercase;
                 letter-spacing: 0.05em;
             }
 
@@ -22200,17 +22086,17 @@ i-feather {
 }
 
 .datatable table.dataTable thead .sorting:after {
-    content: "?";
+    content: "";
 }
 
 .datatable table.dataTable thead .sorting_asc:after,
 .datatable table.dataTable thead .sorting_asc_disabled:after {
-    content: "?";
+    content: "";
 }
 
 .datatable table.dataTable thead .sorting_desc:after,
 .datatable table.dataTable thead .sorting_desc_disabled:after {
-    content: "?";
+    content: "";
 }
 
 .datatable table.dataTable thead .sorting [data-fa-pseudo-element=":after"],
@@ -22579,125 +22465,932 @@ pre[class*=language-] {
     color: #ff6666;
 }
 
-html {
-    font-size: 14px;
+.manager-project {
+    max-width: 160px !important;
 }
 
-@media (min-width: 768px) {
-    html {
+
+
+/*New Css Style v4**/
+
+/**CheckBox style Start*/
+.checkbox-wrapper-4 * {
+    box-sizing: border-box;
+}
+
+.checkbox-wrapper-4 .cbx {
+    -webkit-user-select: none;
+    user-select: none;
+    cursor: pointer;
+    padding: 4px 3px 0px 3px;
+    /* padding-top: 3px; */
+
+    border-radius: 6px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+    display: inline-block;
+}
+
+
+
+    .checkbox-wrapper-4 .cbx:hover {
+        background: rgba(0, 119, 255, 0.06);
+    }
+
+    .checkbox-wrapper-4 .cbx span {
+        float: left;
+        vertical-align: middle;
+        transform: translate3d(0, 0, 0);
+    }
+
+        .checkbox-wrapper-4 .cbx span:first-child {
+            position: relative;
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            transform: scale(1);
+            border: 1px solid #1a2a52;
+            transition: all 0.2s ease;
+            box-shadow: 0 1px 1px rgba(0, 16, 75, 0.05);
+        }
+
+            .checkbox-wrapper-4 .cbx span:first-child svg {
+                position: absolute;
+                top: 3px;
+                left: 2px;
+                fill: none;
+                stroke: #fff;
+                stroke-width: 2;
+                stroke-linecap: round;
+                stroke-linejoin: round;
+                stroke-dasharray: 16px;
+                stroke-dashoffset: 16px;
+                transition: all 0.3s ease;
+                transition-delay: 0.1s;
+                transform: translate3d(0, 0, 0);
+            }
+
+        .checkbox-wrapper-4 .cbx span:last-child {
+            padding-left: 8px;
+            line-height: 18px;
+        }
+
+    .checkbox-wrapper-4 .cbx:hover span:first-child {
+        border-color: #1a2a52;
+    }
+
+.checkbox-wrapper-4 .inp-cbx {
+    position: absolute;
+    visibility: hidden;
+}
+
+    .checkbox-wrapper-4 .inp-cbx:checked + .cbx span:first-child {
+        background: #1a2a52;
+        border-color: #1a2a52;
+        animation: wave-4 0.4s ease;
+    }
+
+        .checkbox-wrapper-4 .inp-cbx:checked + .cbx span:first-child svg {
+            stroke-dashoffset: 0;
+        }
+
+.checkbox-wrapper-4 .inline-svg {
+    position: absolute;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    user-select: none;
+}
+
+@media screen and (max-width: 640px) {
+
+    .checkbox-wrapper-4 .cbx {
+        width: 100%;
+        display: inline-block;
+    }
+}
+
+@-moz-keyframes wave-4 {
+
+    50% {
+        transform: scale(0.9);
+    }
+}
+
+@-webkit-keyframes wave-4 {
+
+    50% {
+        transform: scale(0.9);
+    }
+}
+
+@-o-keyframes wave-4 {
+
+    50% {
+        transform: scale(0.9);
+    }
+}
+
+@keyframes wave-4 {
+
+    50% {
+        transform: scale(0.9);
+    }
+}
+
+
+
+.checkbox-wrapper-4 label {
+    margin-bottom: 0;
+}
+
+.inp-cbx {
+    border-color: red !important;
+}
+
+
+
+.leave-td .checkbox-wrapper-4 .check-disabled span:first-child {
+    border-color: rgba(162, 172, 186, 0.5) !important;
+}
+
+
+
+.leave-td .checkbox-wrapper-4 .inp-cbx:checked + .check-disabled span:first-child {
+    background: #A2ACBA;
+}
+
+
+
+th.leave-th {
+    width: 10%;
+}
+
+
+
+.datatable .table-bordered .UserName0 {
+    width: 56% !important;
+}
+
+
+
+th.actions-th {
+    width: 50%;
+}
+
+
+
+.datatable .table-bordered .editBox {
+    width: 14%; /*changed from 10% to 14 %*/
+}
+
+
+
+.datatable .table-bordered td.leave-td {
+    text-align: center;
+}
+
+/**CheckBox style End*/
+
+/*New Styling V4*/
+
+/* New Stylings START */
+.datatable .table-bordered .UserName0 {
+    width: 40% !important;
+}
+
+.datatable .table-bordered .editBox {
+    width: 13%;
+}
+
+.datatable .table-bordered .notifications-td span {
+    font-size: 12px;
+}
+
+.datatable .table-bordered .notifications-td .active {
+    color: #1a2a52;
+    font-weight: 500;
+}
+
+.datatable .table-bordered .notifications-td .inactive {
+    color: #a2acba;
+}
+
+.datatable .table-bordered .notifications-td .noti-wrap {
+    width: 70%;
+    align-self: flex-start;
+}
+
+.datatable .table-bordered .notifications-td .manage-icon-wrap {
+    width: 30%;
+}
+
+.datatable .table-bordered .notifications-td .manage-icon {
+    height: 18px;
+    width: 18px;
+    background-image: url(../assets/img/manage-button-outline.svg);
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+    .datatable .table-bordered .notifications-td .manage-icon:hover {
+        height: 18px;
+        width: 18px;
+        background-image: url(../assets/img/manage-button-filled.svg);
+        background-size: cover;
+        cursor: pointer;
+    }
+
+.manage-icon-wrap .manage-icon {
+    position: relative;
+}
+
+.manage-icon .manage-tooltip {
+    visibility: hidden;
+    width: 7em;
+    background-color: #1a2a52;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    top: -5px;
+    left: 140%;
+}
+
+    .manage-icon .manage-tooltip::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        right: 100%;
+        margin-top: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: transparent #1a2a52 transparent transparent;
+    }
+
+.manage-icon:hover .manage-tooltip {
+    visibility: visible;
+}
+
+.manage-notifications-wrap .help-text {
+    font-size: 0.9em;
+    color: #a2acba;
+    margin-bottom: 2.5em;
+}
+
+.manage-notifications-head h2 {
+    color: #fff !important;
+    font-size: 1em;
+    font-weight: 500;
+    align-self: center;
+}
+
+.manage-notifications-head img {
+    width: 1.2em;
+}
+
+.manage-notifications-head .user-name-header {
+    font-weight: normal;
+}
+
+.manage-notifications-head .header-name-wrap {
+    column-gap: 0.5em;
+}
+
+.manage-notifications-wrap .table-bordered .notfi-check-cell {
+    width: 10%;
+}
+
+.manage-notifications-wrap th {
+    vertical-align: middle !important;
+    font-size: 1.1em;
+}
+
+.manage-notifications-wrap .notif-day {
+    color: #a2acba;
+    font-size: 1.1em;
+    width: 57%;
+}
+
+.manage-notifications-wrap .notif-day-checked {
+    color: #1a2a52;
+    font-weight: 500;
+}
+
+.manage-notifications-wrap input[type="time"] {
+    color: #1a2a52;
+    font-size: 1em;
+    border: 1px solid #1a2a52;
+    border-radius: 0.3em;
+    font-weight: 500;
+    padding: 0.3em 0.4em 0.2em 0.4em;
+    vertical-align: middle;
+    cursor: pointer;
+    min-width: 8.5em;
+}
+
+    .manage-notifications-wrap input[type="time"]:focus {
+        outline: 1px solid #1a2a52;
+    }
+
+.manage-notifications-wrap input:disabled {
+    opacity: 0.5;
+    color: rgba(26, 42, 82, 0.8);
+    font-weight: 500;
+    border: 1px solid rgba(26, 42, 82, 0.4);
+}
+
+#notification-card-wrap {
+    width: 90%;
+}
+
+.manage-notifications-wrap .time-th,
+.manage-notifications-wrap .time-td {
+    padding-left: 1.1em;
+}
+
+.manage-notifications-wrap {
+    padding: 1.5rem 2.5rem !important;
+}
+/* Default Notifications styling new START  */
+#default-notifications-wrap .sbp-preview {
+    border: none;
+    border-style: none;
+}
+
+#default-notifications-wrap .default-notif-heading {
+    color: #1a2a52;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+.default-notif-tooltip-wrap {
+    background-image: url(../assets/img/help-icon-outline.svg);
+    height: 15px;
+    width: 15px;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+    .default-notif-tooltip-wrap:hover {
+        background-image: url(../assets/img/help-icon-filled.svg);
+        cursor: pointer;
+    }
+
+.default-notif-head-wrap {
+    column-gap: 0.5em;
+    margin-bottom: 0.35em;
+}
+
+.default-notif-tooltip-wrap .default-notif-tooltip {
+    visibility: hidden;
+    width: 20em;
+    word-wrap: break-word;
+    text-align: left !important;
+    background-color: #1a2a52;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 1em;
+    position: absolute;
+    z-index: 1;
+    top: 9px;
+    left: 65%;
+    font-size: 0.8em;
+}
+
+    .default-notif-tooltip-wrap .default-notif-tooltip::after {
+        content: "";
+        position: absolute;
+        top: 30%;
+        right: 100%;
+        margin-top: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: transparent #1a2a52 transparent transparent;
+    }
+
+.default-notif-tooltip-wrap:hover .default-notif-tooltip {
+    visibility: visible;
+}
+
+.demo-div-red {
+    background-color: red !important;
+    height: 10px;
+    width: 10px;
+}
+
+.demo-div-black {
+    background-color: black;
+    height: 10px;
+    width: 10px;
+}
+
+#default-notifications-wrap .table-bordered > tbody > tr > td,
+.table-bordered > tbody > tr > th,
+.table-bordered > tfoot > tr > td,
+.table-bordered > tfoot > tr > th,
+.table-bordered > thead > tr > td {
+    border-top: none;
+    border-left: none;
+    border-right: none;
+}
+
+#default-notifications-wrap .table-bordered > thead > tr > th {
+    border: none;
+    background: #eff3f9;
+    color: #1a2a52;
+}
+/* Default Notifications styling new END  */
+/* Reports Table Default Styling START */
+
+.customer-photo {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-size: 32px 35px;
+    background-position: center center;
+    vertical-align: middle;
+    line-height: 32px;
+    box-shadow: inset 0 0 1px #999, inset 0 0 10px rgba(0, 0, 0, 0.2);
+    margin-left: 5px;
+}
+
+.customer-name {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 32px;
+    padding-left: 3px;
+}
+
+.k-grid tr .checkbox-align {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.product-photo {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-size: 32px 35px;
+    background-position: center center;
+    vertical-align: middle;
+    line-height: 32px;
+    box-shadow: inset 0 0 1px #999, inset 0 0 10px rgba(0, 0, 0, 0.2);
+    margin-right: 5px;
+}
+
+.product-name {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 32px;
+    padding-left: 3px;
+}
+
+.k-rating-container .k-rating-item {
+    padding: 4px 0;
+}
+
+    .k-rating-container .k-rating-item .k-icon {
         font-size: 16px;
     }
+
+.dropdown-country-wrap {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    white-space: nowrap;
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+    .dropdown-country-wrap img {
+        margin-right: 10px;
+    }
+
+#grid .k-grid-edit-row > td > .k-rating {
+    margin-left: 0;
+    width: 100%;
 }
 
-html {
-    position: relative;
-    min-height: 100%;
+/* Reports Table Default Styling END */
+/* Reports Table Custom Styling START */
+
+/**To maximize width of Report page 18/10/23 For 1200px only*/
+@media (min-width: 1200px) {
+    #reports-container {
+        /*height: 75vh;*/
+        min-height: 100vh !important;
+        max-width: 200vw !important;
+        padding-left: 10px;
+        margin: 10px;
+    }
+
+    .card {
+        margin: 1em;
+    }
 }
 
-body {
-    margin-bottom: 60px;
+
+
+
+
+@media (min-width: 1500px) {
+    #reports-container {
+        /*height: 75vh;*/
+        min-height: 100vh !important;
+        max-width: 79vw !important;
+    }
 }
 
-.btnLink {
-    background: none;
-    border: none;
-    padding: 0;
-    font: inherit;
-    cursor: pointer;
-    text-decoration: underline;
-    text-align: center !important;
-    color: #273B69 !important;
+.k-grid-pdf {
+    display: none;
+}
+
+.k-grid-excel {
+    color: white;
+    background: #1a2a52;
+}
+
+    .k-grid-excel:hover {
+        background: #2a3b66;
+    }
+
+.k-grid-toolbar {
+    background: #eff3f9;
+}
+
+.k-grouping-drop-container {
+    color: #1a2a52;
+    background: #eff3f9;
+}
+
+.k-pager-numbers .k-button-flat-primary {
+    color: #1a2a52;
+}
+
+.k-pager {
+    background: #eff3f9;
+}
+
+.k-column-title {
+    color: #687281;
+    font-weight: 600;
+}
+
+.k-checkbox {
+    border-color: #1a2a52;
+}
+
+    .k-checkbox:checked,
+    .k-checkbox.k-checked {
+        border-color: #1a2a52;
+        background-color: #1a2a52;
+    }
+
+.k-grid .k-table-row.k-table-alt-row {
+    background-color: rgba(239, 243, 249, 0.5);
+}
+
+.k-grouping-header,
+.k-grid-add-row,
+.k-grid-footer {
+    background-color: #eff3f9;
+}
+
+.k-grid td.k-selected,
+.k-grid .k-table-row.k-selected > td,
+.k-grid .k-table-td.k-selected,
+.k-grid .k-table-row.k-selected > .k-table-td {
+    background-color: rgba(65, 82, 125, 0.1);
+}
+
+.k-checkbox:checked:focus,
+.k-checkbox.k-checked.k-focus {
+    box-shadow: 0 0 0 2px rgb(171 189 217);
+}
+
+.k-grid .k-table-tbody > .k-table-row:not(.k-detail-row):hover,
+.k-grid .k-table-tbody > .k-table-row:not(.k-detail-row).k-hover {
+    background-color: rgba(239, 243, 249, 0.5);
+}
+
+.k-menu:not(.k-context-menu) > .k-item {
+    color: #1a2a52;
+}
+
+.k-menu-group .k-item > .k-link:active,
+.k-menu-group .k-item > .k-link.k-active,
+.k-menu-group .k-item > .k-link.k-selected,
+.k-menu.k-context-menu .k-item > .k-link:active,
+.k-menu.k-context-menu .k-item > .k-link.k-active,
+.k-menu.k-context-menu .k-item > .k-link.k-selected {
+    background-color: #1a2a52;
+}
+
+.k-grid-header .k-grid-filter.k-active,
+.k-grid-header .k-header-column-menu.k-active,
+.k-grid-header .k-grid-header-menu.k-active,
+.k-grid-header .k-hierarchy-cell .k-icon.k-active,
+.k-grid-header .k-hierarchy-cell .k-svg-icon.k-active {
+    background-color: #1a2a52;
+}
+
+.k-column-menu .k-menu:not(.k-context-menu) .k-item.k-selected {
+    background-color: #1a2a52;
+}
+
+.k-svg-icon > svg {
+    fill: #1a2a52;
+}
+
+.k-rating-item.k-selected {
+    color: #1a2a52;
+}
+
+.k-rating-item:hover,
+.k-rating-item.k-hover {
+    color: #1a2a52;
+}
+
+.k-grid-excel .k-svg-icon > svg {
+    fill: white;
+}
+
+.k-pager-info.k-label {
+    color: #1a2a52;
+}
+
+.k-grid {
+    max-height: 69vh;
+}
+
+.footer {
+    position: fixed;
+    width: 84vw;
+    bottom: 0;
+}
+
+.k-badge-solid-success {
+    border: none !important;
+    background-color: transparent !important;
+    color: #238443;
+    padding-left: 20px;
+    background: url(/assets/img/success-checkmark.svg) no-repeat left center;
+    background-size: 16px 16px;
+    line-height: 16px;
+    font-size: 12px;
+}
+
+.k-badge-solid-error {
+    border: none !important;
+    background-color: transparent !important;
+    color: #FF4F20;
+    padding-left: 20px;
+    background: url(/assets/img/reject-checkmark.svg) no-repeat left center;
+    background-size: 16px 16px;
+    line-height: 16px;
+    font-size: 12px;
+}
+
+.k-badge-solid-warning {
+    border: none !important;
+    background-color: transparent !important;
+    color: #E5A100;
+    padding-left: 20px;
+    background: url(/assets/img/pending-checkmark.svg) no-repeat left center;
+    background-size: 16px 16px;
+    line-height: 16px;
+    font-size: 12px;
+}
+
+.k-grid-header .k-grid-filter.k-active, .k-grid-header .k-header-column-menu.k-active, .k-grid-header .k-grid-header-menu.k-active, .k-grid-header .k-hierarchy-cell .k-icon.k-active, .k-grid-header .k-hierarchy-cell .k-svg-icon.k-active {
     background-color: transparent;
 }
+/* Reports Table Custom Styling END */
 
-    .btnLink:hover {
-        outline: none;
-    }
 
-    .btnLink:focus {
-        color: #0042a6;
-        text-decoration: underline;
-    }
+/* New Stylings END */
 
-    .btnLink:visited {
-        border: none
-    }
 
-    .btnLink .table-bordered td {
-        border: none;
-    }
-***************** Auto Complete  CSS ***************************
-.ui-autocomplete {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    z-index: 1000;
-    display: none;
-    float: left;
-    min-width: 160px;
-    padding: 5px 0;
-    margin: 2px 0 0;
-    list-style: none;
-    font-size: 14px;
-    text-align: left;
-    background-color: #ffffff;
+.manage-wt-sign-td, #manage-wt-name-td {
+    padding: 0.75rem 0.25rem !important;
+}
+
+/*change  manage Sign Td box width 19/10/23*/
+.manage-wt-sign-td {
+    width: 11%;
+}
+
+.selectBox {
+    width: 11%;
+}
+/* Manage notifications V3 START  */
+.set-work-hrs-headline {
+    font-size: 1em;
+    font-weight: bold;
+    color: #687281;
+    font-family: "Metropolis", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    line-height: normal;
+}
+
+.manage-notif-help-text2 {
+    font-size: 0.9em;
+    color: #a2acba;
+}
+
+.set-work-hrs-wrap {
+    column-gap: 0.8em;
+}
+
+.work-hrs-input {
+    width: 4.6em; /*changed from 3em to 4.6em to extend  hrs input type size*/
     border: 1px solid #1A2A52;
-    border: 1px solid rgba(0, 0, 0, 0.15);
-    border-radius: 4px;
-    -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
-    background-clip: padding-box;
+    border-radius: 0.4em;
+    color: #1A2A52;
+    padding: 0.2em 0.2em 0.2em 0.5em;
+    font-weight: 500;
 }
 
-    .ui-autocomplete > li > div {
-        display: block;
-        padding: 3px 20px;
-        clear: both;
-        font-weight: normal;
-        line-height: 1.42857143;
-        color: #333333;
-        white-space: nowrap;
+    .work-hrs-input:focus {
+        outline-color: #1A2A52;
     }
 
-.ui-state-hover,
-.ui-state-active,
-.ui-state-focus {
-    text-decoration: none;
-    color: #262626;
-    background-color: #1A2A52 !important;
+.manage-notif-savebtn {
+    margin-top: 2em;
+    padding: 1em;
+}
+
+.set-work-hrs-headline-default {
+    color: #1A2A52 !important;
+    font-size: 1em;
+    font-weight: bold;
+    color: #687281;
+    font-family: "Metropolis", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+    line-height: normal;
+}
+/* Manage notifications V3 END  */
+
+/*Match width of columns on all pages*/
+.datatable .table-bordered .editBox {
+    width: 14%;
+}
+
+.datatable .table-bordered td.leave-td {
+    text-align: center;
+    padding: 10px;
+}
+
+
+/* PTO Styling START */
+.PTO-date-th,
+.PTO-date-td {
+    width: 15%;
+}
+
+.PTO-desc-th {
+    width: 38%;
+}
+
+.PTO-holiday-th {
+    width: 10%;
+}
+
+.PTO-check-th {
+    width: 10%;
+}
+
+.PTO-delete-th {
+    width: 14%;
+}
+
+.PTO-help-icon {
+    width: 1.2em;
+    height: 1.2em;
+    padding-bottom: 2px;
+}
+
+.PTO-inp-date {
     cursor: pointer;
-    border: 1px solid #1A2A52 !important;
+    padding: 5px;
+    background-color: white;
+    color: #1A2A52;
+    border: 1px solid #1A2A52;
+    border-radius: 5px;
 }
 
-.ui-helper-hidden-accessible {
-    border: 0;
-    clip: rect(0 0 0 0);
-    height: 1px;
-    margin: -1px;
-    overflow: hidden;
-    padding: 0;
+    .PTO-inp-date:disabled {
+        opacity: 0.5;
+    }
+
+.PTO-tooltip-wrap {
+    display: inline-block;
+    background-image: url(../assets/img/help-icon-outline.svg);
+    height: 15px;
+    width: 15px;
+    background-repeat: no-repeat;
+    background-size: cover;
+    vertical-align: middle;
+    margin-bottom: 3px;
+}
+
+    .PTO-tooltip-wrap:hover {
+        background-image: url(../assets/img/help-icon-filled.svg);
+        cursor: pointer;
+    }
+
+.PTO-check-th {
+    position: relative;
+}
+
+.PTO-tooltip-wrap .PTO-tooltip {
+    visibility: hidden;
+    width: 10em;
+    word-wrap: break-word;
+    text-align: left !important;
+    background-color: #1a2a52;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 1em;
     position: absolute;
-    width: 1px;
+    z-index: 1;
+    top: 15%; /* Position below the PTO-check-th */
+    left: 64px; /* Align with the left edge of PTO-check-th */
+    font-size: 0.8em;
+    font-weight: normal;
 }
 
-.textStyle {
-    padding-top: 2px;
-    display: inline-block;
-    vertical-align: middle;
+
+
+    .PTO-tooltip-wrap .PTO-tooltip::after {
+        content: "";
+        position: absolute;
+        top: 30%;
+        right: 100%;
+        margin-top: -5px;
+        border-width: 5px;
+        border-style: solid;
+        border-color: transparent #1a2a52 transparent transparent;
+    }
+
+.PTO-tooltip-wrap:hover .PTO-tooltip {
+    visibility: visible;
 }
 
-.iconStyle {
-    display: inline-block;
-    vertical-align: middle;
-    margin-right: 10px;
-    float: left;
-    line-height: 2 !important;
+
+#ManagePaidTimeOff .form-control:focus {
+    border-color: #1A2A52;
+    outline: 0;
+    box-shadow: 0 0 0 0.0625rem #1A2A52;
 }
 
-.errorfont {
-    font-size: 9pt !important;
+@media (min-width: 1500px) {
+
+    #ManagePaidTimeOff .container {
+        max-width: 930px;
+    }
 }
+
+
+
+
+@media screen and (min-width: 1200px) {
+    #ManagePaidTimeOff.card {
+        width: 115%;
+    }
+
+    .PTO-delete-th {
+        width: 30%;
+    }
+
+    .PTO-check-th {
+        width: 9%;
+    }
+}
+
+
+
+
+
+
+
+
+button#savePaidTimeOff {
+    width: auto;
+}
+
+
+
+#ManagePaidTimeOff #savePaidTimeOff {
+    box-shadow: none;
+    border: none;
+}
+
+
+input.PTO-Description, textarea {
+    background: white;
+}
+/* PTO Styling END */

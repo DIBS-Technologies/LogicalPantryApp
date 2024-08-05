@@ -1,1 +1,237 @@
-﻿
+﻿@model LogicalPantry.Models.Models.Tenant
+
+@{
+    ViewData["Title"] = "Add Tenant";
+}
+
+<style>
+    .dataTables_wrapper .dataTables_scrollHeadInner table.dataTable thead th {
+        text-align: left !important; /* Align all headers to the left */
+    }
+
+    .text-center {
+        text-align: center; /* Align text in specific columns to the center */
+    }
+
+    .text-left {
+        text-align: left !important;
+    }
+
+    h5 {
+        color: white;
+    }
+
+    .mt-n5, .my-n5 {
+        margin-top: 2rem !important;
+    }
+
+    @@media (min-width: 1500px) {
+        .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
+            max-width: 1200px;
+        }
+    }
+
+    #saveButtonDiv {
+        display: flex;
+        justify-content: end;
+    }
+
+    .card-header {
+        justify-content: center;
+        color: black;
+    }
+
+    .card .card-header {
+        font-weight: 500;
+        font-size: 22px;
+    }
+
+    .saveButton {
+        background-color: #1A2A52;
+        color: white;
+        border-radius: 5px;
+        border: none;
+        font-size: 1rem;
+        padding: 0.5rem 2rem 0.5rem 2rem;
+        margin-top: 1rem;
+    }
+
+    .card {
+        width: 100%;
+        max-width: 600px;
+        margin: auto;
+    }
+
+    @@media (max-width: 767px) {
+        .card {
+            margin: 1rem;
+        }
+    }
+</style>
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="path/to/timezones.full.js"></script>
+
+<div class="container mt-n10" style="margin-top: 3rem !important;">
+    <div class="row">
+        <div class="col-lg-9">
+            <div id="default">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        Add User
+                    </div>
+                    <div class="card-body">
+                        <div class="sbp-preview">
+                            <div class="sbp-preview-content">
+                                <form method="post" id="createUser" action="/Tenant/EditTenant" enctype="multipart/form-data">
+                                    <div class="form-group">
+                                        <label for="logo">Logo<span class="mandatory">*</span></label>
+                                        <input type="file" name="Logo" class="form-control" id="logo" placeholder="Select logo" />
+                                        <span class="text-danger errorfont" id="logo-error"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="name">Name<span class="mandatory">*</span></label>
+                                        <input name="name" class="form-control" id="name" placeholder="Name" />
+                                        <span class="text-danger errorfont" id="name-error"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="email">Email<span class="mandatory">*</span></label>
+                                        <input type="email" name="email" class="form-control" id="email" placeholder="Enter Email" />
+                                        <span class="text-danger errorfont" id="email-error"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="phoneNumber">Phone Number<span class="mandatory">*</span></label>
+                                        <input name="phoneNumber" class="form-control" id="phoneNumber" placeholder="Enter Phone Number" />
+                                        <span class="text-danger errorfont" id="phone-error"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="timeZone">Time Zone<span class="mandatory">*</span></label>
+                                        <select name="timeZone" class="form-control" id="timeZone"></select>
+                                        <span class="text-danger errorfont" id="timeZone-error"></span>
+                                    </div>
+
+                                    <div id="saveButtonDiv">
+                                        <button class="saveButton" style="align-content: flex-end" type="submit" onclick="return validateForm();">Register</button>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+    <script src="path/to/timezones.full.js"></script>
+}
+
+<script>
+    $(document).ready(function () {
+        $('#timeZone').timezones();
+
+        $('#logo, #name, #email, #phoneNumber, #timeZone').on('blur change keyup', function() {
+            validateForm();
+        });
+
+        $('#phoneNumber').on('change keyup blur', function () {
+            var phnNo = $(this).val();
+            if (phnNo.length < 10) {
+                validateForm();
+                return;
+            }
+
+            $.ajax({
+                url: '/User/VerifyPhoneNoAdd',
+                type: 'GET',
+                data: { phoneNumber: phnNo },
+                success: function (response) {
+                    if (response === false) {
+                        $('#phone-error').text('Phone Number Already Exists').show();
+                        $(".saveButton").prop("disabled", true);
+                    } else {
+                        $('#phone-error').text('');
+                        $(".saveButton").prop("disabled", false);
+                        validateForm();
+                    }
+                },
+                error: function () {
+                    console.error("An error occurred while verifying the phone number.");
+                }
+            });
+        });
+    });
+
+    function validateForm() {
+        var isValid = true;
+
+        var logo = $("#logo").val();
+        if (logo.trim() === "") {
+            $("#logo-error").text("Logo is required.").show();
+            isValid = false;
+        } else {
+            $("#logo-error").text("").hide();
+        }
+
+        var name = $("#name").val();
+        if (name.trim() === "") {
+            $("#name-error").text("Name is required.").show();
+            isValid = false;
+        } else {
+            $("#name-error").text("").hide();
+        }
+
+        var email = $("#email").val();
+        if (email.trim() === "") {
+            $("#email-error").text("Email is required.").show();
+            isValid = false;
+        } else if (!isValidEmail(email)) {
+            $("#email-error").text("Invalid Email format.").show();
+            isValid = false;
+        } else {
+            $("#email-error").text("").hide();
+        }
+
+        var phoneNumber = $("#phoneNumber").val();
+        if (phoneNumber.trim() === "") {
+            $("#phone-error").text("Phone Number is required.").show();
+            isValid = false;
+        } else if (!isValidPhoneNumber(phoneNumber)) {
+            $("#phone-error").text("Invalid Phone Number format.").show();
+            isValid = false;
+        } else {
+            $("#phone-error").text("").hide();
+        }
+
+        var timeZone = $("#timeZone").val();
+        if (timeZone.trim() === "") {
+            $("#timeZone-error").text("Time Zone is required.").show();
+            isValid = false;
+        } else {
+            $("#timeZone-error").text("").hide();
+        }
+
+        if (!isValid) {
+            $(".saveButton").prop("disabled", true);
+        } else {
+            $(".saveButton").prop("disabled", false);
+        }
+
+        return isValid;
+    }
+
+    function isValidEmail(email) {
+        var emailRegex = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+        return emailRegex.test(email);
+    }
+
+    function isValidPhoneNumber(phoneNumber) {
+        var phoneRegex = /^\d{10}$/;
+        return phoneRegex.test(phoneNumber);
+    }
+</script>

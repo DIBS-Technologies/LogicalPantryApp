@@ -1,0 +1,64 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LogicalPantry.Web</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/LogicalPantry.Web.styles.css" asp-append-version="true" />
+    <style>
+        .nav-links {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: #ffffff;
+        }
+    </style>
+</head>
+<body class="nav-fixed">
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-secondary bg-gradient text-light border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <div class="d-flex justify-content-between align-items-center w-100">
+
+                    <div class="navbar-brand">
+                        <img src="@ViewData[" LogoUrl"]" alt="Logo" style="height: 100px;" />
+                    </div>
+
+                    <div class="mx-auto text-center">
+                        <h1 class="mb-0">@ViewData["PageName"]</h1>
+                    </div>
+
+                    <div class="nav-links">
+                        <a class="nav-link" href="@Url.Action(" Index", "TimeSlots" )">Pickup Slot</a>
+                        <a class="nav-link" href="@Url.Action(" Index", "Donation" )">Donation</a>
+                        <a class="nav-link" href="@Url.Action(" loginView", "Auth" )">Login</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="bg-secondary text-light py-2 fixed-bottom text-center">
+        <div class="container">
+            <p class="mb-0">&copy; @DateTime.Now.Year - LogicalPantry</p>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

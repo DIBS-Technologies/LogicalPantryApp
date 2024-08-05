@@ -15,6 +15,8 @@ using LogicalPantry.Web.Helper;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using LogicalPantry.Models.Models;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.AspNetCore.Http;
 namespace LogicalPantry.Web.Controllers
 {
     public class AuthController : Controller
@@ -57,9 +59,12 @@ namespace LogicalPantry.Web.Controllers
             {
             var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-            await CheckIfUserExist(result);
-            // Optionally, process the user claims
+            var response = await CheckIfUserExist(result);
 
+            if(response == true)
+            {
+                return RedirectToAction(ViewConstants.INDEX, ViewConstants.Registration, new { area = "" });
+            }
             return RedirectToAction(ViewConstants.INDEX, ViewConstants.HOME, new { area = "" });
             }
 
@@ -181,6 +186,11 @@ namespace LogicalPantry.Web.Controllers
             {
             if (result.Succeeded)
                 {
+
+
+                // service : database check user exisist in user table take role from userRole table join role table if not exisist 
+                //  
+
                 // get the identity details from the authenticated result
                 var claimsIdentity = (ClaimsIdentity)result.Principal.Identity;
                 // add user role from database to the claim
@@ -194,8 +204,15 @@ namespace LogicalPantry.Web.Controllers
                     claim.Value,
 
                     });
+
+                var userName = claims.Where(x => x.Issuer == claimsIdentity.AuthenticationType).Select(x => x.Value).Skip(4).FirstOrDefault();
+                var userExisist = await _userServices.GetUserByEmailAsync(userName);
+
+                //HttpContext.Session.SetString("UserId", userExisist.Data.Id.ToString()); 
+                                                                      
                 await HttpContext.SignInAsync(result.Principal);
-                return true;
+
+                return userExisist.Success;
                 }
             return false;
             }
