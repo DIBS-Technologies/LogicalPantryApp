@@ -80,6 +80,19 @@
                         Registration
                     </div>
                     <div class="card-body">
+                        @if (!string.IsNullOrEmpty(TempData["SuccessMessageUser"] as string))
+                        {
+                            <div id="successMessageUser" class="alert @TempData["MessageClass"]">
+                                @TempData["SuccessMessageUser"]
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(TempData["ErrorMessageUser"] as string))
+                        {
+                            <div id="errorMessageUser" class="alert @TempData["MessageClass"]">
+                                @TempData["ErrorMessageUser"]
+                            </div>
+                        }
                         <form method="post" id="register" action="/Registration/Register">
                             <div class="form-group">
                                 <label for="FullName">Name<span class="mandatory">*</span></label>

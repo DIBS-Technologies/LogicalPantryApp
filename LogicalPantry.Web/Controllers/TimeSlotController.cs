@@ -57,7 +57,7 @@ namespace LogicalPantry.Web.Controllers
 
             var response =  _userSercvice.GetUsersbyTimeSlotId(int.Parse(id)).Result;
             var userDtos = new List<UserDto>(); 
-            return View(userDtos); // Handle the error case appropriately
+            return View(response.Data.ToList()); // Handle the error case appropriately
         }
 
 
@@ -166,6 +166,7 @@ namespace LogicalPantry.Web.Controllers
             {
                 startTime = DateTime.Parse(request.StartTime.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
                 endTime = DateTime.Parse(request.EndTime.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
+                TempData["startTime"] = startTime;
             }
             catch (FormatException)
             {

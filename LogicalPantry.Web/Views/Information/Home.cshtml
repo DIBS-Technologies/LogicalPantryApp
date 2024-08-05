@@ -1,0 +1,136 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LogicalPantry.Web</title>
+
+    <link href="/css/default-main.css" rel="stylesheet" />
+    <link href="~/css/styles.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link href="~/css/site.css" rel="stylesheet" />
+    <style>
+        .hidden {
+            display: none;
+        }
+
+        .footer-custom {
+            background-color: #fff;
+            color: #1f2d41;
+        }
+
+        .sidenav-light {
+            background-color: #fff;
+            color: #1f2d41;
+        }
+
+            .sidenav-light .sidenav-menu .nav-link:hover {
+                color: #0061f2;
+            }
+
+        .sidenav .sidenav-menu .nav .sidenav-menu-heading {
+            padding: 1.75rem 1rem 0.75rem;
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .sidenav-light .sidenav-menu .nav-link:hover {
+            color: #0061f2;
+            background-color: #f1f1f1;
+            border-radius: 0.2rem;
+            margin: 0rem 0.5rem 0rem 0.75rem;
+            padding-left: 0.5rem !important;
+        }
+
+        .customer {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .tenatImage {
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+        }
+
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+        }
+
+        /* Full width main container */
+        main {
+            padding: 0;
+            margin: 0;
+            height: calc(100vh - 60px); /* Adjust the height based on the navbar height */
+        }
+
+        /* Full width iframe */
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .topnav .navbar-nav {
+            flex-direction: row;
+        }
+
+        .topnav .nav-link {
+            padding-right: 1rem;
+            padding-left: 1rem;
+        }
+    </style>
+</head>
+<body class="nav-fixed">
+    <nav class="topnav navbar navbar-expand shadow navbar-light bg-white" id="sidenavAccordion">
+        <div class="tenatImage">
+            <img src="~/Image/Demo.jpeg" id="logoImage" style="width: 95px; padding-left: 10px; opacity:100%" />
+        </div>
+        <div class="row customer">
+            <div class="">
+                <a class="nav-link" href="/TimeSlots/Index">Pickup Slot</a>
+            </div>
+            <div class="">
+                <a class="nav-link" href="/Donation/Index">Donation</a>
+            </div>
+            <div class="">
+                <a class="nav-link" href="/Auth/loginview">Login</a>
+            </div>
+        </div>
+    </nav>
+    <div id="layoutSidenav">
+        <div id="layoutSidenav_content">
+            <main>
+                <main role="main" class="pb-3">
+                    <iframe src="" id="urlFrameId"></iframe>
+                </main>
+            </main>
+            <footer class="text-light py-2 fixed-bottom text-center">
+                <div class="container">
+                    <p class="mb-0" style="color:black">&copy; @DateTime.Now.Year - LogicalPantry</p>
+                </div>
+            </footer>
+        </div>
+    </div>
+    @section Scripts {
+        <script>
+            $(document).ready(function () {
+                var url = window.location.href;
+                var parts = url.split("/");
+                var urlParams = new URLSearchParams(window.location.search);
+                var handlerValue = urlParams.get("pageName");
+                var last_part = parts[parts.length - 1];
+                $("#urlFrameId").attr("src", "/TenantHomePage/" + handlerValue + ".html");
+            });
+        </script>
+    }
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js" crossorigin="anonymous"></script>
+</body>
+</html>

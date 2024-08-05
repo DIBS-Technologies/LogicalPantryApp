@@ -169,7 +169,7 @@ namespace LogicalPantry.Services.UserServices
 
      
 
-        public async Task<ServiceResponse<bool>> UpdateUserAllowStatusAsync(List<UserAllowStatusDto> userAllowStatusDtos)
+        public async Task<ServiceResponse<bool>> UpdateUserAllowStatusAsync(List<UserAttendedDto> userAllowStatusDtos)
         {
             var response = new ServiceResponse<bool>();
 
@@ -184,7 +184,7 @@ namespace LogicalPantry.Services.UserServices
             {
                 // Extract user IDs from the list of DTOs
                 var userIds = userAllowStatusDtos
-                    .Where(dto => dto.IsAllow)
+                    .Where(dto => dto.IsAttended)
                     .Select(dto => dto.Id)
                     .ToList();
 
@@ -203,12 +203,12 @@ namespace LogicalPantry.Services.UserServices
                 // Update the 'IsAllow' status for matching users
                 foreach (var userDto in userAllowStatusDtos)
                 {
-                    if (userDto.IsAllow) // Only update users with AllowStatus true
+                    if (userDto.IsAttended) // Only update users with AllowStatus true
                     {
                         var user = usersToUpdate.FirstOrDefault(u => u.Id == userDto.Id);
                         if (user != null)
                         {
-                            user.IsAllow = userDto.IsAllow;
+                            user.IsAllow = userDto.IsAttended;
                         }
                     }
                 }
@@ -436,9 +436,9 @@ namespace LogicalPantry.Services.UserServices
                            FullName = u.FullName,
                            Email = u.Email,
                            PhoneNumber = u.PhoneNumber,
-                           IsAllow = u.IsAllow
+                           IsAllow = u.IsAllow,
+                           TenantId = u.TenantId,
                        })
-                     .Where(u =>u.IsRegistered)
                      .ToListAsync();
 
           
@@ -465,6 +465,6 @@ namespace LogicalPantry.Services.UserServices
             return response;
         }
 
-
+       
     }
 }

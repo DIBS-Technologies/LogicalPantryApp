@@ -57,7 +57,7 @@ namespace LogicalPantry.Web.Controllers
             return response;
         }
         [HttpPost]
-        public object PutUserStatus(List<UserAllowStatusDto> userDto)
+        public object PutUserStatus(List<UserAttendedDto> userDto)
         {
             if (userDto != null)
             {
@@ -118,8 +118,72 @@ namespace LogicalPantry.Web.Controllers
             return Ok(new { success = false });
         }
 
+        [Route("UpdateUserBatch")]
+        [HttpGet]
+        //public async Task<IActionResult> UpdateUserBatch(string userStatuses)
+        //{
+        //    if (userStatuses == null)
+        //    {
+        //        return BadRequest("Invalid data.");
+        //    }
+
+        //   var updatedNotificationListObject = JsonConvert.DeserializeObject<List<UserAllowStatusDto>>(userStatuses);
 
 
+        //    if (updatedNotificationListObject != null)
+        //    {
+        //        var response = _userService.UpdateUserAllowStatusAsync(updatedNotificationListObject).Result;
+
+        //        if (response != null)
+        //        {
+        //            @TempData["MessageClass"] = "alert-success";
+        //            @TempData["SuccessMessageUser"] = "User Saved Successfully";
+
+        //            return Ok(new { success = true });
+        //        }
+        //        else
+        //        {
+        //            @TempData["MessageClass"] = "alert-success";
+        //            @TempData["SuccessMessageUser"] = "Internal server error.";
+        //            return StatusCode(500, "Internal server error.");
+        //        }
+        //    }
+        //    return Ok(new { success = false });
+        //}
+
+        [Route("UpdateUserBatch")]
+        [HttpPost]
+        public async Task<IActionResult> UpdateUserBatch([FromBody] List<UserAttendedDto> userStatuses)
+        {
+            if (userStatuses == null || !userStatuses.Any())
+            {
+                return BadRequest("Invalid data.");
+            }
+
+            try
+            {
+                var response = await _userService.UpdateUserAllowStatusAsync(userStatuses);
+
+                if (response.Success)
+                {
+                    TempData["MessageClass"] = "alert-success";
+                    TempData["SuccessMessageUserBatch"] = "User Saved Successfully";
+                    return Ok(new { success = true });
+                }
+                else
+                {
+                    TempData["MessageClass"] = "alert-danger";
+                    TempData["SuccessMessageUserBatch"] = "Internal server error.";
+                    return StatusCode(500, "Internal server error.");
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["MessageClass"] = "alert-danger";
+                TempData["SuccessMessageUserBatch"] = $"Error: {ex.Message}";
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
 
     }
 

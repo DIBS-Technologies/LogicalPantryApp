@@ -71,6 +71,14 @@
             display: flex;
             justify-content: end;
         }
+
+        .card-body {
+            flex: 1 1 auto;
+            min-height: 1px;
+            padding: 1.35rem;
+            border: 0.2px solid black;
+            border-radius: 1px;
+        }
     </style>
 </head>
 <body>
@@ -85,8 +93,12 @@
                     <div class="card-body">
                         <form id="hiddenForm">
                         <div class="form-group">
+                            <div class="col-6">
                             <label for="amount">Enter amount to donate:</label>
-                            <input type="number" id="amount" name="amount" step="0.01" min="0" required />
+                            </div>
+                            <div class="col-6">
+                            <input type="number" id="amount" class="form-control" name="amount" step="0.01" min="0" required />
+                             </div>
                             @*   <span class="text-danger errorfont" id="FullName-error"></span> *@
                         </div>
                         <div id="saveButtonDiv">

@@ -23,5 +23,7 @@ namespace LogicalPantry.Services.InformationService
         Task<ServiceResponse<TenantDto>> GetTenantByIdAsync(int id);
         Task<ServiceResponse<TenantDto>> UpdateTenantAsync(TenantDto tenantDto);
 
+        Task<ServiceResponse<TenantDto>> GetTenantPageNameForUserAsync(string PageName);
+
     }
 }

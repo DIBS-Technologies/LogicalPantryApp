@@ -72,20 +72,57 @@
             border-radius: .25rem;
             transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
         }
+
+        .row > * {
+            flex-shrink: 0;
+            /* width: 100%; */
+            max-width: 100%;
+            padding-right: calc(var(--bs-gutter-x)* .5);
+            padding-left: calc(var(--bs-gutter-x)* .5);
+            margin-top: var(--bs-gutter-y);
+        }
+
+        .container-fluid {
+            max-width: 90%;
+            margin-top: 50px;
+            margin: 50px 50px 50px 50px;
+        }
+
+        h3{
+            display: flex;
+            align-items: flex-start;
+        }
+
+        #addEventBtn {
+            justify-content: flex-end;
+            display: flex;
+            justify-content: end;
+        }
+
+        .data {
+            display: flex;
+            justify-content: flex-end;
+        }
     </style>
 </head>
 
 <body>
-    <div class="container-fluid px-4">
+    <div class="container-fluid">
         <div class="row calendar-header">
-            <div class="col">
-                <h1>Calendar View</h1>
-            </div>
+           @*  <div class="">
+               
+            </div> *@
             <div class="row">
-                <div class="col-6">
-                    <button type="button" class="btn btn-success" id="addEventBtn">Add Event</button>
+                <div class="col-4">
+                    <h3>Calendar View</h3>
+                   
                 </div>
-                <div class="col-6" style="padding-left:2px;">
+                <div class="col-8" style="padding-left:2px;">
+                    <div class="row">
+                    <div class="col-4 data" >
+                    <button type="button" class="btn btn-success" id="addEventBtn">Add Event</button>
+                    </div>
+                        <div class="col-6">
                     <div class="dropdown d-inline">
                         <select id="eventSelect" class="form-control" onchange="handleSelectChange()">
                             <option value="" selected disabled>Type</option>
@@ -94,6 +131,8 @@
                             <option value="3" data-title="Appointment">Appointment</option>
                         </select>
                     </div>
+                        </div>
+                   </div>
                 </div>
             </div>
             <div class="row">
@@ -179,7 +218,7 @@
             });
 
             $('#calendar').on('Calendar.event-click', function (event, instance, elem, evt) {
-                debugger;
+                ;
                 var startTime = evt.start;
                 var endTime = evt.end;
                 var timeSlotName = evt.title;

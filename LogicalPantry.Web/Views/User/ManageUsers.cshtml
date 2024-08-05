@@ -121,19 +121,17 @@
 
             <div class="card-body">
                 <div class="datatable">
-                    @if (!string.IsNullOrEmpty(TempData["SuccessMessageUser"] as string))
-                    {
-                        <div id="successMessageUser" class="alert @TempData["MessageClass"]">
-                            @TempData["SuccessMessageUser"]
+                    
+                        <div id="successMessageUser" class="alert alert-success" style="display:none;">
+                            User Updated Succesfully.
                         </div>
-                    }
+                    
 
-                    @if (!string.IsNullOrEmpty(TempData["ErrorMessageUser"] as string))
-                    {
-                        <div id="errorMessageUser" class="alert @TempData["MessageClass"]">
-                            @TempData["ErrorMessageUser"]
+                    
+                        <div id="errorMessageUser" class="alert alert-danger" style="display:none;">
+                            Error occured while updating user.
                         </div>
-                    }
+                    
 
                     <table class="table table-bordered table-hover dt-responsive nowrap" id="" width="100%" style="min-width: 250px;" cellspacing="0">
                         <thead>
@@ -229,13 +227,14 @@
                     data: updatedNotificationList,
                     dataType : "json",
                     success: function (response) {
-                        debugger
+                        
                         if (response.success) {
+                            $('#successMessageUser').text('Changes saved successfully.').fadeIn().delay(2000).fadeOut();
                             console.log("User status updated successfully.");
                            
                         } else {
                             console.error("Error updating user status.");
-                           
+                            $('#errorMessageUser').text('Error occured while saving user.').fadeIn().delay(2000).fadeOut();
                         }
                     },
                     error: function (xhr, status, error) {

@@ -17,14 +17,14 @@ namespace LogicalPantry.Services.UserServices
         //Task<UserDto> GetUserByEmailAsync(string email);
 
        // Task<User> GetOrCreateUserAsync(string email, string name, int tenantId);
-        Task<ServiceResponse<bool>> UpdateUserAllowStatusAsync(List<UserAllowStatusDto> userAllowStatusDto);
+        Task<ServiceResponse<bool>> UpdateUserAllowStatusAsync(List<UserAttendedDto> userAllowStatusDto);
 
 
         Task<ServiceResponse<UserDto>> GetUserByEmailAsync(string email);
 
         Task<ServiceResponse<IEnumerable<UserDto>>> GetUsersbyTimeSlot(DateTime timeSlot, int tenentId);
 
-        Task<ServiceResponse<IEnumerable<UserDto>>> GetUsersbyTimeSlot(int timeSlotId);
+        Task<ServiceResponse<IEnumerable<UserDto>>> GetUsersbyTimeSlotId(int timeSlotId);
 
 
 
