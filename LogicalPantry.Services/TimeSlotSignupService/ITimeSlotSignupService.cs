@@ -14,5 +14,8 @@ namespace LogicalPantry.Services.TimeSlotSignupService
     {
         Task<ServiceResponse< IEnumerable<UserDto>>> GetUserbyTimeSlot(DateTime timeslot);
         Task<ServiceResponse<string>> PostTimeSlotSignup(List<TimeSlotSignupDto> users);
+
+        //Task<bool> AddTimeSlotSignUp(TimeSlotSignupDto dto);
+        Task<(bool success, string message)> AddTimeSlotSignUp(TimeSlotSignupDto dto);
     }
 }

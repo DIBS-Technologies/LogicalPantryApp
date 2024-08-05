@@ -452,6 +452,38 @@ namespace LogicalPantry.Services.UserServices
             return response;
         }
 
-        
+
+
+        public async Task<ServiceResponse<int>> GetUserIdByEmail(string email)
+        {
+            var response = new ServiceResponse<int>();
+            try
+            {
+                var user = await dataContext.Users
+                    .Where(u => u.Email == email)
+                    .FirstOrDefaultAsync();
+
+                if (user != null)
+                {
+                    response.Data = user.Id;
+                    response.Success = true;
+                }
+                else
+                {
+                    response.Success = false;
+                    response.Message = "User not found.";
+                }
+            }
+            catch (Exception ex)
+            {
+                
+                response.Success = false;
+                response.Message = $"Error retrieving user ID: {ex.Message}";
+            }
+
+            return response;
+        }
+
+
     }
 }

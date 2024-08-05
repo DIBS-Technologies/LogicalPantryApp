@@ -99,41 +99,7 @@ namespace LogicalPantry.Web.Controllers
         }
 
 
-        [HttpGet("Calendar")]
-        public async Task<IActionResult> Calendar()
-        {
-            _logger.LogInformation("Calendar page accessed");
-
-            // Fetch events from the database
-            var events = await _timeSlotService.GetAllEventsAsync();
-
-            // Log the number of events fetched
-            _logger.LogInformation($"Fetched {events.Count()} events from the database.");
-
-            // Log details of each event
-            foreach (var e in events)
-            {
-                _logger.LogInformation($"Event: Start={e.StartTime}, End={e.EndTime}, Title={e.TimeSlotName}");
-            }
-
-            // Map to your event model
-            var calendarEvents = events.Select(e => new Event
-            {
-                Start = ToUnixTimestamp(e.StartTime),
-                End = ToUnixTimestamp(e.EndTime),
-                Title = e.TimeSlotName,
-            }).ToList();
-
-            // Log the number of events mapped
-            _logger.LogInformation($"Mapped {calendarEvents.Count} events to calendar event model.");
-
-            var model = new CalendarViewModel
-            {
-                Events = calendarEvents
-            };
-
-            return View(model);
-        }
+       
 
 
 
@@ -183,6 +149,88 @@ namespace LogicalPantry.Web.Controllers
                 return NotFound("Time slot not found.");
             }
         }
+
+
+
+      
+
+
+        [HttpGet("Calendar")]
+        public async Task<IActionResult> Calendar()
+        {
+            _logger.LogInformation("Calendar page accessed");
+
+            // Fetch events from the database
+            var events = await _timeSlotService.GetAllEventsAsync();
+
+            // Log the number of events fetched
+            _logger.LogInformation($"Fetched {events.Count()} events from the database.");
+
+            // Log details of each event
+            foreach (var e in events)
+            {
+                _logger.LogInformation($"Event: Start={e.StartTime}, End={e.EndTime}, Title={e.TimeSlotName}");
+            }
+
+            // Map to your event model
+            var calendarEvents = events.Select(e => new Event
+            {
+                Start = ToUnixTimestamp(e.StartTime),
+                End = ToUnixTimestamp(e.EndTime),
+                Title = e.TimeSlotName,
+            }).ToList();
+
+            // Log the number of events mapped
+            _logger.LogInformation($"Mapped {calendarEvents.Count} events to calendar event model.");
+
+            var model = new CalendarViewModel
+            {
+                Events = calendarEvents
+            };
+
+            return View(model);
+        }
+
+
+
+        [HttpGet("UserCalendar")]
+        public async Task<IActionResult> UserCalendar()
+        {
+            _logger.LogInformation("Calendar page accessed");
+
+            // Fetch events from the database
+            var events = await _timeSlotService.GetAllEventsAsync();
+
+            // Log the number of events fetched
+            _logger.LogInformation($"Fetched {events.Count()} events from the database.");
+
+            // Log details of each event
+            foreach (var e in events)
+            {
+                _logger.LogInformation($"Event: Start={e.StartTime}, End={e.EndTime}, Title={e.TimeSlotName}");
+            }
+
+            // Map to your event model
+            var calendarEvents = events.Select(e => new Event
+            {
+                Start = ToUnixTimestamp(e.StartTime),
+                End = ToUnixTimestamp(e.EndTime),
+                Title = e.TimeSlotName,
+            }).ToList();
+
+            // Log the number of events mapped
+            _logger.LogInformation($"Mapped {calendarEvents.Count} events to calendar event model.");
+
+            var model = new UserCalendarDto
+            {
+                Events = calendarEvents
+            };
+
+            return View(model);
+        }
+
+
+
 
 
     }
