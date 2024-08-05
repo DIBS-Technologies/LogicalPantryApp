@@ -23,7 +23,10 @@ namespace LogicalPantry.Services.UserServices
         Task<ServiceResponse<UserDto>> GetUserByEmailAsync(string email);
 
         Task<ServiceResponse<IEnumerable<UserDto>>> GetUsersbyTimeSlot(DateTime timeSlot, int tenentId);
-        
-       
+
+        Task<ServiceResponse<IEnumerable<UserDto>>> GetUsersbyTimeSlot(int timeSlotId);
+
+
+
     }
 }

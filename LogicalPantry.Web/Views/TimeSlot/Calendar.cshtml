@@ -7,10 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="~/css/jquery-calendar.min.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
-
-
     <style>
         .calendar-header {
             margin-bottom: 20px;
@@ -133,7 +129,6 @@
                             </form>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-danger" id="deleteEventBtn">Delete</button>
                             <button type="button" class="btn btn-primary" id="saveEventBtn">Save</button>
                         </div>
                     </div>
@@ -150,30 +145,16 @@
     <script src="~/js/jquery-calendar.min.js"></script>
 
     <script>
-        moment.locale('en');
+        $(document).ready(function () {
+            var events = @Html.Raw(Json.Serialize(Model.Events));
 
-        // Initialize the calendar with events from the server
-        var events = @Html.Raw(Json.Serialize(Model.Events));
+            $('#calendar').Calendar({
+                events: events
+            }).init();
 
-        var calendar = $('#calendar').Calendar({
-            locale: 'en',
-            weekday: {
-                timeline: {
-                    intervalMinutes: 30,
-                    fromHour: 9
-                }
-            },
-            events: events
-        }).init();
-            // var events = @Html.Raw(Json.Serialize(Model.Events));
-
-            // $('#calendar').Calendar({
-            //     events: events
-            // }).init();
-
-            // $('#addEventBtn').on('click', function () {
-            //     $('#eventModal').modal('show');
-            // });
+            $('#addEventBtn').on('click', function () {
+                $('#eventModal').modal('show');
+            });
 
             $('#saveEventBtn').on('click', function () {
                 var eventData = {
@@ -198,70 +179,47 @@
             });
 
             $('#calendar').on('Calendar.event-click', function (event, instance, elem, evt) {
-                var eventData = instance.getEventData(elem);
-                var eventId = eventData.id;
-                var userId = 10;
+                debugger;
+                var startTime = evt.start;
+                var endTime = evt.end;
+                var timeSlotName = evt.title;
 
-                if (userId) {
-                    $.ajax({
-                        url: '/TimeSlotSignup/AddTimeSlotSignUps',
-                        type: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify({
-                            TimeSlotId: eventId,
-                            UserId: userId,
-                            Attended: false
-                        }),
-                        success: function (response) {
-                            alert('Signed up successfully!');
-                        },
-                        error: function (xhr, status, error) {
-                            alert('Error signing up: ' + error);
-                        }
-                    });
-                } else {
-                    alert('User not authenticated');
-                }
-            });
-        });
+                // Convert Unix timestamps to ISO format
+                var startTimeISO = new Date(startTime * 1000).toISOString();
+                var endTimeISO = new Date(endTime * 1000).toISOString();
 
-        function handleSelectChange() {
-            var selectedOption = $('#eventSelect option:selected');
-            var selectedEventId = selectedOption.val();
-            var selectedEventTitle = selectedOption.data('title');
-            // Handle event type selection
-        }
-    </script>
-
-    <script>
-
-        $('#calendar').on('Calendar.event-click', function (event, instance, elem, evt) {
-            var eventData = instance.getEventData(elem);
-            var eventId = eventData.id;
-            var userId = 10;
-
-            if (userId) {
+                // Get time slot ID using the extracted details
                 $.ajax({
-                    url: '/TimeSlotSignup/AddTimeSlotSignUps',
+                    url: '/TimeSlot/GetTimeSlotId',
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify({
-                        TimeSlotId: eventId,
-                        UserId: userId,
-                        Attended: false
+                        StartTime: startTimeISO,
+                        EndTime: endTimeISO,
+                        TimeSlotName: timeSlotName
                     }),
                     success: function (response) {
-                        alert('Signed up successfully!');
+                        if (response && response.timeSlotId) {
+                            // Redirect to EditTimeSlotUser with the time slot ID
+                            window.location.href = '/TimeSlot/EditTimeSlotUser?id=' + response.timeSlotId;
+                        } else {
+                            alert('Time slot not found.');
+                        }
                     },
                     error: function (xhr, status, error) {
-                        alert('Error signing up: ' + error);
+                        alert('Error retrieving time slot ID: ' + error);
                     }
                 });
-            } else {
-                alert('User not authenticated');
+            });
+
+
+            function handleSelectChange() {
+                var selectedOption = $('#eventSelect option:selected');
+                var selectedEventId = selectedOption.val();
+                var selectedEventTitle = selectedOption.data('title');
+             
             }
         });
-                });
 
     </script>
 </body>

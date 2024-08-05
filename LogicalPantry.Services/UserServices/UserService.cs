@@ -267,7 +267,53 @@ namespace LogicalPantry.Services.UserServices
 
 
 
+        public async Task<ServiceResponse<IEnumerable<UserDto>>> GetUsersbyTimeSlot(int timeSlotId)
+        {
+            var response = new ServiceResponse<IEnumerable<UserDto>>();
 
+            try
+            {
+
+                // select user id from timeSlots with timeSlotId join user table and return these user info 
+                var users = await dataContext.TimeSlots
+                 .Where(ts => ts.Id == timeSlotId)
+                 .Join(dataContext.Users,
+                       ts => ts.UserId,
+                       u => u.Id,
+                       (ts, u) => new UserDto
+                       {
+                           Id = u.Id,
+                           FullName = u.FullName,
+                           Email = u.Email,
+                           PhoneNumber = u.PhoneNumber,
+                           IsAllow = u.IsAllow
+                       })
+                     .Where(u => u.IsRegistered)
+                     .ToListAsync();
+
+                // Check if any users are found
+                if (!users.Any())
+                {
+                    response.Success = false;
+                    response.Message = "No registered users found for the specified tenant.";
+                    response.Data = Enumerable.Empty<UserDto>();
+                }
+                else
+                {
+                    response.Data = users;
+                    response.Success = true;
+                    response.Message = "Users retrieved successfully.";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"Error fetching users: {ex.Message}";
+                response.Data = Enumerable.Empty<UserDto>();
+            }
+
+            return response;
+        }
 
 
 
