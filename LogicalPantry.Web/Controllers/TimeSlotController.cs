@@ -17,10 +17,11 @@ namespace LogicalPantry.Web.Controllers
         private readonly IUserService _userSercvice;
 
 
-        public TimeSlotController(ILogger<TimeSlotController> logger, ITimeSlotService timeSlotService)
+        public TimeSlotController(ILogger<TimeSlotController> logger, ITimeSlotService timeSlotService , IUserService userSercvice)
         {
             _logger = logger;
             _timeSlotService = timeSlotService;
+            _userSercvice = userSercvice;   
         }
 
        
