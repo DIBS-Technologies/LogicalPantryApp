@@ -259,7 +259,7 @@ namespace LogicalPantry.Services.InformationService
         public async Task<ServiceResponse<TenantDto>> GetTenantPageNameForUserAsync(string PageName)
         {
             var response = new ServiceResponse<TenantDto>();
-
+           // var pageName1 = "account-billing";
             try
             {
                 var TenantPageName = await dataContext.Tenants.Where(p => p.PageName == PageName)

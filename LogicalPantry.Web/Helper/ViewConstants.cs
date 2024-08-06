@@ -13,7 +13,7 @@
         public const string Registration = "Registration";
         public const string TimeSlotSignUp = "TimeSlotSignup";
         public const string TimeSlot = "TimeSlot";
-        public const string Calandar = "Calandar";
+        public const string Calandar = "Calendar";
         public const string UserCalandar = "UserCalendar";
 
 
