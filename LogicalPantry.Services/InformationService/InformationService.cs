@@ -48,7 +48,7 @@ namespace LogicalPantry.Services.InformationService
             {
                 // Fetch the tenant from the database based on tenantId
                 var tenant = await dataContext.Tenants
-                    .Where(t => t.Id == tenantId)
+                    .Where(t => t.Id == 1)
                     .Select(t => new TenantDto
                     {
                         Id = t.Id,
@@ -87,6 +87,7 @@ namespace LogicalPantry.Services.InformationService
         {
             var response = new ServiceResponse<bool>();
 
+            tenantDto.Id = 1;
             // Validate input
             if (tenantDto == null || tenantDto.Id <= 0)
             {
@@ -251,6 +252,48 @@ namespace LogicalPantry.Services.InformationService
                 response.Message = $"Error updating tenant: {ex.Message}";
             }
 
+            return response;
+        }
+
+
+        public async Task<ServiceResponse<TenantDto>> GetTenantPageNameForUserAsync(string PageName)
+        {
+            var response = new ServiceResponse<TenantDto>();
+
+            try
+            {
+                var TenantPageName = await dataContext.Tenants.Where(p => p.PageName == PageName)
+                                                                     .FirstOrDefaultAsync();
+
+                if (TenantPageName != null)
+                {
+                    var tenantId = TenantPageName.Id;
+
+                    var tenant = await dataContext.Tenants.FindAsync(tenantId);
+
+                    if (tenant != null)
+                    {
+                        response.Data = new TenantDto
+                        {
+                            Id = tenant.Id,
+                            TenantName = tenant.TenantName,
+                            AdminEmail = tenant.AdminEmail,
+                            PaypalId = tenant.PaypalId,
+                            PageName = tenant.PageName,
+                            Logo = tenant.Logo,
+                            Timezone = tenant.Timezone
+
+                        };
+
+                        response.Success = true;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"Error retrieving tenant: {ex.Message}";
+            }
             return response;
         }
 

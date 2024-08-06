@@ -26,7 +26,7 @@
             padding: 1.75rem 1rem 0.75rem;
             font-size: 0.7rem;
             font-weight: bold;
-            text-transform: uppercase;
+            text-transform: uppercase; 
             letter-spacing: 0.05em;
         }
 
@@ -66,11 +66,11 @@
     </nav>
     <div id="layoutSidenav">
         <div id="layoutSidenav_nav">
-            <nav class="sidenav shadow-right sidenav-light @(User.IsInRole("Admin") ? "" : "")">
+            <nav class="sidenav shadow-right sidenav-light @(User.IsInRole("Admin") ? "" : "hidden")">
                 <div class="sidenav-menu">
                     <div class="nav accordion" id="accordionSidenav">
                         <div class="sidenav-menu-heading">Main Menu</div>
-                        <a class="nav-link collapsed" id="menuIndex" asp-action="Calendar" asp-controller="TimeSlot" >
+                        <a class="nav-link collapsed" id="menuIndex" asp-action="Calendar" asp-controller="TimeSlot">
                             <div class="nav-link-icon"><i data-feather="activity"></i></div>
                             Pickup Slots
                         </a>
@@ -132,6 +132,12 @@
                     }
                 });
             });
+
+           sidenav-menu 
+
+            
+
+
         </script>
     }
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js" crossorigin="anonymous"></script>

@@ -75,6 +75,9 @@ builder.Services.AddAuthentication(options =>
     options.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"];
 });
 
+
+
+
 // Add scoped services for dependency injection
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
@@ -115,6 +118,7 @@ else
     app.UseExceptionHandler("/Home/Error"); // Redirect to error page in production mode
     app.UseHsts(); // Use HTTP Strict Transport Security
 }
+
 
 app.UseHttpsRedirection(); // Redirect HTTP requests to HTTPS
 app.UseStaticFiles(); // Serve static files from wwwroot folder

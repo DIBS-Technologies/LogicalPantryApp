@@ -80,6 +80,19 @@
                         Registration
                     </div>
                     <div class="card-body">
+                        @if (!string.IsNullOrEmpty(TempData["SuccessMessageUser"] as string))
+                        {
+                            <div id="successMessageUser" class="alert @TempData["MessageClass"]">
+                                @TempData["SuccessMessageUser"]
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(TempData["ErrorMessageUser"] as string))
+                        {
+                            <div id="errorMessageUser" class="alert @TempData["MessageClass"]">
+                                @TempData["ErrorMessageUser"]
+                            </div>
+                        }
                         <form method="post" id="register" action="/Registration/Register">
                             <div class="form-group">
                                 <label for="FullName">Name<span class="mandatory">*</span></label>
@@ -92,10 +105,12 @@
                                 <span class="text-danger errorfont" id="Address-error"></span>
                             </div>
                             <div class="form-group">
-                                <label for="Email">Email<span class="mandatory">*</span></label>@{
+                                @{
                                     var userEmails = User.FindFirstValue(ClaimTypes.Email);
                                 }
-                                <input type="email" name="Email" value="@userEmails" class="form-control" id="Email" placeholder="Enter Email" disabled />
+                                <label for="Email">Email<span class="mandatory">*</span></label>
+                                <input type="email" name="Email" value="@userEmails" class="form-control" id="Email" placeholder="Enter Email" disabled/>
+                                <input type="hidden" name="Email" value="@userEmails" />
                                 <span class="text-danger errorfont" id="Email-error"></span>
                             </div>
                             <div class="form-group">

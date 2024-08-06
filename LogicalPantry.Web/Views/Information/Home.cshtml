@@ -1,0 +1,176 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LogicalPantry.Web</title>
+
+    <link href="/css/default-main.css" rel="stylesheet" />
+    <link href="~/css/styles.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            /* Prevent scrollbars */
+        }
+
+        #layoutSidenav {
+            display: flex;
+            flex-direction: column;
+            height: 100vh; /* Full viewport height */
+            width: 100vw; /* Full viewport width */
+            margin: 0;
+        }
+
+        #layoutSidenav_content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+             /* Adjust as needed for margins */
+            box-sizing: border-box;
+            overflow: hidden; /* Prevent scrollbars within the content */
+            padding-left: 20px;
+            padding-bottom: 20px;
+        }
+
+        .topnav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1rem;
+            background-color: white;
+            height: 60px; /* Adjust based on navbar height */
+            width: 100%; /* Ensure full width */
+        }
+
+            .topnav .navbar-nav {
+                display: flex;
+                flex-direction: row;
+                margin-left: auto; /* Push links to the right */
+            }
+
+            .topnav .nav-link {
+                padding-right: 1rem;
+                padding-left: 1rem;
+                font-weight: normal;
+                transition: color 0.3s, font-weight 0.3s;
+            }
+
+                .topnav .nav-link:hover {
+                    color: #0061f2;
+                    font-weight: bold;
+                }
+
+        .page-name {
+            flex: 1;
+            text-align: center;
+            font-weight: bold;
+            color: #1f2d41;
+            font-size: 1.25rem; /* Adjust size as needed */
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%; /* Ensure full width */
+            overflow: hidden; /* Prevent scrollbars within main */
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #f8f9fa;
+            color: #6c757d;
+            position: relative;
+            bottom: 0;
+            width: 100%; /* Ensure full width */
+        }
+
+        .nav-fixed #layoutSidenav #layoutSidenav_content {
+             padding-left: 10rem; 
+            /* top: 3.625rem; */
+        }
+
+        .footer-custom {
+            background-color: #fff;
+            color: #1f2d41;
+        }
+
+        .sidenav-light {
+            background-color: #fff;
+            color: #1f2d41;
+        }
+
+            .sidenav-light .sidenav-menu .nav-link:hover {
+                color: #0061f2;
+            }
+
+        .sidenav .sidenav-menu .nav .sidenav-menu-heading {
+            padding: 1.75rem 1rem 0.75rem;
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .sidenav-light .sidenav-menu .nav-link:hover {
+            color: #0061f2;
+            background-color: #f1f1f1;
+            border-radius: 0.2rem;
+            margin: 0rem 0.5rem 0rem 0.75rem;
+            padding-left: 0.5rem !important;
+        }
+    </style>
+</head>
+<body class="nav-fixed">
+    <div id="layoutSidenav">
+        <nav class="topnav navbar navbar-expand shadow navbar-light bg-white" id="sidenavAccordion">
+            <div class="tenatImage">
+                <img src="~/Image/Demo.jpeg" id="logoImage" style="width: 95px; padding-left: 10px; opacity:100%" />
+            </div>
+            <div class="page-name" id="pageName"></div>
+            <div class="navbar-nav">
+                <a class="nav-link" href="/TimeSlots/Calendar">Pickup</a>
+                <a class="nav-link" href="/Donation/PayPal">Donation</a>
+                <a class="nav-link" href="/Auth/loginview">Login</a>
+            </div>
+        </nav>
+        <div id="layoutSidenav_content">
+            <main>
+                <iframe src="" id="urlFrameId"></iframe>
+            </main>
+            <footer>
+                <div class="container">
+                    <p class="mb-0" style="color:black">&copy; @DateTime.Now.Year - LogicalPantry</p>
+                </div>
+            </footer>
+        </div>
+    </div>
+    @section Scripts {
+        <script>
+            $(document).ready(function () {
+                var url = window.location.href;
+                var parts = url.split("/");
+                var urlParams = new URLSearchParams(window.location.search);
+                var handlerValue = urlParams.get("pageName");
+                $("#urlFrameId").attr("src", "/TenantHomePage/" + handlerValue + ".html");
+                $("#pageName").text(handlerValue ? handlerValue.replace(/%20/g, ' ') : ''); // Handle spaces in pageName
+            });
+        </script>
+    }
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js" crossorigin="anonymous"></script>
+</body>
+</html>

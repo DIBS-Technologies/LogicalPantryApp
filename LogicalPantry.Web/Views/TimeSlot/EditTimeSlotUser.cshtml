@@ -7,85 +7,12 @@
 @Html.AntiForgeryToken()
 
 <head>
+    <link href="~/css/site.css" rel="stylesheet" />
     <link href="~/css/style.css" rel="stylesheet" />
     <style>
-        td {
-            max-width: 200px; /* Adjust the max-width as per your layout */
-            white-space: normal;
-        }
-
-        .card-header {
+        #saveButtonDiv {
             display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-        }
-
-        .text-center {
-            text-align: center; /* Align text in specific columns to the center */
-        }
-
-        .text-left {
-            text-align: left !important;
-        }
-
-        .input-error {
-            color: red;
-            font-size: 13px;
-        }
-
-        #successMessageBatch {
-            color: green;
-            font-size: 13px;
-            text-align: left;
-        }
-
-        td {
-            max-width: 200px; /* Adjust the max-width as per your layout */
-            white-space: normal;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-        }
-
-        .mt-n5, .my-n5 {
-            margin-top: 2rem !important;
-        }
-
-        .datatable table.dataTable thead, .datatable table.dataTable tfoot {
-            color: #000000;
-        }
-
-        .dataTables_wrapper .dataTables_scrollHeadInner table.dataTable thead th {
-            text-align: left !important; /* Align all headers to the left */
-        }
-
-        .text-center {
-            text-align: center; /* Align text in specific columns to the center */
-        }
-
-        .text-left {
-            text-align: left !important;
-        }
-
-        table.dataTable.nowrap th, table.dataTable.nowrap td {
-            white-space: normal;
-        }
-
-        .datatable table.dataTable thead, .datatable table.dataTable tfoot {
-            color: #121212;
-        }
-
-        #successMessageUser {
-            color: green !important;
-            font-size: 13px;
-            text-align: left !important;
-        }
-
-        .mt-n10, .my-n10 {
-            margin-top: -10rem !important;
+            justify-content: end;
         }
 
         .sidenav-light {
@@ -109,26 +36,21 @@
             display: none;
         }
 
-        .hidden {
-            display: none;
-        }
-
         .footer-custom {
             background-color: #fff;
             color: #1f2d41;
         }
 
         .sidenav-light .sidenav-menu .nav-link:hover {
-            color: black;
+            color: #0061f2;
             background-color: #f1f1f1;
             border-radius: 0.2rem;
             margin: 0rem 0.5rem 0rem 0.75rem;
             padding-left: 0.5rem !important;
         }
 
-        #saveButtonDiv {
-            display: flex;
-            justify-content: end;
+        .card-header {
+            justify-content: center;
         }
     </style>
 </head>
@@ -147,8 +69,12 @@
 
     <div class="container mt-n10">
         <div class="card mb-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <div style="font-size:25px"><!--Add Time Slot Here--></div>
+            <div class="card-header d-flex justify-content-center align-items-center">
+                @{
+                    DateTime startDate = TempData["StartTime"] != null ? (DateTime)TempData["StartTime"] : DateTime.MinValue;
+                    string formattedDate = startDate.ToString("MMM dd h tt");
+                }
+                @formattedDate
             </div>
 
             <div class="card-body">
@@ -171,7 +97,8 @@
                         <tr>
                             <th>Name</th>
                             <th>Email</th>
-                            <th>Allow</th>
+                            <th>Phone</th>
+                            <th>Attended</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -182,7 +109,6 @@
                                 <td>@user.Email</td>
                                 <td>@user.PhoneNumber</td>
                                 <td>
-                                    
                                     <div class="checkbox-wrapper-4">
                                         <input class="inp-cbx" type="checkbox" id="allowCheckbox_@user.Id" data-user-id="@user.Id" @(user.IsAllow ? "checked" : "") />
                                         <label class="cbx" for="allowCheckbox_@user.Id">
@@ -198,7 +124,6 @@
                                             </symbol>
                                         </svg>
                                     </div>
-                                  
                                 </td>
                             </tr>
                         }
@@ -206,7 +131,7 @@
                 </table>
 
                 <div id="saveButtonDiv">
-                    <button class="saveButton" type="submit" >Save</button>
+                    <button class="saveButton btn btn-primary" type="button" disabled>Save</button>
                 </div>
             </div>
         </div>
@@ -222,33 +147,56 @@
                 var userId = checkbox.data("user-id");
                 var isChecked = checkbox.prop("checked");
 
-                
-                var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '{}');
-                userStatuses[userId] = isChecked;
+                var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '[]');
+
+                var userStatus = userStatuses.find(u => u.Id === userId);
+                if (userStatus) {
+                    userStatus.IsAttended = isChecked;
+                } else {
+                    userStatuses.push({ Id: userId, IsAttended: isChecked });
+                }
+
                 sessionStorage.setItem('userStatuses', JSON.stringify(userStatuses));
+                toggleSaveButton();
             });
 
             $(".saveButton").on("click", function () {
-                var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '{}');
+                var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '[]');
+                if (userStatuses.length === 0) {
+                    return;
+                }
+
                 $.ajax({
-                    url: '@Url.Action("UpdateUserStatuses", "User")', 
+                    url: '@Url.Action("UpdateUserBatch", "User")',
                     type: 'POST',
                     data: JSON.stringify(userStatuses),
                     contentType: 'application/json; charset=utf-8',
                     dataType: 'json',
                     success: function (response) {
                         if (response.success) {
-                            $('#successMessageBatch').text('Changes saved successfully.').fadeIn().delay(3000).fadeOut();
-                            sessionStorage.removeItem('userStatuses'); // Clear session storage after successful save
+                            $('#successMessageBatch').text('Changes saved successfully.').fadeIn().delay(2000).fadeOut();
+                            sessionStorage.removeItem('userStatuses');
+                            toggleSaveButton();
                         } else {
-                            $('#errorMessageBatch').text('Error saving changes.').fadeIn().delay(3000).fadeOut();
+                            $('#errorMessageBatch').text('Error saving changes.').fadeIn().delay(2000).fadeOut();
                         }
                     },
                     error: function () {
-                        $('#errorMessageBatch').text('Error saving changes.').fadeIn().delay(3000).fadeOut();
+                        $('#errorMessageBatch').text('Error saving changes.').fadeIn().delay(2000).fadeOut();
                     }
                 });
             });
+
+            function toggleSaveButton() {
+                var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '[]');
+                if (userStatuses.length > 0) {
+                    $(".saveButton").prop("disabled", false);
+                } else {
+                    $(".saveButton").prop("disabled", true);
+                }
+            }
+
+            toggleSaveButton(); // Initialize the save button state on page load
         });
     </script>
 }

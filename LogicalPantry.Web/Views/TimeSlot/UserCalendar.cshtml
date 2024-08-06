@@ -10,11 +10,12 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="~/css/jquery-calendar.min.css">
     <style>
-        .modal {
-            display: none;
-        }
+
         .calendar-header {
             margin-bottom: 20px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
         }
 
         .dropdown-menu {
@@ -46,14 +47,8 @@
             }
 
         select {
-            display: none;
-        }
-
-        .col-6 {
-            -ms-flex: 0 0 50%;
-            flex: 0 0 50%;
-            max-width: 50%;
-            text-align: right;
+            display: block;
+            width: 100%;
         }
 
         .calendar-categories {
@@ -77,31 +72,62 @@
             border-radius: .25rem;
             transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
         }
+
+        .row > * {
+            flex-shrink: 0;
+            max-width: 100%;
+            padding-right: calc(var(--bs-gutter-x)* .5);
+            padding-left: calc(var(--bs-gutter-x)* .5);
+            margin-top: var(--bs-gutter-y);
+        }
+
+        .container-fluid {
+            max-width: 90%;
+            margin-top: 50px;
+            margin: 50px auto;
+        }
+
+        h3 {
+            margin: 0;
+        }
+
+        #calendar {
+            margin-top: 20px;
+        }
+
+        /* New CSS */
+        .dropdown select {
+            display: inline-block;
+            width: 200px; /* Adjust width as needed */
+            margin-right: 10px; /* Reduce gap between select and button */
+        }
+
+        .btn-success {
+            margin-left: 0; /* Remove extra margin if not needed */
+        }
+
+        .calendar-header .d-flex {
+            align-items: center;
+            gap: 10px; /* Adjust gap between select and button */
+        }
     </style>
 </head>
 <body>
-    <div class="container-fluid px-4">
-        <div class="row calendar-header">
+
+    <div class="container-fluid">
+        <div class="calendar-header">
+            <h3>Calendar View</h3>
+            @{
+                var userEmails = User.FindFirstValue(ClaimTypes.Email);
+            }
+            <input type="hidden" name="Email" value="@userEmails" class="form-control" id="Email" placeholder="Enter Email" disabled />
+        </div>
+
+        <div class="row">
             <div class="col">
-                <h1>Calendar View</h1>
-                @{
-                    var userEmails = User.FindFirstValue(ClaimTypes.Email);
-                }
-                <input type="hidden" name="Email" value="@userEmails" class="form-control" id="Email" placeholder="Enter Email" disabled />
-                
+                <div id="calendar"></div>
             </div>
-            @* <div class="row">               
-                <div class="col-6" style="padding-left:2px;">
-                    <div class="dropdown d-inline">
-                        <select id="eventSelect" class="form-control" onchange="handleSelectChange()">
-                            <option value="" selected disabled>Type</option>
-                            <option value="1" data-title="Food Pickup">Food Pickup</option>
-                            <option value="2" data-title="Volunteer">Volunteer</option>
-                            <option value="3" data-title="Appointment">Appointment</option>
-                        </select>
-                    </div>
-                </div>
-            </div> *@
+        </div>
             <!-- Modal for displaying messages -->
             <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
@@ -119,14 +145,6 @@
                     </div>
                 </div>
             </div>
-
-            <div class="row">
-                <div class="col">
-                    <div id="calendar"></div>
-                </div>
-            </div>
-          
-        </div>
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -149,9 +167,9 @@
 
             // Handle calendar event click and prevent default behavior
             $('#calendar').on('Calendar.event-click', function (event, instance, elem, evt) {
-                debugger;
+                
                 event.preventDefault();
-                debugger;
+               
                 var startTime = evt.start;
                 var endTime = evt.end;
                 var timeSlotName = evt.title;
@@ -170,7 +188,7 @@
                         TimeSlotName: timeSlotName
                     }),
                     success: function (response) {
-                        debugger;
+                        
                         if (response && response.timeSlotId) {
                             // Get user email from the claims
                             var userEmail = $('#Email').val();
@@ -182,7 +200,7 @@
                                 contentType: 'application/json',
                                 data: JSON.stringify({ Email: userEmail }),
                                 success: function (userResponse) {
-                                    debugger;
+                                    
                                     if (userResponse && userResponse.userId) {
                                         // Sign up for the time slot
                                         $.ajax({

@@ -1,9 +1,6 @@
 ﻿@model LogicalPantry.DTOs.TimeSlotDtos.CalendarViewModel
 
-@{
-    ViewData["Title"] = "Calendar";
-    Layout = "~/Views/Shared/_Layout.cshtml"; // Adjust the layout path if necessary
-}
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -185,7 +182,7 @@
 
            <script>
             $(document).ready(function () {
-            debugger;
+            ;
 
             // Initialize the calendar with events from the server
             var events = @Html.Raw(Json.Serialize(Model.Events));
