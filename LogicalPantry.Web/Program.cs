@@ -16,11 +16,23 @@ using NLog.Extensions.Logging;
 using System;
 using LogicalPantry.Services.TimeSlotServices;
 using LogicalPantry.Services.TenantServices;
-using LogicalPantry.Services.TimeSlotSignupServices;
+
 using System.Configuration;
 using LogicalPantry.DTOs.PayPalSettingDtos;
+using LogicalPantry.Services.InformationService;
+
 
 var builder = WebApplication.CreateBuilder(args);
+
+//Add Cashe to the browser
+builder.Services.AddMemoryCache();
+
+//Add output cache
+builder.Services.AddOutputCache(options =>
+{
+    options.AddBasePolicy(builder => builder.Expire(TimeSpan.FromMinutes(2)));
+    options.AddPolicy("ExpireIn30Sec", builder  => builder.Expire(TimeSpan.FromSeconds(2)));
+});
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -85,7 +97,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
 builder.Services.Configure<PayPalDto>(builder.Configuration.GetSection("PayPal"));
-
+builder.Services.AddScoped<IInformationService, InformationService>();
 
 
 
@@ -121,6 +133,7 @@ app.UseSession(); // Enable session middleware
 app.UseRouting(); // Enable routing
 app.UseAuthentication(); // Enable authentication middleware
 app.UseAuthorization(); // Enable authorization middleware
+app.UseOutputCache();   //Enable output cache middleware
 
 // Configure default controller route
 app.MapControllerRoute(

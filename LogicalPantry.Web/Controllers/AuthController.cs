@@ -42,11 +42,14 @@ namespace LogicalPantry.Web.Controllers
         /// <returns>Returns Google Response.</returns>
         public async Task GoogleLogin()
         {
+            _logger.LogInformation($"{this} Method is called Started");
             await HttpContext.ChallengeAsync(GoogleDefaults.AuthenticationScheme,
                 new AuthenticationProperties
                 {
                     RedirectUri = Url.Action(nameof(GoogleResponse)) // Pass the name of the GoogleResponse method
                 });
+            _logger.LogInformation($"{this} Method is call ended");
+
         }
 
         /// <summary>

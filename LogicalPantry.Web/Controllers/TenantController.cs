@@ -9,16 +9,19 @@ namespace LogicalPantry.Web.Controllers
     {
 
         private readonly ITenantService _tenantService;
-
-        public TenantController(ITenantService tenantService)
+        private readonly ILogger _logger;
+        public TenantController(ITenantService tenantService, ILogger logger)
         {
             _tenantService = tenantService;
+            _logger = logger;
         }
 
 
         [HttpGet]
         public IActionResult AddTenant()
         {
+            _logger.LogInformation($"AddTenant method call started");
+            _logger.LogInformation($"AddTenant method call ended");
             return View();
         }
 
@@ -27,6 +30,7 @@ namespace LogicalPantry.Web.Controllers
         [HttpGet("EditTenant/{id}")]
         public async Task<IActionResult> EditTenant(int id)
         {
+            _logger.LogInformation($"EditTenant get method call started");
             var tenantResponse = await _tenantService.GetTenantByIdAsync(id);
             if (tenantResponse.Success)
             {
@@ -34,13 +38,17 @@ namespace LogicalPantry.Web.Controllers
             }
 
             // Handle the case where the tenant is not found
+            _logger.LogInformation($"EditTenant get  method call ended");
             return NotFound(tenantResponse.Message);
+
         }
 
         // Handle form submission
         [HttpPost("EditTenant/{id}")]
         public async Task<IActionResult> EditTenant(TenantDto tenantDto, IFormFile LogoFile)
         {
+            _logger.LogInformation($"EditTenant post method call started");
+
             if (ModelState.IsValid)
             {
                 if (LogoFile != null && LogoFile.Length > 0)
@@ -69,6 +77,8 @@ namespace LogicalPantry.Web.Controllers
                 {
                     ModelState.AddModelError("", response.Message);
                 }
+                _logger.LogInformation($"EditTenant post method call ended");
+
             }
 
             return View(tenantDto);

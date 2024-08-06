@@ -19,6 +19,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="7.0.10" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="7.0.16" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="7.0.16" />
+    <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.1.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.16">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -28,6 +29,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.12" />
     <PackageReference Include="NLog" Version="5.2.8" />
     <PackageReference Include="NLog.Web.AspNetCore" Version="5.3.8" />
@@ -41,6 +43,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Views\Information\" />
     <Folder Include="wwwroot\Image\" />
   </ItemGroup>
 

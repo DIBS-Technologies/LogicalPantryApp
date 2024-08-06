@@ -22,45 +22,64 @@ namespace LogicalPantry.Web.Controllers
     public class UserController : Controller
     {
         IUserService _userService;
-        public UserController(IUserService userService)
+        private readonly ILogger _logger;
+        public UserController(IUserService userService, ILogger logger)
         {
             _userService = userService;
+            _logger = logger;
         }
 
         public IActionResult Index()
         {
+            _logger.LogInformation("Index method call started.");
+
+            _logger.LogInformation("Index method call ended.");
             return View();
         }
         [HttpGet]
         public object GetAllusers()
         {
+            _logger.LogInformation("GetAllusers object call started.");
             var response = _userService.GetAllRegisteredUsersAsync().Result;
+            _logger.LogInformation("GetAllusers object call ended.");
+
             return response;
         }
 
         public object GetUserbyId(int tenentId) 
         {
-            if(tenentId == 0)return null;
+            _logger.LogInformation("GetUserbyId object call Started.");
+
+            if (tenentId == 0)return null;
             var response = _userService.GetUserByIdAsync(tenentId).Result;
+            _logger.LogInformation("GetUserbyId object call ended.");
+
             return response;
         }
         [HttpGet]
         public object GetUsersbyTimeSlot(DateTime timeslot, int tenentId) 
         {
-            if(tenentId == 0 || timeslot == null) return null;
+            _logger.LogInformation("GetUsersbyTimeSlot object call Started.");
+            if (tenentId == 0 || timeslot == null) return null;
             var response = _userService.GetUsersbyTimeSlot(timeslot,tenentId).Result;
+            _logger.LogInformation("GetUsersbyTimeSlot object call ended.");
+
             return response;
         }
         [HttpPost]
         public object PutUserStatus(List<UserAllowStatusDto> userDto)
         {
+            _logger.LogInformation("PutUserStatus object call started.");
+
             if (userDto != null)
             {
                 var response = _userService.UpdateUserAllowStatusAsync(userDto).Result;
+                _logger.LogInformation("PutUserStatus object call ended.");
                 return response;
 
             }
             else { return null; }
+
 
 
         }

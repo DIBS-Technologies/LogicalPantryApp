@@ -22,6 +22,7 @@ namespace LogicalPantry.Web.Controllers
         [HttpPost("AddEvent")]
         public async Task<IActionResult> AddEvent([FromBody] TimeSlotDto timeSlotDto)
         {
+            _logger.LogInformation("AddEvent method call started.");
             if (timeSlotDto == null)
             {
                 return BadRequest("Event data is null.");
@@ -39,8 +40,11 @@ namespace LogicalPantry.Web.Controllers
                 {
                     return StatusCode(500, "An error occurred while saving the time slot. Please try again."); // Return a server error response
                 }
+
             }
+            _logger.LogInformation("AddEvent method call ended.");
             return BadRequest(ModelState); // Return a bad request response with validation errors
+
         }
 
 
@@ -49,12 +53,17 @@ namespace LogicalPantry.Web.Controllers
 
         private long ToUnixTimestamp(DateTime dateTime)
         {
+            _logger.LogInformation("ToUnixTimestamp method call started.");
+            _logger.LogInformation("ToUnixTimestamp method call ended.");
             return ((DateTimeOffset)dateTime).ToUnixTimeSeconds();
+
         }
 
         [HttpPost]
         public async Task<IActionResult> SaveEvent(TimeSlotDto timeSlotDto)
         {
+            _logger.LogInformation("SaveEvent method call started.");
+
             if (ModelState.IsValid)
             {
                 if (timeSlotDto.Id == 0)
@@ -69,17 +78,25 @@ namespace LogicalPantry.Web.Controllers
                 }
                 return Ok();
             }
+
+            _logger.LogInformation("SaveEvent method call ended.");
+
             return BadRequest();
+
         }
 
         [HttpPost]
         public async Task<IActionResult> DeleteEvent([FromBody] TimeSlotDto timeSlotDto)
         {
+            _logger.LogInformation("DeleteEvent method call started.");
+
             if (ModelState.IsValid)
             {
                 await _timeSlotService.DeleteTimeSlotAsync(timeSlotDto.Id);
                 return Ok();
             }
+            _logger.LogInformation("DeleteEvent method call ended.");
+
             return BadRequest();
         }
 
@@ -88,6 +105,8 @@ namespace LogicalPantry.Web.Controllers
         public async Task<IActionResult> Calendar()
         {
             _logger.LogInformation("Calendar page accessed");
+            _logger.LogInformation("Calendar method call started.");
+
 
             // Fetch events from the database
             var events = await _timeSlotService.GetAllEventsAsync();
@@ -116,6 +135,7 @@ namespace LogicalPantry.Web.Controllers
             {
                 Events = calendarEvents
             };
+            _logger.LogInformation("Calendar method call ended.");
 
             return View(model);
         }
@@ -126,13 +146,23 @@ namespace LogicalPantry.Web.Controllers
         // Helper method to get the start of the current week (Sunday)
         private DateTimeOffset GetStartOfWeek(DateTimeOffset dateTime)
         {
+            _logger.LogInformation("GetStartOfWeek method call started.");
+
             int diff = (int)dateTime.DayOfWeek - (int)DayOfWeek.Sunday;
+
+            _logger.LogInformation("GetStartOfWeek method call ended.");
+
+
             return dateTime.AddDays(-diff).Date;
+
         }
 
         // Helper method to convert DateTimeOffset to Unix timestamp (seconds)
         private long ToUnixTimestamp(DateTimeOffset dateTime)
         {
+            _logger.LogInformation("ToUnixTimestamp method call started.");
+            _logger.LogInformation("ToUnixTimestamp method call ended.");
+
             return dateTime.ToUnixTimeSeconds();
         }
 
