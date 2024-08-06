@@ -13,6 +13,7 @@ using LogicalPantry.Services.RegistrationService;
 using Autofac.Core;
 using LogicalPantry.Services.InformationService;
 using LogicalPantry.Services.TimeSlotSignupService;
+using LogicalPantry.Web.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -121,6 +122,10 @@ app.UseSession(); // Enable session middleware
 app.UseRouting(); // Enable routing
 app.UseAuthentication(); // Enable authentication middleware
 app.UseAuthorization(); // Enable authorization middleware
+
+
+// Add the Tenant Middleware
+//app.UseMiddleware<TenantMiddleware>();
 
 // Configure default controller route
 app.MapControllerRoute(

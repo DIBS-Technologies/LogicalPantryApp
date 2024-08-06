@@ -147,9 +147,11 @@
     <script>
         $(document).ready(function () {
             var events = @Html.Raw(Json.Serialize(Model.Events));
+            
 
             $('#calendar').Calendar({
-                events: events
+                locale: 'en', 
+                events: events                             
             }).init();
 
             $('#addEventBtn').on('click', function () {
