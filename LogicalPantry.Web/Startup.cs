@@ -68,6 +68,7 @@ public class Startup
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
+        //app.UseMiddleware<TenantMiddleware>();
 
 
         app.UseEndpoints(endpoints =>

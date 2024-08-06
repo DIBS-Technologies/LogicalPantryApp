@@ -10,7 +10,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register</title>
+    <title>Pay with PayPal</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         .card {
@@ -33,28 +33,17 @@
 
             .form-group label {
                 display: block;
-                margin-bottom: 0.5rem;
+                margin-bottom: 0.5rem; /* Space between label and input */
             }
 
-            .form-group .form-control {
+            .form-group input {
                 width: 100%;
             }
 
-        @@media (min-width: 992px) {
-            .form-group {
-                display: flex;
-                align-items: center;
-            }
-
-                .form-group label {
-                    flex: 0 0 150px;
-                    max-width: 150px;
-                    margin-bottom: 0;
-                }
-
-                .form-group .form-control {
-                    flex: 1 1 auto;
-                }
+        .error-message {
+            color: red;
+            font-size: 0.875rem;
+            margin-top: 0.5rem; /* Space above the error message */
         }
 
         .saveButton {
@@ -73,8 +62,6 @@
         }
 
         .card-body {
-            flex: 1 1 auto;
-            min-height: 1px;
             padding: 1.35rem;
             border: 0.2px solid black;
             border-radius: 1px;
@@ -82,7 +69,6 @@
     </style>
 </head>
 <body>
-    <!-- Input field for donation amount -->
     <div class="container mt-5">
         <div class="row">
             <div class="col-lg-12">
@@ -92,46 +78,39 @@
                     </div>
                     <div class="card-body">
                         <form id="hiddenForm">
-                        <div class="form-group">
-                            <div class="col-6">
-                            <label for="amount">Enter amount to donate:</label>
+                            <div class="form-group">
+                                <label for="amount">Enter amount for donation:</label>
+                                <input type="number" id="amount" class="form-control" name="amount" step="0.01" min="0" required />
+                                <span id="amount-error" class="error-message" style="display: none;">Please enter a valid amount.</span>
                             </div>
-                            <div class="col-6">
-                            <input type="number" id="amount" class="form-control" name="amount" step="0.01" min="0" required />
-                             </div>
-                            @*   <span class="text-danger errorfont" id="FullName-error"></span> *@
-                        </div>
-                        <div id="saveButtonDiv">
-                            <button class="saveButton" id="pay-button" onclick="hideForm()">Pay with PayPal</button>
-                        </div>
+                            <div id="saveButtonDiv">
+                                <button class="saveButton" id="pay-button" type="button">Pay with PayPal</button>
+                            </div>
                         </form>
                         <!-- Container for PayPal button -->
-                        <div id="paypal-button-container"></div>
-
+                        <div id="paypal-button-container" style="display: none;"></div>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
 
-
-
-    <script src="https://www.paypal.com/sdk/js?client-id=@Configuration["PayPal:ClientId"]"></script>
-
-
-    <script>
-        <script src="https://www.paypal.com/sdk/js?client-id=@Configuration["PayPal:ClientId"]" ></script>
-
+    <script src="https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID"></script>
     <script>
         document.getElementById('pay-button').addEventListener('click', function (event) {
             event.preventDefault(); // Prevent the default form submission
-            var amount = document.getElementById('amount').value;
 
-            if (amount <= 0) {
-                alert('Please enter a valid amount.');
+            var amount = document.getElementById('amount').value;
+            var errorMessage = document.getElementById('amount-error');
+
+            if (!amount || amount <= 0) {
+                // Show error message
+                errorMessage.style.display = 'block';
                 return;
             }
+
+            // Hide the error message if input is valid
+            errorMessage.style.display = 'none';
 
             // Hide the form and show the PayPal button container
             document.getElementById('hiddenForm').style.display = 'none';
@@ -163,7 +142,7 @@
             }).render('#paypal-button-container'); // Renders the PayPal button into the container
         });
     </script>
-
 </body>
 </html>
+
 

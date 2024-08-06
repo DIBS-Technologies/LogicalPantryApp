@@ -48,7 +48,7 @@ namespace LogicalPantry.Services.InformationService
             {
                 // Fetch the tenant from the database based on tenantId
                 var tenant = await dataContext.Tenants
-                    .Where(t => t.Id == tenantId)
+                    .Where(t => t.Id == 1)
                     .Select(t => new TenantDto
                     {
                         Id = t.Id,
@@ -87,6 +87,7 @@ namespace LogicalPantry.Services.InformationService
         {
             var response = new ServiceResponse<bool>();
 
+            tenantDto.Id = 1;
             // Validate input
             if (tenantDto == null || tenantDto.Id <= 0)
             {

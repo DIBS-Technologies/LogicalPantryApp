@@ -1,4 +1,5 @@
 ﻿using LogicalPantry.DTOs;
+using LogicalPantry.DTOs.Roledtos;
 using LogicalPantry.DTOs.UserDtos;
 using System;
 using System.Collections.Generic;
@@ -27,8 +28,6 @@ namespace LogicalPantry.Services.UserServices
         Task<ServiceResponse<IEnumerable<UserDto>>> GetUsersbyTimeSlotId(int timeSlotId);
 
         Task<ServiceResponse<int>> GetUserIdByEmail(string email);
-
-
-
+        Task<RoleDto> GetUserRoleAsync(int id);
     }
 }

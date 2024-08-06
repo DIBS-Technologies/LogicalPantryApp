@@ -8,10 +8,14 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="~/css/jquery-calendar.min.css">
     <style>
+       
+
         .calendar-header {
             margin-bottom: 20px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
         }
-
         .dropdown-menu {
             max-height: 2.5rem;
             overflow-y: auto;
@@ -41,14 +45,8 @@
             }
 
         select {
-            display: none;
-        }
-
-        .col-6 {
-            -ms-flex: 0 0 50%;
-            flex: 0 0 50%;
-            max-width: 50%;
-            text-align: right;
+            display: block;
+            width: 100%;
         }
 
         .calendar-categories {
@@ -75,7 +73,6 @@
 
         .row > * {
             flex-shrink: 0;
-            /* width: 100%; */
             max-width: 100%;
             padding-right: calc(var(--bs-gutter-x)* .5);
             padding-left: calc(var(--bs-gutter-x)* .5);
@@ -85,91 +82,86 @@
         .container-fluid {
             max-width: 90%;
             margin-top: 50px;
-            margin: 50px 50px 50px 50px;
+            margin: 50px auto;
         }
 
-        h3{
-            display: flex;
-            align-items: flex-start;
+        h3 {
+            margin: 0;
         }
 
-        #addEventBtn {
-            justify-content: flex-end;
-            display: flex;
-            justify-content: end;
+        #calendar {
+            margin-top: 20px;
         }
 
-        .data {
-            display: flex;
-            justify-content: flex-end;
+        /* New CSS */
+        .dropdown select {
+            display: inline-block;
+            width: 200px; /* Adjust width as needed */
+            margin-right: 10px; /* Reduce gap between select and button */
+        }
+
+        .btn-success {
+            margin-left: 0; /* Remove extra margin if not needed */
+        }
+
+        .calendar-header .d-flex {
+            align-items: center;
+            gap: 10px; /* Adjust gap between select and button */
         }
     </style>
 </head>
 
 <body>
     <div class="container-fluid">
-        <div class="row calendar-header">
-           @*  <div class="">
-               
-            </div> *@
-            <div class="row">
-                <div class="col-4">
-                    <h3>Calendar View</h3>
-                   
+        <div class="calendar-header">
+            <h3>Calendar View</h3>
+            <div class="d-flex align-items-center">
+                <div class="dropdown d-inline">
+                    <select id="eventSelect" class="form-control" onchange="handleSelectChange()">
+                        <option value="" selected disabled>Type</option>
+                        <option value="1" data-title="Food Pickup">Food Pickup</option>
+                        <option value="2" data-title="Volunteer">Volunteer</option>
+                        <option value="3" data-title="Appointment">Appointment</option>
+                    </select>
                 </div>
-                <div class="col-8" style="padding-left:2px;">
-                    <div class="row">
-                    <div class="col-4 data" >
-                    <button type="button" class="btn btn-success" id="addEventBtn">Add Event</button>
-                    </div>
-                        <div class="col-6">
-                    <div class="dropdown d-inline">
-                        <select id="eventSelect" class="form-control" onchange="handleSelectChange()">
-                            <option value="" selected disabled>Type</option>
-                            <option value="1" data-title="Food Pickup">Food Pickup</option>
-                            <option value="2" data-title="Volunteer">Volunteer</option>
-                            <option value="3" data-title="Appointment">Appointment</option>
-                        </select>
-                    </div>
-                        </div>
-                   </div>
-                </div>
+                <button type="button" class="btn btn-success" id="addEventBtn">Add Event</button>
             </div>
-            <div class="row">
-                <div class="col">
-                    <div id="calendar"></div>
-                </div>
-            </div>
+        </div>
 
-            <!-- Bootstrap Modal for Event Details -->
-            <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="eventModalLabel">Event Details</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        <div class="modal-body">
-                            <form id="eventForm">
-                                <div class="form-group">
-                                    <label for="eventTitle">Title:</label>
-                                    <input type="text" class="form-control" id="eventTitle" name="Title" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="eventStart">Start Date and Time:</label>
-                                    <input type="datetime-local" class="form-control" id="eventStart" name="StartDateTime" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="eventEnd">End Date and Time:</label>
-                                    <input type="datetime-local" class="form-control" id="eventEnd" name="EndDateTime" required>
-                                </div>
-                            </form>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" id="saveEventBtn">Save</button>
-                        </div>
+        <div class="row">
+            <div class="col">
+                <div id="calendar"></div>
+            </div>
+        </div>
+
+        <!-- Bootstrap Modal for Event Details -->
+        <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="eventModalLabel">Event Details</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="eventForm">
+                            <div class="form-group">
+                                <label for="eventTitle">Title:</label>
+                                <input type="text" class="form-control" id="eventTitle" name="Title" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="eventStart">Start Date and Time:</label>
+                                <input type="datetime-local" class="form-control" id="eventStart" name="StartDateTime" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="eventEnd">End Date and Time:</label>
+                                <input type="datetime-local" class="form-control" id="eventEnd" name="EndDateTime" required>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="saveEventBtn">Save</button>
                     </div>
                 </div>
             </div>
@@ -218,7 +210,6 @@
             });
 
             $('#calendar').on('Calendar.event-click', function (event, instance, elem, evt) {
-                ;
                 var startTime = evt.start;
                 var endTime = evt.end;
                 var timeSlotName = evt.title;
@@ -251,15 +242,12 @@
                 });
             });
 
-
             function handleSelectChange() {
                 var selectedOption = $('#eventSelect option:selected');
                 var selectedEventId = selectedOption.val();
                 var selectedEventTitle = selectedOption.data('title');
-             
             }
         });
-
     </script>
 </body>
 

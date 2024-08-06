@@ -18,25 +18,23 @@ namespace LogicalPantry.Web.Controllers
             return View();
         }
         [HttpPost]
-        public object Register(UserDto user) 
+        public IActionResult Register(UserDto user) 
         {
             var response=_registrationService.RegisterUser(user).Result;
-
 
             if (response.Success)
             {
                 @TempData["MessageClass"] = "alert-success";
                 @TempData["SuccessMessageUser"] = "Registartion Successfull";
-
-                return Ok(new { success = true });
             }
             else
             {
                 @TempData["MessageClass"] = "alert-danger";
                 @TempData["SuccessMessageUser"] = "Failed to Save User server error.";
-                return StatusCode(500, "Internal server error.");
+                return View("Index");
+
             }
-            return response;
+            return RedirectToAction("UserCalendar", "TimeSlot", new { area = "" });
         }
         [HttpGet]
         public object ValidateEmail(string emailId) 

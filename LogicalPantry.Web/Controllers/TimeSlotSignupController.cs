@@ -29,7 +29,7 @@ namespace LogicalPantry.Web.Controllers
             _timeSlotSignupService = timeSlotSignupService;
         }
 
-
+        [Route("Index")]
         public IActionResult Index()
         {
             return View();

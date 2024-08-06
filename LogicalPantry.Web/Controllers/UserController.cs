@@ -118,8 +118,7 @@ namespace LogicalPantry.Web.Controllers
             return Ok(new { success = false });
         }
 
-        [Route("UpdateUserBatch")]
-        [HttpGet]
+        
         //public async Task<IActionResult> UpdateUserBatch(string userStatuses)
         //{
         //    if (userStatuses == null)
@@ -204,6 +203,34 @@ namespace LogicalPantry.Web.Controllers
             }
         }
 
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            try
+            {
+                
+                if (!int.TryParse(id, out int userId))
+                {
+                    return BadRequest("Invalid user ID format.");
+                }
+
+                // Call the service to delete the user
+                var result = await _userService.DeleteUserAsync(userId);
+
+                if (result.Success)
+                {
+                    return NoContent(); 
+                }
+                else
+                {
+                    return NotFound("User not found."); 
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error.");
+            }
+        }
 
 
     }

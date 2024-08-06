@@ -10,10 +10,98 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <link href="~/css/site.css" rel="stylesheet" />
     <style>
-        .hidden {
-            display: none;
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            /* Prevent scrollbars */
+        }
+
+        #layoutSidenav {
+            display: flex;
+            flex-direction: column;
+            height: 100vh; /* Full viewport height */
+            width: 100vw; /* Full viewport width */
+            margin: 0;
+        }
+
+        #layoutSidenav_content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+             /* Adjust as needed for margins */
+            box-sizing: border-box;
+            overflow: hidden; /* Prevent scrollbars within the content */
+            padding-left: 20px;
+            padding-bottom: 20px;
+        }
+
+        .topnav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1rem;
+            background-color: white;
+            height: 60px; /* Adjust based on navbar height */
+            width: 100%; /* Ensure full width */
+        }
+
+            .topnav .navbar-nav {
+                display: flex;
+                flex-direction: row;
+                margin-left: auto; /* Push links to the right */
+            }
+
+            .topnav .nav-link {
+                padding-right: 1rem;
+                padding-left: 1rem;
+                font-weight: normal;
+                transition: color 0.3s, font-weight 0.3s;
+            }
+
+                .topnav .nav-link:hover {
+                    color: #0061f2;
+                    font-weight: bold;
+                }
+
+        .page-name {
+            flex: 1;
+            text-align: center;
+            font-weight: bold;
+            color: #1f2d41;
+            font-size: 1.25rem; /* Adjust size as needed */
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%; /* Ensure full width */
+            overflow: hidden; /* Prevent scrollbars within main */
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #f8f9fa;
+            color: #6c757d;
+            position: relative;
+            bottom: 0;
+            width: 100%; /* Ensure full width */
+        }
+
+        .nav-fixed #layoutSidenav #layoutSidenav_content {
+             padding-left: 10rem; 
+            /* top: 3.625rem; */
         }
 
         .footer-custom {
@@ -45,74 +133,26 @@
             margin: 0rem 0.5rem 0rem 0.75rem;
             padding-left: 0.5rem !important;
         }
-
-        .customer {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-        }
-
-        .tenatImage {
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-        }
-
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-        }
-
-        /* Full width main container */
-        main {
-            padding: 0;
-            margin: 0;
-            height: calc(100vh - 60px); /* Adjust the height based on the navbar height */
-        }
-
-        /* Full width iframe */
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        .topnav .navbar-nav {
-            flex-direction: row;
-        }
-
-        .topnav .nav-link {
-            padding-right: 1rem;
-            padding-left: 1rem;
-        }
     </style>
 </head>
 <body class="nav-fixed">
-    <nav class="topnav navbar navbar-expand shadow navbar-light bg-white" id="sidenavAccordion">
-        <div class="tenatImage">
-            <img src="~/Image/Demo.jpeg" id="logoImage" style="width: 95px; padding-left: 10px; opacity:100%" />
-        </div>
-        <div class="row customer">
-            <div class="">
-                <a class="nav-link" href="/TimeSlots/Index">Pickup Slot</a>
+    <div id="layoutSidenav">
+        <nav class="topnav navbar navbar-expand shadow navbar-light bg-white" id="sidenavAccordion">
+            <div class="tenatImage">
+                <img src="~/Image/Demo.jpeg" id="logoImage" style="width: 95px; padding-left: 10px; opacity:100%" />
             </div>
-            <div class="">
-                <a class="nav-link" href="/Donation/Index">Donation</a>
-            </div>
-            <div class="">
+            <div class="page-name" id="pageName"></div>
+            <div class="navbar-nav">
+                <a class="nav-link" href="/TimeSlots/Calendar">Pickup</a>
+                <a class="nav-link" href="/Donation/PayPal">Donation</a>
                 <a class="nav-link" href="/Auth/loginview">Login</a>
             </div>
-        </div>
-    </nav>
-    <div id="layoutSidenav">
+        </nav>
         <div id="layoutSidenav_content">
             <main>
-                <main role="main" class="pb-3">
-                    <iframe src="" id="urlFrameId"></iframe>
-                </main>
+                <iframe src="" id="urlFrameId"></iframe>
             </main>
-            <footer class="text-light py-2 fixed-bottom text-center">
+            <footer>
                 <div class="container">
                     <p class="mb-0" style="color:black">&copy; @DateTime.Now.Year - LogicalPantry</p>
                 </div>
@@ -126,8 +166,8 @@
                 var parts = url.split("/");
                 var urlParams = new URLSearchParams(window.location.search);
                 var handlerValue = urlParams.get("pageName");
-                var last_part = parts[parts.length - 1];
                 $("#urlFrameId").attr("src", "/TenantHomePage/" + handlerValue + ".html");
+                $("#pageName").text(handlerValue ? handlerValue.replace(/%20/g, ' ') : ''); // Handle spaces in pageName
             });
         </script>
     }
