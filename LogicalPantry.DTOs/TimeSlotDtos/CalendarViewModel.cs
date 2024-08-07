@@ -8,12 +8,7 @@ using System.Threading.Tasks;
 
 namespace LogicalPantry.DTOs.TimeSlotDtos
 {
-    //public class CalendarViewModel
-    //{
-
-    //        public List<TimeSlotDto> TimeSlotDto { get; set; }
-
-    //}
+  
 
     public class CalendarViewModel
     {

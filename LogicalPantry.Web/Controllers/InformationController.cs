@@ -1,4 +1,6 @@
-﻿using LogicalPantry.Services.InformationService;
+﻿using LogicalPantry.DTOs.TenantDtos;
+using LogicalPantry.Models.Models;
+using LogicalPantry.Services.InformationService;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -7,6 +9,7 @@ using static System.Net.WebRequestMethods;
 
 namespace LogicalPantry.Web.Controllers
 {
+    [Route("Information")]
     public class InformationController : Controller
     {
         IInformationService _informationService;
@@ -21,6 +24,7 @@ namespace LogicalPantry.Web.Controllers
             _logger = logger;
             _memoryCache = memoryCache;
         }
+
         public IActionResult Index()
         {
             _logger.LogInformation($"Index method call started");
@@ -30,8 +34,9 @@ namespace LogicalPantry.Web.Controllers
             return View();
 
         }
+
         [HttpGet]
-        public object Get(int tenantid) 
+        public object Get(string tenantid)
         {
             _logger.LogInformation($"Get Object call started");
 
@@ -115,18 +120,116 @@ namespace LogicalPantry.Web.Controllers
                     _logger.LogInformation("PageName is already stored in cache.");
                 }
 
-
-                _logger.LogInformation($"Index1 method call Ended");
-
-                //return View("Index1", model: htmlContent);
-
-                return Redirect($"/{tenantFolderName}/{filenameWithExtension}");
-
-            }
-            return NotFound(tenanatResponse.Message);
+        [HttpGet]
+        [Route("AddTenant")]
+        public IActionResult AddTenant()
+        {
+            return View();
         }
 
 
+        public async Task<IActionResult> AddTenant2(int id)
+        {
+            var response = _informationService.GetTenant(id);
+            if (response.Result.Success)
+            {
+                
+                return View(response.Result.Data);
+            }
 
+            //Handle the case where the tenant is not found
+            return NotFound(/*tenantResponse.Message*/);
+        }
+
+        // Handle form submission
+        [HttpPost("AddTenant")]
+        public async Task<IActionResult> AddTenant(TenantDto tenantDto, IFormFile LogoFile)
+        {
+
+            if (LogoFile != null && LogoFile.Length > 0)
+            {
+                // Generate a unique file name to avoid conflicts
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(LogoFile.FileName);
+                var filePath = Path.Combine("wwwroot\\Image", fileName);
+
+                // Save the file
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await LogoFile.CopyToAsync(stream);
+                }
+
+                // Update the tenantDto with the new logo path
+                tenantDto.Logo = "/Image/" + fileName;
+            }
+
+            var response = await _informationService.PostTenant(tenantDto);
+            if (response.Success)
+            {
+                
+                    @TempData["MessageClass"] = "alert-success";
+                    @TempData["SuccessMessageInfo"] = "Infromation Saved Successfully";
+
+                // Redirect to the GET method to display the updated data
+                return RedirectToAction(nameof(AddTenant2), new { id = tenantDto.Id });
+            }
+            else
+            {
+                @TempData["MessageClass"] = "alert-danger";
+                @TempData["ErrorMessageInfo"] = "Internal server error.";
+                ModelState.AddModelError("", response.Message);
+            }
+
+
+            return View(tenantDto);
+        }
+
+
+        [HttpGet("Home")]
+        public async Task<IActionResult> Home(string PageName)
+        {
+            var tenanatResponse = await _informationService.GetTenantPageNameForUserAsync(PageName);
+            if (tenanatResponse.Success)
+            {
+                var pageName = tenanatResponse.Data.PageName;
+
+                var fileExtension = ".html";
+                if (!pageName.EndsWith(fileExtension, StringComparison.OrdinalIgnoreCase))
+                {
+                    pageName += fileExtension;
+                }
+
+                var tenantFolderPath = Path.Combine(_webHostEnvironment.WebRootPath, "TenantHomePage");
+                var filepath = Path.Combine(tenantFolderPath, pageName);
+                var fileNameWithExtension = Path.GetFileName(filepath);
+
+                Console.WriteLine($"Page Name: {pageName}");
+                Console.WriteLine($"Tenant Folder Path: {tenantFolderPath}");
+                Console.WriteLine($"File Path: {filepath}");
+
+                if (!System.IO.File.Exists(filepath))
+                {
+                    Console.WriteLine("File not found.");
+                    return NotFound("The requested page was not found.");
+                }
+
+                string htmlContent;
+                try
+                {
+                    htmlContent = await System.IO.File.ReadAllTextAsync(filepath);
+                }
+                catch (IOException ex)
+                {
+                    Console.WriteLine($"IOException: {ex.Message}");
+                    return StatusCode(500, "An error occurred while reading the file.");
+                }
+
+                TempData["PageName"] = fileNameWithExtension;
+
+                return View();
+            }
+
+            return NotFound(tenanatResponse.Message);
+        }
     }
+
 }

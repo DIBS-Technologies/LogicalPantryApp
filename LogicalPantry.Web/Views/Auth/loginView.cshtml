@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@{
+    ViewData["Title"] = "Login";
+    Layout = "CustomeLayout";
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,11 +13,39 @@
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+
+        .container {
+            display: flex;
+            justify-content: center;
+        }
+        .card {
+            position: relative;
+            display: -ms-flexbox;
+            display: flex;
+            -ms-flex-direction: column;
+            flex-direction: column;
+            min-width: 0;
+            word-wrap: break-word;
+            background-color: #fff;
+            background-clip: border-box;
+            border: 1px solid rgba(0, 0, 0, .125);
+            max-width: 500px;
+            min-width: 450px;
+            border-radius: .25rem;
+        }
+
+        .card-body {
+            flex: 1 1 auto;
+            min-height: 1px;
+            padding: 1.35rem;
+        }
+    </style>
 </head>
 <body>
 
-    <div class="container mt-5">
-        <div class="row">
+    <div class="container mt-10">
+        <div class="">
             <div class="col-md-6 mb-4">
                 <div class="card">
                     <div class="card-body">
@@ -55,19 +88,6 @@
                 </div>
             </div>
 
-            <div class="col-md-6 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Microsoft 365 Login</h5>
-                        <p class="card-text">Sign in using your Microsoft 365 account.</p>
-                        <form method="post" asp-area="" asp-controller="Auth" asp-action="Microsoft365Login">
-                            <button type="submit" class="btn btn-primary btn-block">
-                                <i class="fab fa-microsoft"></i> Login With Microsoft 365
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 

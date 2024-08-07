@@ -123,6 +123,14 @@ namespace LogicalPantry.Services.TimeSlotServices
         }
 
 
+        public async Task<int?> GetTimeSlotIdAsync(DateTime startTime, DateTime endTime, string title)
+        {
+            var timeSlot = await _context.TimeSlots
+                .Where(ts => ts.StartTime == startTime && ts.EndTime == endTime && ts.TimeSlotName == title)
+                .FirstOrDefaultAsync();
+
+            return timeSlot?.Id;
+        }
 
 
 

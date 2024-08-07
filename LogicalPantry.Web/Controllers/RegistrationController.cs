@@ -23,10 +23,24 @@ namespace LogicalPantry.Web.Controllers
             return View();
         }
         [HttpPost]
-        public object Register(UserDto user) 
+        public IActionResult Register(UserDto user) 
         {
             _logger.LogInformation($"Register method call started");
             var response=_registrationService.RegisterUser(user).Result;
+
+            if (response.Success)
+            {
+                @TempData["MessageClass"] = "alert-success";
+                @TempData["SuccessMessageUser"] = "Registartion Successfull";
+            }
+            else
+            {
+                @TempData["MessageClass"] = "alert-danger";
+                @TempData["SuccessMessageUser"] = "Failed to Save User server error.";
+                return View("Index");
+
+            }
+            return RedirectToAction("UserCalendar", "TimeSlot", new { area = "" });
             _logger.LogInformation($"Register method call ended");
 
             return response;

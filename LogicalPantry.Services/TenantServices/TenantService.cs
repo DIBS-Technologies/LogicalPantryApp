@@ -2,18 +2,20 @@
 using LogicalPantry.DTOs.TenantDtos;
 using LogicalPantry.DTOs;
 using LogicalPantry.Models.Models;
-using Microsoft.AspNetCore.Http;
+
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Microsoft.AspNetCore.Http;
 
 namespace LogicalPantry.Services.TenantServices
 {
-    public class TenantService
+    public class TenantService : ITenantService
     {
         private readonly ILogger<TenantService> logger;
         private readonly IMapper mapper;

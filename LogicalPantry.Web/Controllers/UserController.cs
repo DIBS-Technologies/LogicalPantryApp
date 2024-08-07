@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Mvc;
+
 using Microsoft.Extensions.Logging;
 
 using LogicalPantry.Services.RoleServices;
@@ -15,6 +15,10 @@ using LogicalPantry.Web.Helper;
 using LogicalPantry.DTOs.UserDtos;
 using LogicalPantry.DTOs.UserDtos;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
+using LogicalPantry.DTOs.TimeSlotDtos;
+using LogicalPantry.Models.Models;
+using Newtonsoft.Json;
 
 namespace LogicalPantry.Web.Controllers
 {
@@ -37,7 +41,8 @@ namespace LogicalPantry.Web.Controllers
             return View();
         }
         [HttpGet]
-        public object GetAllusers()
+        [Route("ManageUsers")]
+        public async Task<IActionResult> ManageUsers()
         {
             _logger.LogInformation("GetAllusers object call started.");
             var response = _userService.GetAllRegisteredUsersAsync().Result;
@@ -67,7 +72,7 @@ namespace LogicalPantry.Web.Controllers
             return response;
         }
         [HttpPost]
-        public object PutUserStatus(List<UserAllowStatusDto> userDto)
+        public object PutUserStatus(List<UserAttendedDto> userDto)
         {
             _logger.LogInformation("PutUserStatus object call started.");
 
@@ -81,8 +86,171 @@ namespace LogicalPantry.Web.Controllers
             else { return null; }
 
 
-
         }
+
+        [HttpGet("session")]
+        public IActionResult GetSessionData()
+        {
+            var userEmail = HttpContext.Session.GetString("UserEmail");
+            var userName = HttpContext.Session.GetString("UserName");
+
+            if (string.IsNullOrEmpty(userEmail) || string.IsNullOrEmpty(userName))
+            {
+                return NotFound();
+            }
+
+            return Ok(new { UserEmail = userEmail, UserName = userName });
+        }
+
+        [Route("UpdateUser")]
+        public async Task<IActionResult> UpdateUser(string updatedNotificationList)
+        {
+            if (updatedNotificationList == null)
+            {
+                return BadRequest("Invalid data.");
+            }
+
+            var updatedNotificationListObject = JsonConvert.DeserializeObject<UserAllowStatusDto>(updatedNotificationList);
+
+            var userDto = new UserDto { Id = updatedNotificationListObject.Id, IsAllow = updatedNotificationListObject.IsAllow };
+
+
+            if (userDto != null)
+            {
+                var response = _userService.UpdateUserAsync(userDto).Result;
+
+                if (response != null)
+                {
+                    @TempData["MessageClass"] = "alert-success";
+                    @TempData["SuccessMessageUser"] = "User Saved Successfully";
+
+                    return Ok(new { success = true });
+                }
+                else
+                {
+                    @TempData["MessageClass"] = "alert-success";
+                    @TempData["SuccessMessageUser"] = "Internal server error.";
+                    return StatusCode(500, "Internal server error.");
+                }
+            }
+            return Ok(new { success = false });
+        }
+
+        
+        //public async Task<IActionResult> UpdateUserBatch(string userStatuses)
+        //{
+        //    if (userStatuses == null)
+        //    {
+        //        return BadRequest("Invalid data.");
+        //    }
+
+        //   var updatedNotificationListObject = JsonConvert.DeserializeObject<List<UserAllowStatusDto>>(userStatuses);
+
+
+        //    if (updatedNotificationListObject != null)
+        //    {
+        //        var response = _userService.UpdateUserAllowStatusAsync(updatedNotificationListObject).Result;
+
+        //        if (response != null)
+        //        {
+        //            @TempData["MessageClass"] = "alert-success";
+        //            @TempData["SuccessMessageUser"] = "User Saved Successfully";
+
+        //            return Ok(new { success = true });
+        //        }
+        //        else
+        //        {
+        //            @TempData["MessageClass"] = "alert-success";
+        //            @TempData["SuccessMessageUser"] = "Internal server error.";
+        //            return StatusCode(500, "Internal server error.");
+        //        }
+        //    }
+        //    return Ok(new { success = false });
+        //}
+
+        [Route("UpdateUserBatch")]
+        [HttpPost]
+        public async Task<IActionResult> UpdateUserBatch([FromBody] List<UserAttendedDto> userStatuses)
+        {
+            if (userStatuses == null || !userStatuses.Any())
+            {
+                return BadRequest("Invalid data.");
+            }
+
+            try
+            {
+                var response = await _userService.UpdateUserAllowStatusAsync(userStatuses);
+
+                if (response.Success)
+                {
+                    TempData["MessageClass"] = "alert-success";
+                    TempData["SuccessMessageUserBatch"] = "User Saved Successfully";
+                    return Ok(new { success = true });
+                }
+                else
+                {
+                    TempData["MessageClass"] = "alert-danger";
+                    TempData["SuccessMessageUserBatch"] = "Internal server error.";
+                    return StatusCode(500, "Internal server error.");
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData["MessageClass"] = "alert-danger";
+                TempData["SuccessMessageUserBatch"] = $"Error: {ex.Message}";
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
+        [HttpPost("GetUserIdByEmail")]
+        public async Task<IActionResult> GetUserIdByEmail([FromBody] UserDto dto)
+        {
+            if (dto == null || string.IsNullOrEmpty(dto.Email))
+            {
+                return BadRequest(new { Message = "Invalid email." });
+            }
+
+            var response = await _userService.GetUserIdByEmail(dto.Email);
+
+            if (response.Success)
+            {
+                return Ok(new { UserId = response.Data });
+            }
+            else
+            {
+                return StatusCode(500, response);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(string id)
+        {
+            try
+            {
+                
+                if (!int.TryParse(id, out int userId))
+                {
+                    return BadRequest("Invalid user ID format.");
+                }
+
+                // Call the service to delete the user
+                var result = await _userService.DeleteUserAsync(userId);
+
+                if (result.Success)
+                {
+                    return NoContent(); 
+                }
+                else
+                {
+                    return NotFound("User not found."); 
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Internal server error.");
+            }
+        }
+
+
     }
 
 

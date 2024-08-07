@@ -1,26 +1,19 @@
-using Autofac.Core;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Facebook;
-using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using LogicalPantry.Models.Models;
 using LogicalPantry.Services.RoleServices;
 using LogicalPantry.Services.UserServices;
 using NLog.Extensions.Logging;
-using System;
 using LogicalPantry.Services.TimeSlotServices;
 using LogicalPantry.Services.TenantServices;
 
 using System.Configuration;
 using LogicalPantry.DTOs.PayPalSettingDtos;
+using LogicalPantry.Services.RegistrationService;
+using Autofac.Core;
 using LogicalPantry.Services.InformationService;
-
+using LogicalPantry.Services.TimeSlotSignupService;
+using LogicalPantry.Web.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -92,15 +85,24 @@ builder.Services.AddAuthentication(options =>
     options.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"];
 });
 
+
+
+
 // Add scoped services for dependency injection
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
+builder.Services.AddScoped<IRegistrationService , RegistrationService>();
+builder.Services.AddScoped<IInformationService, InformationService>();
+builder.Services.AddScoped<IRegistrationService, RegistrationService>();
+builder.Services.AddScoped<ITimeSlotSignupService, TimeSlotSignupService>();
+//builder.Services.AddScoped<ITimeSlotSignupService, TimeSlotSignupService>();
 builder.Services.Configure<PayPalDto>(builder.Configuration.GetSection("PayPal"));
 builder.Services.AddScoped<IInformationService, InformationService>();
 
 
 
+//builder.Services.AddScoped<ITenantService,TenantService>();
 
 
 // Add AutoMapper for object mapping
@@ -127,6 +129,7 @@ else
     app.UseHsts(); // Use HTTP Strict Transport Security
 }
 
+
 app.UseHttpsRedirection(); // Redirect HTTP requests to HTTPS
 app.UseStaticFiles(); // Serve static files from wwwroot folder
 app.UseSession(); // Enable session middleware
@@ -135,10 +138,14 @@ app.UseAuthentication(); // Enable authentication middleware
 app.UseAuthorization(); // Enable authorization middleware
 app.UseOutputCache();   //Enable output cache middleware
 
+
+// Add the Tenant Middleware
+//app.UseMiddleware<TenantMiddleware>();
+
 // Configure default controller route
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=timeslot}/{action=Calendar}/{id?}");
+    pattern: "{controller=Auth}/{action=loginView}/{id?}");
 
 app.Run();
 

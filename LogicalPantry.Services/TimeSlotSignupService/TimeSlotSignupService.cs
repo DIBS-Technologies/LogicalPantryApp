@@ -62,6 +62,8 @@ namespace LogicalPantry.Services.TimeSlotSignupService
         public async Task<ServiceResponse<string>> PostTimeSlotSignup(List<TimeSlotSignupDto> users)
         {
             var response = new ServiceResponse<string>();
+
+            // Validate input
             if (users == null || !users.Any())
             {
                 response.Success = false;
@@ -71,6 +73,9 @@ namespace LogicalPantry.Services.TimeSlotSignupService
 
             try
             {
+                // Check if time slots and users are valid (optional, based on your requirements)
+                // For example: Ensure all TimeSlotIds and UserIds are valid and exist in the database
+
                 var timeSlotSignups = users.Select(dto => new TimeSlotSignup
                 {
                     TimeSlotId = dto.TimeSlotId,
@@ -89,12 +94,83 @@ namespace LogicalPantry.Services.TimeSlotSignupService
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, "Error posting time slot signups");
+                // Log the error with details
+                logger.LogError(ex, "Error posting time slot signups. Data: {TimeSlotSignups}", users);
                 response.Success = false;
                 response.Message = $"Error posting time slot signups: {ex.Message}";
             }
 
             return response;
         }
+
+
+
+        //public async Task<bool> AddTimeSlotSignUp(TimeSlotSignupDto dto)
+        //{
+        //    try
+        //    {
+        //        // Example logic for adding a time slot signup
+        //        var timeSlotSignup = new TimeSlotSignup
+        //        {
+        //            TimeSlotId = dto.TimeSlotId,
+        //            UserId = dto.UserId,
+        //            Attended = dto.Attended
+        //        };
+
+        //        dataContext.TimeSlotSignups.Add(timeSlotSignup);
+        //        await dataContext.SaveChangesAsync();
+
+        //        return true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Log exception
+        //        throw new Exception("Error adding time slot signup: " + ex.Message);
+        //    }
+        //}
+
+        public async Task<(bool success, string message)> AddTimeSlotSignUp(TimeSlotSignupDto dto)
+        {
+            try
+            {
+                // Validate input
+                if (dto == null)
+                {
+                    return (false, "Invalid time slot signup data.");
+                }
+
+                // Check if the user has already signed up for the same time slot
+                var existingSignup = await dataContext.TimeSlotSignups
+                    .FirstOrDefaultAsync(s => s.TimeSlotId == dto.TimeSlotId && s.UserId == dto.UserId);
+
+                if (existingSignup != null)
+                {
+                    return (true, "You have already signed up for this time slot.");
+                }
+
+                // Create a new TimeSlotSignup entity
+                var timeSlotSignup = new TimeSlotSignup
+                {
+                    TimeSlotId = dto.TimeSlotId,
+                    UserId = dto.UserId,
+                    Attended = dto.Attended
+                };
+
+                // Add the new sign-up to the database
+                dataContext.TimeSlotSignups.Add(timeSlotSignup);
+                await dataContext.SaveChangesAsync();
+
+                return (true, "Successfully signed up for the time slot.");
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                // Example: logger.LogError(ex, "Error adding time slot signup.");
+
+                return (false, "Error adding time slot signup: " + ex.Message);
+            }
+        }
+
+
     }
 }

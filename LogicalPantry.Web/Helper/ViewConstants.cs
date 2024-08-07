@@ -10,6 +10,14 @@
         public const string HOME = "Home";
         public const string AUTH = "Auth";
         public const string USER = "User";
+        public const string Registration = "Registration";
+        public const string TimeSlotSignUp = "TimeSlotSignup";
+        public const string TimeSlot = "TimeSlot";
+        public const string Calandar = "Calandar";
+        public const string UserCalandar = "UserCalendar";
+
+
+
 
     }
 

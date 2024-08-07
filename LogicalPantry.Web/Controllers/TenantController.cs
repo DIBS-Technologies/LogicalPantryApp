@@ -1,4 +1,5 @@
 ﻿using LogicalPantry.DTOs.TenantDtos;
+using LogicalPantry.Services.InformationService;
 using LogicalPantry.Services.TenantServices;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,15 +10,29 @@ namespace LogicalPantry.Web.Controllers
     {
 
         private readonly ITenantService _tenantService;
+        private readonly IInformationService _infotenantService;
+
+
+        public TenantController(ITenantService tenantService, IInformationService infotenantService)
         private readonly ILogger _logger;
         public TenantController(ITenantService tenantService, ILogger logger)
         {
             _tenantService = tenantService;
+            _infotenantService = infotenantService;
+        }
+
+
+        public IActionResult Index(string pageName)
+        {
+
+            return View();
             _logger = logger;
         }
 
 
+
         [HttpGet]
+        [Route("AddTenant")]
         public IActionResult AddTenant()
         {
             _logger.LogInformation($"AddTenant method call started");
@@ -27,7 +42,7 @@ namespace LogicalPantry.Web.Controllers
 
 
         // Display the form for editing
-        [HttpGet("EditTenant/{id}")]
+        [HttpPost("AddTenat")]
         public async Task<IActionResult> EditTenant(int id)
         {
             _logger.LogInformation($"EditTenant get method call started");
@@ -44,7 +59,7 @@ namespace LogicalPantry.Web.Controllers
         }
 
         // Handle form submission
-        [HttpPost("EditTenant/{id}")]
+        [HttpPost("EditTenant")]
         public async Task<IActionResult> EditTenant(TenantDto tenantDto, IFormFile LogoFile)
         {
             _logger.LogInformation($"EditTenant post method call started");
@@ -67,7 +82,7 @@ namespace LogicalPantry.Web.Controllers
                     tenantDto.Logo = "/Pages/" + fileName;
                 }
 
-                var response = await _tenantService.UpdateTenantAsync(tenantDto);
+                var response = await _infotenantService.PostTenant(tenantDto);
                 if (response.Success)
                 {
                     // Redirect to the GET method to display the updated data

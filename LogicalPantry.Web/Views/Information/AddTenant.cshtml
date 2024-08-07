@@ -1,0 +1,242 @@
+﻿@using System.Security.Claims
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tenant Information</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .card {
+            width: 100%;
+            max-width: 800px; /* Increase card width for larger screens */
+            margin: auto;
+        }
+
+        .card-header {
+            text-align: center;
+            font-weight: 500;
+            font-size: 22px;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group .form-control {
+            width: 100%;
+        }
+
+       /*  @@media (min-width: 992px) {
+            .form-group {
+                display: flex;
+                align-items: center;
+            }
+
+            .form-group label {
+                flex: 0 0 150px;
+                max-width: 150px;
+                margin-bottom: 0;
+            }
+
+            .form-group .form-control {
+                flex: 1 1 auto;
+            }
+        } */
+
+        .saveButton {
+            background-color: #1A2A52;
+            color: white;
+            border-radius: 5px;
+            border: none;
+            font-size: 1rem;
+            padding: 0.5rem 2rem;
+            margin-top: 1rem;
+        }
+
+        #saveButtonDiv {
+            display: flex;
+            justify-content: end;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        Information
+                    </div>
+                    <div class="card-body">
+                        @if (!string.IsNullOrEmpty(TempData["SuccessMessageInfo"] as string))
+                        {
+                            <div id="successMessageUser" class="alert @TempData["MessageClass"]">
+                                @TempData["SuccessMessageInfo"]
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(TempData["ErrorMessageInfo"] as string))
+                        {
+                            <div id="errorMessageUser" class="alert @TempData["MessageClass"]">
+                                @TempData["ErrorMessageInfo"]
+                            </div>
+                        }
+                        <form method="post" id="createUser" action="/Information/AddTenant" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label for="logo">Logo<span class="mandatory">*</span></label>
+                                <input type="file" name="LogoFile" class="form-control-file" id="logo" />
+                                <span class="text-danger" id="logo-error"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="name">Name<span class="mandatory">*</span></label>
+                                <input name="TenantName" class="form-control" id="name" />
+                                <span class="text-danger" id="name-error"></span>
+                            </div>
+                            <div class="form-group">
+                                @{
+                                    var userEmails = User.FindFirstValue(ClaimTypes.Email);
+                                }
+                                @* <label for="email">Email<span class="mandatory">*</span></label>
+                                <input type="email" value="@userEmails" name="AdminEmail" class="form-control" id="email"  disabled />
+                                <span class="text-danger" id="email-error"></span> *@
+                            </div>
+                            <div class="form-group">
+                                <label for="paypalId">Paypal ID<span class="mandatory">*</span></label>
+                                <input type="email" name="PaypalId" value="@userEmails" class="form-control" id="paypalId" />
+                                <span class="text-danger" id="paypalId-error"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="timeZone">Time Zone<span class="mandatory">*</span></label>
+                                <select name="Timezone" class="form-control" id="timeZone"></select>
+                                <span class="text-danger" id="timeZone-error"></span>
+                            </div>
+                            <div id="saveButtonDiv">
+                                <button class="saveButton" type="submit" onclick="return validateForm();">Save</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.34/moment-timezone-with-data.min.js"></script><script src="~/js/timezones.full.js"></script>
+<script src="~/js/timezones.full.min.js"></script>
+<script src="~/js/timezones.js"></script>
+<script src="~/js/timezones.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            populateTimeZones();
+
+            $('#logo').on('blur change keyup', validateLogo);
+            $('#name').on('blur change keyup', validateName);
+            $('#email').on('blur change keyup', validateEmail);
+            $('#paypalId').on('blur change keyup', validatePaypalId);
+            $('#timeZone').on('blur change', validateTimeZone);
+
+            $('.saveButton').on('click', function () {
+                validateForm();
+                if (validateForm()) {
+                    $(".saveButton").prop("disabled", false);
+                }
+            });
+        });
+
+        function populateTimeZones() {
+            var timezones = moment.tz.names();
+            var $timeZoneSelect = $('#timeZone');
+            $.each(timezones, function (index, timezone) {
+                $timeZoneSelect.append($('<option>', { value: timezone, text: timezone }));
+            });
+        }
+
+        function validateLogo() {
+            var logo = $("#logo").val();
+            if (logo.trim() === "") {
+                $("#logo-error").text("Logo is required.").show();
+                return false;
+            } else {
+                $("#logo-error").text("").hide();
+                return true;
+            }
+        }
+
+        function validateName() {
+            var name = $("#name").val();
+            if (name.trim() === "") {
+                $("#name-error").text("Name is required.").show();
+                return false;
+            } else {
+                $("#name-error").text("").hide();
+                return true;
+            }
+        }
+
+        function validateEmail() {
+            var email = $("#email").val();
+            if (email.trim() === "") {
+                $("#email-error").text("Email is required.").show();
+                return false;
+            } else if (!isValidEmail(email)) {
+                $("#email-error").text("Invalid Email format.").show();
+                return false;
+            } else {
+                $("#email-error").text("").hide();
+                return true;
+            }
+        }
+
+        function validatePaypalId() {
+            var paypalId = $("#paypalId").val();
+            if (paypalId.trim() === "") {
+                $("#paypalId-error").text("Paypal ID is required.").show();
+                return false;
+            } else if (!isValidEmail(paypalId)) {
+                $("#paypalId-error").text("Invalid Paypal ID format.").show();
+                return false;
+            } else {
+                $("#paypalId-error").text("").hide();
+                return true;
+            }
+        }
+
+        function validateTimeZone() {
+            var timeZone = $("#timeZone").val();
+            if (timeZone.trim() === "") {
+                $("#timeZone-error").text("Time Zone is required.").show();
+                return false;
+            } else {
+                $("#timeZone-error").text("").hide();
+                return true;
+            }
+        }
+
+        function validateForm() {
+            var isValid = true;
+
+            isValid = validateLogo() && isValid;
+            isValid = validateName() && isValid;
+            isValid = validateEmail() && isValid;
+            isValid = validatePaypalId() && isValid;
+            isValid = validateTimeZone() && isValid;
+
+            $(".saveButton").prop("disabled", !isValid);
+
+            return isValid;
+        }
+
+        function isValidEmail(email) {
+            var emailRegex = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+            return emailRegex.test(email);
+        }
+    </script>
+</body>
+</html>

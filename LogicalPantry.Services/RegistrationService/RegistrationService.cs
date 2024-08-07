@@ -87,26 +87,42 @@ namespace LogicalPantry.Services.RegistrationService
 
                 if (existingUser != null)
                 {
-                    response.Success = false;
-                    response.Message = "Email is already registered.";
-                    response.Data = false; // Indicating failure
-                    return response;
+                    if (existingUser.IsRegistered)
+                    {
+                        // If the user is already registered, return a response indicating failure
+                        response.Success = false;
+                        response.Message = "Email is already registered.";
+                        response.Data = false; // Indicating failure
+                        return response;
+                    }
+
+                    // If the user exists but is not registered, update the existing user
+                    existingUser.FullName = userDto.FullName;
+                    existingUser.Address = userDto.Address;
+                    existingUser.PhoneNumber = userDto.PhoneNumber;
+                    existingUser.IsAllow = false; // Default value or update based on your logic
+                    existingUser.IsRegistered = true; // Ensure the registration status remains false or set as needed
+
+                    // Update the user in the database
+                    dataContext.Users.Update(existingUser);
                 }
-
-                // Create a new user entity
-                var newUser = new User
+                else
                 {
-                    TenantId = userDto.TenantId,
-                    FullName = userDto.FullName,
-                    Address = userDto.Address,
-                    Email = userDto.Email,
-                    PhoneNumber = userDto.PhoneNumber,
-                    IsAllow = false, // Default value
-                    IsRegistered = false // Default value
-                };
+                    // Create a new user entity
+                    var newUser = new User
+                    {
+                        TenantId = 1,
+                        FullName = userDto.FullName,
+                        Address = userDto.Address,
+                        Email = userDto.Email,
+                        PhoneNumber = userDto.PhoneNumber,
+                        IsAllow = false, // Default value
+                        IsRegistered = false // Default value
+                    };
 
-                // Add the new user to the database
-                dataContext.Users.Add(newUser);
+                    // Add the new user to the database
+                    await dataContext.Users.AddAsync(newUser);
+                }
 
                 // Save changes to the database
                 await dataContext.SaveChangesAsync();
