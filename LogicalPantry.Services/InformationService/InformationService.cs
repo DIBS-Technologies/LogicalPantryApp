@@ -265,7 +265,7 @@ namespace LogicalPantry.Services.InformationService
         public async Task<ServiceResponse<TenantDto>> GetTenantPageNameForUserAsync(string PageName)
         {
             var response = new ServiceResponse<TenantDto>();
-
+           // var pageName1 = "account-billing";
             try
             {
                 // Retrieve the page name for the specified tenant from the database

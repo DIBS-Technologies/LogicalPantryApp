@@ -6,11 +6,31 @@
 <head>
     <meta charset="utf-8">
     <title>Calendar</title>
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="~/css/jquery-calendar.min.css">
-    <style>
 
+    <style>
+        .modal-content {
+            background: none;
+            display: none;
+            width: 100px;
+            height: 100px;
+        }   
+        .modal.fade {
+            background: none;
+            display: none !important; 
+        }      
+        .modal-backdrop {
+            opacity: 0 !important; 
+            display: none !important; 
+        }
+    
+
+        .modal {
+            background: none;
+        }
         .calendar-header {
             margin-bottom: 20px;
             display: flex;
@@ -110,17 +130,73 @@
             align-items: center;
             gap: 10px; /* Adjust gap between select and button */
         }
+       /*  .modal-c2 {
+            background-color: #fff;
+        } */
+
+        .modal-c2 {
+            background-color: #87CEEB; /* Dark Slate Gray */
+        }
+
+
+        .calendar-timeline
+         {
+            padding-top: 41px;
+            margin-top: 60px;
+     
+         }
+        /* Base styles for the button */
+        /* Base styles for the button */
+   
+
+            /* Arrow styling */
+            .btn.btn-sm.btn-light.btn-move-calendar:before {
+                font-size: 30;
+                margin: 0 2px;
+            }
+            /* Left arrow direction */
+            .btn.btn-sm.btn-light.btn-move-calendar[data-direction="left"]:before {
+                content: "\2190";
+            }
+
+            /* Right arrow direction */
+            .btn.btn-sm.btn-light.btn-move-calendar[data-direction="right"]:before {
+                content: "\2192";
+            }
+
+        /* Button hover effect */
+        .btn.btn-sm.btn-light.btn-move-calendar:hover {
+            background-color: #f0f0f0;
+            border-color: #333; 
+            color: black;
+        }
+
+        .btn.btn-sm.btn-default.btn-move-calendar {
+            background-color: white; 
+            border: 2px solid black;
+            padding: 10px 20px; 
+            display: flex;
+            align-items: center; 
+            justify-content: center; 
+            border-radius: 4px; 
+        }
+
+         
+        
     </style>
 </head>
 <body>
 
     <div class="container-fluid">
         <div class="calendar-header">
-            <h3>Calendar View</h3>
+            <h3> TimeSlotSignUp Page</h3>
             @{
                 var userEmails = User.FindFirstValue(ClaimTypes.Email);
             }
             <input type="hidden" name="Email" value="@userEmails" class="form-control" id="Email" placeholder="Enter Email" disabled />
+           
+           
+
         </div>
 
         <div class="row">
@@ -129,9 +205,9 @@
             </div>
         </div>
             <!-- Modal for displaying messages -->
-            <div class="modal fade" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+            <div class="modal fade2" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
-                    <div class="modal-content">
+                    <div class="modal-c2">
                         <div class="modal-header">
                             <h5 class="modal-title" id="messageModalLabel">Message</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -145,6 +221,7 @@
                     </div>
                 </div>
             </div>
+   
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -154,21 +231,28 @@
     <script src="~/js/jquery-calendar.min.js"></script>
     <script>
         $(document).ready(function () {
-            $('.modal').hide();
-            // Initialize calendar with events
             var events = @Html.Raw(Json.Serialize(Model.Events));
 
-            $('#calendar').Calendar({
-                locale: 'en',          
-                events: events
-            }).init();
 
-          
+            $('#calendar').Calendar({
+                locale: 'en',
+                weekday: {
+                    timeline: {
+                        intervalMinutes: 30,
+                        fromHour: 9
+                    }
+                },
+                events: events,
+
+         
+            }).init();         
+
+
 
             // Handle calendar event click and prevent default behavior
             $('#calendar').on('Calendar.event-click', function (event, instance, elem, evt) {
-                
-                event.preventDefault();
+               // $('#calendar-modal').attr('style', '');
+               // $('.modal-content').attr('style', '');              
                
                 var startTime = evt.start;
                 var endTime = evt.end;
@@ -188,7 +272,7 @@
                         TimeSlotName: timeSlotName
                     }),
                     success: function (response) {
-                        
+                        // $('#modal-content').css('display', 'None');
                         if (response && response.timeSlotId) {
                             // Get user email from the claims
                             var userEmail = $('#Email').val();
@@ -237,20 +321,36 @@
                     }
                 });
             });
+
+          
         });
+
+
 
         // Function to show a message in a Bootstrap modal
         function showMessage(message, isError) {
+          
             var modalTitle = isError ? 'Error' : 'Success';
             var modalClass = isError ? 'text-danger' : 'text-success';
 
             $('#messageModalLabel').text(modalTitle);
-            $('#messageModalBody').text(message).removeClass('text-success text-danger').addClass(modalClass);
-
+            $('#messageModalBody').text(message).removeClass('text-success text-danger').addClass(modalClass);          
             $('#messageModal').modal('show');
+
+
+
+            // Hide the modal with a fade-out effect after 1 second
+            setTimeout(function () {
+                $('#messageModal').fadeOut(1000, function () {
+                    $('#messageModal').modal('hide'); // Hide the modal
+                    $('#messageModal').css('display', 'none'); // Reset display property for future use
+                });
+            }, 2000); // 1000 milliseconds = 1 second
+           
         }
 
-
+   
+     
     </script>
 
 </body>
