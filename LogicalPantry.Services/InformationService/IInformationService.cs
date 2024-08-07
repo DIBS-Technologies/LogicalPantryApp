@@ -25,6 +25,5 @@ namespace LogicalPantry.Services.InformationService
 
         Task<ServiceResponse<TenantDto>> GetTenantPageNameForUserAsync(string PageName);
 
-        Task<ServiceResponse<TenantDto>> GetTenantPageNameForUserAsync(string PageName);
     }
 }

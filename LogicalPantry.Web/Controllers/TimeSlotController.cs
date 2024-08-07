@@ -115,19 +115,6 @@ namespace LogicalPantry.Web.Controllers
             return BadRequest();
         }
 
-
-       
-
-
-
-
-        // Helper method to get the start of the current week (Sunday)
-        public DateTimeOffset GetStartOfWeek(DateTimeOffset dateTime)
-        {
-            int diff = (int)dateTime.DayOfWeek - (int)DayOfWeek.Sunday;
-            return dateTime.AddDays(-diff).Date;
-        }
-
         // Helper method to convert DateTimeOffset to Unix timestamp (seconds)
         private long ToUnixTimestamp(DateTimeOffset dateTime)
         {
@@ -169,10 +156,6 @@ namespace LogicalPantry.Web.Controllers
         }
 
 
-
-      
-
-
         [HttpGet("Calendar")]
         public async Task<IActionResult> Calendar()
         {
@@ -212,14 +195,6 @@ namespace LogicalPantry.Web.Controllers
             return View(model);
         }
 
-
-
-        [HttpGet("UserCalendar")]
-        public async Task<IActionResult> UserCalendar()
-        {
-            _logger.LogInformation("Calendar page accessed");
-
-        // Helper method to get the start of the current week (Sunday)
         private DateTimeOffset GetStartOfWeek(DateTimeOffset dateTime)
         {
             _logger.LogInformation("GetStartOfWeek method call started.");
@@ -228,10 +203,17 @@ namespace LogicalPantry.Web.Controllers
 
             _logger.LogInformation("GetStartOfWeek method call ended.");
 
-
             return dateTime.AddDays(-diff).Date;
 
         }
+
+
+        [HttpGet("UserCalendar")]
+        public async Task<IActionResult> UserCalendar()
+        {
+            _logger.LogInformation("Calendar page accessed");
+        // Helper method to get the start of the current week (Sunday)
+        
             // Fetch events from the database
             var events = await _timeSlotService.GetAllEventsAsync();
 

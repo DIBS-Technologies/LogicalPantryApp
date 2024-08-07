@@ -46,7 +46,7 @@ namespace LogicalPantry.Web.Controllers
         {
             _logger.LogInformation($"Error method call started");
 
-            _logger.LogInformation($"Error method call started");
+            _logger.LogInformation($"Error method call ended");
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }

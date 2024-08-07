@@ -15,26 +15,18 @@ namespace LogicalPantry.Web.Controllers
     [Route("TimeSlotSignup")]
     public class TimeSlotSignupController : Controller
     {
-
-
-        private readonly ILogger<TimeSlotSignupController> _logger;
         private readonly ITimeSlotService _timeSlotService;
         private readonly ITimeSlotSignupService _timeSlotSignupService;
+        private readonly ILogger _logger;
+     
 
-
-        public TimeSlotSignupController(ILogger<TimeSlotSignupController> logger, ITimeSlotService timeSlotService , ITimeSlotSignupService timeSlotSignupService)
+        public TimeSlotSignupController( ITimeSlotService timeSlotService , ITimeSlotSignupService timeSlotSignupService, ILogger logger)
         {
             _logger = logger;
             _timeSlotService = timeSlotService;
             _timeSlotSignupService = timeSlotSignupService;
-        ITimeSlotSignupService _repositoryService;
-        private readonly ILogger _logger;
-        public TimeSlotSignupController(ITimeSlotSignupService repositoryService, ILogger logger)
-        {
-            _repositoryService = repositoryService;
-            _logger = logger;
         }
-
+ 
         [Route("Index")]
         public IActionResult Index()
         {
@@ -53,7 +45,7 @@ namespace LogicalPantry.Web.Controllers
                 return BadRequest(new { Message = "Invalid time slot provided." });
             }
 
-            var response = _repositoryService.GetUserbyTimeSlot(timeSlot).Result;
+            var response = _timeSlotSignupService.GetUserbyTimeSlot(timeSlot).Result;
             _logger.LogInformation("GetUsersbyTimeSlot method call ended.");
             return response;
         }
@@ -93,7 +85,7 @@ namespace LogicalPantry.Web.Controllers
         [HttpPost("AddTimeSlotSignUps")]
         public async Task<IActionResult> AddTimeSlotSignUps([FromBody] TimeSlotSignupDto dto)
         {
-            if (timeSlotSignupDtos == null || !timeSlotSignupDtos.Any())
+            if (dto == null)
             {
                 return BadRequest(new { success = false, message = "Invalid data" });
             }
@@ -119,10 +111,6 @@ namespace LogicalPantry.Web.Controllers
 
                 return StatusCode(500, new { success = false, message = "Exception occurred: " + ex.Message });
             }
-            var response = _repositoryService.PostTimeSlotSignup(timeSlotSignupDtos);
-            _logger.LogInformation("timeSlotSignupDtos Object call ended.");
-
-            return response;
         }
 
 

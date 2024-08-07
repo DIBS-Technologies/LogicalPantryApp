@@ -13,12 +13,12 @@ namespace LogicalPantry.Web.Controllers
         private readonly IInformationService _infotenantService;
 
 
-        public TenantController(ITenantService tenantService, IInformationService infotenantService)
         private readonly ILogger _logger;
-        public TenantController(ITenantService tenantService, ILogger logger)
+        public TenantController(ITenantService tenantService, ILogger logger, IInformationService infotenantService)
         {
             _tenantService = tenantService;
             _infotenantService = infotenantService;
+            _logger = logger;
         }
 
 
@@ -26,7 +26,6 @@ namespace LogicalPantry.Web.Controllers
         {
 
             return View();
-            _logger = logger;
         }
 
 

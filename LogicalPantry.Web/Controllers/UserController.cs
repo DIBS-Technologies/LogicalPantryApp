@@ -48,7 +48,7 @@ namespace LogicalPantry.Web.Controllers
             var response = _userService.GetAllRegisteredUsersAsync().Result;
             _logger.LogInformation("GetAllusers object call ended.");
 
-            return response;
+            return View(response.Data);
         }
 
         public object GetUserbyId(int tenentId) 

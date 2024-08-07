@@ -28,7 +28,9 @@ namespace LogicalPantry.Web.Controllers
             _logger.LogInformation($"Register method call started");
             var response=_registrationService.RegisterUser(user).Result;
 
-            if (response.Success)
+            _logger.LogInformation($"Register method call ended");
+         
+            if(response.Success)
             {
                 @TempData["MessageClass"] = "alert-success";
                 @TempData["SuccessMessageUser"] = "Registartion Successfull";
@@ -40,10 +42,9 @@ namespace LogicalPantry.Web.Controllers
                 return View("Index");
 
             }
-            return RedirectToAction("UserCalendar", "TimeSlot", new { area = "" });
-            _logger.LogInformation($"Register method call ended");
 
-            return response;
+            return RedirectToAction("UserCalendar", "TimeSlot", new { area = "" });
+
         }
         [HttpGet]
         public object ValidateEmail(string emailId) 

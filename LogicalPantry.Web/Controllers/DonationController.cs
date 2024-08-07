@@ -43,7 +43,7 @@ namespace LogicalPantry.Web.Controllers
 
             // Just for demo purposes, let's return OK
 
-            _logger.LogInformation($"CompletePayment method call started");
+            _logger.LogInformation($"CompletePayment method call ended");
 
             return Ok();
         }
