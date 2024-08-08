@@ -17,6 +17,16 @@ using LogicalPantry.Services.TimeSlotSignupService;
 
 var builder = WebApplication.CreateBuilder(args);
 
+//Add Cashe to the browser
+builder.Services.AddMemoryCache();
+
+//Add output cache
+builder.Services.AddOutputCache(options =>
+{
+    options.AddBasePolicy(builder => builder.Expire(TimeSpan.FromMinutes(2)));
+    options.AddPolicy("ExpireIn30Sec", builder  => builder.Expire(TimeSpan.FromSeconds(2)));
+});
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 

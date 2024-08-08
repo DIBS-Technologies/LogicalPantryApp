@@ -15,35 +15,38 @@ namespace LogicalPantry.Web.Controllers
     [Route("TimeSlotSignup")]
     public class TimeSlotSignupController : Controller
     {
-
-
-        private readonly ILogger<TimeSlotSignupController> _logger;
         private readonly ITimeSlotService _timeSlotService;
         private readonly ITimeSlotSignupService _timeSlotSignupService;
+        private readonly ILogger _logger;
+     
 
-
-        public TimeSlotSignupController(ILogger<TimeSlotSignupController> logger, ITimeSlotService timeSlotService , ITimeSlotSignupService timeSlotSignupService)
+        public TimeSlotSignupController( ITimeSlotService timeSlotService , ITimeSlotSignupService timeSlotSignupService, ILogger logger)
         {
             _logger = logger;
             _timeSlotService = timeSlotService;
             _timeSlotSignupService = timeSlotSignupService;
         }
-
+ 
         [Route("Index")]
         public IActionResult Index()
         {
+            _logger.LogInformation("Index method call started.");
+
+            _logger.LogInformation("Index method call ended.");
             return View();
         }
 
         [HttpGet]
         public object GetUsersbyTimeSlot(DateTime timeSlot)
         {
+            _logger.LogInformation("GetUsersbyTimeSlot method call started.");
             if (timeSlot == default)
             {
                 return BadRequest(new { Message = "Invalid time slot provided." });
             }
 
             var response = _timeSlotSignupService.GetUserbyTimeSlot(timeSlot).Result;
+            _logger.LogInformation("GetUsersbyTimeSlot method call ended.");
             return response;
         }
 

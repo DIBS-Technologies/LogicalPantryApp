@@ -1,0 +1,112 @@
+2024-08-06 12:45:19.6006 Info Loading assembly name: NLog.Web.AspNetCore
+2024-08-06 12:45:19.6210 Info NLog.Web.AspNetCore, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.3.8.1035. Product version: 5.3.8+0c5db2371c65c25905734b0335fd0c593ee61ad6. GlobalAssemblyCache: False
+2024-08-06 12:45:19.6598 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2024-08-06 12:45:19.6598 Warn Error has been raised. Exception: NLog.NLogConfigurationException: 'JsonLayout' cannot assign unknown property 'includeProperties'='true'
+   at NLog.Config.LoggingConfigurationParser.SetPropertyValueFromString[T](T targetObject, String propertyName, String propertyValue, ValidatedConfigurationElement element)
+2024-08-06 12:45:19.6863 Warn Error has been raised. Exception: NLog.NLogConfigurationException: Failed to create LayoutRenderer with unknown type-alias: 'logndate' - Verify type-alias and check extension is included.
+   at NLog.Config.FactoryExtensions.CreateInstance[TBaseType](IFactory`1 factory, String typeAlias)
+   at NLog.Layouts.LayoutParser.GetLayoutRenderer(String typeName, ConfigurationItemFactory configurationItemFactory, Nullable`1 throwConfigExceptions)
+2024-08-06 12:45:19.6863 Warn Error has been raised. Exception: NLog.NLogConfigurationException: ${event-properties} cannot assign unknown property 'wheneEmpty='
+2024-08-06 12:45:19.6899 Info Registered target NLog.Targets.FileTarget(Name=ownFile-web)
+2024-08-06 12:45:19.6899 Info Registered target NLog.Targets.ConsoleTarget(Name=lifetimeConsole)
+2024-08-06 12:45:19.6899 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.8.2366. Product version: 5.2.8+f586f1341c46fa38aaaff4c641e7f0fa7e813943. GlobalAssemblyCache: False
+2024-08-06 12:45:19.7066 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=67, FilePath=D:\Sagar\LogicalPantryApp\LogicalPantry.Web\obj\Debug\Debug\net7.0\nlog.config
+2024-08-06 12:45:19.7066 Info Configuration initialized.
+2024-08-06 13:00:15.2610 Info Loading assembly name: NLog.Web.AspNetCore
+2024-08-06 13:00:15.2775 Info NLog.Web.AspNetCore, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.3.8.1035. Product version: 5.3.8+0c5db2371c65c25905734b0335fd0c593ee61ad6. GlobalAssemblyCache: False
+2024-08-06 13:00:15.3104 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2024-08-06 13:00:15.3140 Warn Error has been raised. Exception: NLog.NLogConfigurationException: 'JsonLayout' cannot assign unknown property 'includeProperties'='true'
+   at NLog.Config.LoggingConfigurationParser.SetPropertyValueFromString[T](T targetObject, String propertyName, String propertyValue, ValidatedConfigurationElement element)
+2024-08-06 13:00:15.3356 Warn Error has been raised. Exception: NLog.NLogConfigurationException: Failed to create LayoutRenderer with unknown type-alias: 'logndate' - Verify type-alias and check extension is included.
+   at NLog.Config.FactoryExtensions.CreateInstance[TBaseType](IFactory`1 factory, String typeAlias)
+   at NLog.Layouts.LayoutParser.GetLayoutRenderer(String typeName, ConfigurationItemFactory configurationItemFactory, Nullable`1 throwConfigExceptions)
+2024-08-06 13:00:15.3356 Warn Error has been raised. Exception: NLog.NLogConfigurationException: ${event-properties} cannot assign unknown property 'wheneEmpty='
+2024-08-06 13:00:15.3356 Info Registered target NLog.Targets.FileTarget(Name=ownFile-web)
+2024-08-06 13:00:15.3356 Info Registered target NLog.Targets.ConsoleTarget(Name=lifetimeConsole)
+2024-08-06 13:00:15.3356 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.8.2366. Product version: 5.2.8+f586f1341c46fa38aaaff4c641e7f0fa7e813943. GlobalAssemblyCache: False
+2024-08-06 13:00:15.3494 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=67, FilePath=D:\Sagar\LogicalPantryApp\LogicalPantry.Web\obj\Debug\Debug\net7.0\nlog.config
+2024-08-06 13:00:15.3494 Info Configuration initialized.
+2024-08-06 15:03:23.3167 Info Loading assembly name: NLog.Web.AspNetCore
+2024-08-06 15:03:23.4225 Info NLog.Web.AspNetCore, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.3.8.1035. Product version: 5.3.8+0c5db2371c65c25905734b0335fd0c593ee61ad6. GlobalAssemblyCache: False
+2024-08-06 15:03:23.4567 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2024-08-06 15:03:23.4567 Warn Error has been raised. Exception: NLog.NLogConfigurationException: 'JsonLayout' cannot assign unknown property 'includeProperties'='true'
+   at NLog.Config.LoggingConfigurationParser.SetPropertyValueFromString[T](T targetObject, String propertyName, String propertyValue, ValidatedConfigurationElement element)
+2024-08-06 15:03:23.4790 Warn Error has been raised. Exception: NLog.NLogConfigurationException: Failed to create LayoutRenderer with unknown type-alias: 'logndate' - Verify type-alias and check extension is included.
+   at NLog.Config.FactoryExtensions.CreateInstance[TBaseType](IFactory`1 factory, String typeAlias)
+   at NLog.Layouts.LayoutParser.GetLayoutRenderer(String typeName, ConfigurationItemFactory configurationItemFactory, Nullable`1 throwConfigExceptions)
+2024-08-06 15:03:23.4790 Warn Error has been raised. Exception: NLog.NLogConfigurationException: ${event-properties} cannot assign unknown property 'wheneEmpty='
+2024-08-06 15:03:23.4790 Info Registered target NLog.Targets.FileTarget(Name=ownFile-web)
+2024-08-06 15:03:23.4790 Info Registered target NLog.Targets.ConsoleTarget(Name=lifetimeConsole)
+2024-08-06 15:03:23.4790 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.8.2366. Product version: 5.2.8+f586f1341c46fa38aaaff4c641e7f0fa7e813943. GlobalAssemblyCache: False
+2024-08-06 15:03:23.4933 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=67, FilePath=D:\Sagar\LogicalPantryApp\LogicalPantry.Web\obj\Debug\Debug\net7.0\nlog.config
+2024-08-06 15:03:23.4933 Info Configuration initialized.
+2024-08-06 15:24:57.9824 Info Loading assembly name: NLog.Web.AspNetCore
+2024-08-06 15:24:57.9990 Info NLog.Web.AspNetCore, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.3.8.1035. Product version: 5.3.8+0c5db2371c65c25905734b0335fd0c593ee61ad6. GlobalAssemblyCache: False
+2024-08-06 15:24:58.0316 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2024-08-06 15:24:58.0316 Warn Error has been raised. Exception: NLog.NLogConfigurationException: 'JsonLayout' cannot assign unknown property 'includeProperties'='true'
+   at NLog.Config.LoggingConfigurationParser.SetPropertyValueFromString[T](T targetObject, String propertyName, String propertyValue, ValidatedConfigurationElement element)
+2024-08-06 15:24:58.0527 Warn Error has been raised. Exception: NLog.NLogConfigurationException: Failed to create LayoutRenderer with unknown type-alias: 'logndate' - Verify type-alias and check extension is included.
+   at NLog.Config.FactoryExtensions.CreateInstance[TBaseType](IFactory`1 factory, String typeAlias)
+   at NLog.Layouts.LayoutParser.GetLayoutRenderer(String typeName, ConfigurationItemFactory configurationItemFactory, Nullable`1 throwConfigExceptions)
+2024-08-06 15:24:58.0527 Warn Error has been raised. Exception: NLog.NLogConfigurationException: ${event-properties} cannot assign unknown property 'wheneEmpty='
+2024-08-06 15:24:58.0556 Info Registered target NLog.Targets.FileTarget(Name=ownFile-web)
+2024-08-06 15:24:58.0556 Info Registered target NLog.Targets.ConsoleTarget(Name=lifetimeConsole)
+2024-08-06 15:24:58.0556 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.8.2366. Product version: 5.2.8+f586f1341c46fa38aaaff4c641e7f0fa7e813943. GlobalAssemblyCache: False
+2024-08-06 15:24:58.0556 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=67, FilePath=D:\Sagar\LogicalPantryApp\LogicalPantry.Web\obj\Debug\Debug\net7.0\nlog.config
+2024-08-06 15:24:58.0768 Info Configuration initialized.
+2024-08-06 15:29:56.0005 Info Loading assembly name: NLog.Web.AspNetCore
+2024-08-06 15:29:56.0188 Info NLog.Web.AspNetCore, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.3.8.1035. Product version: 5.3.8+0c5db2371c65c25905734b0335fd0c593ee61ad6. GlobalAssemblyCache: False
+2024-08-06 15:29:56.0544 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2024-08-06 15:29:56.0567 Warn Error has been raised. Exception: NLog.NLogConfigurationException: 'JsonLayout' cannot assign unknown property 'includeProperties'='true'
+   at NLog.Config.LoggingConfigurationParser.SetPropertyValueFromString[T](T targetObject, String propertyName, String propertyValue, ValidatedConfigurationElement element)
+2024-08-06 15:29:56.0779 Warn Error has been raised. Exception: NLog.NLogConfigurationException: Failed to create LayoutRenderer with unknown type-alias: 'logndate' - Verify type-alias and check extension is included.
+   at NLog.Config.FactoryExtensions.CreateInstance[TBaseType](IFactory`1 factory, String typeAlias)
+   at NLog.Layouts.LayoutParser.GetLayoutRenderer(String typeName, ConfigurationItemFactory configurationItemFactory, Nullable`1 throwConfigExceptions)
+2024-08-06 15:29:56.0779 Warn Error has been raised. Exception: NLog.NLogConfigurationException: ${event-properties} cannot assign unknown property 'wheneEmpty='
+2024-08-06 15:29:56.0779 Info Registered target NLog.Targets.FileTarget(Name=ownFile-web)
+2024-08-06 15:29:56.0779 Info Registered target NLog.Targets.ConsoleTarget(Name=lifetimeConsole)
+2024-08-06 15:29:56.0779 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.8.2366. Product version: 5.2.8+f586f1341c46fa38aaaff4c641e7f0fa7e813943. GlobalAssemblyCache: False
+2024-08-06 15:29:56.0929 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=67, FilePath=D:\Sagar\LogicalPantryApp\LogicalPantry.Web\obj\Debug\Debug\net7.0\nlog.config
+2024-08-06 15:29:56.1044 Info Configuration initialized.
+2024-08-06 15:41:14.2243 Info Loading assembly name: NLog.Web.AspNetCore
+2024-08-06 15:41:14.2424 Info NLog.Web.AspNetCore, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.3.8.1035. Product version: 5.3.8+0c5db2371c65c25905734b0335fd0c593ee61ad6. GlobalAssemblyCache: False
+2024-08-06 15:41:14.2781 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2024-08-06 15:41:14.2781 Warn Error has been raised. Exception: NLog.NLogConfigurationException: 'JsonLayout' cannot assign unknown property 'includeProperties'='true'
+   at NLog.Config.LoggingConfigurationParser.SetPropertyValueFromString[T](T targetObject, String propertyName, String propertyValue, ValidatedConfigurationElement element)
+2024-08-06 15:41:14.3022 Warn Error has been raised. Exception: NLog.NLogConfigurationException: Failed to create LayoutRenderer with unknown type-alias: 'logndate' - Verify type-alias and check extension is included.
+   at NLog.Config.FactoryExtensions.CreateInstance[TBaseType](IFactory`1 factory, String typeAlias)
+   at NLog.Layouts.LayoutParser.GetLayoutRenderer(String typeName, ConfigurationItemFactory configurationItemFactory, Nullable`1 throwConfigExceptions)
+2024-08-06 15:41:14.3022 Warn Error has been raised. Exception: NLog.NLogConfigurationException: ${event-properties} cannot assign unknown property 'wheneEmpty='
+2024-08-06 15:41:14.3049 Info Registered target NLog.Targets.FileTarget(Name=ownFile-web)
+2024-08-06 15:41:14.3049 Info Registered target NLog.Targets.ConsoleTarget(Name=lifetimeConsole)
+2024-08-06 15:41:14.3049 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.8.2366. Product version: 5.2.8+f586f1341c46fa38aaaff4c641e7f0fa7e813943. GlobalAssemblyCache: False
+2024-08-06 15:41:14.3049 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=67, FilePath=D:\Sagar\LogicalPantryApp\LogicalPantry.Web\obj\Debug\Debug\net7.0\nlog.config
+2024-08-06 15:41:14.3276 Info Configuration initialized.
+2024-08-06 17:47:48.0167 Info Loading assembly name: NLog.Web.AspNetCore
+2024-08-06 17:47:48.0369 Info NLog.Web.AspNetCore, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.3.8.1035. Product version: 5.3.8+0c5db2371c65c25905734b0335fd0c593ee61ad6. GlobalAssemblyCache: False
+2024-08-06 17:47:48.0710 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2024-08-06 17:47:48.0710 Warn Error has been raised. Exception: NLog.NLogConfigurationException: 'JsonLayout' cannot assign unknown property 'includeProperties'='true'
+   at NLog.Config.LoggingConfigurationParser.SetPropertyValueFromString[T](T targetObject, String propertyName, String propertyValue, ValidatedConfigurationElement element)
+2024-08-06 17:47:48.0960 Warn Error has been raised. Exception: NLog.NLogConfigurationException: Failed to create LayoutRenderer with unknown type-alias: 'logndate' - Verify type-alias and check extension is included.
+   at NLog.Config.FactoryExtensions.CreateInstance[TBaseType](IFactory`1 factory, String typeAlias)
+   at NLog.Layouts.LayoutParser.GetLayoutRenderer(String typeName, ConfigurationItemFactory configurationItemFactory, Nullable`1 throwConfigExceptions)
+2024-08-06 17:47:48.0960 Warn Error has been raised. Exception: NLog.NLogConfigurationException: ${event-properties} cannot assign unknown property 'wheneEmpty='
+2024-08-06 17:47:48.0960 Info Registered target NLog.Targets.FileTarget(Name=ownFile-web)
+2024-08-06 17:47:48.0960 Info Registered target NLog.Targets.ConsoleTarget(Name=lifetimeConsole)
+2024-08-06 17:47:48.1066 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.8.2366. Product version: 5.2.8+f586f1341c46fa38aaaff4c641e7f0fa7e813943. GlobalAssemblyCache: False
+2024-08-06 17:47:48.1066 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=67, FilePath=D:\Sagar\LogicalPantryApp\LogicalPantry.Web\obj\Debug\Debug\net7.0\nlog.config
+2024-08-06 17:47:48.1263 Info Configuration initialized.
+2024-08-06 17:48:37.8257 Info Loading assembly name: NLog.Web.AspNetCore
+2024-08-06 17:48:37.8454 Info NLog.Web.AspNetCore, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.3.8.1035. Product version: 5.3.8+0c5db2371c65c25905734b0335fd0c593ee61ad6. GlobalAssemblyCache: False
+2024-08-06 17:48:37.8793 Info Registered target NLog.Targets.FileTarget(Name=allfile)
+2024-08-06 17:48:37.8793 Warn Error has been raised. Exception: NLog.NLogConfigurationException: 'JsonLayout' cannot assign unknown property 'includeProperties'='true'
+   at NLog.Config.LoggingConfigurationParser.SetPropertyValueFromString[T](T targetObject, String propertyName, String propertyValue, ValidatedConfigurationElement element)
+2024-08-06 17:48:37.9051 Warn Error has been raised. Exception: NLog.NLogConfigurationException: Failed to create LayoutRenderer with unknown type-alias: 'logndate' - Verify type-alias and check extension is included.
+   at NLog.Config.FactoryExtensions.CreateInstance[TBaseType](IFactory`1 factory, String typeAlias)
+   at NLog.Layouts.LayoutParser.GetLayoutRenderer(String typeName, ConfigurationItemFactory configurationItemFactory, Nullable`1 throwConfigExceptions)
+2024-08-06 17:48:37.9051 Warn Error has been raised. Exception: NLog.NLogConfigurationException: ${event-properties} cannot assign unknown property 'wheneEmpty='
+2024-08-06 17:48:37.9051 Info Registered target NLog.Targets.FileTarget(Name=ownFile-web)
+2024-08-06 17:48:37.9051 Info Registered target NLog.Targets.ConsoleTarget(Name=lifetimeConsole)
+2024-08-06 17:48:37.9144 Info NLog, Version=5.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c. File version: 5.2.8.2366. Product version: 5.2.8+f586f1341c46fa38aaaff4c641e7f0fa7e813943. GlobalAssemblyCache: False
+2024-08-06 17:48:37.9144 Info Validating config: TargetNames=allfile, lifetimeConsole, ownFile-web, ConfigItems=67, FilePath=D:\Sagar\LogicalPantryApp\LogicalPantry.Web\obj\Debug\Debug\net7.0\nlog.config
+2024-08-06 17:48:37.9348 Info Configuration initialized.

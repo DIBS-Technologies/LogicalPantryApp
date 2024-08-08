@@ -79,7 +79,6 @@ namespace LogicalPantry.Services.InformationService
                 response.Message = $"Error retrieving tenant: {ex.Message}";
                 response.Data = null; // Error occurred, no data
             }
-
             return response;
         }
 
@@ -256,23 +255,34 @@ namespace LogicalPantry.Services.InformationService
         }
 
 
-        public async Task<ServiceResponse<TenantDto>> GetTenantPageNameForUserAsync(string tenantName)
+      
+
+        /// <summary>
+        /// For anonymous page - 2-08-2024 kunal karne
+        /// </summary>
+        /// <param name="PageName"></param>
+        /// <returns></returns>
+        public async Task<ServiceResponse<TenantDto>> GetTenantPageNameForUserAsync(string PageName)
         {
             var response = new ServiceResponse<TenantDto>();
            // var pageName1 = "account-billing";
             try
             {
-                var TenantPageName = await dataContext.Tenants.Where(p => p.TenantName == tenantName)
+                // Retrieve the page name for the specified tenant from the database
+                var TenantPageName = await dataContext.Tenants.Where(p => p.PageName == PageName)
                                                                      .FirstOrDefaultAsync();
-
+               
                 if (TenantPageName != null)
                 {
                     var tenantId = TenantPageName.Id;
 
+                    // Retrieve the tenant information from the database using the specified tenant ID
                     var tenant = await dataContext.Tenants.FindAsync(tenantId);
 
+                    // if tenant is not null return response with data
                     if (tenant != null)
                     {
+                   
                         response.Data = new TenantDto
                         {
                             Id = tenant.Id,
