@@ -108,13 +108,48 @@
             align-items: center;
             gap: 10px; /* Adjust gap between select and button */
         }
+
+        /* Arrow styling */
+        .btn.btn-sm.btn-light.btn-move-calendar:before {
+            font-size: 30;
+            margin: 0 2px;
+           
+        }
+        /* Left arrow direction */
+        .btn.btn-sm.btn-light.btn-move-calendar[data-direction="left"]:before {
+            content: "\2190";
+           
+        }
+
+        /* Right arrow direction */
+        .btn.btn-sm.btn-light.btn-move-calendar[data-direction="right"]:before {
+            content: "\2192";
+        }
+
+        /* Button hover effect */
+        .btn.btn-sm.btn-light.btn-move-calendar:hover {
+            background-color: #f0f0f0;
+            border-color: #333;
+            color: black;
+        }
+
+        .btn.btn-sm.btn-default.btn-move-calendar {
+            background-color: white; 
+            border: 2px solid black;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+
     </style>
 </head>
 
 <body>
     <div class="container-fluid">
         <div class="calendar-header">
-            <h3>TimeSlot Page</h3>
+            <h3>TimeSlot </h3>
             <div class="d-flex align-items-center">
                 <div class="dropdown d-inline">
                     <select id="eventSelect" class="form-control" onchange="handleSelectChange()">
@@ -180,8 +215,64 @@
             var events = @Html.Raw(Json.Serialize(Model.Events));          
 
             $('#calendar').Calendar({
-                locale: 'en',            
-                events: events                             
+                locale: 'en',
+                weekday: {
+                    timeline: {
+                        intervalMinutes: 30,
+                        fromHour: 9
+                    }
+                },
+                events: events,
+                view: 'week',                
+                defaultView: {
+                    largeScreen: 'week',
+                    smallScreen: 'day',
+                    smallScreenThreshold: 1000
+                },
+                weekday: {
+                    timeline: {
+                        fromHour: 10,
+                        toHour: 20,
+                        intervalMinutes: 60,
+                        format: 'HH:mm',
+                        heightPx: 50,
+                        autoResize: true
+                    },
+                    dayline: {
+                        weekdays: [0, 1, 2, 3, 4, 5, 6],
+                        format: 'MM/DD',
+                        heightPx: 31,
+                        month: {
+                            format: 'MMMM YYYY',
+                            heightPx: 30,
+                            weekFormat: 'w'
+                        }
+                    }
+                },
+                month: {
+                    format: 'MMMM YYYY',
+                    heightPx: 31,
+                    weekline: {
+                        format: 'w',
+                        heightPx: 80
+                    },
+                    dayheader: {
+                        weekdays: [0, 1, 2, 3, 4, 5, 6],
+                        format: 'dddd',
+                        heightPx: 30
+                    },
+                    day: {
+                        format: 'MM/DD'
+                    }
+                },
+                unixTimestamp: moment().format('X'),
+                event: {
+                    hover: {
+                        delay: 5000000
+                    },
+                
+                }
+
             }).init();
 
             $('#addEventBtn').on('click', function () {

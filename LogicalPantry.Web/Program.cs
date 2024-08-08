@@ -13,7 +13,7 @@ using LogicalPantry.Services.RegistrationService;
 using Autofac.Core;
 using LogicalPantry.Services.InformationService;
 using LogicalPantry.Services.TimeSlotSignupService;
-using LogicalPantry.Web.Middleware;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -88,7 +88,7 @@ builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 builder.Services.AddScoped<ITimeSlotSignupService, TimeSlotSignupService>();
 //builder.Services.AddScoped<ITimeSlotSignupService, TimeSlotSignupService>();
 builder.Services.Configure<PayPalDto>(builder.Configuration.GetSection("PayPal"));
-
+builder.Services.AddMemoryCache(); // Add in-memory caching
 
 
 
@@ -119,22 +119,42 @@ else
     app.UseHsts(); // Use HTTP Strict Transport Security
 }
 
+app.UseAuthentication(); // Enable authentication middleware
+app.UseAuthorization(); // Enable authorization middleware
+// Add the Tenant Middleware
+
+
+
 
 app.UseHttpsRedirection(); // Redirect HTTP requests to HTTPS
 app.UseStaticFiles(); // Serve static files from wwwroot folder
+
+app.UseMiddleware<TenantMiddleware>();
 app.UseSession(); // Enable session middleware
 app.UseRouting(); // Enable routing
-app.UseAuthentication(); // Enable authentication middleware
-app.UseAuthorization(); // Enable authorization middleware
 
 
-// Add the Tenant Middleware
-//app.UseMiddleware<TenantMiddleware>();
 
-// Configure default controller route
+
+
+//// Define a route pattern that includes the tenant in the URL
+//app.MapControllerRoute(
+//    name: "tenantRoute",
+//    pattern: "{tenant}/{controller=Information}/{action=Home}/{id?}",
+//    defaults: new { controller = "Information", action = "Home" });
+
+//app.MapControllerRoute(
+//    name: "tenantRoute",
+//    pattern: "{tenant?}/{controller=Information}/{action=Home}/{id?}");
+
+
+
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Auth}/{action=loginView}/{id?}");
+    name: "tenantRoute",
+    pattern: "{tenant?}/{controller=Information}/{action=Home}/{id?}"
+);
+
+
 
 app.Run();
 

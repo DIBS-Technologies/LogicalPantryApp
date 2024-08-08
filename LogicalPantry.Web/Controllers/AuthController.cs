@@ -15,6 +15,7 @@ using LogicalPantry.Models.Models;
 
 namespace LogicalPantry.Web.Controllers
 {
+    [Route("Auth")]
     public class AuthController : Controller
     {
         private readonly ILogger<AuthController> _logger;
@@ -161,6 +162,7 @@ namespace LogicalPantry.Web.Controllers
             return RedirectToAction(ViewConstants.AUTH, ViewConstants.LOGINVIEW, new { area = "" });
         }
 
+        [HttpGet("loginView")]
         public IActionResult loginView()
         {
             _logger.LogInformation("loginView page accessed.");

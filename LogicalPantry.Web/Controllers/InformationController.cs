@@ -7,11 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace LogicalPantry.Web.Controllers
 {
     [Route("Information")]
-    public class InformationController : Controller
+    public class InformationController : HomeController
     {
         IInformationService _informationService;
-
         IWebHostEnvironment _webHostEnvironment;
+
+        //protected TenantDto Tenant => HttpContext.Items["Tenant"] as TenantDto;
         public InformationController(IInformationService informationService,IWebHostEnvironment web)
         {
             _informationService = informationService;
@@ -26,6 +27,7 @@ namespace LogicalPantry.Web.Controllers
         [HttpGet]
         public object Get(string tenantid)
         {
+            
             if (int.Parse(tenantid) == 0) { return null; }
             var response = _informationService.GetTenant(int.Parse(tenantid)).Result;
             return response;
@@ -98,6 +100,9 @@ namespace LogicalPantry.Web.Controllers
         [HttpGet("Home")]
         public async Task<IActionResult> Home(string PageName)
         {
+           // HttpContext.Items["SkipTenantMiddleware"] = true;
+
+
             var tenanatResponse = await _informationService.GetTenantPageNameForUserAsync(PageName);
             if (tenanatResponse.Success)
             {
@@ -141,6 +146,89 @@ namespace LogicalPantry.Web.Controllers
 
             return NotFound(tenanatResponse.Message);
         }
+
+        [HttpGet("/{action?}")]
+        public async Task<IActionResult> Home()
+        {
+            // HttpContext.Items["SkipTenantMiddleware"] = true;
+
+             var tenantName = TenantName; ;
+            var tenanatResponse = await _informationService.GetTenantPageNameForUserAsync(tenantName);
+            if (tenanatResponse.Success)
+            {
+                var pageName = tenanatResponse.Data.PageName;
+
+                if (pageName == null)
+                {
+                    return NotFound("The requested page name was not found.");
+                }
+
+                var fileExtension = ".html";
+                if (!pageName.EndsWith(fileExtension, StringComparison.OrdinalIgnoreCase))
+                {
+                    pageName += fileExtension;
+                }
+
+                var tenantFolderPath = Path.Combine(_webHostEnvironment.WebRootPath, "TenantHomePage");
+                var filepath = Path.Combine(tenantFolderPath, pageName);
+                var fileNameWithExtension = Path.GetFileName(filepath);
+
+                Console.WriteLine($"Page Name: {pageName}");
+                Console.WriteLine($"Tenant Folder Path: {tenantFolderPath}");
+                Console.WriteLine($"File Path: {filepath}");
+
+                if (!System.IO.File.Exists(filepath))
+                {
+                    Console.WriteLine("File not found.");
+                    return NotFound("The requested page was not found.");
+                }
+
+                string htmlContent;
+                try
+                {
+                    htmlContent = await System.IO.File.ReadAllTextAsync(filepath);
+                }
+                catch (IOException ex)
+                {
+                    Console.WriteLine($"IOException: {ex.Message}");
+                    return StatusCode(500, "An error occurred while reading the file.");
+                }
+
+                TempData["PageName"] = fileNameWithExtension;
+
+                return View();
+            }
+
+            return NotFound(tenanatResponse.Message);
+        }
+
+
+        [HttpGet("GetTenant")]
+        public async Task<IActionResult> GetTenantIdByName(string tenantName)
+        {
+            var response = await _informationService.GetTenantByNameAsync(tenantName);
+            if (response.Success)
+            {
+                return Ok(response.Data);
+            }
+
+            return NotFound(response.Message);
+        }
+
+
+        [HttpGet("GetTenantByUserEmail")]
+        public async Task<IActionResult> GetTenantIdByEmail(string userEmail)
+        {
+            var response = await _informationService.GetTenantIdByEmail(userEmail);
+            if (response.Success)
+            {
+                return Ok(response.Data);
+            }
+
+            return NotFound(response.Message);
+        }
+
+
     }
 
 }

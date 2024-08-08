@@ -10,8 +10,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="~/css/jquery-calendar.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.css">
+
 
     <style>
+
+        /* Ensure calendar events have a fixed z-index */
+        /* Remove hover styles */
+
+        /* .calendar-event {
+            height: auto !important;
+            overflow: hidden;
+            position: relative;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+            .calendar-event:hover {
+                top: 477.458px !important;
+                left: 0% !important;
+                width: 100% !important;
+                z-index: auto !important;
+                height: 101px !important;
+                height: auto !important;
+                
+            } */
+
+       
+/* 
+        .calendar-event {
+     
+            height: auto !important;
+             overflow: hidden; 
+            position: relative;
+            white-space: nowrap;
+             text-overflow: ellipsis; 
+        }
+
+         
+            .calendar-event:hover {
+                height: auto !important;
+          
+                 overflow: hidden; 
+                position: relative;
+                white-space: nowrap;
+                 text-overflow: ellipsis; 
+            }
+
+        .calendar.event-mouseleave
+        {
+            height: auto !important;
+
+            overflow: hidden;
+            position: relative;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        } */
+
+        .backgr {
+            background-color: grey;
+            opacity: 0.5;
+        }
         .modal-content {
             background: none;
             display: none;
@@ -25,8 +84,7 @@
         .modal-backdrop {
             opacity: 0 !important; 
             display: none !important; 
-        }
-    
+        }  
 
         .modal {
             background: none;
@@ -135,19 +193,21 @@
         } */
 
         .modal-c2 {
-            background-color: #87CEEB; /* Dark Slate Gray */
+            background-color: #c1c1c1;
+            
         }
 
+        .modal .fade2
+        {
+            background-color: #00000F;
+        }
 
         .calendar-timeline
          {
             padding-top: 41px;
             margin-top: 60px;
      
-         }
-        /* Base styles for the button */
-        /* Base styles for the button */
-   
+         }  
 
             /* Arrow styling */
             .btn.btn-sm.btn-light.btn-move-calendar:before {
@@ -180,7 +240,7 @@
             justify-content: center; 
             border-radius: 4px; 
         }
-
+      
          
         
     </style>
@@ -189,7 +249,7 @@
 
     <div class="container-fluid">
         <div class="calendar-header">
-            <h3> TimeSlotSignUp Page</h3>
+            <h3> TimeSlotSignUp</h3>
             @{
                 var userEmails = User.FindFirstValue(ClaimTypes.Email);
             }
@@ -215,9 +275,9 @@
                         <div class="modal-body" id="messageModalBody">
                             <!-- Message will be inserted here -->
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
                     </div>
                 </div>
             </div>
@@ -229,8 +289,10 @@
     <script src="~/js/moment.js/moment-with-locales.min.js"></script>
     <script src="~/jquery.touchswipe/jquery.touchswipe.min.js"></script>
     <script src="~/js/jquery-calendar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
     <script>
         $(document).ready(function () {
+        
             var events = @Html.Raw(Json.Serialize(Model.Events));
 
 
@@ -243,11 +305,61 @@
                     }
                 },
                 events: events,
+                view: 'week',
+                defaultView: {
+                    largeScreen: 'week',
+                    smallScreen: 'day',
+                    smallScreenThreshold: 1000
+                },
+                weekday: {
+                    timeline: {
+                        fromHour: 7,
+                        toHour: 20,
+                        intervalMinutes: 60,
+                        format: 'HH:mm',
+                        heightPx: 50,
+                        autoResize: true
+                    },
+                    dayline: {
+                        weekdays: [0, 1, 2, 3, 4, 5, 6],
+                        format: 'MM/DD',
+                        heightPx: 31,
+                        month: {
+                            format: 'MMMM YYYY',
+                            heightPx: 30,
+                            weekFormat: 'w'
+                        }
+                    }
+                },
+                month: {
+                    format: 'MMMM YYYY',
+                    heightPx: 31,
+                    weekline: {
+                        format: 'w',
+                        heightPx: 80
+                    },
+                    dayheader: {
+                        weekdays: [0, 1, 2, 3, 4, 5, 6],
+                        format: 'dddd',
+                        heightPx: 30
+                    },
+                    day: {
+                        format: 'MM/DD'
+                    }
+                },
+                unixTimestamp: moment().format('X'),
+                event: {
+                    hover: {
+                        delay: 500000
+                    }
+                }
 
          
-            }).init();         
+            }).init();
 
 
+
+            
 
             // Handle calendar event click and prevent default behavior
             $('#calendar').on('Calendar.event-click', function (event, instance, elem, evt) {
@@ -338,12 +450,17 @@
             $('#messageModal').modal('show');
 
 
+           // $(".nav-fixed").addClass("backgr");
+
+
+           
 
             // Hide the modal with a fade-out effect after 1 second
             setTimeout(function () {
                 $('#messageModal').fadeOut(1000, function () {
                     $('#messageModal').modal('hide'); // Hide the modal
                     $('#messageModal').css('display', 'none'); // Reset display property for future use
+                    //$(".nav-fixed").removeClass("backgr");
                 });
             }, 2000); // 1000 milliseconds = 1 second
            

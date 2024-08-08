@@ -159,6 +159,7 @@ namespace LogicalPantry.Web.Controllers
         [HttpGet("Calendar")]
         public async Task<IActionResult> Calendar()
         {
+            var tenantName = HttpContext.Items["TenantName"] as string;
             _logger.LogInformation("Calendar page accessed");
 
             // Fetch events from the database

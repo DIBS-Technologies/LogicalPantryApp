@@ -9,17 +9,21 @@ using DotNetOpenAuth.AspNet.Clients;
 using Facebook;
 using FacebookClient = Facebook.FacebookClient;
 using LogicalPantry.Web.Helper;
+using LogicalPantry.DTOs.TenantDtos;
 
 namespace LogicalPantry.Web.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+       // protected TenantDto Tenant => HttpContext.Items["Tenant"] as TenantDto;
+        protected string TenantName => HttpContext.Items["TenantName"]?.ToString();
 
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
+        //private readonly ILogger<HomeController> _logger;
+
+        //public HomeController(ILogger<HomeController> logger)
+        //{
+        //    _logger = logger;
+        //}
        
         public IActionResult Index()
         {

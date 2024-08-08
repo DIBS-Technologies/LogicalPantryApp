@@ -256,13 +256,13 @@ namespace LogicalPantry.Services.InformationService
         }
 
 
-        public async Task<ServiceResponse<TenantDto>> GetTenantPageNameForUserAsync(string PageName)
+        public async Task<ServiceResponse<TenantDto>> GetTenantPageNameForUserAsync(string tenantName)
         {
             var response = new ServiceResponse<TenantDto>();
            // var pageName1 = "account-billing";
             try
             {
-                var TenantPageName = await dataContext.Tenants.Where(p => p.PageName == PageName)
+                var TenantPageName = await dataContext.Tenants.Where(p => p.TenantName == tenantName)
                                                                      .FirstOrDefaultAsync();
 
                 if (TenantPageName != null)
@@ -297,5 +297,58 @@ namespace LogicalPantry.Services.InformationService
             return response;
         }
 
+
+
+
+        public async Task<ServiceResponse<TenantDto>> GetTenantByNameAsync(string tenantName)
+        {
+            var response = new ServiceResponse<TenantDto>();
+
+            var tenant = await dataContext.Tenants.FirstOrDefaultAsync(t => t.TenantName == tenantName);
+            if (tenant != null)
+            {
+                response.Data = new TenantDto
+                {
+                    Id = tenant.Id,
+                    TenantName = tenant.TenantName,
+                    // Add other properties as needed
+                };
+                response.Success = true;
+            }
+            else
+            {
+                response.Success = false;
+                response.Message = "Tenant not found";
+            }
+
+            return response;
+        }
+
+
+
+        
+        public async Task<ServiceResponse<TenantDto>> GetTenantIdByEmail(string userEmail)
+        {
+            var response = new ServiceResponse<TenantDto>();
+
+            var tenant = await dataContext.Tenants.FirstOrDefaultAsync(t => t.AdminEmail == userEmail);
+            if (tenant != null)
+            {
+                response.Data = new TenantDto
+                {
+                    Id = tenant.Id,
+                    TenantName = tenant.TenantName,
+                    // Add other properties as needed
+                };
+                response.Success = true;
+            }
+            else
+            {
+                response.Success = false;
+                response.Message = "Tenant not found";
+            }
+
+            return response;
+        }
     }
 }
