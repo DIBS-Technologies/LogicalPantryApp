@@ -9,7 +9,7 @@ using Tweetinvi.Core.Events;
 namespace LogicalPantry.Web.Controllers
 {
     [Route("TimeSlot")]
-    public class TimeSlotController : Controller
+    public class TimeSlotController : BaseController
     {
 
         private readonly ILogger<TimeSlotController> _logger;
@@ -59,7 +59,7 @@ namespace LogicalPantry.Web.Controllers
         public async Task<IActionResult> EditTimeSlotUser(string id)
         {
 
-            var response =  _userSercvice.GetUsersbyTimeSlotId(int.Parse(id)).Result;
+            var response = await _userSercvice.GetUsersbyTimeSlotId(int.Parse(id));
             var userDtos = new List<UserDto>(); 
             return View(response.Data.ToList()); // Handle the error case appropriately
         }

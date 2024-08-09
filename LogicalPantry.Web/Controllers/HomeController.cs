@@ -13,7 +13,7 @@ using LogicalPantry.DTOs.TenantDtos;
 
 namespace LogicalPantry.Web.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
        // protected TenantDto Tenant => HttpContext.Items["Tenant"] as TenantDto;
         protected string TenantName => HttpContext.Items["TenantName"]?.ToString();
@@ -27,9 +27,7 @@ namespace LogicalPantry.Web.Controllers
        
         public IActionResult Index()
         {
-           _logger.LogInformation($"Index method call started");
-
-           _logger.LogInformation($"Index method call ended");
+          
 
             return View();
         }
@@ -37,9 +35,7 @@ namespace LogicalPantry.Web.Controllers
        
         public IActionResult Privacy()
         {
-            _logger.LogInformation($"Privacy method call started");
-
-            _logger.LogInformation($"Privacy method call ended");
+           
 
             return View();
         }
@@ -47,9 +43,7 @@ namespace LogicalPantry.Web.Controllers
        
         public IActionResult Error()
         {
-            _logger.LogInformation($"Error method call started");
-
-            _logger.LogInformation($"Error method call ended");
+            
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
     }

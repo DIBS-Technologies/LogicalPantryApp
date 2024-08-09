@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace LogicalPantry.Web.Controllers
 {
     [Route("Tenant")]
-    public class TenantController : Controller
+    public class TenantController : BaseController
     {
 
         private readonly ITenantService _tenantService;
@@ -14,7 +14,7 @@ namespace LogicalPantry.Web.Controllers
 
 
         private readonly ILogger _logger;
-        public TenantController(ITenantService tenantService, ILogger logger, IInformationService infotenantService)
+        public TenantController(ITenantService tenantService, ILogger<TenantController> logger, IInformationService infotenantService)
         {
             _tenantService = tenantService;
             _infotenantService = infotenantService;
@@ -71,32 +71,34 @@ namespace LogicalPantry.Web.Controllers
                     var fileName = Guid.NewGuid().ToString() + Path.GetExtension(LogoFile.FileName);
                     var filePath = Path.Combine("wwwroot/Pages", fileName);
 
-        //            // Save the file
-        //            using (var stream = new FileStream(filePath, FileMode.Create))
-        //            {
-        //                await LogoFile.CopyToAsync(stream);
-        //            }
+                    //            // Save the file
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await LogoFile.CopyToAsync(stream);
+                    }
 
-        //            // Update the tenantDto with the new logo path
-        //            tenantDto.Logo = "/Pages/" + fileName;
-        //        }
+                    // Update the tenantDto with the new logo path
+                    tenantDto.Logo = "/Pages/" + fileName;
+                }
 
                 var response = await _infotenantService.PostTenant(tenantDto);
-                if (response.Success)
-                {
-                    // Redirect to the GET method to display the updated data
-                    return RedirectToAction(nameof(EditTenant), new { id = tenantDto.Id });
-                }
-                else
-                {
-                    ModelState.AddModelError("", response.Message);
-                }
-                _logger.LogInformation($"EditTenant post method call ended");
+                    if (response.Success)
+                    {
+                        // Redirect to the GET method to display the updated data
+                        return RedirectToAction(nameof(EditTenant), new { id = tenantDto.Id });
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", response.Message);
+                    }
+                    _logger.LogInformation($"EditTenant post method call ended");
 
+                }
+
+                return View(tenantDto);
             }
+        }
+     }
+    
 
-        //    return View(tenantDto);
-        //}
-    }
-}
 

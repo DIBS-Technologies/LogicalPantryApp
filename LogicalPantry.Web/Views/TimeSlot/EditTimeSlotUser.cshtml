@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Edit Time Slot Users";
+    var tenantName = (string)ViewData["TenantName"] ?? "DefaultTenant";
+}
 }
 
 @Html.AntiForgeryToken()

@@ -7,11 +7,11 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LogicalPantry.Web.Controllers
 {
-    public class RegistrationController : Controller
+    public class RegistrationController : BaseController
     {
         IRegistrationService _registrationService;
         private readonly ILogger _logger;
-        public RegistrationController(IRegistrationService registrationService, ILogger logger)
+        public RegistrationController(IRegistrationService registrationService, ILogger<RegistrationController> logger)
         {
                 _registrationService = registrationService;
                 _logger = logger;

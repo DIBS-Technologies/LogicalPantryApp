@@ -129,22 +129,20 @@ else
     app.UseHsts(); // Use HTTP Strict Transport Security
 }
 
+app.UseHttpsRedirection(); // Redirect HTTP requests to HTTPS
 app.UseAuthentication(); // Enable authentication middleware
 app.UseAuthorization(); // Enable authorization middleware
 // Add the Tenant Middleware
 
-
-
-
-app.UseHttpsRedirection(); // Redirect HTTP requests to HTTPS
 app.UseStaticFiles(); // Serve static files from wwwroot folder
-
-app.UseMiddleware<TenantMiddleware>();
 app.UseSession(); // Enable session middleware
+app.UseMiddleware<TenantMiddleware>();
 app.UseRouting(); // Enable routing
 
 
-
+//app.MapControllerRoute(
+//    name: "default",
+//    pattern: "{controller=Auth}/{action=loginView}/{id?}");
 
 
 //// Define a route pattern that includes the tenant in the URL

@@ -1,6 +1,102 @@
-﻿using LogicalPantry.Services.InformationService;
+﻿//using LogicalPantry.Services.InformationService;
+//using Microsoft.AspNetCore.Http;
+//using Microsoft.Extensions.Caching.Memory;
+//using System.Linq;
+//using System.Security.Claims;
+//using System.Threading.Tasks;
+
+//public class TenantMiddleware
+//{
+//    private readonly RequestDelegate _next;
+//    private readonly IMemoryCache _cache;
+
+//    public TenantMiddleware(RequestDelegate next, IMemoryCache cache)
+//    {
+//        _next = next;
+//        _cache = cache;
+//    }
+
+
+
+//    public async Task InvokeAsync(HttpContext context)
+//    {
+//        // Get the path of the current request
+//        var path = context.Request.Path.Value;
+
+//        // Skip middleware processing for static assets (e.g., CSS, JS, images, fonts)
+//        var staticFileExtensions = new[] { ".css", ".js", ".png", ".jpg", ".jpeg", ".gif", ".woff", ".woff2", ".ttf", ".otf", ".eot", ".svg" };
+
+//        if (staticFileExtensions.Any(ext => path.EndsWith(ext, StringComparison.OrdinalIgnoreCase)) || path.Contains("assets") || path.Contains("fonts"))
+//        {
+//            // Skip further processing and pass the request to the next middleware
+//            await _next(context);
+//            return;
+//        }
+
+//        // Process tenant-specific logic
+//        var segments = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+
+
+//        if (segments.Length > 0)  // Ensure there's more than just the tenant in the URL
+//        {
+//            var tenantNameFromUrl = segments[0]; // Capture TenantA
+
+//            // Simulate authentication check (remove this if you're already doing this elsewhere)
+//            if (context.User.Identity.IsAuthenticated)
+//            {
+//                var userEmail = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+//                if (!_cache.TryGetValue(tenantNameFromUrl, out string cachedTenantName))
+//                {
+//                    var informationService = context.RequestServices.GetRequiredService<IInformationService>();
+//                    var tenant = await informationService.GetTenantIdByEmail(userEmail);
+
+//                    if (tenant == null)
+//                    {
+//                        context.Response.StatusCode = StatusCodes.Status404NotFound;
+//                        await context.Response.WriteAsync("Tenant not found");
+//                        return;
+//                    }
+
+//                    cachedTenantName = tenant.Data.TenantName;
+//                    _cache.Set(tenantNameFromUrl, cachedTenantName);
+//                }
+
+//                if (tenantNameFromUrl != cachedTenantName)
+//                {
+//                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
+//                    await context.Response.WriteAsync("Unauthorized: Tenant mismatch");
+//                    return;
+//                }
+
+//                // Store the tenant name in HttpContext.Items to access it in the controller
+//                context.Items["TenantName"] = cachedTenantName;
+//            }
+//            else
+//            {
+//                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+//                await context.Response.WriteAsync("Unauthorized: User not authenticated");
+//                return;
+//            }
+
+//            // Modify the path to remove the tenant segment so that the routing can work properly
+//            //  var newPath = "/" + string.Join("/", segments.Skip(1));
+//            //context.Request.Path = newPath; // Update the path to /TimeSlot/UserCalendar
+//            var newPath = "/" + string.Join("/", segments.Skip(1)); // Adjust path to remove tenant segment
+//            context.Request.Path = newPath;
+//        }
+
+
+//        await _next(context);
+//    }
+//}
+
+
+
+using LogicalPantry.Services.InformationService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
+using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -16,78 +112,87 @@ public class TenantMiddleware
         _cache = cache;
     }
 
- 
+    public async Task InvokeAsync(HttpContext context)
+    {
+        // Get the path of the current request
+        var path = context.Request.Path.Value;
 
-        public async Task InvokeAsync(HttpContext context)
+        // Handle root path or empty tenant name
+        if (string.IsNullOrWhiteSpace(path) || path == "/")
         {
-            var path = context.Request.Path.Value;
+            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            await context.Response.WriteAsync("Tenant name is missing ");
+            return;
+        }
 
-            // Define static file extensions and directories to ignore
-            var staticFileExtensions = new[] { ".css", ".js", ".png", ".jpg", ".jpeg", ".gif", ".ico", ".woff", ".woff2", ".ttf", ".svg", ".otf" };
-            var staticDirectories = new[] { "assets", "fonts", "images", "styles" };
+        // Skip middleware processing for static assets (e.g., CSS, JS, images, fonts)
+        var staticFileExtensions = new[] { ".css", ".js", ".png", ".jpg", ".jpeg", ".gif", ".woff", ".woff2", ".ttf", ".otf", ".eot", ".svg" };
+        if (staticFileExtensions.Any(ext => path.EndsWith(ext, StringComparison.OrdinalIgnoreCase)) || path.Contains("assets") || path.Contains("fonts"))
+        {
+            await _next(context);
+            return;
+        }
 
-            // Check if the request path contains static file extensions or directories
-            if (staticFileExtensions.Any(ext => path.EndsWith(ext, StringComparison.OrdinalIgnoreCase)) ||
-                staticDirectories.Any(dir => path.Contains($"/{dir}/", StringComparison.OrdinalIgnoreCase)))
+        // Process tenant-specific logic
+        var segments = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+        if (segments.Length > 0)
+        {
+            var tenantNameFromUrl = segments[0]; // Capture TenantA from the URL
+
+
+            if (segments.Length == 1)
             {
+
+                context.Request.Path = "";
+                context.Items["TenantName"] = tenantNameFromUrl; // Store tenant name for later use in the controller
                 await _next(context);
-                return;
             }
 
-            // Process tenant-specific logic
-            var segments = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
 
+            if (context.User.Identity.IsAuthenticated)
+            {
+                var userEmail = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
-        if (segments.Length > 0)  // Ensure there's more than just the tenant in the URL
+                if (userEmail == null)
                 {
-                    var tenantNameFromUrl = segments[0]; // Capture TenantA
+                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    await context.Response.WriteAsync("Unauthorized: User email not found");
+                    return;
+                }
 
-                    // Simulate authentication check (remove this if you're already doing this elsewhere)
-                    if (context.User.Identity.IsAuthenticated)
+                // Check if tenant information is cached
+                if (!_cache.TryGetValue(tenantNameFromUrl, out string cachedTenantName))
+                {
+                    var informationService = context.RequestServices.GetRequiredService<IInformationService>();
+                    var tenant = await informationService.GetTenantIdByEmail(userEmail);
+
+                    if (tenant == null)
                     {
-                        var userEmail = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
-
-                        if (!_cache.TryGetValue(tenantNameFromUrl, out string cachedTenantName))
-                        {
-                            var informationService = context.RequestServices.GetRequiredService<IInformationService>();
-                            var tenant = await informationService.GetTenantIdByEmail(userEmail);
-                 
-                            if (tenant == null)
-                            {
-                                context.Response.StatusCode = StatusCodes.Status404NotFound;
-                                await context.Response.WriteAsync("Tenant not found");
-                                return;
-                            }
-
-                            cachedTenantName = tenant.Data.TenantName;
-                            _cache.Set(tenantNameFromUrl, cachedTenantName);
-                        }
-
-                        if (tenantNameFromUrl != cachedTenantName)
-                        {
-                            context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                            await context.Response.WriteAsync("Unauthorized: Tenant mismatch");
-                            return;
-                        }
-
-                        // Store the tenant name in HttpContext.Items to access it in the controller
-                        context.Items["TenantName"] = cachedTenantName;
-                    }
-                    else
-                    {
-                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                        await context.Response.WriteAsync("Unauthorized: User not authenticated");
+                        context.Response.StatusCode = StatusCodes.Status404NotFound;
+                        await context.Response.WriteAsync("Tenant not found");
                         return;
                     }
 
-                    // Modify the path to remove the tenant segment so that the routing can work properly
-                  //  var newPath = "/" + string.Join("/", segments.Skip(1));
-                    //context.Request.Path = newPath; // Update the path to /TimeSlot/UserCalendar
-                     var newPath = "/" + string.Join("/", segments.Skip(1)); // Adjust path to remove tenant segment
-                context.Request.Path = newPath;
+                    cachedTenantName = tenant.Data.TenantName;
+                    _cache.Set(tenantNameFromUrl, cachedTenantName);
                 }
-     
 
-                await _next(context);
+                // Ensure the tenant name in the URL matches the tenant associated with the user
+                if (tenantNameFromUrl != cachedTenantName)
+                {
+                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                    await context.Response.WriteAsync("Unauthorized: Tenant mismatch");
+                    return;
+                }
+
+                // Store the tenant name in HttpContext.Items for use in controllers
+                context.Items["TenantName"] = cachedTenantName;
+                var newPath = "/" + string.Join("/", segments.Skip(1)); // Adjust path to remove tenant segment
+                context.Request.Path = newPath;
+            }
         }
+
+        // Continue processing the request
+        await _next(context);
+    }
 }

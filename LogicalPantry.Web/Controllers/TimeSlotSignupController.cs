@@ -13,14 +13,14 @@ using Tweetinvi.Core.Extensions;
 namespace LogicalPantry.Web.Controllers
 {
     [Route("TimeSlotSignup")]
-    public class TimeSlotSignupController : Controller
+    public class TimeSlotSignupController : BaseController
     {
         private readonly ITimeSlotService _timeSlotService;
         private readonly ITimeSlotSignupService _timeSlotSignupService;
         private readonly ILogger _logger;
      
 
-        public TimeSlotSignupController( ITimeSlotService timeSlotService , ITimeSlotSignupService timeSlotSignupService, ILogger logger)
+        public TimeSlotSignupController( ITimeSlotService timeSlotService , ITimeSlotSignupService timeSlotSignupService, ILogger<TimeSlotSignupController> logger)
         {
             _logger = logger;
             _timeSlotService = timeSlotService;

@@ -23,11 +23,11 @@ using Newtonsoft.Json;
 namespace LogicalPantry.Web.Controllers
 {
     [Route("User")]
-    public class UserController : Controller
+    public class UserController : BaseController
     {
         IUserService _userService;
         private readonly ILogger _logger;
-        public UserController(IUserService userService, ILogger logger)
+        public UserController(IUserService userService, ILogger<UserController> logger)
         {
             _userService = userService;
             _logger = logger;

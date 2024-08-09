@@ -269,7 +269,7 @@ namespace LogicalPantry.Services.InformationService
             try
             {
                 // Retrieve the page name for the specified tenant from the database
-                var TenantPageName = await dataContext.Tenants.Where(p => p.PageName == PageName)
+                var TenantPageName = await dataContext.Tenants.Where(p => p.TenantName == PageName)
                                                                      .FirstOrDefaultAsync();
                
                 if (TenantPageName != null)

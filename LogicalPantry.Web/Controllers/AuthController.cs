@@ -18,11 +18,10 @@ namespace LogicalPantry.Web.Controllers
     [Route("Auth")]
     public class AuthController : Controller
     {
-        private readonly ILogger<AuthController> _logger;
         private readonly IUserService _userServices;
         private readonly IRoleService _roleService;
-
-        public AuthController(IUserService userServices, IRoleService roleService, ILogger<AuthController> logger)
+        private readonly ILogger _logger;
+        public AuthController(IUserService userServices, IRoleService roleService , ILogger<AuthController> logger)
         {
             _userServices = userServices;
             _roleService = roleService;
@@ -30,20 +29,21 @@ namespace LogicalPantry.Web.Controllers
         }
 
         // Google Authentication
+        [HttpGet("GoogleLogin")]
         public IActionResult GoogleLogin()
         {
-            _logger.LogInformation($"GoogleLogin Method is called Started");
+            //_logger.LogInformation($"GoogleLogin Method is called Started");
             var properties = new AuthenticationProperties
             {
                 RedirectUri = Url.Action(nameof(GoogleResponse))
             };
-            _logger.LogInformation($"GoogleLogin Method is call ended");
+            //_logger.LogInformation($"GoogleLogin Method is call ended");
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
-
+        [HttpGet("GoogleResponse")]
         public async Task<IActionResult> GoogleResponse()
         {
-            _logger.LogInformation($"GoogleResponse Method is call ended");
+            //_logger.LogInformation($"GoogleResponse Method is call ended");
 
             var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             var userInfo = await CheckIfUserExists(result);
@@ -66,13 +66,13 @@ namespace LogicalPantry.Web.Controllers
                     return RedirectToAction(ViewConstants.UserCalandar, ViewConstants.TimeSlot, new { area = "" });
                 }
             }
-            _logger.LogInformation($"GoogleResponse Method is call ended");
-            return RedirectToAction(ViewConstants.AUTH, ViewConstants.LOGINVIEW, new { area = "" });
+           // _logger.LogInformation($"GoogleResponse Method is call ended");
+            return RedirectToAction(ViewConstants.LOGINVIEW, ViewConstants.AUTH, new { area = "" });
 
    
         }
 
-        // Facebook Authentication
+       // Facebook Authentication
         public IActionResult FacebookLogin()
         {
             var properties = new AuthenticationProperties
@@ -132,7 +132,7 @@ namespace LogicalPantry.Web.Controllers
 
             return RedirectToAction(ViewConstants.AUTH, ViewConstants.LOGINVIEW, new { area = "" });
 
-         
+
         }
 
         // Microsoft 365 Authentication
@@ -158,7 +158,7 @@ namespace LogicalPantry.Web.Controllers
             }
             else if (userInfo != null && userInfo.Role == "User")
             {
-                
+
 
                 return RedirectToAction(ViewConstants.INDEX, ViewConstants.TimeSlotSignUp, new { area = "" });
             }
@@ -169,7 +169,7 @@ namespace LogicalPantry.Web.Controllers
         [HttpGet("loginView")]
         public IActionResult loginView()
         {
-            _logger.LogInformation("loginView page accessed.");
+            //_logger.LogInformation("loginView page accessed.");
             return View();
         }
 
