@@ -2,9 +2,9 @@
 
 @{
     ViewData["Title"] = "Edit Time Slot Users";
-    var tenantName = (string)ViewData["TenantName"] ?? "DefaultTenant";
+    var tenantName = ViewBag.TenantName as string;
 }
-}
+
 
 @Html.AntiForgeryToken()
 
@@ -169,7 +169,7 @@
                 }
 
                 $.ajax({
-                    url: '@Url.Action("UpdateUserBatch", "User")',
+                    url: '@Url.Action(tenantName,"UpdateUserBatch", "User")',
                     type: 'POST',
                     data: JSON.stringify(userStatuses),
                     contentType: 'application/json; charset=utf-8',

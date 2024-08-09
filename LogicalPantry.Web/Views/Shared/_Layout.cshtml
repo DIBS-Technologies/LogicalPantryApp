@@ -1,4 +1,8 @@
 ﻿@using System.Security.Claims;
+@{
+    var tenantName = ViewBag.TenantName as string;
+
+}
 <!DOCTYPE html>
 <html>
 <head>
@@ -70,15 +74,15 @@
                 <div class="sidenav-menu">
                     <div class="nav accordion" id="accordionSidenav">
                         <div class="sidenav-menu-heading">Main Menu</div>
-                        <a class="nav-link collapsed" id="menuIndex" asp-action="Calendar" asp-controller="TimeSlot">
+                        <a class="nav-link collapsed" id="menuIndex" href="/@tenantName/TimeSlot/Calendar">
                             <div class="nav-link-icon"><i data-feather="activity"></i></div>
                             Pickup Slots
                         </a>
-                        <a class="nav-link collapsed" id="menuIndex" href="/Information/AddTenant">
+                        <a class="nav-link collapsed" id="menuIndex" href="/@tenantName/Information/AddTenant">
                             <div class="nav-link-icon"><i data-feather="activity"></i></div>
                             Information
                         </a>
-                        <a class="nav-link collapsed" id="menuIndex" href="/User/ManageUsers">
+                        <a class="nav-link collapsed" id="menuIndex" href="/@tenantName/User/ManageUsers">
                             <div class="nav-link-icon"><i data-feather="activity"></i></div>
                             Users
                         </a>
@@ -120,7 +124,7 @@
 
                 var userEmail = '@User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value';
                 $.ajax({
-                    url: "/Infromation/Get",
+                    url: "/@tenantName/Information/Get",
                     method: "GET",
                     data: { tenantid:"1" },
                     success: function (data) {

@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var tenantName = ViewBag.TenantName as string;
+
+}
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -143,9 +148,9 @@
             </div>
             <div class="page-name" id="pageName"></div>
             <div class="navbar-nav">
-                <a class="nav-link" href="/TimeSlots/Calendar">Pickup</a>
-                <a class="nav-link" href="/Donation/PayPal">Donation</a>
-                <a class="nav-link" href="/Auth/loginview">Login</a>
+                <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar">Pickup</a>
+                <a class="nav-link" href="/@tenantName/Donation/PayPal">Donation</a>
+                <a class="nav-link" href="/@tenantName/Auth/loginview">Login</a>
             </div>
         </nav>
         <div id="layoutSidenav_content">

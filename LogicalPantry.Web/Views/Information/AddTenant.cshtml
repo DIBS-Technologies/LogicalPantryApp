@@ -1,5 +1,10 @@
 ﻿@using System.Security.Claims
 
+@{
+    var tenantName = ViewBag.TenantName as string;
+
+}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -88,7 +93,7 @@
                                 @TempData["ErrorMessageInfo"]
                             </div>
                         }
-                        <form method="post" id="createUser" action="/Information/AddTenant" enctype="multipart/form-data">
+                        <form method="post" id="createUser" action="@tenantName/Information/AddTenant" enctype="multipart/form-data">
                             <div class="form-group">
                                 <label for="logo">Logo<span class="mandatory">*</span></label>
                                 <input type="file" name="LogoFile" class="form-control-file" id="logo" />

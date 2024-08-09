@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var tenantName = ViewBag.TenantName as string;
+
+}
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -212,6 +216,7 @@
 
     <script>
         $(document).ready(function () {
+            debugger;
             var events = @Html.Raw(Json.Serialize(Model.Events));          
 
             $('#calendar').Calendar({
@@ -287,7 +292,7 @@
                 };
 
                 $.ajax({
-                    url: '/TimeSlot/AddEvent',
+                    url: 'AddEvent',
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(eventData),
@@ -314,7 +319,7 @@
 
                 // Get time slot ID using the extracted details
                 $.ajax({
-                    url: '/TimeSlot/GetTimeSlotId',
+                    url: 'GetTimeSlotId',
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify({
@@ -325,7 +330,7 @@
                     success: function (response) {
                         if (response && response.timeSlotId) {
                             // Redirect to EditTimeSlotUser with the time slot ID
-                            window.location.href = '/TimeSlot/EditTimeSlotUser?id=' + response.timeSlotId;
+                            window.location.href = 'EditTimeSlotUser?id=' + response.timeSlotId;
                         } else {
                             alert('Time slot not found.');
                         }

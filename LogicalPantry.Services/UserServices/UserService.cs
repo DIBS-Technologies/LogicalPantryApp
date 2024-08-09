@@ -123,8 +123,8 @@ namespace LogicalPantry.Services.UserServices
                     return response;
                 }
 
-                //dataContext.Users.Remove(user);
-                //await dataContext.SaveChangesAsync();
+                dataContext.Users.Remove(user);
+                await dataContext.SaveChangesAsync();
 
                 response.Data = true;
                 response.Success = true;

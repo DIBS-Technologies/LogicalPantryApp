@@ -52,34 +52,7 @@ namespace LogicalPantry.Web.Controllers
 
 
 
-        //[HttpPost("AddTimeSlotSignUps")]
-        //public async Task<IActionResult> AddTimeSlotSignUps([FromBody] TimeSlotSignupDto dto)
-        //{
-        //    if (dto == null)
-        //    {
-        //        return BadRequest(new { success = false, message = "Invalid data" });
-        //    }
-
-        //    try
-        //    {
-        //        // Assuming you have a service to handle the business logic
-        //        var result = await _timeSlotSignupService.AddTimeSlotSignUp(dto);
-
-        //        if (result)
-        //        {
-        //            return Ok(new { success = true });
-        //        }
-        //        else
-        //        {
-        //            return StatusCode(500, new { success = false, message = "Error adding sign-up" });
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // Log exception
-        //        return StatusCode(500, new { success = false, message = "Exception occurred: " + ex.Message });
-        //    }
-        //}
+   
 
 
         [HttpPost("AddTimeSlotSignUps")]

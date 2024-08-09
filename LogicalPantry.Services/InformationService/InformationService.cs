@@ -255,21 +255,21 @@ namespace LogicalPantry.Services.InformationService
         }
 
 
-      
+
 
         /// <summary>
         /// For anonymous page - 2-08-2024 kunal karne
         /// </summary>
-        /// <param name="PageName"></param>
+        /// <param name="tenantName"></param>
         /// <returns></returns>
-        public async Task<ServiceResponse<TenantDto>> GetTenantPageNameForUserAsync(string PageName)
+        public async Task<ServiceResponse<TenantDto>> GetTenantPageNameForUserAsync(string tenantName)
         {
             var response = new ServiceResponse<TenantDto>();
            // var pageName1 = "account-billing";
             try
             {
                 // Retrieve the page name for the specified tenant from the database
-                var TenantPageName = await dataContext.Tenants.Where(p => p.TenantName == PageName)
+                var TenantPageName = await dataContext.Tenants.Where(p => p.TenantName == tenantName)
                                                                      .FirstOrDefaultAsync();
                
                 if (TenantPageName != null)

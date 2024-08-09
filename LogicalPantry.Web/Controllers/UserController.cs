@@ -102,54 +102,22 @@ namespace LogicalPantry.Web.Controllers
             return Ok(new { UserEmail = userEmail, UserName = userName });
         }
 
-        [Route("UpdateUser")]
-        public async Task<IActionResult> UpdateUser(string updatedNotificationList)
-        {
-            if (updatedNotificationList == null)
-            {
-                return BadRequest("Invalid data.");
-            }
-
-            var updatedNotificationListObject = JsonConvert.DeserializeObject<UserAllowStatusDto>(updatedNotificationList);
-
-            var userDto = new UserDto { Id = updatedNotificationListObject.Id, IsAllow = updatedNotificationListObject.IsAllow };
-
-
-            if (userDto != null)
-            {
-                var response = _userService.UpdateUserAsync(userDto).Result;
-
-                if (response != null)
-                {
-                    @TempData["MessageClass"] = "alert-success";
-                    @TempData["SuccessMessageUser"] = "User Saved Successfully";
-
-                    return Ok(new { success = true });
-                }
-                else
-                {
-                    @TempData["MessageClass"] = "alert-success";
-                    @TempData["SuccessMessageUser"] = "Internal server error.";
-                    return StatusCode(500, "Internal server error.");
-                }
-            }
-            return Ok(new { success = false });
-        }
-
-        
-        //public async Task<IActionResult> UpdateUserBatch(string userStatuses)
+        //[Route("UpdateUser")]
+        //public async Task<IActionResult> UpdateUser([FromBody]  string updatedNotificationList)
         //{
-        //    if (userStatuses == null)
+        //    if (updatedNotificationList == null)
         //    {
         //        return BadRequest("Invalid data.");
         //    }
 
-        //   var updatedNotificationListObject = JsonConvert.DeserializeObject<List<UserAllowStatusDto>>(userStatuses);
+        //    var updatedNotificationListObject = JsonConvert.DeserializeObject<UserAllowStatusDto>(updatedNotificationList);
+
+        //    var userDto = new UserDto { Id = updatedNotificationListObject.Id, IsAllow = updatedNotificationListObject.IsAllow };
 
 
-        //    if (updatedNotificationListObject != null)
+        //    if (userDto != null)
         //    {
-        //        var response = _userService.UpdateUserAllowStatusAsync(updatedNotificationListObject).Result;
+        //        var response = _userService.UpdateUserAsync(userDto).Result;
 
         //        if (response != null)
         //        {
@@ -167,6 +135,34 @@ namespace LogicalPantry.Web.Controllers
         //    }
         //    return Ok(new { success = false });
         //}
+
+        [Route("UpdateUser")]
+        [HttpPost] // Or [HttpGet] if using GET
+        public async Task<IActionResult> UpdateUser(int userId, bool isAllow)
+        {
+            if (userId <= 0)
+            {
+                return BadRequest("Invalid user ID.");
+            }
+
+            var userDto = new UserDto { Id = userId, IsAllow = isAllow };
+
+            var response = await _userService.UpdateUserAsync(userDto);
+
+            if (response.Success)
+            {
+                TempData["MessageClass"] = "alert-success";
+                TempData["SuccessMessageUser"] = "User Saved Successfully";
+                return Ok(new { success = true });
+            }
+            else
+            {
+                TempData["MessageClass"] = "alert-danger";
+                TempData["SuccessMessageUser"] = "Internal server error.";
+                return StatusCode(500, "Internal server error.");
+            }
+        }
+
 
         [Route("UpdateUserBatch")]
         [HttpPost]
@@ -221,7 +217,7 @@ namespace LogicalPantry.Web.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("DeleteUser/{id}")]
         public async Task<IActionResult> DeleteUser(string id)
         {
             try

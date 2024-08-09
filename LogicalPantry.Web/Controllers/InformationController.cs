@@ -12,7 +12,7 @@ namespace LogicalPantry.Web.Controllers
     [Route("Information")]
     public class InformationController : BaseController
     {
-        IInformationService _informationService;
+        private readonly IInformationService _informationService;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly ILogger<InformationController> _logger;
         private readonly IMemoryCache _memoryCache;
@@ -50,95 +50,11 @@ namespace LogicalPantry.Web.Controllers
         }
 
 
-        /// <summary>
-        /// For anonymous page - 2-08-2024 kunal karne
-        /// </summary>
-        /// <param name="PageName"></param>
-        /// <returns></returns>
-
-        //        [ResponseCache(Duration = 300, Location = ResponseCacheLocation.Any, NoStore = false)]
-        //        public async Task<IActionResult> PageName(string PageName)
-        //        {
-
-
-        //            _logger.LogInformation($"Index1 method call started");
-
-        //            // Call the service to get tenant-specific page name information
-        //            var tenanatResponse = await _informationService.GetTenantPageNameForUserAsync(PageName);
-        //            //check if the response indicated success
-        //            if (tenanatResponse.Success)
-        //            {
-
-        //                //Extract the pageName from response
-        //                var pageName = tenanatResponse.Data.PageName;
-
-        //                var fileExtension = ".html";
-        //                if (!pageName.EndsWith(fileExtension, StringComparison.OrdinalIgnoreCase))
-        //                {
-        //                    pageName += fileExtension;
-        //                }
-
-        //                // Build the path to the tenant-specific pages directory
-        //                var tenantFolderPath = Path.Combine(_webHostEnvironment.WebRootPath, "TenantPages");
-        //                var tenantFolderName = Path.GetFileName(tenantFolderPath);   //Get the folder name
-        //                var filepath = Path.Combine(tenantFolderPath, pageName);    //Get full path of pageName
-        //                string filenameWithExtension = Path.GetFileName(filepath);  //Get pageName with extension
-
-
-        //                //check if file is exist
-        //                if (!System.IO.File.Exists(filepath))
-        //                {
-        //                    Console.WriteLine("File not found.");
-        //                    return NotFound("The requested page was not found.");
-        //                }
-
-
-        //                 string CacheKey = "PageName";
-
-        //                // Try to get the page name from memory cache
-        //                if (!_memoryCache.TryGetValue(CacheKey, out string cachedPageName))
-        //                {
-        //                    // If not found in cache, fetch it from the service
-        //                    cachedPageName = tenanatResponse.Data.PageName;
-
-        //                    // Set the fetched page name in the memory cache with an expiration time
-        //                    var cacheEntryOptions = new MemoryCacheEntryOptions
-        //                    {
-        //                        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5),
-        //                        // Optionally, set other cache options like priority or sliding expiration
-        //                        Priority = CacheItemPriority.Normal,
-        //                        SlidingExpiration = TimeSpan.FromMinutes(2)
-        //                    };
-
-        //                    _memoryCache.Set(CacheKey, cachedPageName, cacheEntryOptions);
-
-        //                    Console.WriteLine( $" store memory cashe {_memoryCache.Get("PageName")}");
-        //                    _logger.LogInformation("PageName fetched from service and stored in cache.");
-        //                }
-        //                else
-        //                {
-        //                    _logger.LogInformation("PageName is already stored in cache.");
-        //                }
-
         [HttpGet]
         [Route("AddTenant")]
         public IActionResult AddTenant()
         {
             return View();
-        }
-
-
-        public async Task<IActionResult> AddTenant2(int id)
-        {
-            var response = _informationService.GetTenant(id);
-            if (response.Result.Success)
-            {
-
-                return View(response.Result.Data);
-            }
-
-            //Handle the case where the tenant is not found
-            return NotFound(/*tenantResponse.Message*/);
         }
 
         // Handle form submission
@@ -183,19 +99,23 @@ namespace LogicalPantry.Web.Controllers
             return View(tenantDto);
         }
 
+        public async Task<IActionResult> AddTenant2(int id)
+        {
+            var response = _informationService.GetTenant(id);
+            if (response.Result.Success)
+            {
 
-        //        [HttpGet("Home")]
-        //        public async Task<IActionResult> Home(string PageName)
-        //        {
-        //            var tenanatResponse = await _informationService.GetTenantPageNameForUserAsync(PageName);
-        //            if (tenanatResponse.Success)
-        //            {
-        //                var pageName = tenanatResponse.Data.PageName;
+                return View(response.Result.Data);
+            }
+            return NotFound(response.Result.Message);
+        }
+
+
+
 
         [HttpGet("Home")]
         public async Task<IActionResult> Home(string PageName)
         {
-           // HttpContext.Items["SkipTenantMiddleware"] = true;
 
 
             var tenanatResponse = await _informationService.GetTenantPageNameForUserAsync(PageName);
@@ -245,9 +165,8 @@ namespace LogicalPantry.Web.Controllers
         [HttpGet("/{action?}")]
         public async Task<IActionResult> Home()
         {
-             //HttpContext.Items["SkipTenantMiddleware"] = true;
 
-             var tenantName = TenantName; ;
+            var tenantName = TenantName; 
             var tenanatResponse = await _informationService.GetTenantPageNameForUserAsync(tenantName);
             if (tenanatResponse.Success)
             {

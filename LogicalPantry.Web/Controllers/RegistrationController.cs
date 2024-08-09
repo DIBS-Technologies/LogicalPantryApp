@@ -22,11 +22,12 @@ namespace LogicalPantry.Web.Controllers
             _logger.LogInformation($"Index method call ended");
             return View();
         }
+
         [HttpPost]
-        public IActionResult Register(UserDto user) 
+        public async Task<IActionResult> Register(UserDto user) 
         {
             _logger.LogInformation($"Register method call started");
-            var response=_registrationService.RegisterUser(user).Result;
+            var response= await _registrationService.RegisterUser(user);
 
             _logger.LogInformation($"Register method call ended");
          

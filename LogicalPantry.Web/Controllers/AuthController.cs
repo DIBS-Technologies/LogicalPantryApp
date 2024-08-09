@@ -32,18 +32,15 @@ namespace LogicalPantry.Web.Controllers
         [HttpGet("GoogleLogin")]
         public IActionResult GoogleLogin()
         {
-            //_logger.LogInformation($"GoogleLogin Method is called Started");
             var properties = new AuthenticationProperties
             {
                 RedirectUri = Url.Action(nameof(GoogleResponse))
             };
-            //_logger.LogInformation($"GoogleLogin Method is call ended");
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
         [HttpGet("GoogleResponse")]
         public async Task<IActionResult> GoogleResponse()
         {
-            //_logger.LogInformation($"GoogleResponse Method is call ended");
 
             var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             var userInfo = await CheckIfUserExists(result);
@@ -66,7 +63,6 @@ namespace LogicalPantry.Web.Controllers
                     return RedirectToAction(ViewConstants.UserCalandar, ViewConstants.TimeSlot, new { area = "" });
                 }
             }
-           // _logger.LogInformation($"GoogleResponse Method is call ended");
             return RedirectToAction(ViewConstants.LOGINVIEW, ViewConstants.AUTH, new { area = "" });
 
    
@@ -169,7 +165,6 @@ namespace LogicalPantry.Web.Controllers
         [HttpGet("loginView")]
         public IActionResult loginView()
         {
-            //_logger.LogInformation("loginView page accessed.");
             return View();
         }
 

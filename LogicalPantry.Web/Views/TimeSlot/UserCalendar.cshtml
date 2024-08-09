@@ -1,6 +1,10 @@
 ﻿@using System.Security.Claims;
 @model LogicalPantry.DTOs.TimeSlotDtos.UserCalendarDto
 
+
+@{
+    var tenantName = ViewBag.TenantName as string;
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -375,7 +379,7 @@
 
                 // Retrieve time slot ID based on the event details
                 $.ajax({
-                    url: '/TimeSlot/GetTimeSlotId',
+                    url: '/GetTimeSlotId',
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify({
@@ -391,7 +395,7 @@
 
                             // Retrieve user ID based on email
                             $.ajax({
-                                url: '/User/GetUserIdByEmail',
+                                url: '/GetUserIdByEmail',
                                 type: 'POST',
                                 contentType: 'application/json',
                                 data: JSON.stringify({ Email: userEmail }),
@@ -400,7 +404,7 @@
                                     if (userResponse && userResponse.userId) {
                                         // Sign up for the time slot
                                         $.ajax({
-                                            url: '/TimeSlotSignup/AddTimeSlotSignUps',
+                                            url: '/AddTimeSlotSignUps',
                                             type: 'POST',
                                             contentType: 'application/json',
                                             data: JSON.stringify({
