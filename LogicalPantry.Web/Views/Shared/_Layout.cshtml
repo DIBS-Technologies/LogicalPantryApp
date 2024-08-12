@@ -58,7 +58,7 @@
 </head>
 <body class="nav-fixed">
     <nav class="topnav navbar navbar-expand shadow navbar-light bg-white" id="sidenavAccordion">
-        <img src="~/Image/Demo.jpeg" id="logoImage" style="width: 95px; padding-left: 10px; opacity:100%" />
+        <img src="" id="logoImage" style="width: 95px; padding-left: 10px; opacity:100%" />
         <div class="UserName">
             @if (User.Identity.IsAuthenticated)
             {
@@ -121,10 +121,10 @@
     @section Scripts {
         <script>
             $(document).ready(function () {
-
+                debugger;
                 var userEmail = '@User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value';
                 $.ajax({
-                    url: "/@tenantName/Information/Get",
+                      url: "/@tenantName/Information/Get",
                     method: "GET",
                     data: { tenantid:"1" },
                     success: function (data) {
@@ -136,7 +136,7 @@
                     }
                 });
             });
-
+               
            sidenav-menu 
 
             

@@ -84,9 +84,10 @@ namespace LogicalPantry.Services.InformationService
 
         public async Task<ServiceResponse<bool>> PostTenant(TenantDto tenantDto)
         {
-            var response = new ServiceResponse<bool>();
+            var response = new ServiceResponse<bool>();        
 
-            tenantDto.Id = 1;
+            var tenantdetails = await GetTenantByNameAsync(tenantDto.TenantName);
+            tenantDto.Id = tenantdetails.Data.Id;
             // Validate input
             if (tenantDto == null || tenantDto.Id <= 0)
             {
@@ -112,14 +113,17 @@ namespace LogicalPantry.Services.InformationService
                 // Update the tenant information
                 tenant.PaypalId = tenantDto.PaypalId;
                 tenant.PageName = tenantDto.PageName;
-                tenant.Logo = tenantDto.Logo;
+                if (tenantDto.Logo != null)
+                {
+                    tenant.Logo = tenantDto.Logo;
+                }                
                 tenant.Timezone = tenantDto.Timezone;
 
                 dataContext.Tenants.Update(tenant);
 
                 // Save changes to the database
                 await dataContext.SaveChangesAsync();
-
+         
                 // Return a successful response
                 response.Success = true;
                 response.Data = true; // Indicating success
@@ -321,7 +325,12 @@ namespace LogicalPantry.Services.InformationService
                 {
                     Id = tenant.Id,
                     TenantName = tenant.TenantName,
-                    // Add other properties as needed
+                     AdminEmail = tenant.AdminEmail,
+                    PaypalId = tenant.PaypalId,
+                    PageName = tenant.PageName,
+                    Logo = tenant.Logo,
+                    Timezone =   tenant.Timezone
+       
                 };
                 response.Success = true;
             }

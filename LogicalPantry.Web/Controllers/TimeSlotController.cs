@@ -74,16 +74,34 @@ namespace LogicalPantry.Web.Controllers
         }
 
 
-        [HttpGet]
-        [Route("EditTimeSlotUser")]
+        //[HttpGet("EditTimeSlotUser")]
+        //public async Task<IActionResult> EditTimeSlotUser(string id)
+        //{
+
+        //    var response = await _userSercvice.GetUsersbyTimeSlotId(int.Parse(id));
+        //    var userDtos = new List<UserDto>(); 
+        //    return View(response.Data.ToList()); // Handle the error case appropriately
+        //}
+
+        [HttpGet("EditTimeSlotUser")]
         public async Task<IActionResult> EditTimeSlotUser(string id)
         {
+            if (string.IsNullOrEmpty(id) || !int.TryParse(id, out int timeSlotId))
+            {
+                return BadRequest("Invalid time slot ID.");
+            }
 
-            var response = await _userSercvice.GetUsersbyTimeSlotId(int.Parse(id));
-            var userDtos = new List<UserDto>(); 
-            return View(response.Data.ToList()); // Handle the error case appropriately
+            var response = await _userSercvice.GetUsersbyTimeSlotId(timeSlotId);
+
+            if (response.Success && response.Data != null)
+            {
+                return View(response.Data.ToList()); // Ensure that you handle the error case appropriately
+            }
+            else
+            {
+                return NotFound("Users not found for the specified time slot.");
+            }
         }
-
 
 
         private long ToUnixTimestamp(DateTime dateTime)

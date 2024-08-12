@@ -219,7 +219,8 @@ public class TenantMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-       var path = context.Request.Path.Value;
+       
+        var path = context.Request.Path.Value;
 
         // Handle root path or empty tenant name
         if (string.IsNullOrWhiteSpace(path) || path == "/")
@@ -236,7 +237,7 @@ public class TenantMiddleware
             await _next(context);
             return;
         }
-
+        
         var segments = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
         if (segments.Length > 0)
         {
@@ -279,7 +280,8 @@ public class TenantMiddleware
                     cachedValues = (cachedTenantName, userEmail);
                 }
 
-                if (tenantNameFromUrl != cachedValues.TenantName)
+                //if (tenantNameFromUrl != cachedValues.TenantName)
+                if (!string.Equals(tenantNameFromUrl, cachedValues.TenantName, StringComparison.OrdinalIgnoreCase))
                 {
                     context.Response.StatusCode = StatusCodes.Status403Forbidden;
                     await context.Response.WriteAsync("Unauthorized: Tenant mismatch");

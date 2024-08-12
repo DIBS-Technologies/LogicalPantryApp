@@ -12,11 +12,12 @@ using System.Security.Claims;
 using System.Linq;
 using System.Threading.Tasks;
 using LogicalPantry.Models.Models;
+using Microsoft.Extensions.Options;
 
 namespace LogicalPantry.Web.Controllers
 {
     [Route("Auth")]
-    public class AuthController : Controller
+    public class AuthController : BaseController
     {
         private readonly IUserService _userServices;
         private readonly IRoleService _roleService;
@@ -32,13 +33,16 @@ namespace LogicalPantry.Web.Controllers
         [HttpGet("GoogleLogin")]
         public IActionResult GoogleLogin()
         {
+            var tenantName = TenantName;
             var properties = new AuthenticationProperties
             {
-                RedirectUri = Url.Action(nameof(GoogleResponse))
+                //RedirectUri = Url.Action(nameof(GoogleResponse))
+                RedirectUri = Url.Action(TenantName ,"GoogleResponse", "Auth")
             };
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
-        [HttpGet("GoogleResponse")]
+
+        [HttpPost("GoogleResponse")]
         public async Task<IActionResult> GoogleResponse()
         {
 

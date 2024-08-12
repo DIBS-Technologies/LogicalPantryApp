@@ -35,7 +35,7 @@ namespace LogicalPantry.Web.Controllers
 
         }
 
-        [HttpGet]
+        [HttpGet("Get")]
         public object Get(string tenantid)
         {
             _logger.LogInformation($"Get Object call started");
@@ -51,16 +51,20 @@ namespace LogicalPantry.Web.Controllers
 
 
         [HttpGet]
-        [Route("AddTenant")]
-        public IActionResult AddTenant()
+        [Route("AddTenant")]        
+        public async Task<IActionResult> AddTenant()
         {
-            return View();
+            var tenantName = TenantName;
+            var response = await _informationService.GetTenantByNameAsync(tenantName);
+
+            return View(response.Data);
         }
 
         // Handle form submission
         [HttpPost("AddTenant")]
         public async Task<IActionResult> AddTenant(TenantDto tenantDto, IFormFile LogoFile)
         {
+            tenantDto.TenantName = TenantName;
 
             if (LogoFile != null && LogoFile.Length > 0)
             {
@@ -86,7 +90,8 @@ namespace LogicalPantry.Web.Controllers
                 @TempData["SuccessMessageInfo"] = "Infromation Saved Successfully";
 
                 // Redirect to the GET method to display the updated data
-                return RedirectToAction(nameof(AddTenant2), new { id = tenantDto.Id });
+                return View(tenantDto);
+                //return RedirectToAction(nameof(AddTenant));
             }
             else
             {
@@ -99,7 +104,7 @@ namespace LogicalPantry.Web.Controllers
             return View(tenantDto);
         }
 
-        public async Task<IActionResult> AddTenant2(int id)
+        public async Task<IActionResult> RedirectTenant(int id)
         {
             var response = _informationService.GetTenant(id);
             if (response.Result.Success)

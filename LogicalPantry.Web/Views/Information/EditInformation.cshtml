@@ -52,30 +52,6 @@
             display: flex;
             justify-content: end;
         }
-
-        .form-control-file {
-            display: block;
-            width: 25; /* Adjust width as needed */
-        }
-
-        .form-control-file {
-            display: block;
-            width: 35%; /* Adjust width as needed */
-        }
-
-        .form-group {
-            margin-bottom: 1rem;
-        }
-
-            .form-group label {
-                margin-bottom: 0;
-            }
-
-            .form-group .form-control {
-                width: 100%;
-            }
-
-
     </style>
 </head>
 <body>
@@ -101,25 +77,16 @@
                             </div>
                         }
 
-                        <form method="post" id="createUser" action="/@tenantName/Information/AddTenant" enctype="multipart/form-data">
-                            <div class="form-group row align-items-center">
-                                <label for="logo" >Logo</label>
-                                <div class="col-sm-10 d-flex align-items-center">
-                                    <!-- File input -->
-                                    <input type="file" name="LogoFile" class="form-control-file" id="logo" />
-
-                                  @*   <!-- Image display -->
-                                    @if (!string.IsNullOrEmpty(Model.Logo))
-                                    {
-                                        <img src="@Model.Logo" alt="Logo" style="max-width: 150px; margin-left: 15px;" />
-                                    } *@
-                                </div>
-                            </div>
+                        <form method="post" id="editTenantForm" action="/@tenantName/Information/UpdateTenant" enctype="multipart/form-data">
                             <div class="form-group">
+                                <label for="logo">Logo</label>
+                                <input type="file" name="LogoFile" class="form-control-file" id="logo" />
+                                @if (Model.Logo != null)
+                                {
+                                    <img src="@Model.Logo" alt="Logo" style="max-width: 150px; display: block; margin-top: 10px;" />
+                                }
                                 <span class="text-danger" id="logo-error"></span>
                             </div>
-
-
                             <div class="form-group">
                                 <label for="PageName">Page Name<span class="mandatory">*</span></label>
                                 <input name="PageName" class="form-control" id="name" value="@Model.PageName" />
@@ -157,7 +124,7 @@
     <script>
         $(document).ready(function () {
             populateTimeZones();
-           // $('#logo').on('blur change keyup', validateLogo);
+            $('#logo').on('blur change keyup', validateLogo);
             $('#name').on('blur change keyup', validateName);
             $('#paypalId').on('blur change keyup', validatePaypalId);
             $('#timeZone').on('blur change', validateTimeZone);
@@ -179,16 +146,16 @@
             $timeZoneSelect.val('@Model.Timezone'); // Set the selected timezone
         }
 
-        // function validateLogo() {
-        //     var logo = $("#logo").val();
-        //     if (logo.trim() === "") {
-        //         $("#logo-error").text("Logo is required.").show();
-        //         return false;
-        //     } else {
-        //         $("#logo-error").text("").hide();
-        //         return true;
-        //     }
-        // }
+        function validateLogo() {
+            var logo = $("#logo").val();
+            if (logo.trim() === "") {
+                $("#logo-error").text("Logo is required.").show();
+                return false;
+            } else {
+                $("#logo-error").text("").hide();
+                return true;
+            }
+        }
 
         function validateName() {
             var name = $("#name").val();
@@ -228,7 +195,7 @@
 
         function validateForm() {
             var isValid = true;
-            //isValid = validateLogo() && isValid;
+            isValid = validateLogo() && isValid;
             isValid = validateName() && isValid;
             isValid = validatePaypalId() && isValid;
             isValid = validateTimeZone() && isValid;

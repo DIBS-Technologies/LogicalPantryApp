@@ -112,7 +112,9 @@
                                 <td>@user.PhoneNumber</td>
                                 <td>
                                     <div class="checkbox-wrapper-4">
-                                        <input class="inp-cbx" type="checkbox" id="allowCheckbox_@user.Id" data-user-id="@user.Id" @(user.IsAllow ? "checked" : "") />
+                                        @* <input class="inp-cbx" type="checkbox" id="allowCheckbox_@user.Id" data-user-id="@user.Id" @(user.IsAllow ? "checked" : "") /> *@
+                                        <input class="inp-cbx" type="checkbox" id="allowCheckbox_@user.Id" data-user-id="@user.Id" @(user.Attended ? "checked" : "") />
+
                                         <label class="cbx" for="allowCheckbox_@user.Id">
                                             <span>
                                                 <svg width="12px" height="10px">
@@ -142,8 +144,9 @@
 
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script>
+    @* <script>
         $(document).ready(function () {
+            debugger;
             $(".inp-cbx").on("change", function () {
                 var checkbox = $(this);
                 var userId = checkbox.data("user-id");
@@ -163,6 +166,7 @@
             });
 
             $(".saveButton").on("click", function () {
+                debugger;
                 var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '[]');
                 if (userStatuses.length === 0) {
                     return;
@@ -190,6 +194,75 @@
             });
 
             function toggleSaveButton() {
+                var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '[]');
+                if (userStatuses.length > 0) {
+                    $(".saveButton").prop("disabled", false);
+                } else {
+                    $(".saveButton").prop("disabled", true);
+                }
+            }
+
+            toggleSaveButton(); // Initialize the save button state on page load
+        });
+          </script>
+ *@
+
+
+    <script>
+        $(document).ready(function () {
+            $(".inp-cbx").on("change", function () {
+                debugger;
+                var checkbox = $(this);
+                var userId = checkbox.data("user-id");
+                var isChecked = checkbox.prop("checked");
+
+                var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '[]');
+
+                var userStatus = userStatuses.find(u => u.Id === userId);
+                if (userStatus) {
+                    userStatus.IsAttended = isChecked;
+                } else {
+                    userStatuses.push({ Id: userId, IsAttended: isChecked });
+                }
+
+                sessionStorage.setItem('userStatuses', JSON.stringify(userStatuses));
+                toggleSaveButton();
+            });
+
+            $(".saveButton").on("click", function () {
+                debugger;
+                var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '[]');
+                if (userStatuses.length === 0) {
+                    return;
+                }
+
+                // Building the tenant-specific URL for the AJAX request
+                var tenantName = '@tenantName';
+                var url = '/' + tenantName + '/User/UpdateUserBatch';
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: JSON.stringify(userStatuses),
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    success: function (response) {
+                        if (response.success) {
+                            $('#successMessageBatch').text('Changes saved successfully.').fadeIn().delay(2000).fadeOut();
+                            sessionStorage.removeItem('userStatuses');
+                            toggleSaveButton();
+                        } else {
+                            $('#errorMessageBatch').text('Error saving changes.').fadeIn().delay(2000).fadeOut();
+                        }
+                    },
+                    error: function () {
+                        $('#errorMessageBatch').text('Error saving changes.').fadeIn().delay(2000).fadeOut();
+                    }
+                });
+            });
+
+            function toggleSaveButton() {
+                debugger;
                 var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '[]');
                 if (userStatuses.length > 0) {
                     $(".saveButton").prop("disabled", false);

@@ -367,8 +367,7 @@
 
             // Handle calendar event click and prevent default behavior
             $('#calendar').on('Calendar.event-click', function (event, instance, elem, evt) {
-               // $('#calendar-modal').attr('style', '');
-               // $('.modal-content').attr('style', '');              
+                debugger;         
                
                 var startTime = evt.start;
                 var endTime = evt.end;
@@ -379,7 +378,7 @@
 
                 // Retrieve time slot ID based on the event details
                 $.ajax({
-                    url: '/GetTimeSlotId',
+                    url: 'GetTimeSlotId',
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify({
@@ -395,7 +394,7 @@
 
                             // Retrieve user ID based on email
                             $.ajax({
-                                url: '/GetUserIdByEmail',
+                                url: '/@tenantName/User/GetUserIdByEmail',
                                 type: 'POST',
                                 contentType: 'application/json',
                                 data: JSON.stringify({ Email: userEmail }),
@@ -404,7 +403,7 @@
                                     if (userResponse && userResponse.userId) {
                                         // Sign up for the time slot
                                         $.ajax({
-                                            url: '/AddTimeSlotSignUps',
+                                            url: '/@tenantName/TimeSlotSignup/AddTimeSlotSignUps',
                                             type: 'POST',
                                             contentType: 'application/json',
                                             data: JSON.stringify({
@@ -414,6 +413,10 @@
                                             }),
                                             success: function (signupResponse) {
                                                 showMessage(signupResponse.message);
+                                                // Delay redirection by 2 seconds
+                                               // setTimeout(function () {
+                                                   // window.location.href = '/@tenantName/TimeSlot/UserCalendar';
+                                                //}, 3000); // 2000 milliseconds = 2 seconds
                                             },
                                             error: function (xhr, status, error) {
                                                 var response = xhr.responseJSON;

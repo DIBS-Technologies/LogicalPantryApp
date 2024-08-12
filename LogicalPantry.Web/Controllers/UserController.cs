@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc;
 using LogicalPantry.DTOs.TimeSlotDtos;
 using LogicalPantry.Models.Models;
 using Newtonsoft.Json;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace LogicalPantry.Web.Controllers
 {
@@ -45,48 +46,48 @@ namespace LogicalPantry.Web.Controllers
         public async Task<IActionResult> ManageUsers()
         {
             _logger.LogInformation("GetAllusers object call started.");
-            var response = _userService.GetAllRegisteredUsersAsync().Result;
+            var response = await _userService.GetAllRegisteredUsersAsync();
             _logger.LogInformation("GetAllusers object call ended.");
 
             return View(response.Data);
         }
 
-        public object GetUserbyId(int tenentId) 
-        {
-            _logger.LogInformation("GetUserbyId object call Started.");
+        //public object GetUserbyId(int tenentId) 
+        //{
+        //    _logger.LogInformation("GetUserbyId object call Started.");
 
-            if (tenentId == 0)return null;
-            var response = _userService.GetUserByIdAsync(tenentId).Result;
-            _logger.LogInformation("GetUserbyId object call ended.");
+        //    if (tenentId == 0)return null;
+        //    var response = _userService.GetUserByIdAsync(tenentId).Result;
+        //    _logger.LogInformation("GetUserbyId object call ended.");
 
-            return response;
-        }
-        [HttpGet]
-        public object GetUsersbyTimeSlot(DateTime timeslot, int tenentId) 
-        {
-            _logger.LogInformation("GetUsersbyTimeSlot object call Started.");
-            if (tenentId == 0 || timeslot == null) return null;
-            var response = _userService.GetUsersbyTimeSlot(timeslot,tenentId).Result;
-            _logger.LogInformation("GetUsersbyTimeSlot object call ended.");
+        //    return response;
+        //}
+        //[HttpGet]
+        //public object GetUsersbyTimeSlot(DateTime timeslot, int tenentId) 
+        //{
+        //    _logger.LogInformation("GetUsersbyTimeSlot object call Started.");
+        //    if (tenentId == 0 || timeslot == null) return null;
+        //    var response = _userService.GetUsersbyTimeSlot(timeslot,tenentId).Result;
+        //    _logger.LogInformation("GetUsersbyTimeSlot object call ended.");
 
-            return response;
-        }
-        [HttpPost]
-        public object PutUserStatus(List<UserAttendedDto> userDto)
-        {
-            _logger.LogInformation("PutUserStatus object call started.");
+        //    return response;
+        //}
+        //[HttpPost]
+        //public object PutUserStatus(List<UserAttendedDto> userDto)
+        //{
+        //    _logger.LogInformation("PutUserStatus object call started.");
 
-            if (userDto != null)
-            {
-                var response = _userService.UpdateUserAllowStatusAsync(userDto).Result;
-                _logger.LogInformation("PutUserStatus object call ended.");
-                return response;
+        //    if (userDto != null)
+        //    {
+        //        var response = _userService.UpdateUserAllowStatusAsync(userDto).Result;
+        //        _logger.LogInformation("PutUserStatus object call ended.");
+        //        return response;
 
-            }
-            else { return null; }
+        //    }
+        //    else { return null; }
 
 
-        }
+        //}
 
         [HttpGet("session")]
         public IActionResult GetSessionData()
@@ -136,8 +137,7 @@ namespace LogicalPantry.Web.Controllers
         //    return Ok(new { success = false });
         //}
 
-        [Route("UpdateUser")]
-        [HttpPost] // Or [HttpGet] if using GET
+        [HttpPost("UpdateUser")] //ThisExpressionSyntax is ForbidResult allow method
         public async Task<IActionResult> UpdateUser(int userId, bool isAllow)
         {
             if (userId <= 0)
@@ -163,9 +163,7 @@ namespace LogicalPantry.Web.Controllers
             }
         }
 
-
-        [Route("UpdateUserBatch")]
-        [HttpPost]
+        [HttpPost("UpdateUserBatch")]
         public async Task<IActionResult> UpdateUserBatch([FromBody] List<UserAttendedDto> userStatuses)
         {
             if (userStatuses == null || !userStatuses.Any())
@@ -175,7 +173,7 @@ namespace LogicalPantry.Web.Controllers
 
             try
             {
-                var response = await _userService.UpdateUserAllowStatusAsync(userStatuses);
+                var response = await _userService.UpdateUserAttendanceStatusAsync(userStatuses);
 
                 if (response.Success)
                 {
@@ -197,6 +195,9 @@ namespace LogicalPantry.Web.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+
+
         [HttpPost("GetUserIdByEmail")]
         public async Task<IActionResult> GetUserIdByEmail([FromBody] UserDto dto)
         {

@@ -45,7 +45,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Views\Information\" />
     <Folder Include="wwwroot\Image\" />
   </ItemGroup>
 
