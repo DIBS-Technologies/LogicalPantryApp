@@ -164,7 +164,7 @@ namespace LogicalPantry.Web.Controllers
         }
 
         [HttpPost("UpdateUserBatch")]
-        public async Task<IActionResult> UpdateUserBatch([FromBody] List<UserAttendedDto> userStatuses)
+        public async Task<IActionResult> UpdateUserBatch([FromBody] List<UserDto> userStatuses)
         {
             if (userStatuses == null || !userStatuses.Any())
             {

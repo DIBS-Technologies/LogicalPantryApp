@@ -19,5 +19,6 @@ namespace LogicalPantry.DTOs.UserDtos
         public bool IsRegistered { get; set; }
         public bool Attended { get; set; }
 
+        public int TimeSlotId { get; set; }
     }
 }

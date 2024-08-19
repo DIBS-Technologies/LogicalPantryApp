@@ -17,10 +17,10 @@ namespace LogicalPantry.Services.UserServices
         Task<ServiceResponse<bool>> DeleteUserAsync(int id);
         //Task<UserDto> GetUserByEmailAsync(string email);
 
-       // Task<User> GetOrCreateUserAsync(string email, string name, int tenantId);
+        // Task<User> GetOrCreateUserAsync(string email, string name, int tenantId);
         //Task<ServiceResponse<bool>> UpdateUserAllowStatusAsync(List<UserAttendedDto> userAllowStatusDto);
-        Task<ServiceResponse<bool>> UpdateUserAttendanceStatusAsync(List<UserAttendedDto> userAllowStatusDto);
-
+        //Task<ServiceResponse<bool>> UpdateUserAttendanceStatusAsync(List<UserAttendedDto> userAllowStatusDto);
+        Task<ServiceResponse<bool>> UpdateUserAttendanceStatusAsync(List<UserDto> userAttendedDtos);
 
         Task<ServiceResponse<UserDto>> GetUserByEmailAsync(string email);
 

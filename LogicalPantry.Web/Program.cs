@@ -136,11 +136,6 @@ app.UseAuthorization(); // Enable authorization middleware
 
 app.UseStaticFiles(); // Serve static files from wwwroot folder
 app.UseSession(); // Enable session middleware
-//app.Use(async (context, next) =>
-//{
-//    context.Request.EnableBuffering();
-//    await next.Invoke();
-//});
 app.UseMiddleware<TenantMiddleware>();
 app.UseRouting(); // Enable routing
 

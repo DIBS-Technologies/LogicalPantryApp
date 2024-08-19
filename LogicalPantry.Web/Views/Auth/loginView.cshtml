@@ -4,7 +4,6 @@
     var tenantName = ViewBag.TenantName as string;
 }
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,11 +15,11 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <style>
-
         .container {
             display: flex;
             justify-content: center;
         }
+
         .card {
             position: relative;
             display: -ms-flexbox;
@@ -53,7 +52,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Google Login</h5>
                         <p class="card-text">Sign in using your Google account.</p>
-                        <form method="post" asp-area="" asp-controller="Auth" asp-action="GoogleLogin">
+                        <form method="post" action="/Auth/GoogleLogin">
                             <button type="submit" class="btn btn-danger btn-block">
                                 <i class="fab fa-google"></i> Login With Google
                             </button>
@@ -67,7 +66,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Facebook Login</h5>
                         <p class="card-text">Sign in using your Facebook account.</p>
-                        <form method="post" asp-area="" asp-controller="Auth" asp-action="FacebookLogin">
+                        <form method="post" action="/Auth/FacebookLogin">
                             <button type="submit" class="btn btn-primary btn-block">
                                 <i class="fab fa-facebook"></i> Login With Facebook
                             </button>
@@ -81,7 +80,7 @@
                     <div class="card-body">
                         <h5 class="card-title">Microsoft Login</h5>
                         <p class="card-text">Sign in using your Microsoft account.</p>
-                        <form method="post" asp-area="" asp-controller="Auth" asp-action="MicrosoftLogin">
+                        <form method="post" action="/Auth/MicrosoftLogin">
                             <button type="submit" class="btn btn-primary btn-block">
                                 <i class="fab fa-microsoft"></i> Login With Microsoft
                             </button>

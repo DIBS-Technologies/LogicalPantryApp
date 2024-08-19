@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Edit Time Slot Users";
     var tenantName = ViewBag.TenantName as string;
+ 
 }
 
 
@@ -135,7 +136,7 @@
                 </table>
 
                 <div id="saveButtonDiv">
-                    <button class="saveButton btn btn-primary" type="button" disabled>Save</button>
+                    <button class="saveButton" type="button" disabled>Save</button>
                 </div>
             </div>
         </div>
@@ -210,6 +211,18 @@
 
     <script>
         $(document).ready(function () {
+              debugger;
+                 // Function to get query parameters from the URL
+                function getQueryParameter(name) {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    return urlParams.get(name);
+                }
+
+                // Extract the timeSlotId from the URL
+                var timeSlotId = getQueryParameter('id');
+                console.log('Time Slot ID:', timeSlotId);
+
+
             $(".inp-cbx").on("change", function () {
                 debugger;
                 var checkbox = $(this);
@@ -229,40 +242,103 @@
                 toggleSaveButton();
             });
 
+
             $(".saveButton").on("click", function () {
                 debugger;
-                var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '[]');
-                if (userStatuses.length === 0) {
-                    return;
-                }
+                    var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '[]');
+                    if (userStatuses.length === 0) {
+                        return;
+                    }
 
-                // Building the tenant-specific URL for the AJAX request
-                var tenantName = '@tenantName';
-                var url = '/' + tenantName + '/User/UpdateUserBatch';
+                    // Add the timeSlotId to each user's data
+                    var updatedUserStatuses = userStatuses.map(function (userStatus) {
+                        return {
+                            Id: +userStatus.Id,
+                            Attended: userStatus.IsAttended,
+                            TimeSlotId: +timeSlotId // Add timeSlotId to each user's data
+                        };
+                    });
 
-                $.ajax({
-                    url: url,
-                    type: 'POST',
-                    data: JSON.stringify(userStatuses),
-                    contentType: 'application/json; charset=utf-8',
-                    dataType: 'json',
-                    success: function (response) {
-                        if (response.success) {
-                            $('#successMessageBatch').text('Changes saved successfully.').fadeIn().delay(2000).fadeOut();
-                            sessionStorage.removeItem('userStatuses');
-                            toggleSaveButton();
-                        } else {
+                    var requestData = {
+                        userStatuses: updatedUserStatuses
+                    };
+
+                    // Building the tenant-specific URL for the AJAX request
+                    var tenantName = '@tenantName';
+                    var url = '/' + tenantName + '/User/UpdateUserBatch';
+
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        data: JSON.stringify(updatedUserStatuses),
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        success: function (response) {
+                            if (response.success) {
+                                $('#successMessageBatch').text('Changes saved successfully.').fadeIn().delay(2000).fadeOut();
+                                sessionStorage.removeItem('userStatuses');
+                                toggleSaveButton();
+                            } else {
+                                $('#errorMessageBatch').text('Error saving changes.').fadeIn().delay(2000).fadeOut();
+                            }
+                        },
+                        error: function () {
                             $('#errorMessageBatch').text('Error saving changes.').fadeIn().delay(2000).fadeOut();
                         }
-                    },
-                    error: function () {
-                        $('#errorMessageBatch').text('Error saving changes.').fadeIn().delay(2000).fadeOut();
-                    }
+                    });
                 });
-            });
+
+            // $(".saveButton").on("click", function () {
+            //     debugger;
+            //     var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '[]');
+            //     if (userStatuses.length === 0) {
+            //         return;
+            //     }
+
+
+            //     debugger;
+            //      // Add the timeSlotId to each user's data
+            //     var updatedUserStatuses = userStatuses.map(function(userStatus) {
+            //         return {
+            //             userId: userStatus.userId,
+            //             attended: userStatus.attended,
+            //             timeSlotId: timeSlotId // Add timeSlotId to each user's data
+            //         };
+            //     });
+
+            //     var requestData = {
+            //         userStatuses: updatedUserStatuses
+            //     };
+
+            //     // Building the tenant-specific URL for the AJAX request
+            //     var tenantName = '@tenantName';
+            //     var url = '/' + tenantName + '/User/UpdateUserBatch';
+
+            //     $.ajax({
+            //         url: url,
+            //         type: 'POST',
+            //         data: JSON.stringify(requestData),
+            //         contentType: 'application/json; charset=utf-8',
+            //         dataType: 'json',
+            //         success: function (response) {
+            //             if (response.success) {
+            //                 $('#successMessageBatch').text('Changes saved successfully.').fadeIn().delay(2000).fadeOut();
+            //                 sessionStorage.removeItem('userStatuses');
+            //                 toggleSaveButton();
+            //             } else {
+            //                 $('#errorMessageBatch').text('Error saving changes.').fadeIn().delay(2000).fadeOut();
+            //             }
+            //         },
+            //         error: function () {
+            //             $('#errorMessageBatch').text('Error saving changes.').fadeIn().delay(2000).fadeOut();
+            //         }
+            //     });
+            // });
+
+          
 
             function toggleSaveButton() {
-                debugger;
+             
                 var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '[]');
                 if (userStatuses.length > 0) {
                     $(".saveButton").prop("disabled", false);

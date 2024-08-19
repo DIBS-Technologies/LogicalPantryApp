@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using LogicalPantry.Models.Models;
 using Microsoft.Extensions.Options;
+using System.Security.Policy;
 
 namespace LogicalPantry.Web.Controllers
 {
@@ -34,12 +35,21 @@ namespace LogicalPantry.Web.Controllers
         public IActionResult GoogleLogin()
         {
             var tenantName = TenantName;
+           // var tenantUrl = $"/{tenantName}/Auth/GoogleResponse"; // Construct the tenant-specific URL
+
+            // Redirect to the tenant-specific login URL
+            //return Redirect(tenantUrl);
             var properties = new AuthenticationProperties
             {
-                //RedirectUri = Url.Action(nameof(GoogleResponse))
-                RedirectUri = Url.Action(TenantName ,"GoogleResponse", "Auth")
-            };
-            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+               // RedirectUri = Url.Action(nameof(GoogleResponse))
+                RedirectUri = Url.Action("GoogleResponse", "Auth")
+                //RedirectUri = Url.Action(tenantUrl)
+            
+        
+
+           };
+             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+            //return Redirect(tenantUrl);
         }
 
         [HttpPost("GoogleResponse")]
@@ -69,10 +79,11 @@ namespace LogicalPantry.Web.Controllers
             }
             return RedirectToAction(ViewConstants.LOGINVIEW, ViewConstants.AUTH, new { area = "" });
 
-   
+
         }
 
-       // Facebook Authentication
+        // Facebook Authentication
+        [HttpGet("FacebookLogin")]
         public IActionResult FacebookLogin()
         {
             var properties = new AuthenticationProperties
@@ -82,6 +93,7 @@ namespace LogicalPantry.Web.Controllers
             return Challenge(properties, FacebookDefaults.AuthenticationScheme);
         }
 
+        [HttpPost("FacebookResponse")]
         public async Task<IActionResult> FacebookResponse()
         {
             var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -104,6 +116,7 @@ namespace LogicalPantry.Web.Controllers
         }
 
         // Microsoft Authentication
+        [HttpGet("MicrosoftLogin")]
         public IActionResult MicrosoftLogin()
         {
             var properties = new AuthenticationProperties
@@ -113,6 +126,7 @@ namespace LogicalPantry.Web.Controllers
             return Challenge(properties, MicrosoftAccountDefaults.AuthenticationScheme);
         }
 
+        [HttpPost("MicrosoftResponse")]
         public async Task<IActionResult> MicrosoftResponse()
         {
             var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -135,36 +149,36 @@ namespace LogicalPantry.Web.Controllers
 
         }
 
-        // Microsoft 365 Authentication
-        public IActionResult Microsoft365Login()
-        {
-            var properties = new AuthenticationProperties
-            {
-                RedirectUri = Url.Action(nameof(Microsoft365Response))
-            };
-            return Challenge(properties, OpenIdConnectDefaults.AuthenticationScheme);
-        }
+        //// Microsoft 365 Authentication
+        //public IActionResult Microsoft365Login()
+        //{
+        //    var properties = new AuthenticationProperties
+        //    {
+        //        RedirectUri = Url.Action(nameof(Microsoft365Response))
+        //    };
+        //    return Challenge(properties, OpenIdConnectDefaults.AuthenticationScheme);
+        //}
 
-        public async Task<IActionResult> Microsoft365Response()
-        {
-            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            var userInfo = await CheckIfUserExists(result);
+        //public async Task<IActionResult> Microsoft365Response()
+        //{
+        //    var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        //    var userInfo = await CheckIfUserExists(result);
 
-            if (userInfo != null && userInfo.Role == "Admin")
-            {
-                // Redirect based on user role
-                return RedirectToAction(ViewConstants.Calandar, ViewConstants.TimeSlot, new { area = "" });
+        //    if (userInfo != null && userInfo.Role == "Admin")
+        //    {
+        //        // Redirect based on user role
+        //        return RedirectToAction(ViewConstants.Calandar, ViewConstants.TimeSlot, new { area = "" });
 
-            }
-            else if (userInfo != null && userInfo.Role == "User")
-            {
+        //    }
+        //    else if (userInfo != null && userInfo.Role == "User")
+        //    {
 
 
-                return RedirectToAction(ViewConstants.INDEX, ViewConstants.TimeSlotSignUp, new { area = "" });
-            }
+        //        return RedirectToAction(ViewConstants.INDEX, ViewConstants.TimeSlotSignUp, new { area = "" });
+        //    }
 
-            return RedirectToAction(ViewConstants.AUTH, ViewConstants.LOGINVIEW, new { area = "" });
-        }
+        //    return RedirectToAction(ViewConstants.AUTH, ViewConstants.LOGINVIEW, new { area = "" });
+        //}
 
         [HttpGet("loginView")]
         public IActionResult loginView()

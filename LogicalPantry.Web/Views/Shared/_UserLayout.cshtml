@@ -1,0 +1,84 @@
+﻿@using System.Security.Claims;
+@{
+    var tenantName = ViewBag.TenantName as string;
+    var tenantId = ViewBag.TenantId;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LogicalPantry.Web</title>
+
+    <link href="/css/default-main.css" rel="stylesheet" />
+    <link href="~/css/styles.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link href="~/css/site.css" rel="stylesheet" />
+    <style>
+        .full-width-content {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .footer-custom {
+            background-color: #fff;
+            color: #1f2d41;
+        }
+
+        .text-light {
+            color: #1f2d41 !important;
+        }
+    </style>
+</head>
+<body class="nav-fixed">
+    <nav class="topnav navbar navbar-expand shadow navbar-light bg-white" id="sidenavAccordion">
+        <img src="" id="logoImage" style="width: 95px; padding-left: 10px; opacity:100%" />
+        <div class="UserName">
+            @if (User.Identity.IsAuthenticated)
+            {
+                var userEmail = User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value;
+                var userName = User.FindFirstValue(ClaimTypes.Name) ?? User.Claims.FirstOrDefault(c => c.Type == "name")?.Value;
+            }
+        </div>
+    </nav>
+    <div id="layoutSidenav">
+        <div id="layoutSidenav_content">
+            <main>
+                <div class="full-width-content">
+                    @RenderBody()
+                </div>
+            </main>
+            <footer class="text-light py-2 fixed-bottom text-center">
+                <div class="container">
+                    <p class="mb-0" style="color:black">&copy; @DateTime.Now.Year - LogicalPantry</p>
+                </div>
+            </footer>
+        </div>
+    </div>
+    @section Scripts {
+        <script>
+            $(document).ready(function () {
+                var userEmail = '@User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value';
+                $.ajax({
+                    url: "/@tenantName/Information/Get",
+                    method: "GET",
+                    data: { tenantid:@tenantId },
+                    success: function (data) {
+                        $("#logoImage").attr("src", data.ImageUrl);
+                    },
+                    error: function () {
+                        console.error("Cannot find Image src");
+                    }
+                });
+            });
+        </script>
+    }
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js" crossorigin="anonymous"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+    @await RenderSectionAsync("Styles", required: false)
+</body>
+</html>

@@ -230,8 +230,66 @@ namespace LogicalPantry.Services.UserServices
 
         //    return response;
         //}
-                                                 
-        public async Task<ServiceResponse<bool>> UpdateUserAttendanceStatusAsync(List<UserAttendedDto> userAttendedDtos)
+
+        //public async Task<ServiceResponse<bool>> UpdateUserAttendanceStatusAsync(List<UserAttendedDto> userAttendedDtos)
+        //{
+        //    var response = new ServiceResponse<bool>();
+
+        //    if (userAttendedDtos == null || !userAttendedDtos.Any())
+        //    {
+        //        response.Success = false;
+        //        response.Message = "No users to update.";
+        //        return response;
+        //    }
+
+        //    try
+        //    {
+        //        // Extract user IDs from the list of DTOs
+        //        var userIds = userAttendedDtos
+        //            .Select(dto => dto.Id)
+        //            .ToList();
+
+        //        if (!userIds.Any())
+        //        {
+        //            response.Success = false;
+        //            response.Message = "No valid users provided.";
+        //            return response;
+        //        }
+
+        //        // Fetch matching records from the TimeSlotSignups table
+        //        var timeSlotSignupsToUpdate = await dataContext.TimeSlotSignups
+        //            .Where(ts => userIds.Contains(ts.UserId))
+        //            .ToListAsync();
+
+        //        // Update the 'Attended' status for matching records
+        //        foreach (var userDto in userAttendedDtos)
+        //        {
+        //            var timeSlotSignup = timeSlotSignupsToUpdate.FirstOrDefault(ts => ts.UserId == userDto.Id);
+        //            if (timeSlotSignup != null)
+        //            {
+        //                timeSlotSignup.Attended = userDto.IsAttended;
+        //            }
+        //        }
+
+        //        // Save changes to the database
+        //        await dataContext.SaveChangesAsync();
+
+        //        response.Data = true;
+        //        response.Success = true;
+        //        response.Message = "User attendance status updated successfully.";
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response.Success = false;
+        //        response.Message = $"Error updating user attendance status: {ex.Message}";
+        //    }
+
+        //    return response;
+        //}
+
+
+
+        public async Task<ServiceResponse<bool>> UpdateUserAttendanceStatusAsync(List<UserDto> userAttendedDtos)
         {
             var response = new ServiceResponse<bool>();
 
@@ -244,30 +302,36 @@ namespace LogicalPantry.Services.UserServices
 
             try
             {
-                // Extract user IDs from the list of DTOs
-                var userIds = userAttendedDtos
-                    .Select(dto => dto.Id)
+                // Extract user IDs and corresponding time slot IDs from the list of DTOs
+                var userTimeSlotPairs = userAttendedDtos
+                    .Select(dto => new { dto.Id, dto.TimeSlotId })
                     .ToList();
 
-                if (!userIds.Any())
+                if (!userTimeSlotPairs.Any())
                 {
                     response.Success = false;
                     response.Message = "No valid users provided.";
                     return response;
                 }
 
-                // Fetch matching records from the TimeSlotSignups table
-                var timeSlotSignupsToUpdate = await dataContext.TimeSlotSignups
-                    .Where(ts => userIds.Contains(ts.UserId))
+                // Fetch all relevant TimeSlotSignups from the database
+                var allTimeSlotSignups = await dataContext.TimeSlotSignups
                     .ToListAsync();
+
+                // Filter the data in-memory
+                var timeSlotSignupsToUpdate = allTimeSlotSignups
+                    .Where(ts => userTimeSlotPairs.Any(uts => uts.Id == ts.UserId && uts.TimeSlotId == ts.TimeSlotId))
+                    .ToList();
 
                 // Update the 'Attended' status for matching records
                 foreach (var userDto in userAttendedDtos)
                 {
-                    var timeSlotSignup = timeSlotSignupsToUpdate.FirstOrDefault(ts => ts.UserId == userDto.Id);
+                    var timeSlotSignup = timeSlotSignupsToUpdate
+                        .FirstOrDefault(ts => ts.UserId == userDto.Id && ts.TimeSlotId == userDto.TimeSlotId);
+
                     if (timeSlotSignup != null)
                     {
-                        timeSlotSignup.Attended = userDto.IsAttended;
+                        timeSlotSignup.Attended = userDto.Attended;
                     }
                 }
 
@@ -286,9 +350,6 @@ namespace LogicalPantry.Services.UserServices
 
             return response;
         }
-
-
-
 
 
 
@@ -599,7 +660,7 @@ namespace LogicalPantry.Services.UserServices
 
             try
             {
-                // Retrieve users associated with the specified time slot
+                //// Retrieve users associated with the specified time slot
                 var users = await dataContext.TimeSlots
                     .Where(ts => ts.Id == timeSlotId)
                     .Join(dataContext.Users,
@@ -622,6 +683,29 @@ namespace LogicalPantry.Services.UserServices
                                     .FirstOrDefault() // Returns the value of `Attended` if found, or `false` if not found
                     })
                     .ToListAsync();
+
+
+                // Retrieve users associated with the specified time slot
+                //var users = await dataContext.TimeSlots
+                //    .Where(ts => ts.Id == timeSlotId)
+                //    .Join(dataContext.Users,
+                //        ts => ts.UserId,
+                //        u => u.Id,
+                //        (ts, u) => new { User = u, TimeSlot = ts })
+                //    .GroupJoin(dataContext.TimeSlotSignups.Where(tsu => tsu.TimeSlotId == timeSlotId),
+                //        result => result.User.Id,
+                //        tsu => tsu.UserId,
+                //        (result, tsuGroup) => new { result.User, result.TimeSlot, TimeSlotSignups = tsuGroup.FirstOrDefault() })
+                //    .Select(joinedResult => new UserDto
+                //    {
+                //        Id = joinedResult.User.Id,
+                //        FullName = joinedResult.User.FullName,
+                //        Email = joinedResult.User.Email,
+                //        PhoneNumber = joinedResult.User.PhoneNumber,
+                //       // Attended = joinedResult.TimeSlotSignups != null ? joinedResult.TimeSlotSignups.Attended : (bool?)null
+                //    })
+                //    .ToListAsync();
+
 
                 if (!users.Any())
                 {

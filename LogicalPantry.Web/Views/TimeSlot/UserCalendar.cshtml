@@ -4,6 +4,7 @@
 
 @{
     var tenantName = ViewBag.TenantName as string;
+   // Layout = User.IsInRole("User") ? "~/Shared/_UserLayout.cshtml" : "~/Shared/_Layout.cshtml";
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -70,6 +71,11 @@
             white-space: nowrap;
             text-overflow: ellipsis;
         } */
+
+
+        #layoutSidenav_content {
+            margin-left: -200px;
+        }
 
         .backgr {
             background-color: grey;
@@ -245,6 +251,7 @@
             border-radius: 4px; 
         }
       
+       
          
         
     </style>

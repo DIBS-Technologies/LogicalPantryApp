@@ -36,16 +36,16 @@ namespace LogicalPantry.Web.Controllers
         }
 
         [HttpGet("Get")]
-        public object Get(string tenantid)
+        public async Task<IActionResult> Get(int tenantid)
         {
             _logger.LogInformation($"Get Object call started");
 
-            if (int.Parse(tenantid) == 0) { return null; }
-            var response = _informationService.GetTenant(int.Parse(tenantid)).Result;
+            if (tenantid == 0) { return null; }
+            var response =await _informationService.GetTenant(tenantid);
 
             _logger.LogInformation($"Get Object call ended");
 
-            return response;
+            return Json(response);
 
         }
 
@@ -176,7 +176,7 @@ namespace LogicalPantry.Web.Controllers
             if (tenanatResponse.Success)
             {
                 var pageName = tenanatResponse.Data.PageName;
-
+                var tenantId = tenanatResponse.Data.Id;
                 if (pageName == null)
                 {
                     return NotFound("The requested page name was not found.");
@@ -214,7 +214,8 @@ namespace LogicalPantry.Web.Controllers
                 }
 
                 TempData["PageName"] = fileNameWithExtension;
-
+                ViewBag.PageName = pageName;
+                ViewBag.TenantId = tenantId;
                 return View();
             }
 
