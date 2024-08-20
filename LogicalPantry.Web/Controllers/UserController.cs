@@ -41,6 +41,7 @@ namespace LogicalPantry.Web.Controllers
             _logger.LogInformation("Index method call ended.");
             return View();
         }
+
         [HttpGet]
         [Route("ManageUsers")]
         public async Task<IActionResult> ManageUsers()
@@ -92,6 +93,7 @@ namespace LogicalPantry.Web.Controllers
         [HttpGet("session")]
         public IActionResult GetSessionData()
         {
+            _logger.LogInformation("GetSessionData method call started");
             var userEmail = HttpContext.Session.GetString("UserEmail");
             var userName = HttpContext.Session.GetString("UserName");
 
@@ -99,7 +101,7 @@ namespace LogicalPantry.Web.Controllers
             {
                 return NotFound();
             }
-
+            _logger.LogInformation("GetSessionData method call ended");
             return Ok(new { UserEmail = userEmail, UserName = userName });
         }
 
@@ -166,6 +168,7 @@ namespace LogicalPantry.Web.Controllers
         [HttpPost("UpdateUserBatch")]
         public async Task<IActionResult> UpdateUserBatch([FromBody] List<UserDto> userStatuses)
         {
+            _logger.LogInformation("UpdateUserBatch method call started");
             if (userStatuses == null || !userStatuses.Any())
             {
                 return BadRequest("Invalid data.");
@@ -179,6 +182,7 @@ namespace LogicalPantry.Web.Controllers
                 {
                     TempData["MessageClass"] = "alert-success";
                     TempData["SuccessMessageUserBatch"] = "User Saved Successfully";
+                    _logger.LogInformation("UpdateUserBatch method call ended");
                     return Ok(new { success = true });
                 }
                 else
@@ -192,15 +196,16 @@ namespace LogicalPantry.Web.Controllers
             {
                 TempData["MessageClass"] = "alert-danger";
                 TempData["SuccessMessageUserBatch"] = $"Error: {ex.Message}";
+                _logger.LogCritical($"Internal server error: {ex.Message}, Stack Trace: {ex.StackTrace}");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
+
         }
-
-
 
         [HttpPost("GetUserIdByEmail")]
         public async Task<IActionResult> GetUserIdByEmail([FromBody] UserDto dto)
         {
+            _logger.LogInformation("GetUserIdByEmail method call Started");
             if (dto == null || string.IsNullOrEmpty(dto.Email))
             {
                 return BadRequest(new { Message = "Invalid email." });
@@ -210,17 +215,20 @@ namespace LogicalPantry.Web.Controllers
 
             if (response.Success)
             {
+                _logger.LogInformation("GetUserIdByEmail method call ended");
                 return Ok(new { UserId = response.Data });
             }
             else
             {
                 return StatusCode(500, response);
             }
+
         }
 
         [HttpDelete("DeleteUser/{id}")]
         public async Task<IActionResult> DeleteUser(string id)
         {
+            _logger.LogInformation("DeleteUser method call started");
             try
             {
                 
@@ -234,12 +242,14 @@ namespace LogicalPantry.Web.Controllers
 
                 if (result.Success)
                 {
+                    _logger.LogInformation("DeleteUser method call ended");
                     return NoContent(); 
                 }
                 else
                 {
                     return NotFound("User not found."); 
                 }
+                
             }
             catch (Exception ex)
             {

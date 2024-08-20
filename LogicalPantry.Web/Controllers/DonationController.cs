@@ -19,7 +19,6 @@ namespace LogicalPantry.Web.Controllers
         public IActionResult PayPal()
         {
             _logger.LogInformation($"PayPal method call started");
-
             _logger.LogInformation($"PayPal method call ended");
 
             return View();
@@ -30,10 +29,7 @@ namespace LogicalPantry.Web.Controllers
         public async Task<IActionResult> CompletePayment([FromBody] PayPalPaymentDto paymentDto)
         {
             _logger.LogInformation($"CompletePayment method call started");
-
-
-
-            if (paymentDto == null || string.IsNullOrEmpty(paymentDto.OrderId) || string.IsNullOrEmpty(paymentDto.PayerId))
+           if (paymentDto == null || string.IsNullOrEmpty(paymentDto.OrderId) || string.IsNullOrEmpty(paymentDto.PayerId))
             {
                 return BadRequest("Invalid payment details");
             }
@@ -51,10 +47,7 @@ namespace LogicalPantry.Web.Controllers
         public IActionResult Success()
         {
             _logger.LogInformation($"Success method call started");
-
             _logger.LogInformation($"Success method call ended");
-
-
             return View();
         }
     }

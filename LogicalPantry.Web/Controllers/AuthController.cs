@@ -55,6 +55,7 @@ namespace LogicalPantry.Web.Controllers
         [HttpPost("GoogleResponse")]
         public async Task<IActionResult> GoogleResponse()
         {
+            _logger.LogInformation($"GoogleResponse Method is call started");
 
             var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             var userInfo = await CheckIfUserExists(result);
@@ -86,16 +87,20 @@ namespace LogicalPantry.Web.Controllers
         [HttpGet("FacebookLogin")]
         public IActionResult FacebookLogin()
         {
+            _logger.LogInformation($"FacebookLogin Method is call started");
+
             var properties = new AuthenticationProperties
             {
                 RedirectUri = Url.Action(nameof(FacebookResponse))
             };
+            _logger.LogInformation($"FacebookLogin Method is call ended");
             return Challenge(properties, FacebookDefaults.AuthenticationScheme);
         }
 
         [HttpPost("FacebookResponse")]
         public async Task<IActionResult> FacebookResponse()
         {
+            _logger.LogInformation($"FacebookResponse Method is call started");
             var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             var userInfo = await CheckIfUserExists(result);
 
@@ -110,7 +115,7 @@ namespace LogicalPantry.Web.Controllers
 
                 return RedirectToAction(ViewConstants.UserCalandar, ViewConstants.TimeSlot, new { area = "" });
             }
-
+            _logger.LogInformation($"FacebookResponse Method is call ended");
             return RedirectToAction(ViewConstants.AUTH, ViewConstants.LOGINVIEW, new { area = "" });
 
         }
@@ -119,16 +124,19 @@ namespace LogicalPantry.Web.Controllers
         [HttpGet("MicrosoftLogin")]
         public IActionResult MicrosoftLogin()
         {
+            _logger.LogInformation($"MicrosoftLogin Method is call started");
             var properties = new AuthenticationProperties
             {
                 RedirectUri = Url.Action(nameof(MicrosoftResponse))
             };
+            _logger.LogInformation($"MicrosoftLogin Method is call ended");
             return Challenge(properties, MicrosoftAccountDefaults.AuthenticationScheme);
         }
 
         [HttpPost("MicrosoftResponse")]
         public async Task<IActionResult> MicrosoftResponse()
         {
+            _logger.LogInformation($"MicrosoftResponse Method is call started");
             var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             var userInfo = await CheckIfUserExists(result);
 
@@ -143,26 +151,28 @@ namespace LogicalPantry.Web.Controllers
 
                 return RedirectToAction(ViewConstants.UserCalandar, ViewConstants.TimeSlot, new { area = "" });
             }
-
+            _logger.LogInformation($"MicrosoftResponse Method is call ended");
             return RedirectToAction(ViewConstants.AUTH, ViewConstants.LOGINVIEW, new { area = "" });
 
 
         }
 
-        //// Microsoft 365 Authentication
-        //public IActionResult Microsoft365Login()
-        //{
-        //    var properties = new AuthenticationProperties
-        //    {
-        //        RedirectUri = Url.Action(nameof(Microsoft365Response))
-        //    };
-        //    return Challenge(properties, OpenIdConnectDefaults.AuthenticationScheme);
-        //}
+        // Microsoft 365 Authentication
+        public IActionResult Microsoft365Login()
+        {
+            _logger.LogInformation($"Microsoft365Login Method is call started");
+            var properties = new AuthenticationProperties
+            {
+                RedirectUri = Url.Action(nameof(Microsoft365Response))
+            };
+            _logger.LogInformation($"Microsoft365Login Method is call ended");
+            return Challenge(properties, OpenIdConnectDefaults.AuthenticationScheme);
+        }
 
-        //public async Task<IActionResult> Microsoft365Response()
-        //{
-        //    var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        //    var userInfo = await CheckIfUserExists(result);
+        public async Task<IActionResult> Microsoft365Response()
+        {
+            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            var userInfo = await CheckIfUserExists(result);
 
         //    if (userInfo != null && userInfo.Role == "Admin")
         //    {
@@ -183,19 +193,25 @@ namespace LogicalPantry.Web.Controllers
         [HttpGet("loginView")]
         public IActionResult loginView()
         {
+            _logger.LogInformation($"loginView Method is call started");
+            _logger.LogInformation("loginView page accessed.");
+            _logger.LogInformation($"loginView Method is call ended");
             return View();
         }
 
         // Logout
         public async Task<IActionResult> Logout()
         {
+            _logger.LogInformation($"Logout Method is call started");
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            _logger.LogInformation($"Logout Method is call ended");
             return RedirectToAction(ViewConstants.LOGINVIEW, ViewConstants.AUTH);
         }
 
         // Check if user exists and update claims
         private async Task<UserInfo> CheckIfUserExists(AuthenticateResult result)
         {
+            _logger.LogInformation($"CheckIfUserExists Method is call started");
             if (result.Succeeded)
             {
                 var claimsIdentity = (ClaimsIdentity)result.Principal.Identity;
@@ -235,6 +251,7 @@ namespace LogicalPantry.Web.Controllers
                     
                 }
             }
+            _logger.LogInformation($"CheckIfUserExists Method is call ended");
             return null;
         }
 
