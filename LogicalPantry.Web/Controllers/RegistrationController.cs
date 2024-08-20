@@ -28,7 +28,6 @@ namespace LogicalPantry.Web.Controllers
             _logger.LogInformation($"Register method call started");
             var response=_registrationService.RegisterUser(user).Result;
 
-            _logger.LogInformation($"Register method call ended");
          
             if(response.Success)
             {
@@ -42,7 +41,7 @@ namespace LogicalPantry.Web.Controllers
                 return View("Index");
 
             }
-
+            _logger.LogInformation($"Register method call ended");
             return RedirectToAction("UserCalendar", "TimeSlot", new { area = "" });
 
         }

@@ -27,7 +27,7 @@ namespace LogicalPantry.Web.Controllers
     {
         IUserService _userService;
         private readonly ILogger _logger;
-        public UserController(IUserService userService, ILogger logger)
+        public UserController(IUserService userService, ILogger<UserController> logger)
         {
             _userService = userService;
             _logger = logger;
@@ -40,13 +40,14 @@ namespace LogicalPantry.Web.Controllers
             _logger.LogInformation("Index method call ended.");
             return View();
         }
+
         [HttpGet]
         [Route("ManageUsers")]
         public async Task<IActionResult> ManageUsers()
         {
-            _logger.LogInformation("GetAllusers object call started.");
-            var response = _userService.GetAllRegisteredUsersAsync().Result;
-            _logger.LogInformation("GetAllusers object call ended.");
+            _logger.LogInformation("ManageUsers object call started.");
+            var response = await _userService.GetAllRegisteredUsersAsync();
+            _logger.LogInformation("ManageUsers object call ended.");
 
             return View(response.Data);
         }
@@ -58,9 +59,9 @@ namespace LogicalPantry.Web.Controllers
             if (tenentId == 0)return null;
             var response = _userService.GetUserByIdAsync(tenentId).Result;
             _logger.LogInformation("GetUserbyId object call ended.");
-
             return response;
         }
+
         [HttpGet]
         public object GetUsersbyTimeSlot(DateTime timeslot, int tenentId) 
         {
@@ -68,14 +69,13 @@ namespace LogicalPantry.Web.Controllers
             if (tenentId == 0 || timeslot == null) return null;
             var response = _userService.GetUsersbyTimeSlot(timeslot,tenentId).Result;
             _logger.LogInformation("GetUsersbyTimeSlot object call ended.");
-
             return response;
         }
+
         [HttpPost]
         public object PutUserStatus(List<UserAttendedDto> userDto)
         {
             _logger.LogInformation("PutUserStatus object call started.");
-
             if (userDto != null)
             {
                 var response = _userService.UpdateUserAllowStatusAsync(userDto).Result;
@@ -91,6 +91,7 @@ namespace LogicalPantry.Web.Controllers
         [HttpGet("session")]
         public IActionResult GetSessionData()
         {
+            _logger.LogInformation("GetSessionData method call started");
             var userEmail = HttpContext.Session.GetString("UserEmail");
             var userName = HttpContext.Session.GetString("UserName");
 
@@ -98,13 +99,14 @@ namespace LogicalPantry.Web.Controllers
             {
                 return NotFound();
             }
-
+            _logger.LogInformation("GetSessionData method call ended");
             return Ok(new { UserEmail = userEmail, UserName = userName });
         }
 
         [Route("UpdateUser")]
         public async Task<IActionResult> UpdateUser(string updatedNotificationList)
         {
+            _logger.LogInformation("UpdateUser method call started");
             if (updatedNotificationList == null)
             {
                 return BadRequest("Invalid data.");
@@ -133,6 +135,7 @@ namespace LogicalPantry.Web.Controllers
                     return StatusCode(500, "Internal server error.");
                 }
             }
+            _logger.LogInformation("UpdateUser method call ended");
             return Ok(new { success = false });
         }
 
@@ -172,6 +175,7 @@ namespace LogicalPantry.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> UpdateUserBatch([FromBody] List<UserAttendedDto> userStatuses)
         {
+            _logger.LogInformation("UpdateUserBatch method call started");
             if (userStatuses == null || !userStatuses.Any())
             {
                 return BadRequest("Invalid data.");
@@ -185,6 +189,7 @@ namespace LogicalPantry.Web.Controllers
                 {
                     TempData["MessageClass"] = "alert-success";
                     TempData["SuccessMessageUserBatch"] = "User Saved Successfully";
+                    _logger.LogInformation("UpdateUserBatch method call ended");
                     return Ok(new { success = true });
                 }
                 else
@@ -198,12 +203,16 @@ namespace LogicalPantry.Web.Controllers
             {
                 TempData["MessageClass"] = "alert-danger";
                 TempData["SuccessMessageUserBatch"] = $"Error: {ex.Message}";
+                _logger.LogCritical($"Internal server error: {ex.Message}, Stack Trace: {ex.StackTrace}");
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
+
         }
+
         [HttpPost("GetUserIdByEmail")]
         public async Task<IActionResult> GetUserIdByEmail([FromBody] UserDto dto)
         {
+            _logger.LogInformation("GetUserIdByEmail method call Started");
             if (dto == null || string.IsNullOrEmpty(dto.Email))
             {
                 return BadRequest(new { Message = "Invalid email." });
@@ -213,17 +222,20 @@ namespace LogicalPantry.Web.Controllers
 
             if (response.Success)
             {
+                _logger.LogInformation("GetUserIdByEmail method call ended");
                 return Ok(new { UserId = response.Data });
             }
             else
             {
                 return StatusCode(500, response);
             }
+
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(string id)
         {
+            _logger.LogInformation("DeleteUser method call started");
             try
             {
                 
@@ -237,12 +249,14 @@ namespace LogicalPantry.Web.Controllers
 
                 if (result.Success)
                 {
+                    _logger.LogInformation("DeleteUser method call ended");
                     return NoContent(); 
                 }
                 else
                 {
                     return NotFound("User not found."); 
                 }
+                
             }
             catch (Exception ex)
             {

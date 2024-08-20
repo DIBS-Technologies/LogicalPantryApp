@@ -24,7 +24,8 @@ namespace LogicalPantry.Web.Controllers
 
         public IActionResult Index(string pageName)
         {
-
+            _logger.LogInformation($"Index method call started.");
+            _logger.LogInformation($"Index method call ended.");
             return View();
         }
 

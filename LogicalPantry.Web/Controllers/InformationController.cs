@@ -13,6 +13,8 @@ namespace LogicalPantry.Web.Controllers
     public class InformationController : Controller
     {
         IInformationService _informationService;
+        private ILogger<InformationController> object1;
+        private IInformationService object2;
         private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly ILogger<InformationController> _logger;
         private readonly IMemoryCache _memoryCache;
@@ -25,29 +27,49 @@ namespace LogicalPantry.Web.Controllers
             _memoryCache = memoryCache;
         }
 
+
         public IActionResult Index()
         {
             _logger.LogInformation($"Index method call started");
-
             _logger.LogInformation($"Index method call ended");
-
             return View();
-
         }
 
-        [HttpGet]
-        public object Get(string tenantid)
+        //[HttpGet]
+        //public object Get(string tenantid)
+        //{
+        //    _logger.LogInformation("Get Object call started");
+        //    if (int.Parse(tenantid) == 0) { return null; }
+        //    var response = _informationService.GetTenant(int.Parse(tenantid)).Result;
+        //    _logger.LogInformation($"Get Object call ended");
+        //    return response;
+
+        //} 
+
+        public async Task<IActionResult> Get(string tenantid)
         {
-            _logger.LogInformation($"Get Object call started");
+            _logger.LogInformation("Get Object call started");
 
-            if (int.Parse(tenantid) == 0) { return null; }
-            var response = _informationService.GetTenant(int.Parse(tenantid)).Result;
+            try
+            {
+                if (int.TryParse(tenantid, out int id) && id != 0)
+                {
+                    var response = await _informationService.GetTenant(id);
+                    _logger.LogInformation("Get Object call ended");
+                    return Ok(response);
+                }
 
-            _logger.LogInformation($"Get Object call ended");
-
-            return response;
-
+                _logger.LogInformation("Get Object call ended");
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting tenant.");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
+
+
 
 
         /// <summary>

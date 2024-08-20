@@ -58,9 +58,10 @@ namespace LogicalPantry.Web.Controllers
         [Route("EditTimeSlotUser")]
         public async Task<IActionResult> EditTimeSlotUser(string id)
         {
-
+            _logger.LogInformation("EditTimeSlotUser method call started.");
             var response =  _userSercvice.GetUsersbyTimeSlotId(int.Parse(id)).Result;
-            var userDtos = new List<UserDto>(); 
+            var userDtos = new List<UserDto>();
+            _logger.LogInformation("EditTimeSlotUser method call ended.");
             return View(response.Data.ToList()); // Handle the error case appropriately
         }
 
@@ -118,6 +119,8 @@ namespace LogicalPantry.Web.Controllers
         // Helper method to convert DateTimeOffset to Unix timestamp (seconds)
         private long ToUnixTimestamp(DateTimeOffset dateTime)
         {
+            _logger.LogInformation("ToUnixTimestamp method call started.");
+            _logger.LogInformation("ToUnixTimestamp method call ended.");
             return dateTime.ToUnixTimeSeconds();
         }
 
@@ -125,6 +128,7 @@ namespace LogicalPantry.Web.Controllers
         [HttpPost("GetTimeSlotId")]
         public async Task<IActionResult> GetTimeSlotId([FromBody] TimeSlotDto request)
         {
+            _logger.LogInformation("GetTimeSlotId method call started.");
             if (request == null)
             {
                 return BadRequest("Invalid request data.");
@@ -137,9 +141,11 @@ namespace LogicalPantry.Web.Controllers
                 startTime = DateTime.Parse(request.StartTime.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
                 endTime = DateTime.Parse(request.EndTime.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
                 TempData["startTime"] = startTime;
+
             }
-            catch (FormatException)
+            catch (FormatException ex)
             {
+                _logger.LogCritical($"Internal server error: {ex.Message}, Stack Trace: {ex.StackTrace}");
                 return BadRequest("Invalid date format.");
             }
 
@@ -147,6 +153,7 @@ namespace LogicalPantry.Web.Controllers
 
             if (timeSlotId.HasValue)
             {
+                _logger.LogInformation("GetTimeSlotId method call ended.");
                 return Ok(new { timeSlotId = timeSlotId });
             }
             else
@@ -191,7 +198,6 @@ namespace LogicalPantry.Web.Controllers
                 Events = calendarEvents
             };
             _logger.LogInformation("Calendar method call ended.");
-
             return View(model);
         }
 
