@@ -132,11 +132,13 @@ else
 app.UseHttpsRedirection(); // Redirect HTTP requests to HTTPS
 app.UseAuthentication(); // Enable authentication middleware
 app.UseAuthorization(); // Enable authorization middleware
+
 // Add the Tenant Middleware
 
 app.UseStaticFiles(); // Serve static files from wwwroot folder
 app.UseSession(); // Enable session middleware
 app.UseMiddleware<TenantMiddleware>();
+
 app.UseRouting(); // Enable routing
 
 

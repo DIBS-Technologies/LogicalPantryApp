@@ -174,14 +174,14 @@
         </div>
 
         <!-- Bootstrap Modal for Event Details -->
-        <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel" aria-hidden="true">
+        @* <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h5 class="modal-title" id="eventModalLabel">Event Details</h5>
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
-                        </button>
+                        </button> 
                     </div>
                     <div class="modal-body">
                         <form id="eventForm">
@@ -196,6 +196,37 @@
                             <div class="form-group">
                                 <label for="eventEnd">End Date and Time:</label>
                                 <input type="datetime-local" class="form-control" id="eventEnd" name="EndDateTime" required>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="saveEventBtn">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div> *@
+        <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="eventModalLabel">Event Details</h5>
+                    </div>
+                    <div class="modal-body">
+                        <form id="eventForm">
+                            <div class="form-group">
+                                <label for="eventTitle">Title:</label>
+                                <input type="text" class="form-control" id="eventTitle" name="Title" required>
+                                <span class="text-danger validation-message" id="titleError"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="eventStart">Start Date and Time:</label>
+                                <input type="datetime-local" class="form-control" id="eventStart" name="StartDateTime" required>
+                                <span class="text-danger validation-message" id="startError"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="eventEnd">End Date and Time:</label>
+                                <input type="datetime-local" class="form-control" id="eventEnd" name="EndDateTime" required>
+                                <span class="text-danger validation-message" id="endError"></span>
                             </div>
                         </form>
                     </div>
@@ -236,7 +267,7 @@
                 },
                 weekday: {
                     timeline: {
-                        fromHour: 10,
+                        fromHour: 7,
                         toHour: 20,
                         intervalMinutes: 60,
                         format: 'HH:mm',
@@ -297,11 +328,12 @@
                     contentType: 'application/json',
                     data: JSON.stringify(eventData),
                     success: function (response) {
-                        alert('Event added successfully!');
+                        // alert('Event added successfully!');
                         $('#eventModal').modal('hide');
+                        location.reload();
                     },
                     error: function (xhr, status, error) {
-                        alert('Error adding event: ' + error);
+                        //alert('Error adding event: ' + error);
                     }
                 });
             });
@@ -349,6 +381,42 @@
                 var selectedEventId = selectedOption.val();
                 var selectedEventTitle = selectedOption.data('title');
             }
+
+            $('#saveEventBtn').on('click', function (e) {
+                e.preventDefault();
+
+                // Clear previous validation messages
+                $('.validation-message').text('');
+
+                // Validation flags
+                let isValid = true;
+
+                // Validate Title
+                const title = $('#eventTitle').val().trim();
+                if (title === '') {
+                    $('#titleError').text('Title is required.');
+                    isValid = false;
+                }
+
+                // Validate Start Date and Time
+                const startDateTime = $('#eventStart').val().trim();
+                if (startDateTime === '') {
+                    $('#startError').text('Start date and time are required.');
+                    isValid = false;
+                }
+
+                // Validate End Date and Time
+                const endDateTime = $('#eventEnd').val().trim();
+                if (endDateTime === '') {
+                    $('#endError').text('End date and time are required.');
+                    isValid = false;
+                }
+
+                // If all fields are valid, submit the form
+                if (isValid) {
+                    $('#eventForm').submit(); // Submit the form or call your saving logic here
+                }
+            });
         });
     </script>
 </body>
