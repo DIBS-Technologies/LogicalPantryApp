@@ -58,6 +58,7 @@ namespace LogicalPantry.Web.Controllers
         [HttpPost("AddTimeSlotSignUps")]
         public async Task<IActionResult> AddTimeSlotSignUps([FromBody] TimeSlotSignupDto dto)
         {
+            _logger.LogInformation("AddTimeSlotSignUps method call started.");
             if (dto == null)
             {
                 return BadRequest(new { success = false, message = "Invalid data" });
@@ -69,6 +70,7 @@ namespace LogicalPantry.Web.Controllers
 
                 if (success)
                 {
+                    _logger.LogInformation("AddTimeSlotSignUps method call ended.");
                     return Ok(new { success = true, message = message });
                 }
                 else
@@ -81,7 +83,7 @@ namespace LogicalPantry.Web.Controllers
             {
                 // Log exception
                 // Example: logger.LogError(ex, "Exception occurred in AddTimeSlotSignUps.");
-
+                _logger.LogCritical($"Internal server error: {ex.Message}, Stack Trace: {ex.StackTrace}");
                 return StatusCode(500, new { success = false, message = "Exception occurred: " + ex.Message });
             }
         }

@@ -29,9 +29,8 @@ namespace LogicalPantry.Web.Controllers
             _logger.LogInformation($"Register method call started");
             var response= await _registrationService.RegisterUser(user);
 
-            _logger.LogInformation($"Register method call ended");
          
-            if(response.Success)
+            if(response != null && response.Success)
             {
                 @TempData["MessageClass"] = "alert-success";
                 @TempData["SuccessMessageUser"] = "Registartion Successfull";
@@ -43,7 +42,7 @@ namespace LogicalPantry.Web.Controllers
                 return View("Index");
 
             }
-
+            _logger.LogInformation($"Register method call ended");
             return RedirectToAction("UserCalendar", "TimeSlot", new { area = "" });
 
         }

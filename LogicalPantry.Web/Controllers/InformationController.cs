@@ -25,29 +25,34 @@ namespace LogicalPantry.Web.Controllers
             _memoryCache = memoryCache;
         }
 
+
         public IActionResult Index()
         {
             _logger.LogInformation($"Index method call started");
-
             _logger.LogInformation($"Index method call ended");
-
             return View();
-
         }
 
         [HttpGet("Get")]
         public async Task<IActionResult> Get(int tenantid)
         {
-            _logger.LogInformation($"Get Object call started");
+            _logger.LogInformation("Get Object call started");
 
             if (tenantid == 0) { return null; }
             var response =await _informationService.GetTenant(tenantid);
 
-            _logger.LogInformation($"Get Object call ended");
+                _logger.LogInformation("Get Object call ended");
+                return NotFound();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting tenant.");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
 
             return Json(response);
 
-        }
 
 
         [HttpGet]
