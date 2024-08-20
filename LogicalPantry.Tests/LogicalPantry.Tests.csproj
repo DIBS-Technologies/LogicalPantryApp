@@ -18,6 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LogicalPantry.Services.Test\LogicalPantry.Services.Test.csproj" />
     <ProjectReference Include="..\LogicalPantry.Services\LogicalPantry.Services.csproj" />
     <ProjectReference Include="..\LogicalPantry.Web\LogicalPantry.Web.csproj" />
   </ItemGroup>

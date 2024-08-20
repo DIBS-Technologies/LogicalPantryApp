@@ -147,7 +147,7 @@ app.UseRouting(); // Enable routing
 //    pattern: "{controller=Auth}/{action=loginView}/{id?}");
 
 
-//// Define a route pattern that includes the tenant in the URL
+//// Define a route pattern Equals includes the tenant in the URL
 //app.MapControllerRoute(
 //    name: "tenantRoute",
 //    pattern: "{tenant}/{controller=Information}/{action=Home}/{id?}",

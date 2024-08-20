@@ -55,10 +55,19 @@
         .card-header {
             justify-content: center;
         }
+        #main {
+            padding: 2%;
+            margin-left: 6%;
+            margin-right: 5%;
+            margin-top: 5%;
+        } 
+         /* .container {
+            margin: 10%;
+        } */
     </style>
 </head>
 
-<main>
+<main id="main">
     <header class="page-header pb-10">
         <div class="container">
             <div class="page-header-content pt-4">
@@ -147,7 +156,7 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     @* <script>
         $(document).ready(function () {
-            debugger;
+            ;
             $(".inp-cbx").on("change", function () {
                 var checkbox = $(this);
                 var userId = checkbox.data("user-id");
@@ -167,7 +176,7 @@
             });
 
             $(".saveButton").on("click", function () {
-                debugger;
+                ;
                 var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '[]');
                 if (userStatuses.length === 0) {
                     return;
@@ -211,7 +220,7 @@
 
     <script>
         $(document).ready(function () {
-              debugger;
+              ;
                  // Function to get query parameters from the URL
                 function getQueryParameter(name) {
                     const urlParams = new URLSearchParams(window.location.search);
@@ -224,7 +233,7 @@
 
 
             $(".inp-cbx").on("change", function () {
-                debugger;
+                ;
                 var checkbox = $(this);
                 var userId = checkbox.data("user-id");
                 var isChecked = checkbox.prop("checked");
@@ -244,7 +253,7 @@
 
 
             $(".saveButton").on("click", function () {
-                debugger;
+                ;
                     var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '[]');
                     if (userStatuses.length === 0) {
                         return;
@@ -289,14 +298,14 @@
                 });
 
             // $(".saveButton").on("click", function () {
-            //     debugger;
+            //     ;
             //     var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '[]');
             //     if (userStatuses.length === 0) {
             //         return;
             //     }
 
 
-            //     debugger;
+            //     ;
             //      // Add the timeSlotId to each user's data
             //     var updatedUserStatuses = userStatuses.map(function(userStatus) {
             //         return {

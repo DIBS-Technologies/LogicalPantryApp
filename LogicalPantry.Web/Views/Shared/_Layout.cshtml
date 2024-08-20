@@ -3,6 +3,8 @@
     var tenantName = ViewBag.TenantName as string;
     var tenantId = ViewBag.TenantId;
     var pagename = ViewBag.PageName as string;
+    var isUser = User.IsInRole("User");
+    var isAdmin = User.IsInRole("Admin");
 }
 <!DOCTYPE html>
 <html>
@@ -12,34 +14,12 @@
     <title>@ViewData["Title"] - LogicalPantry.Web</title>
 
     <link href="/css/default-main.css" rel="stylesheet" />
-    <link href="~/css/styles.css" rel="stylesheet" />
+    <link href="~/css/style.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <link href="~/css/site.css" rel="stylesheet" />
     <style>
         .sidenav-light {
-            background-color: #fff;
-            color: #1f2d41;
-        }
-
-            .sidenav-light .sidenav-menu .nav-link:hover {
-                color: #0061f2;
-            }
-
-        .sidenav .sidenav-menu .nav .sidenav-menu-heading {
-            padding: 1.75rem 1rem 0.75rem;
-            font-size: 0.7rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .footer-custom {
             background-color: #fff;
             color: #1f2d41;
         }
@@ -52,7 +32,6 @@
             padding-left: 0.5rem !important;
         }
 
-
         .topnav {
             display: flex;
             justify-content: space-between;
@@ -63,23 +42,23 @@
             width: 100%; /* Ensure full width */
         }
 
-            .topnav .navbar-nav {
-                display: flex;
-                flex-direction: row;
-                margin-left: auto; /* Push links to the right */
-            }
+        .topnav .navbar-nav {
+            display: flex;
+            flex-direction: row;
+            margin-left: auto; /* Push links to the right */
+        }
 
-            .topnav .nav-link {
-                padding-right: 1rem;
-                padding-left: 1rem;
-                font-weight: normal;
-                transition: color 0.3s, font-weight 0.3s;
-            }
+        .topnav .nav-link {
+            padding-right: 1rem;
+            padding-left: 1rem;
+            font-weight: normal;
+            transition: color 0.3s, font-weight 0.3s;
+        }
 
-                .topnav .nav-link:hover {
-                    color: #0061f2;
-                    font-weight: bold;
-                }
+        .topnav .nav-link:hover {
+            color: #0061f2;
+            font-weight: bold;
+        }
 
         .page-name {
             flex: 1;
@@ -87,6 +66,43 @@
             font-weight: bold;
             color: #1f2d41;
             font-size: 1.25rem; /* Adjust size as needed */
+        }
+
+        #layoutSidenav {
+            display: flex;
+            flex-direction: column;
+            height: 80vh;
+            width: 100vw;
+            margin: 0;
+        }
+
+       /*  #layoutSidenav_nav {
+            display: @(isAdmin ? "block" : "none"); /* Hide the sidenav if not admin */
+        } */
+
+        #layoutSidenav_content {
+            margin-left: @(isAdmin ? "0" : "20px"); /* Add margin if sidenav is hidden */
+            margin-right: 20px;
+            transition: margin 0.15s ease-in-out;
+            padding: @(!isAdmin ? "0" : "10px");
+        }
+
+        @@media (min-width: 992px) {
+            #layoutSidenav #layoutSidenav_content {
+                margin-left: @(isAdmin ? "0" : ""); /* Add margin if sidenav is hidden */
+            }
+        }
+
+        .nav-fixed #layoutSidenav #layoutSidenav_content {
+            padding-left: @(isAdmin ? "2rem" : "none");
+            padding-right: 2rem;
+            top: 4rem;
+            padding-bottom: 5rem;
+        }
+
+        footer {
+            display: flex;
+            justify-content: right;
         }
 
     </style>
@@ -98,10 +114,11 @@
         </div>
         <div class="page-name" id="pageName"></div>
         <div class="navbar-nav">
-            <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar">Pickup</a>
+           @*  <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar">Pickup</a> *@
             <a class="nav-link" href="/@tenantName/Donation/PayPal">Donation</a>
-             <a class="nav-link" href="Auth/LoginView">Login</a> 
-            <input id="pag" type="hidden" name="name" value="@pagename" />
+            <a class="nav-link" href="/Auth/LoginView">Login</a>
+            <input id="page" type="hidden" name="name" value="@pagename" />
+            <input type="hidden" value="@isUser" id="isUser" />
             @if (User.Identity.IsAuthenticated)
             {
                 var userEmail = User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value;
@@ -110,12 +127,12 @@
             }
         </div>
     </nav>
-            
-       
+           
     <div id="layoutSidenav">
-         <div id="layoutSidenav_nav"> 
-             @if (User.IsInRole("Admin"))
-            {
+         
+            <div id="layoutSidenav_nav">
+           @*  @if(User.IsInRole("Admin"))
+            { *@
                 <nav class="sidenav shadow-right sidenav-light">
                     <div class="sidenav-menu">
                         <div class="nav accordion" id="accordionSidenav">
@@ -135,8 +152,9 @@
                         </div>
                     </div>
                 </nav>
-             } 
-         </div> 
+            @* } *@
+        </div> 
+        
         <div id="layoutSidenav_content">
             <main>
                 <main role="main" class="pb-3">
@@ -145,32 +163,35 @@
             </main>
             <footer class="text-light py-2 fixed-bottom text-center">
                 <div class="container">
-                    <p class="mb-0" style="color:black">&copy; @DateTime.Now.Year - LogicalPantry</p>
+                    <p class="mb-0" style="color:black;display:flex; justify-content : center">&copy; @DateTime.Now.Year - LogicalPantry</p>
                 </div>
             </footer>
         </div>
     </div>
     @section Scripts {
         <script>
-             $(document).ready(function () {
-                 debugger;
-                 var userEmail = '@User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value';
-                 $.ajax({
-                       url: "/@tenantName/Information/Get",
-                     method: "GET",
-                     data: { tenantid:@tenantId},
-                     success: function (data) {
-                         debugger
-                         $("#logoImage").attr("src", data.ImageUrl);
-                     },
-                     error: function () {
-                         console.error("Cannot find Image src");
-                     }
-                 });
-             });
-              var handlerValue = $("#pag").val();                
+            $(document).ready(function () {
+                var userEmail = '@User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value';
+                $.ajax({
+                    url: "/@tenantName/Information/Get",
+                    method: "GET",
+                    data: { tenantid: @tenantId },
+                    success: function (data) {
+                        $("#logoImage").attr("src", data.ImageUrl);
+                    },
+                    error: function () {
+                        console.error("Cannot find Image src");
+                    }
+                });
+
+                var handlerValue = $("#page").val();
                 $("#pageName").text(handlerValue ? handlerValue.replace('.html', ' ') : '');
-            sidenav-menu
+
+                debugger
+                // if ($("#isUser").val() === "True") {
+                //     $("#layoutSidenav_nav").remove();
+                // }
+            });
         </script>
     }
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js" crossorigin="anonymous"></script>

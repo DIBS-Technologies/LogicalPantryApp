@@ -44,7 +44,7 @@ namespace LogicalPantry.Web.Controllers
             var response =await _informationService.GetTenant(tenantid);
 
                 _logger.LogInformation("Get Object call ended");
-                return Json(response);
+                return NotFound();
             }
             catch (Exception ex)
             {

@@ -1,6 +1,9 @@
 ﻿@{
     var tenantName = ViewBag.TenantName as string;
     var pagename = ViewBag.PageName as string;
+    var isUser = User.IsInRole("User");
+    var isAdmin = User.IsInRole("Admin");
+   
 }
 
 <!DOCTYPE html>
@@ -11,7 +14,7 @@
     <title>@ViewData["Title"] - LogicalPantry.Web</title>
 
     <link href="/css/default-main.css" rel="stylesheet" />
-    <link href="~/css/styles.css" rel="stylesheet" />
+    <link href="~/css/style.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
@@ -40,6 +43,7 @@
             overflow: hidden; /* Prevent scrollbars within the content */
             padding-left: 20px;
             padding-bottom: 20px;
+            padding: @(!isAdmin ? "0" : "10px");
         }
 
         .topnav {
@@ -101,11 +105,13 @@
             color: #6c757d;
             position: relative;
             bottom: 0;
-            width: 100%; /* Ensure full width */
+            width: 100%; 
         }
 
         .nav-fixed #layoutSidenav #layoutSidenav_content {
-             padding-left: 10rem; 
+            
+            /*  padding-left: 10rem; */
+           
             /* top: 3.625rem; */
         }
 
@@ -138,6 +144,23 @@
             margin: 0rem 0.5rem 0rem 0.75rem;
             padding-left: 0.5rem !important;
         }
+
+      
+            #layoutSidenav_content {
+                padding : @@(isUser ? "0" : "10");
+            }
+
+        .nav-fixed #layoutSidenav #layoutSidenav_content {
+            padding-left: @(isAdmin ? "none" : "2rem");
+            top: 3.625rem;
+        }
+
+        footer {
+            display: flex;
+            justify-content: right;
+        }
+
+
     </style>
 </head>
 <body class="nav-fixed">
@@ -148,13 +171,16 @@
             </div>
             <div class="page-name" id="pageName"></div>
             <div class="navbar-nav">
-                <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar">Pickup</a>
+                @* <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar">Pickup</a> *@
                 <a class="nav-link" href="/@tenantName/Donation/PayPal">Donation</a>
+                <a class="nav-link" href="/Auth/LoginView">Login</a>
+                <input id="page" type="hidden" name="name" value="@pagename" />
+                <input type="hidden" value="@isUser" id="isUser" />
                 <a class="nav-link" href="/@tenantName/Auth/LoginView">Login</a>
                 <input id="pag" type="hidden" name="name" value="@pagename" />
             </div>
         </nav>
-        <div id="layoutSidenav_content"> 
+        <div id="layoutSidenav_content" style="@(isUser ? "Padding : 0;" : "")"> 
             <main>
                 <iframe src="" id="urlFrameId"></iframe>
             </main>
@@ -179,9 +205,12 @@
                 // var urlParams = new URLSearchParams(window.location.search);
                 // var handlerValue = urlParams.get("pageName");
 
-                var handlerValue = $("#pag").val();
+                var handlerValue = $("#page").val();
                 $("#urlFrameId").attr("src", "/TenantHomePage/" + handlerValue);
                 $("#pageName").text(handlerValue ? handlerValue.replace('.html', ' ') : ''); // Handle spaces in pageName
+
+               
+
             });
         </script>
     }

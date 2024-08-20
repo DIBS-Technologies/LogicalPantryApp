@@ -256,20 +256,20 @@ namespace LogicalPantry.Web.Controllers
         //    var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
         //    var userInfo = await CheckIfUserExists(result);
 
-        //    if (userInfo != null && userInfo.Role == "Admin")
-        //    {
-        //        // Redirect based on user role
-        //        return RedirectToAction(ViewConstants.Calandar, ViewConstants.TimeSlot, new { area = "" });
+        ////    if (userInfo != null && userInfo.Role == "Admin")
+        ////    {
+        ////        // Redirect based on user role
+        ////        return RedirectToAction(ViewConstants.Calandar, ViewConstants.TimeSlot, new { area = "" });
 
-        //    }
-        //    else if (userInfo != null && userInfo.Role == "User")
-        //    {
+        ////    }
+        ////    else if (userInfo != null && userInfo.Role == "User")
+        ////    {
 
 
-        //        return RedirectToAction(ViewConstants.INDEX, ViewConstants.TimeSlotSignUp, new { area = "" });
-        //    }
+        ////        return RedirectToAction(ViewConstants.INDEX, ViewConstants.TimeSlotSignUp, new { area = "" });
+        ////    }
 
-        //    return RedirectToAction(ViewConstants.AUTH, ViewConstants.LOGINVIEW, new { area = "" });
+        ////    return RedirectToAction(ViewConstants.AUTH, ViewConstants.LOGINVIEW, new { area = "" });
         //}
 
         [HttpGet("loginView")]
