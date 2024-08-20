@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.0-release-24373-02" />
+    <PackageReference Include="Moq" Version="4.20.70" />
+    <PackageReference Include="NUnit" Version="4.1.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LogicalPantry.DTOs\LogicalPantry.DTOs.csproj" />
+    <ProjectReference Include="..\LogicalPantry.Models\LogicalPantry.Models.csproj" />
+    <ProjectReference Include="..\LogicalPantry.Services\LogicalPantry.Services.csproj" />
+    <ProjectReference Include="..\LogicalPantry.Web\LogicalPantry.Web.csproj" />
+  </ItemGroup>
+
+</Project>

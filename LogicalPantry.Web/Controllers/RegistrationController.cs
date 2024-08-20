@@ -31,7 +31,7 @@ namespace LogicalPantry.Web.Controllers
 
             _logger.LogInformation($"Register method call ended");
          
-            if(response.Success)
+            if(response != null && response.Success)
             {
                 @TempData["MessageClass"] = "alert-success";
                 @TempData["SuccessMessageUser"] = "Registartion Successfull";

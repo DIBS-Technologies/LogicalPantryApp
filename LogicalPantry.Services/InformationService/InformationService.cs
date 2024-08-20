@@ -87,7 +87,7 @@ namespace LogicalPantry.Services.InformationService
             var response = new ServiceResponse<bool>();        
 
             var tenantdetails = await GetTenantByNameAsync(tenantDto.TenantName);
-            tenantDto.Id = tenantdetails.Data.Id;
+            tenantDto.Id = tenantdetails.Data.Id; 
             // Validate input
             if (tenantDto == null || tenantDto.Id <= 0)
             {
