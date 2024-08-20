@@ -84,9 +84,10 @@ namespace LogicalPantry.Services.InformationService
 
         public async Task<ServiceResponse<bool>> PostTenant(TenantDto tenantDto)
         {
-            var response = new ServiceResponse<bool>();
+            var response = new ServiceResponse<bool>();        
 
-            tenantDto.Id = 1;
+            var tenantdetails = await GetTenantByNameAsync(tenantDto.TenantName);
+            tenantDto.Id = tenantdetails.Data.Id; 
             // Validate input
             if (tenantDto == null || tenantDto.Id <= 0)
             {
@@ -112,14 +113,17 @@ namespace LogicalPantry.Services.InformationService
                 // Update the tenant information
                 tenant.PaypalId = tenantDto.PaypalId;
                 tenant.PageName = tenantDto.PageName;
-                tenant.Logo = tenantDto.Logo;
+                if (tenantDto.Logo != null)
+                {
+                    tenant.Logo = tenantDto.Logo;
+                }                
                 tenant.Timezone = tenantDto.Timezone;
 
                 dataContext.Tenants.Update(tenant);
 
                 // Save changes to the database
                 await dataContext.SaveChangesAsync();
-
+         
                 // Return a successful response
                 response.Success = true;
                 response.Data = true; // Indicating success
@@ -255,21 +259,21 @@ namespace LogicalPantry.Services.InformationService
         }
 
 
-      
+
 
         /// <summary>
         /// For anonymous page - 2-08-2024 kunal karne
         /// </summary>
-        /// <param name="PageName"></param>
+        /// <param name="tenantName"></param>
         /// <returns></returns>
-        public async Task<ServiceResponse<TenantDto>> GetTenantPageNameForUserAsync(string PageName)
+        public async Task<ServiceResponse<TenantDto>> GetTenantPageNameForUserAsync(string tenantName)
         {
             var response = new ServiceResponse<TenantDto>();
            // var pageName1 = "account-billing";
             try
             {
                 // Retrieve the page name for the specified tenant from the database
-                var TenantPageName = await dataContext.Tenants.Where(p => p.PageName == PageName)
+                var TenantPageName = await dataContext.Tenants.Where(p => p.TenantName == tenantName)
                                                                      .FirstOrDefaultAsync();
                
                 if (TenantPageName != null)
@@ -307,5 +311,63 @@ namespace LogicalPantry.Services.InformationService
             return response;
         }
 
+
+
+
+        public async Task<ServiceResponse<TenantDto>> GetTenantByNameAsync(string tenantName)
+        {
+            var response = new ServiceResponse<TenantDto>();
+
+            var tenant = await dataContext.Tenants.FirstOrDefaultAsync(t => t.TenantName == tenantName);
+            if (tenant != null)
+            {
+                response.Data = new TenantDto
+                {
+                    Id = tenant.Id,
+                    TenantName = tenant.TenantName,
+                     AdminEmail = tenant.AdminEmail,
+                    PaypalId = tenant.PaypalId,
+                    PageName = tenant.PageName,
+                    Logo = tenant.Logo,
+                    Timezone =   tenant.Timezone
+       
+                };
+                response.Success = true;
+            }
+            else
+            {
+                response.Success = false;
+                response.Message = "Tenant not found";
+            }
+
+            return response;
+        }
+
+
+
+        
+        public async Task<ServiceResponse<TenantDto>> GetTenantIdByEmail(string userEmail)
+        {
+            var response = new ServiceResponse<TenantDto>();
+
+            var tenant = await dataContext.Tenants.FirstOrDefaultAsync(t => t.AdminEmail == userEmail);
+            if (tenant != null)
+            {
+                response.Data = new TenantDto
+                {
+                    Id = tenant.Id,
+                    TenantName = tenant.TenantName,
+                    // Add other properties as needed
+                };
+                response.Success = true;
+            }
+            else
+            {
+                response.Success = false;
+                response.Message = "Tenant not found";
+            }
+
+            return response;
+        }
     }
 }

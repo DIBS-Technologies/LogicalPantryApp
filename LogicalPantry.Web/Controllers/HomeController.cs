@@ -9,44 +9,12 @@ using DotNetOpenAuth.AspNet.Clients;
 using Facebook;
 using FacebookClient = Facebook.FacebookClient;
 using LogicalPantry.Web.Helper;
+using LogicalPantry.DTOs.TenantDtos;
 
 namespace LogicalPantry.Web.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
-        {
-
-            _logger = logger;
-        }
        
-        public IActionResult Index()
-        {
-           _logger.LogInformation($"Index method call started");
-
-           _logger.LogInformation($"Index method call ended");
-
-            return View();
-        }
-
-       
-        public IActionResult Privacy()
-        {
-            _logger.LogInformation($"Privacy method call started");
-
-            _logger.LogInformation($"Privacy method call ended");
-
-            return View();
-        }
-
-       
-        public IActionResult Error()
-        {
-            _logger.LogInformation($"Error method call started");
-            _logger.LogInformation($"Error method call ended");
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
     }
 }

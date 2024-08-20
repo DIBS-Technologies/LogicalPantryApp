@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogicalPantry.Services", "L
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LogicalPantry.Web", "LogicalPantry.Web\LogicalPantry.Web.csproj", "{661D0E77-072D-4183-8D36-5498F2902E64}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogicalPantry.Tests", "LogicalPantry.Tests\LogicalPantry.Tests.csproj", "{89ADB81D-42A4-4D57-94C2-F17B7AA8B1BF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogicalPantry.Test", "LogicalPantry.Test\LogicalPantry.Test.csproj", "{74D9DBDC-6696-40D9-BA9B-400778E1F631}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,10 +35,10 @@ Global
 		{661D0E77-072D-4183-8D36-5498F2902E64}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{661D0E77-072D-4183-8D36-5498F2902E64}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{661D0E77-072D-4183-8D36-5498F2902E64}.Release|Any CPU.Build.0 = Release|Any CPU
-		{89ADB81D-42A4-4D57-94C2-F17B7AA8B1BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{89ADB81D-42A4-4D57-94C2-F17B7AA8B1BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{89ADB81D-42A4-4D57-94C2-F17B7AA8B1BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{89ADB81D-42A4-4D57-94C2-F17B7AA8B1BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{74D9DBDC-6696-40D9-BA9B-400778E1F631}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{74D9DBDC-6696-40D9-BA9B-400778E1F631}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{74D9DBDC-6696-40D9-BA9B-400778E1F631}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{74D9DBDC-6696-40D9-BA9B-400778E1F631}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

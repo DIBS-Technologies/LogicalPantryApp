@@ -4,12 +4,12 @@ using Microsoft.AspNetCore.Mvc;
 namespace LogicalPantry.Web.Controllers
 {
     [Route("Donation")]
-    public class DonationController : Controller
+    public class DonationController : BaseController
     {
         private readonly IConfiguration _configuration;
         private readonly ILogger _logger;
 
-        public DonationController(IConfiguration configuration, ILogger logger)
+        public DonationController(IConfiguration configuration, ILogger<DonationController> logger)
         {
             _configuration = configuration;
             _logger = logger;

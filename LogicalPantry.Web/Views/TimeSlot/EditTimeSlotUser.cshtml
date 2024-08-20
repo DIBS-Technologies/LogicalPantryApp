@@ -2,7 +2,10 @@
 
 @{
     ViewData["Title"] = "Edit Time Slot Users";
+    var tenantName = ViewBag.TenantName as string;
+ 
 }
+
 
 @Html.AntiForgeryToken()
 
@@ -110,7 +113,9 @@
                                 <td>@user.PhoneNumber</td>
                                 <td>
                                     <div class="checkbox-wrapper-4">
-                                        <input class="inp-cbx" type="checkbox" id="allowCheckbox_@user.Id" data-user-id="@user.Id" @(user.IsAllow ? "checked" : "") />
+                                        @* <input class="inp-cbx" type="checkbox" id="allowCheckbox_@user.Id" data-user-id="@user.Id" @(user.IsAllow ? "checked" : "") /> *@
+                                        <input class="inp-cbx" type="checkbox" id="allowCheckbox_@user.Id" data-user-id="@user.Id" @(user.Attended ? "checked" : "") />
+
                                         <label class="cbx" for="allowCheckbox_@user.Id">
                                             <span>
                                                 <svg width="12px" height="10px">
@@ -131,7 +136,7 @@
                 </table>
 
                 <div id="saveButtonDiv">
-                    <button class="saveButton btn btn-primary" type="button" disabled>Save</button>
+                    <button class="saveButton" type="button" disabled>Save</button>
                 </div>
             </div>
         </div>
@@ -140,8 +145,9 @@
 
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    <script>
+    @* <script>
         $(document).ready(function () {
+            debugger;
             $(".inp-cbx").on("change", function () {
                 var checkbox = $(this);
                 var userId = checkbox.data("user-id");
@@ -161,13 +167,14 @@
             });
 
             $(".saveButton").on("click", function () {
+                debugger;
                 var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '[]');
                 if (userStatuses.length === 0) {
                     return;
                 }
 
                 $.ajax({
-                    url: '@Url.Action("UpdateUserBatch", "User")',
+                    url: '@Url.Action(tenantName,"UpdateUserBatch", "User")',
                     type: 'POST',
                     data: JSON.stringify(userStatuses),
                     contentType: 'application/json; charset=utf-8',
@@ -188,6 +195,150 @@
             });
 
             function toggleSaveButton() {
+                var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '[]');
+                if (userStatuses.length > 0) {
+                    $(".saveButton").prop("disabled", false);
+                } else {
+                    $(".saveButton").prop("disabled", true);
+                }
+            }
+
+            toggleSaveButton(); // Initialize the save button state on page load
+        });
+          </script>
+ *@
+
+
+    <script>
+        $(document).ready(function () {
+              debugger;
+                 // Function to get query parameters from the URL
+                function getQueryParameter(name) {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    return urlParams.get(name);
+                }
+
+                // Extract the timeSlotId from the URL
+                var timeSlotId = getQueryParameter('id');
+                console.log('Time Slot ID:', timeSlotId);
+
+
+            $(".inp-cbx").on("change", function () {
+                debugger;
+                var checkbox = $(this);
+                var userId = checkbox.data("user-id");
+                var isChecked = checkbox.prop("checked");
+
+                var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '[]');
+
+                var userStatus = userStatuses.find(u => u.Id === userId);
+                if (userStatus) {
+                    userStatus.IsAttended = isChecked;
+                } else {
+                    userStatuses.push({ Id: userId, IsAttended: isChecked });
+                }
+
+                sessionStorage.setItem('userStatuses', JSON.stringify(userStatuses));
+                toggleSaveButton();
+            });
+
+
+            $(".saveButton").on("click", function () {
+                debugger;
+                    var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '[]');
+                    if (userStatuses.length === 0) {
+                        return;
+                    }
+
+                    // Add the timeSlotId to each user's data
+                    var updatedUserStatuses = userStatuses.map(function (userStatus) {
+                        return {
+                            Id: +userStatus.Id,
+                            Attended: userStatus.IsAttended,
+                            TimeSlotId: +timeSlotId // Add timeSlotId to each user's data
+                        };
+                    });
+
+                    var requestData = {
+                        userStatuses: updatedUserStatuses
+                    };
+
+                    // Building the tenant-specific URL for the AJAX request
+                    var tenantName = '@tenantName';
+                    var url = '/' + tenantName + '/User/UpdateUserBatch';
+
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        data: JSON.stringify(updatedUserStatuses),
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        success: function (response) {
+                            if (response.success) {
+                                $('#successMessageBatch').text('Changes saved successfully.').fadeIn().delay(2000).fadeOut();
+                                sessionStorage.removeItem('userStatuses');
+                                toggleSaveButton();
+                            } else {
+                                $('#errorMessageBatch').text('Error saving changes.').fadeIn().delay(2000).fadeOut();
+                            }
+                        },
+                        error: function () {
+                            $('#errorMessageBatch').text('Error saving changes.').fadeIn().delay(2000).fadeOut();
+                        }
+                    });
+                });
+
+            // $(".saveButton").on("click", function () {
+            //     debugger;
+            //     var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '[]');
+            //     if (userStatuses.length === 0) {
+            //         return;
+            //     }
+
+
+            //     debugger;
+            //      // Add the timeSlotId to each user's data
+            //     var updatedUserStatuses = userStatuses.map(function(userStatus) {
+            //         return {
+            //             userId: userStatus.userId,
+            //             attended: userStatus.attended,
+            //             timeSlotId: timeSlotId // Add timeSlotId to each user's data
+            //         };
+            //     });
+
+            //     var requestData = {
+            //         userStatuses: updatedUserStatuses
+            //     };
+
+            //     // Building the tenant-specific URL for the AJAX request
+            //     var tenantName = '@tenantName';
+            //     var url = '/' + tenantName + '/User/UpdateUserBatch';
+
+            //     $.ajax({
+            //         url: url,
+            //         type: 'POST',
+            //         data: JSON.stringify(requestData),
+            //         contentType: 'application/json; charset=utf-8',
+            //         dataType: 'json',
+            //         success: function (response) {
+            //             if (response.success) {
+            //                 $('#successMessageBatch').text('Changes saved successfully.').fadeIn().delay(2000).fadeOut();
+            //                 sessionStorage.removeItem('userStatuses');
+            //                 toggleSaveButton();
+            //             } else {
+            //                 $('#errorMessageBatch').text('Error saving changes.').fadeIn().delay(2000).fadeOut();
+            //             }
+            //         },
+            //         error: function () {
+            //             $('#errorMessageBatch').text('Error saving changes.').fadeIn().delay(2000).fadeOut();
+            //         }
+            //     });
+            // });
+
+          
+
+            function toggleSaveButton() {
+             
                 var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '[]');
                 if (userStatuses.length > 0) {
                     $(".saveButton").prop("disabled", false);

@@ -111,7 +111,7 @@ namespace LogicalPantry.Services.RegistrationService
                     // Create a new user entity
                     var newUser = new User
                     {
-                        TenantId = 1,
+                        TenantId = userDto.TenantId,
                         FullName = userDto.FullName,
                         Address = userDto.Address,
                         Email = userDto.Email,

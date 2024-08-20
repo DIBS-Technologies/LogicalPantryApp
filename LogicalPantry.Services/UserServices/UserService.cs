@@ -123,8 +123,8 @@ namespace LogicalPantry.Services.UserServices
                     return response;
                 }
 
-                //dataContext.Users.Remove(user);
-                //await dataContext.SaveChangesAsync();
+                dataContext.Users.Remove(user);
+                await dataContext.SaveChangesAsync();
 
                 response.Data = true;
                 response.Success = true;
@@ -169,13 +169,131 @@ namespace LogicalPantry.Services.UserServices
         }
 
 
-     
 
-        public async Task<ServiceResponse<bool>> UpdateUserAllowStatusAsync(List<UserAttendedDto> userAllowStatusDtos)
+
+        //public async Task<ServiceResponse<bool>> UpdateUserAllowStatusAsync(List<UserAttendedDto> userAllowStatusDtos)
+        //{
+        //    var response = new ServiceResponse<bool>();
+
+        //    if (userAllowStatusDtos == null || !userAllowStatusDtos.Any())
+        //    {
+        //        response.Success = false;
+        //        response.Message = "No users to update.";
+        //        return response;
+        //    }
+
+        //    try
+        //    {
+        //        // Extract user IDs from the list of DTOs
+        //        var userIds = userAllowStatusDtos
+        //            .Where(dto => dto.IsAttended)
+        //            .Select(dto => dto.Id)
+        //            .ToList();
+
+        //        if (!userIds.Any())
+        //        {
+        //            response.Success = false;
+        //            response.Message = "No users with AllowStatus set to true.";
+        //            return response;
+        //        }
+
+        //        // Fetch users matching the IDs from the database
+        //        var usersToUpdate = await dataContext.Users
+        //            .Where(u => userIds.Contains(u.Id))
+        //            .ToListAsync();
+
+        //        // Update the 'IsAllow' status for matching users
+        //        foreach (var userDto in userAllowStatusDtos)
+        //        {
+        //            if (userDto.IsAttended) // Only update users with AllowStatus true
+        //            {
+        //                var user = usersToUpdate.FirstOrDefault(u => u.Id == userDto.Id);
+        //                if (user != null)
+        //                {
+        //                    user.IsAllow = userDto.IsAttended;
+        //                }
+        //            }
+        //        }
+
+        //        // Save changes to the database
+        //        await dataContext.SaveChangesAsync();
+
+        //        response.Data = true;
+        //        response.Success = true;
+        //        response.Message = "User allow status updated successfully.";
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response.Success = false;
+        //        response.Message = $"Error updating user allow status: {ex.Message}";
+        //    }
+
+        //    return response;
+        //}
+
+        //public async Task<ServiceResponse<bool>> UpdateUserAttendanceStatusAsync(List<UserAttendedDto> userAttendedDtos)
+        //{
+        //    var response = new ServiceResponse<bool>();
+
+        //    if (userAttendedDtos == null || !userAttendedDtos.Any())
+        //    {
+        //        response.Success = false;
+        //        response.Message = "No users to update.";
+        //        return response;
+        //    }
+
+        //    try
+        //    {
+        //        // Extract user IDs from the list of DTOs
+        //        var userIds = userAttendedDtos
+        //            .Select(dto => dto.Id)
+        //            .ToList();
+
+        //        if (!userIds.Any())
+        //        {
+        //            response.Success = false;
+        //            response.Message = "No valid users provided.";
+        //            return response;
+        //        }
+
+        //        // Fetch matching records from the TimeSlotSignups table
+        //        var timeSlotSignupsToUpdate = await dataContext.TimeSlotSignups
+        //            .Where(ts => userIds.Contains(ts.UserId))
+        //            .ToListAsync();
+
+        //        // Update the 'Attended' status for matching records
+        //        foreach (var userDto in userAttendedDtos)
+        //        {
+        //            var timeSlotSignup = timeSlotSignupsToUpdate.FirstOrDefault(ts => ts.UserId == userDto.Id);
+        //            if (timeSlotSignup != null)
+        //            {
+        //                timeSlotSignup.Attended = userDto.IsAttended;
+        //            }
+        //        }
+
+        //        // Save changes to the database
+        //        await dataContext.SaveChangesAsync();
+
+        //        response.Data = true;
+        //        response.Success = true;
+        //        response.Message = "User attendance status updated successfully.";
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response.Success = false;
+        //        response.Message = $"Error updating user attendance status: {ex.Message}";
+        //    }
+
+        //    return response;
+        //}
+
+
+
+        public async Task<ServiceResponse<bool>> UpdateUserAttendanceStatusAsync(List<UserDto> userAttendedDtos)
         {
             var response = new ServiceResponse<bool>();
 
-            if (userAllowStatusDtos == null || !userAllowStatusDtos.Any())
+            if (userAttendedDtos == null || !userAttendedDtos.Any())
             {
                 response.Success = false;
                 response.Message = "No users to update.";
@@ -184,34 +302,36 @@ namespace LogicalPantry.Services.UserServices
 
             try
             {
-                // Extract user IDs from the list of DTOs
-                var userIds = userAllowStatusDtos
-                    .Where(dto => dto.IsAttended)
-                    .Select(dto => dto.Id)
+                // Extract user IDs and corresponding time slot IDs from the list of DTOs
+                var userTimeSlotPairs = userAttendedDtos
+                    .Select(dto => new { dto.Id, dto.TimeSlotId })
                     .ToList();
 
-                if (!userIds.Any())
+                if (!userTimeSlotPairs.Any())
                 {
                     response.Success = false;
-                    response.Message = "No users with AllowStatus set to true.";
+                    response.Message = "No valid users provided.";
                     return response;
                 }
 
-                // Fetch users matching the IDs from the database
-                var usersToUpdate = await dataContext.Users
-                    .Where(u => userIds.Contains(u.Id))
+                // Fetch all relevant TimeSlotSignups from the database
+                var allTimeSlotSignups = await dataContext.TimeSlotSignups
                     .ToListAsync();
 
-                // Update the 'IsAllow' status for matching users
-                foreach (var userDto in userAllowStatusDtos)
+                // Filter the data in-memory
+                var timeSlotSignupsToUpdate = allTimeSlotSignups
+                    .Where(ts => userTimeSlotPairs.Any(uts => uts.Id == ts.UserId && uts.TimeSlotId == ts.TimeSlotId))
+                    .ToList();
+
+                // Update the 'Attended' status for matching records
+                foreach (var userDto in userAttendedDtos)
                 {
-                    if (userDto.IsAttended) // Only update users with AllowStatus true
+                    var timeSlotSignup = timeSlotSignupsToUpdate
+                        .FirstOrDefault(ts => ts.UserId == userDto.Id && ts.TimeSlotId == userDto.TimeSlotId);
+
+                    if (timeSlotSignup != null)
                     {
-                        var user = usersToUpdate.FirstOrDefault(u => u.Id == userDto.Id);
-                        if (user != null)
-                        {
-                            user.IsAllow = userDto.IsAttended;
-                        }
+                        timeSlotSignup.Attended = userDto.Attended;
                     }
                 }
 
@@ -220,16 +340,40 @@ namespace LogicalPantry.Services.UserServices
 
                 response.Data = true;
                 response.Success = true;
-                response.Message = "User allow status updated successfully.";
+                response.Message = "User attendance status updated successfully.";
             }
             catch (Exception ex)
             {
                 response.Success = false;
-                response.Message = $"Error updating user allow status: {ex.Message}";
+                response.Message = $"Error updating user attendance status: {ex.Message}";
             }
 
             return response;
         }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         //Commented By Swapnil
         //public async Task<UserDto> CheckUserExisist(string email)
@@ -460,35 +604,113 @@ namespace LogicalPantry.Services.UserServices
         }
 
 
-        public async Task<ServiceResponse<IEnumerable<UserDto>>> GetUsersbyTimeSlotId( int timeSlotId)
+        //public async Task<ServiceResponse<IEnumerable<UserDto>>> GetUsersbyTimeSlotId( int timeSlotId)
+        //{
+        //    var response = new ServiceResponse<IEnumerable<UserDto>>();
+
+        //    try
+        //    {
+
+        //        // select user id from timeSlots with timeSlotId join user table and return these user info 
+        //        var users = await dataContext.TimeSlots
+        //         .Where(ts => ts.Id == timeSlotId)
+        //         .Join(dataContext.Users,
+        //               ts => ts.UserId,
+        //               u => u.Id,
+        //               (ts, u) => new UserDto
+        //               {
+        //                   Id = u.Id,
+        //                   FullName = u.FullName,
+        //                   Email = u.Email,
+        //                   PhoneNumber = u.PhoneNumber,
+        //                   IsAllow = u.IsAllow,
+        //                   TenantId = u.TenantId,
+        //               })
+        //             .ToListAsync();
+
+
+        //         var user1 = await dataContext.TimeSlotSignups.Where(us => us.UserId == users.id)
+        //        if (!users.Any())
+        //        {
+        //            response.Success = false;
+        //            response.Message = "No registered users found for the specified tenant.";
+        //            response.Data = Enumerable.Empty<UserDto>();
+        //        }
+        //        else
+        //        {
+        //            response.Data = users;
+        //            response.Success = true;
+        //            response.Message = "Users retrieved successfully.";
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response.Success = false;
+        //        response.Message = $"Error fetching users: {ex.Message}";
+        //        response.Data = Enumerable.Empty<UserDto>();
+        //    }
+
+        //    return response;
+        //}
+
+
+        public async Task<ServiceResponse<IEnumerable<UserDto>>> GetUsersbyTimeSlotId(int timeSlotId)
         {
             var response = new ServiceResponse<IEnumerable<UserDto>>();
 
             try
             {
-
-                // select user id from timeSlots with timeSlotId join user table and return these user info 
+                //// Retrieve users associated with the specified time slot
                 var users = await dataContext.TimeSlots
-                 .Where(ts => ts.Id == timeSlotId)
-                 .Join(dataContext.Users,
-                       ts => ts.UserId,
-                       u => u.Id,
-                       (ts, u) => new UserDto
-                       {
-                           Id = u.Id,
-                           FullName = u.FullName,
-                           Email = u.Email,
-                           PhoneNumber = u.PhoneNumber,
-                           IsAllow = u.IsAllow,
-                           TenantId = u.TenantId,
-                       })
-                     .ToListAsync();
+                    .Where(ts => ts.Id == timeSlotId)
+                    .Join(dataContext.Users,
+                        ts => ts.UserId,
+                        u => u.Id,
+                        (ts, u) => new
+                        {
+                            User = u,
+                            TimeSlot = ts
+                        })
+                    .Select(result => new UserDto
+                    {
+                        Id = result.User.Id,
+                        FullName = result.User.FullName,
+                        Email = result.User.Email,
+                        PhoneNumber = result.User.PhoneNumber,
+                        Attended = dataContext.TimeSlotSignups
+                                    .Where(tsu => tsu.UserId == result.User.Id && tsu.TimeSlotId == timeSlotId)
+                                    .Select(tsu => tsu.Attended)
+                                    .FirstOrDefault() // Returns the value of `Attended` if found, or `false` if not found
+                    })
+                    .ToListAsync();
 
-          
+
+                // Retrieve users associated with the specified time slot
+                //var users = await dataContext.TimeSlots
+                //    .Where(ts => ts.Id == timeSlotId)
+                //    .Join(dataContext.Users,
+                //        ts => ts.UserId,
+                //        u => u.Id,
+                //        (ts, u) => new { User = u, TimeSlot = ts })
+                //    .GroupJoin(dataContext.TimeSlotSignups.Where(tsu => tsu.TimeSlotId == timeSlotId),
+                //        result => result.User.Id,
+                //        tsu => tsu.UserId,
+                //        (result, tsuGroup) => new { result.User, result.TimeSlot, TimeSlotSignups = tsuGroup.FirstOrDefault() })
+                //    .Select(joinedResult => new UserDto
+                //    {
+                //        Id = joinedResult.User.Id,
+                //        FullName = joinedResult.User.FullName,
+                //        Email = joinedResult.User.Email,
+                //        PhoneNumber = joinedResult.User.PhoneNumber,
+                //       // Attended = joinedResult.TimeSlotSignups != null ? joinedResult.TimeSlotSignups.Attended : (bool?)null
+                //    })
+                //    .ToListAsync();
+
+
                 if (!users.Any())
                 {
                     response.Success = false;
-                    response.Message = "No registered users found for the specified tenant.";
+                    response.Message = "No registered users found for the specified time slot.";
                     response.Data = Enumerable.Empty<UserDto>();
                 }
                 else

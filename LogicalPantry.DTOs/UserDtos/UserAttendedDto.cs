@@ -11,5 +11,6 @@ namespace LogicalPantry.DTOs.UserDtos
 
         public int Id { get; set; }
         public bool IsAttended { get; set; }
+        public int TimeSlotId { get; set; } // TimeSlotId
     }
 }

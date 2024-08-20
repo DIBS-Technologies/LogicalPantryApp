@@ -7,11 +7,11 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LogicalPantry.Web.Controllers
 {
-    public class RegistrationController : Controller
+    public class RegistrationController : BaseController
     {
         IRegistrationService _registrationService;
         private readonly ILogger _logger;
-        public RegistrationController(IRegistrationService registrationService, ILogger logger)
+        public RegistrationController(IRegistrationService registrationService, ILogger<RegistrationController> logger)
         {
                 _registrationService = registrationService;
                 _logger = logger;
@@ -22,14 +22,15 @@ namespace LogicalPantry.Web.Controllers
             _logger.LogInformation($"Index method call ended");
             return View();
         }
+
         [HttpPost]
-        public IActionResult Register(UserDto user) 
+        public async Task<IActionResult> Register(UserDto user) 
         {
             _logger.LogInformation($"Register method call started");
-            var response=_registrationService.RegisterUser(user).Result;
+            var response= await _registrationService.RegisterUser(user);
 
          
-            if(response.Success)
+            if(response != null && response.Success)
             {
                 @TempData["MessageClass"] = "alert-success";
                 @TempData["SuccessMessageUser"] = "Registartion Successfull";

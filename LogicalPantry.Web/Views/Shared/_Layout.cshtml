@@ -1,4 +1,9 @@
 ﻿@using System.Security.Claims;
+@{
+    var tenantName = ViewBag.TenantName as string;
+    var tenantId = ViewBag.TenantId;
+    var pagename = ViewBag.PageName as string;
+}
 <!DOCTYPE html>
 <html>
 <head>
@@ -26,7 +31,7 @@
             padding: 1.75rem 1rem 0.75rem;
             font-size: 0.7rem;
             font-weight: bold;
-            text-transform: uppercase; 
+            text-transform: uppercase;
             letter-spacing: 0.05em;
         }
 
@@ -34,14 +39,10 @@
             display: none;
         }
 
-        .hidden {
-            display: none;
-        }
-
         .footer-custom {
-            background-color: #fff; 
+            background-color: #fff;
             color: #1f2d41;
-        } 
+        }
 
         .sidenav-light .sidenav-menu .nav-link:hover {
             color: #0061f2;
@@ -50,12 +51,57 @@
             margin: 0rem 0.5rem 0rem 0.75rem;
             padding-left: 0.5rem !important;
         }
+
+
+        .topnav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1rem;
+            background-color: white;
+            height: 60px; /* Adjust based on navbar height */
+            width: 100%; /* Ensure full width */
+        }
+
+            .topnav .navbar-nav {
+                display: flex;
+                flex-direction: row;
+                margin-left: auto; /* Push links to the right */
+            }
+
+            .topnav .nav-link {
+                padding-right: 1rem;
+                padding-left: 1rem;
+                font-weight: normal;
+                transition: color 0.3s, font-weight 0.3s;
+            }
+
+                .topnav .nav-link:hover {
+                    color: #0061f2;
+                    font-weight: bold;
+                }
+
+        .page-name {
+            flex: 1;
+            text-align: center;
+            font-weight: bold;
+            color: #1f2d41;
+            font-size: 1.25rem; /* Adjust size as needed */
+        }
+
     </style>
 </head>
 <body class="nav-fixed">
     <nav class="topnav navbar navbar-expand shadow navbar-light bg-white" id="sidenavAccordion">
-        <img src="~/Image/Demo.jpeg" id="logoImage" style="width: 95px; padding-left: 10px; opacity:100%" />
-        <div class="UserName">
+        <div class="tenatImage">
+            <img src="~/Image/Demo.jpeg" id="logoImage" style="width: 95px; padding-left: 10px; opacity:100%" />
+        </div>
+        <div class="page-name" id="pageName"></div>
+        <div class="navbar-nav">
+            <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar">Pickup</a>
+            <a class="nav-link" href="/@tenantName/Donation/PayPal">Donation</a>
+            <a class="nav-link" href="/Auth/LoginView">Login</a>
+            <input id="pag" type="hidden" name="name" value="@pagename" />
             @if (User.Identity.IsAuthenticated)
             {
                 var userEmail = User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value;
@@ -64,43 +110,33 @@
             }
         </div>
     </nav>
+            
+       
     <div id="layoutSidenav">
-        <div id="layoutSidenav_nav">
-            <nav class="sidenav shadow-right sidenav-light @(User.IsInRole("Admin") ? "" : "")">
-                <div class="sidenav-menu">
-                    <div class="nav accordion" id="accordionSidenav">
-                        <div class="sidenav-menu-heading">Main Menu</div>
-                        <a class="nav-link collapsed" id="menuIndex" asp-action="Calendar" asp-controller="TimeSlot">
-                            <div class="nav-link-icon"><i data-feather="activity"></i></div>
-                            Pickup Slots
-                        </a>
-                        <a class="nav-link collapsed" id="menuIndex" href="/Information/AddTenant">
-                            <div class="nav-link-icon"><i data-feather="activity"></i></div>
-                            Information
-                        </a>
-                        <a class="nav-link collapsed" id="menuIndex" href="/User/ManageUsers">
-                            <div class="nav-link-icon"><i data-feather="activity"></i></div>
-                            Users
-                        </a>
-                    </div>
-                </div>
-                <div class="sidenav-footer">
-                    <div class="sidenav-footer-content">
-                        <div>
-                            @if (User.Identity.IsAuthenticated)
-                            {
-                                var userEmail = User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value;
-                                var userName = User.FindFirstValue(ClaimTypes.Name) ?? User.Claims.FirstOrDefault(c => c.Type == "name")?.Value;
-
-                                <div class="sidenav-footer-subtitle">Logged in as:</div>
-                                <div class="sidenav-footer-title" style="color:black;">@userName</div>
-                                <input id="tenatId"type="hidden" value="" />
-                            }
+         <div id="layoutSidenav_nav"> 
+             @if (User.IsInRole("Admin"))
+            {
+                <nav class="sidenav shadow-right sidenav-light">
+                    <div class="sidenav-menu">
+                        <div class="nav accordion" id="accordionSidenav">
+                            <div class="sidenav-menu-heading">Main Menu</div>
+                            <a class="nav-link collapsed" id="menuIndex" href="/@tenantName/TimeSlot/Calendar">
+                                <div class="nav-link-icon"><i data-feather="activity"></i></div>
+                                Pickup Slots
+                            </a>
+                            <a class="nav-link collapsed" id="menuIndex" href="/@tenantName/Information/AddTenant">
+                                <div class="nav-link-icon"><i data-feather="activity"></i></div>
+                                Information
+                            </a>
+                            <a class="nav-link collapsed" id="menuIndex" href="/@tenantName/User/ManageUsers">
+                                <div class="nav-link-icon"><i data-feather="activity"></i></div>
+                                Users
+                            </a>
                         </div>
                     </div>
-                </div>
-            </nav>
-        </div>
+                </nav>
+             } 
+         </div> 
         <div id="layoutSidenav_content">
             <main>
                 <main role="main" class="pb-3">
@@ -116,28 +152,25 @@
     </div>
     @section Scripts {
         <script>
-            $(document).ready(function () {
-
-                var userEmail = '@User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value';
-                $.ajax({
-                    url: "/Infromation/Get",
-                    method: "GET",
-                    data: { tenantid:"1" },
-                    success: function (data) {
-                        debugger
-                        $("#logoImage").attr("src", data.ImageUrl);
-                    },
-                    error: function () {
-                        console.error("Cannot find Image src");
-                    }
-                });
-            });
-
-           sidenav-menu 
-
-            
-
-
+             $(document).ready(function () {
+                 debugger;
+                 var userEmail = '@User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value';
+                 $.ajax({
+                       url: "/@tenantName/Information/Get",
+                     method: "GET",
+                     data: { tenantid:@tenantId},
+                     success: function (data) {
+                         debugger
+                         $("#logoImage").attr("src", data.ImageUrl);
+                     },
+                     error: function () {
+                         console.error("Cannot find Image src");
+                     }
+                 });
+             });
+              var handlerValue = $("#pag").val();                
+                $("#pageName").text(handlerValue ? handlerValue.replace('.html', ' ') : '');
+            sidenav-menu
         </script>
     }
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js" crossorigin="anonymous"></script>

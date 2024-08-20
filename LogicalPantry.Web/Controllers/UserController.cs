@@ -19,11 +19,12 @@ using Microsoft.AspNetCore.Mvc;
 using LogicalPantry.DTOs.TimeSlotDtos;
 using LogicalPantry.Models.Models;
 using Newtonsoft.Json;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace LogicalPantry.Web.Controllers
 {
     [Route("User")]
-    public class UserController : Controller
+    public class UserController : BaseController
     {
         IUserService _userService;
         private readonly ILogger _logger;
@@ -45,48 +46,49 @@ namespace LogicalPantry.Web.Controllers
         [Route("ManageUsers")]
         public async Task<IActionResult> ManageUsers()
         {
-            _logger.LogInformation("ManageUsers object call started.");
+            _logger.LogInformation("GetAllusers object call started.");
             var response = await _userService.GetAllRegisteredUsersAsync();
-            _logger.LogInformation("ManageUsers object call ended.");
+            _logger.LogInformation("GetAllusers object call ended.");
 
             return View(response.Data);
         }
 
-        public object GetUserbyId(int tenentId) 
-        {
-            _logger.LogInformation("GetUserbyId object call Started.");
+        //public object GetUserbyId(int tenentId) 
+        //{
+        //    _logger.LogInformation("GetUserbyId object call Started.");
 
-            if (tenentId == 0)return null;
-            var response = _userService.GetUserByIdAsync(tenentId).Result;
-            _logger.LogInformation("GetUserbyId object call ended.");
-            return response;
-        }
+        //    if (tenentId == 0)return null;
+        //    var response = _userService.GetUserByIdAsync(tenentId).Result;
+        //    _logger.LogInformation("GetUserbyId object call ended.");
 
-        [HttpGet]
-        public object GetUsersbyTimeSlot(DateTime timeslot, int tenentId) 
-        {
-            _logger.LogInformation("GetUsersbyTimeSlot object call Started.");
-            if (tenentId == 0 || timeslot == null) return null;
-            var response = _userService.GetUsersbyTimeSlot(timeslot,tenentId).Result;
-            _logger.LogInformation("GetUsersbyTimeSlot object call ended.");
-            return response;
-        }
+        //    return response;
+        //}
+        //[HttpGet]
+        //public object GetUsersbyTimeSlot(DateTime timeslot, int tenentId) 
+        //{
+        //    _logger.LogInformation("GetUsersbyTimeSlot object call Started.");
+        //    if (tenentId == 0 || timeslot == null) return null;
+        //    var response = _userService.GetUsersbyTimeSlot(timeslot,tenentId).Result;
+        //    _logger.LogInformation("GetUsersbyTimeSlot object call ended.");
 
-        [HttpPost]
-        public object PutUserStatus(List<UserAttendedDto> userDto)
-        {
-            _logger.LogInformation("PutUserStatus object call started.");
-            if (userDto != null)
-            {
-                var response = _userService.UpdateUserAllowStatusAsync(userDto).Result;
-                _logger.LogInformation("PutUserStatus object call ended.");
-                return response;
+        //    return response;
+        //}
+        //[HttpPost]
+        //public object PutUserStatus(List<UserAttendedDto> userDto)
+        //{
+        //    _logger.LogInformation("PutUserStatus object call started.");
 
-            }
-            else { return null; }
+        //    if (userDto != null)
+        //    {
+        //        var response = _userService.UpdateUserAllowStatusAsync(userDto).Result;
+        //        _logger.LogInformation("PutUserStatus object call ended.");
+        //        return response;
+
+        //    }
+        //    else { return null; }
 
 
-        }
+        //}
 
         [HttpGet("session")]
         public IActionResult GetSessionData()
@@ -103,56 +105,22 @@ namespace LogicalPantry.Web.Controllers
             return Ok(new { UserEmail = userEmail, UserName = userName });
         }
 
-        [Route("UpdateUser")]
-        public async Task<IActionResult> UpdateUser(string updatedNotificationList)
-        {
-            _logger.LogInformation("UpdateUser method call started");
-            if (updatedNotificationList == null)
-            {
-                return BadRequest("Invalid data.");
-            }
-
-            var updatedNotificationListObject = JsonConvert.DeserializeObject<UserAllowStatusDto>(updatedNotificationList);
-
-            var userDto = new UserDto { Id = updatedNotificationListObject.Id, IsAllow = updatedNotificationListObject.IsAllow };
-
-
-            if (userDto != null)
-            {
-                var response = _userService.UpdateUserAsync(userDto).Result;
-
-                if (response != null)
-                {
-                    @TempData["MessageClass"] = "alert-success";
-                    @TempData["SuccessMessageUser"] = "User Saved Successfully";
-
-                    return Ok(new { success = true });
-                }
-                else
-                {
-                    @TempData["MessageClass"] = "alert-success";
-                    @TempData["SuccessMessageUser"] = "Internal server error.";
-                    return StatusCode(500, "Internal server error.");
-                }
-            }
-            _logger.LogInformation("UpdateUser method call ended");
-            return Ok(new { success = false });
-        }
-
-        
-        //public async Task<IActionResult> UpdateUserBatch(string userStatuses)
+        //[Route("UpdateUser")]
+        //public async Task<IActionResult> UpdateUser([FromBody]  string updatedNotificationList)
         //{
-        //    if (userStatuses == null)
+        //    if (updatedNotificationList == null)
         //    {
         //        return BadRequest("Invalid data.");
         //    }
 
-        //   var updatedNotificationListObject = JsonConvert.DeserializeObject<List<UserAllowStatusDto>>(userStatuses);
+        //    var updatedNotificationListObject = JsonConvert.DeserializeObject<UserAllowStatusDto>(updatedNotificationList);
+
+        //    var userDto = new UserDto { Id = updatedNotificationListObject.Id, IsAllow = updatedNotificationListObject.IsAllow };
 
 
-        //    if (updatedNotificationListObject != null)
+        //    if (userDto != null)
         //    {
-        //        var response = _userService.UpdateUserAllowStatusAsync(updatedNotificationListObject).Result;
+        //        var response = _userService.UpdateUserAsync(userDto).Result;
 
         //        if (response != null)
         //        {
@@ -171,9 +139,34 @@ namespace LogicalPantry.Web.Controllers
         //    return Ok(new { success = false });
         //}
 
-        [Route("UpdateUserBatch")]
-        [HttpPost]
-        public async Task<IActionResult> UpdateUserBatch([FromBody] List<UserAttendedDto> userStatuses)
+        [HttpPost("UpdateUser")] //ThisExpressionSyntax is ForbidResult allow method
+        public async Task<IActionResult> UpdateUser(int userId, bool isAllow)
+        {
+            if (userId <= 0)
+            {
+                return BadRequest("Invalid user ID.");
+            }
+
+            var userDto = new UserDto { Id = userId, IsAllow = isAllow };
+
+            var response = await _userService.UpdateUserAsync(userDto);
+
+            if (response.Success)
+            {
+                TempData["MessageClass"] = "alert-success";
+                TempData["SuccessMessageUser"] = "User Saved Successfully";
+                return Ok(new { success = true });
+            }
+            else
+            {
+                TempData["MessageClass"] = "alert-danger";
+                TempData["SuccessMessageUser"] = "Internal server error.";
+                return StatusCode(500, "Internal server error.");
+            }
+        }
+
+        [HttpPost("UpdateUserBatch")]
+        public async Task<IActionResult> UpdateUserBatch([FromBody] List<UserDto> userStatuses)
         {
             _logger.LogInformation("UpdateUserBatch method call started");
             if (userStatuses == null || !userStatuses.Any())
@@ -183,7 +176,7 @@ namespace LogicalPantry.Web.Controllers
 
             try
             {
-                var response = await _userService.UpdateUserAllowStatusAsync(userStatuses);
+                var response = await _userService.UpdateUserAttendanceStatusAsync(userStatuses);
 
                 if (response.Success)
                 {
@@ -232,7 +225,7 @@ namespace LogicalPantry.Web.Controllers
 
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("DeleteUser/{id}")]
         public async Task<IActionResult> DeleteUser(string id)
         {
             _logger.LogInformation("DeleteUser method call started");

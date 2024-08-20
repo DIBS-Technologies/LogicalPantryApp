@@ -5,23 +5,26 @@ using LogicalPantry.Services.TimeSlotServices;
 using LogicalPantry.Services.UserServices;
 using Microsoft.AspNetCore.Mvc;
 using Tweetinvi.Core.Events;
+using LogicalPantry.Services.InformationService;
 
 namespace LogicalPantry.Web.Controllers
 {
     [Route("TimeSlot")]
-    public class TimeSlotController : Controller
+    public class TimeSlotController : BaseController
     {
 
         private readonly ILogger<TimeSlotController> _logger;
         private readonly ITimeSlotService _timeSlotService;
         private readonly IUserService _userSercvice;
+        private readonly IInformationService _informationService;
 
 
-        public TimeSlotController(ILogger<TimeSlotController> logger, ITimeSlotService timeSlotService,IUserService userService)
+        public TimeSlotController(ILogger<TimeSlotController> logger, ITimeSlotService timeSlotService,IUserService userService ,IInformationService informationService)
         {
             _logger = logger;
             _timeSlotService = timeSlotService;
             _userSercvice = userService;
+            _informationService = informationService;
         }
 
        
@@ -29,10 +32,27 @@ namespace LogicalPantry.Web.Controllers
         public async Task<IActionResult> AddEvent([FromBody] TimeSlotDto timeSlotDto)
         {
             _logger.LogInformation("AddEvent method call started.");
+
+            
             if (timeSlotDto == null)
             {
                 return BadRequest("Event data is null.");
             }
+
+            var tenantName = TenantName;
+            var tenanatResponse = await _informationService.GetTenantPageNameForUserAsync(tenantName);
+            if (tenanatResponse.Success)
+            {
+                timeSlotDto.TenantId = tenanatResponse.Data.Id;
+
+            }
+            var userEmail = UserEmail;
+            var userResponse = await _userSercvice.GetUserIdByEmail(userEmail);
+            if (userResponse.Success)
+            {
+                timeSlotDto.UserId = userResponse.Data;
+            }
+
 
             if (ModelState.IsValid)
             {
@@ -54,17 +74,35 @@ namespace LogicalPantry.Web.Controllers
         }
 
 
-        [HttpGet]
-        [Route("EditTimeSlotUser")]
+        //[HttpGet("EditTimeSlotUser")]
+        //public async Task<IActionResult> EditTimeSlotUser(string id)
+        //{
+
+        //    var response = await _userSercvice.GetUsersbyTimeSlotId(int.Parse(id));
+        //    var userDtos = new List<UserDto>(); 
+        //    return View(response.Data.ToList()); // Handle the error case appropriately
+        //}
+
+        [HttpGet("EditTimeSlotUser")]
         public async Task<IActionResult> EditTimeSlotUser(string id)
         {
-            _logger.LogInformation("EditTimeSlotUser method call started.");
-            var response =  _userSercvice.GetUsersbyTimeSlotId(int.Parse(id)).Result;
-            var userDtos = new List<UserDto>();
-            _logger.LogInformation("EditTimeSlotUser method call ended.");
-            return View(response.Data.ToList()); // Handle the error case appropriately
-        }
+            if (string.IsNullOrEmpty(id) || !int.TryParse(id, out int timeSlotId))
+            {
+                return BadRequest("Invalid time slot ID.");
+            }
 
+            var response = await _userSercvice.GetUsersbyTimeSlotId(timeSlotId);
+
+            _logger.LogInformation("EditTimeSlotUser method call started.");
+            if (response.Success && response.Data != null)
+            {
+                return View(response.Data.ToList()); // Ensure that you handle the error case appropriately
+            }
+            else
+            {
+                return NotFound("Users not found for the specified time slot.");
+            }
+        }
 
 
         private long ToUnixTimestamp(DateTime dateTime)
@@ -166,6 +204,7 @@ namespace LogicalPantry.Web.Controllers
         [HttpGet("Calendar")]
         public async Task<IActionResult> Calendar()
         {
+            var tenantName = HttpContext.Items["TenantName"] as string;
             _logger.LogInformation("Calendar page accessed");
             _logger.LogInformation("Calendar method call started.");
 

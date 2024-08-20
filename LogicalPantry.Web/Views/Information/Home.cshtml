@@ -1,4 +1,9 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var tenantName = ViewBag.TenantName as string;
+    var pagename = ViewBag.PageName as string;
+}
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -78,8 +83,8 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 100%; /* Ensure full width */
-            overflow: hidden; /* Prevent scrollbars within main */
+            width: 100%;
+            overflow: hidden; 
         }
 
         iframe {
@@ -136,38 +141,47 @@
     </style>
 </head>
 <body class="nav-fixed">
-    <div id="layoutSidenav">
+     <div id="layoutSidenav"> 
         <nav class="topnav navbar navbar-expand shadow navbar-light bg-white" id="sidenavAccordion">
             <div class="tenatImage">
                 <img src="~/Image/Demo.jpeg" id="logoImage" style="width: 95px; padding-left: 10px; opacity:100%" />
             </div>
             <div class="page-name" id="pageName"></div>
             <div class="navbar-nav">
-                <a class="nav-link" href="/TimeSlots/Calendar">Pickup</a>
-                <a class="nav-link" href="/Donation/PayPal">Donation</a>
-                <a class="nav-link" href="/Auth/loginview">Login</a>
+                <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar">Pickup</a>
+                <a class="nav-link" href="/@tenantName/Donation/PayPal">Donation</a>
+                <a class="nav-link" href="/Auth/LoginView">Login</a>
+                <input id="pag" type="hidden" name="name" value="@pagename" />
             </div>
         </nav>
-        <div id="layoutSidenav_content">
+        <div id="layoutSidenav_content"> 
             <main>
                 <iframe src="" id="urlFrameId"></iframe>
             </main>
-            <footer>
-                <div class="container">
+      @*       <footer class"d-flex" style="display:flex; justify-content:center">
+                <div class="container" style="display:flex; justify-content:center">
+                    <p class="mb-0" style="color:black; ">&copy; @DateTime.Now.Year - LogicalPantry</p>
+                   
+                </div>
+            </footer> *@
+            <footer class="text-light py-2 fixed-bottom text-center">
+               <div class="container">
                     <p class="mb-0" style="color:black">&copy; @DateTime.Now.Year - LogicalPantry</p>
                 </div>
             </footer>
-        </div>
+         </div> 
     </div>
     @section Scripts {
         <script>
             $(document).ready(function () {
-                var url = window.location.href;
-                var parts = url.split("/");
-                var urlParams = new URLSearchParams(window.location.search);
-                var handlerValue = urlParams.get("pageName");
-                $("#urlFrameId").attr("src", "/TenantHomePage/" + handlerValue + ".html");
-                $("#pageName").text(handlerValue ? handlerValue.replace(/%20/g, ' ') : ''); // Handle spaces in pageName
+                // var url = window.location.href;
+                // var parts = url.split("/");
+                // var urlParams = new URLSearchParams(window.location.search);
+                // var handlerValue = urlParams.get("pageName");
+
+                var handlerValue = $("#pag").val();
+                $("#urlFrameId").attr("src", "/TenantHomePage/" + handlerValue);
+                $("#pageName").text(handlerValue ? handlerValue.replace('.html', ' ') : ''); // Handle spaces in pageName
             });
         </script>
     }

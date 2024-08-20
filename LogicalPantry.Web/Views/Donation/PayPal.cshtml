@@ -95,7 +95,7 @@
         </div>
     </div>
 
-    <script src="https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=@Configuration["PayPal:ClientId"]"></script>
     <script>
         document.getElementById('pay-button').addEventListener('click', function (event) {
             event.preventDefault(); // Prevent the default form submission

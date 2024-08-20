@@ -13,7 +13,7 @@ using LogicalPantry.Services.RegistrationService;
 using Autofac.Core;
 using LogicalPantry.Services.InformationService;
 using LogicalPantry.Services.TimeSlotSignupService;
-using LogicalPantry.Web.Middleware;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -98,7 +98,7 @@ builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 builder.Services.AddScoped<ITimeSlotSignupService, TimeSlotSignupService>();
 //builder.Services.AddScoped<ITimeSlotSignupService, TimeSlotSignupService>();
 builder.Services.Configure<PayPalDto>(builder.Configuration.GetSection("PayPal"));
-builder.Services.AddScoped<IInformationService, InformationService>();
+builder.Services.AddMemoryCache(); // Add in-memory caching
 
 
 
@@ -129,23 +129,40 @@ else
     app.UseHsts(); // Use HTTP Strict Transport Security
 }
 
-
 app.UseHttpsRedirection(); // Redirect HTTP requests to HTTPS
-app.UseStaticFiles(); // Serve static files from wwwroot folder
-app.UseSession(); // Enable session middleware
-app.UseRouting(); // Enable routing
 app.UseAuthentication(); // Enable authentication middleware
 app.UseAuthorization(); // Enable authorization middleware
-app.UseOutputCache();   //Enable output cache middleware
-
-
 // Add the Tenant Middleware
-//app.UseMiddleware<TenantMiddleware>();
 
-// Configure default controller route
+app.UseStaticFiles(); // Serve static files from wwwroot folder
+app.UseSession(); // Enable session middleware
+app.UseMiddleware<TenantMiddleware>();
+app.UseRouting(); // Enable routing
+
+
+//app.MapControllerRoute(
+//    name: "default",
+//    pattern: "{controller=Auth}/{action=loginView}/{id?}");
+
+
+//// Define a route pattern that includes the tenant in the URL
+//app.MapControllerRoute(
+//    name: "tenantRoute",
+//    pattern: "{tenant}/{controller=Information}/{action=Home}/{id?}",
+//    defaults: new { controller = "Information", action = "Home" });
+
+//app.MapControllerRoute(
+//    name: "tenantRoute",
+//    pattern: "{tenant?}/{controller=Information}/{action=Home}/{id?}");
+
+
+
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Auth}/{action=loginView}/{id?}");
+    name: "tenantRoute",
+    pattern: "{tenant?}/{controller=Information}/{action=Home}/{id?}"
+);
+
+
 
 app.Run();
 

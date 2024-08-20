@@ -12,16 +12,18 @@ using System.Security.Claims;
 using System.Linq;
 using System.Threading.Tasks;
 using LogicalPantry.Models.Models;
+using Microsoft.Extensions.Options;
+using System.Security.Policy;
 
 namespace LogicalPantry.Web.Controllers
 {
-    public class AuthController : Controller
+    [Route("Auth")]
+    public class AuthController : BaseController
     {
-        private readonly ILogger<AuthController> _logger;
         private readonly IUserService _userServices;
         private readonly IRoleService _roleService;
-
-        public AuthController(IUserService userServices, IRoleService roleService, ILogger<AuthController> logger)
+        private readonly ILogger _logger;
+        public AuthController(IUserService userServices, IRoleService roleService , ILogger<AuthController> logger)
         {
             _userServices = userServices;
             _roleService = roleService;
@@ -29,17 +31,28 @@ namespace LogicalPantry.Web.Controllers
         }
 
         // Google Authentication
+        [HttpGet("GoogleLogin")]
         public IActionResult GoogleLogin()
         {
-            _logger.LogInformation($"GoogleLogin Method is called Started");
+            var tenantName = TenantName;
+           // var tenantUrl = $"/{tenantName}/Auth/GoogleResponse"; // Construct the tenant-specific URL
+
+            // Redirect to the tenant-specific login URL
+            //return Redirect(tenantUrl);
             var properties = new AuthenticationProperties
             {
-                RedirectUri = Url.Action(nameof(GoogleResponse))
-            };
-            _logger.LogInformation($"GoogleLogin Method is call ended");
-            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+               // RedirectUri = Url.Action(nameof(GoogleResponse))
+                RedirectUri = Url.Action("GoogleResponse", "Auth")
+                //RedirectUri = Url.Action(tenantUrl)
+            
+        
+
+           };
+             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+            //return Redirect(tenantUrl);
         }
 
+        [HttpPost("GoogleResponse")]
         public async Task<IActionResult> GoogleResponse()
         {
             _logger.LogInformation($"GoogleResponse Method is call started");
@@ -65,13 +78,13 @@ namespace LogicalPantry.Web.Controllers
                     return RedirectToAction(ViewConstants.UserCalandar, ViewConstants.TimeSlot, new { area = "" });
                 }
             }
-            _logger.LogInformation($"GoogleResponse Method is call ended");
-            return RedirectToAction(ViewConstants.AUTH, ViewConstants.LOGINVIEW, new { area = "" });
+            return RedirectToAction(ViewConstants.LOGINVIEW, ViewConstants.AUTH, new { area = "" });
 
-   
+
         }
 
         // Facebook Authentication
+        [HttpGet("FacebookLogin")]
         public IActionResult FacebookLogin()
         {
             _logger.LogInformation($"FacebookLogin Method is call started");
@@ -84,6 +97,7 @@ namespace LogicalPantry.Web.Controllers
             return Challenge(properties, FacebookDefaults.AuthenticationScheme);
         }
 
+        [HttpPost("FacebookResponse")]
         public async Task<IActionResult> FacebookResponse()
         {
             _logger.LogInformation($"FacebookResponse Method is call started");
@@ -107,6 +121,7 @@ namespace LogicalPantry.Web.Controllers
         }
 
         // Microsoft Authentication
+        [HttpGet("MicrosoftLogin")]
         public IActionResult MicrosoftLogin()
         {
             _logger.LogInformation($"MicrosoftLogin Method is call started");
@@ -118,6 +133,7 @@ namespace LogicalPantry.Web.Controllers
             return Challenge(properties, MicrosoftAccountDefaults.AuthenticationScheme);
         }
 
+        [HttpPost("MicrosoftResponse")]
         public async Task<IActionResult> MicrosoftResponse()
         {
             _logger.LogInformation($"MicrosoftResponse Method is call started");
@@ -138,7 +154,7 @@ namespace LogicalPantry.Web.Controllers
             _logger.LogInformation($"MicrosoftResponse Method is call ended");
             return RedirectToAction(ViewConstants.AUTH, ViewConstants.LOGINVIEW, new { area = "" });
 
-         
+
         }
 
         // Microsoft 365 Authentication
@@ -155,26 +171,26 @@ namespace LogicalPantry.Web.Controllers
 
         public async Task<IActionResult> Microsoft365Response()
         {
-            _logger.LogInformation($"Microsoft365Response Method is call started");
             var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             var userInfo = await CheckIfUserExists(result);
 
-            if (userInfo != null && userInfo.Role == "Admin")
-            {
-                // Redirect based on user role
-                return RedirectToAction(ViewConstants.Calandar, ViewConstants.TimeSlot, new { area = "" });
+        //    if (userInfo != null && userInfo.Role == "Admin")
+        //    {
+        //        // Redirect based on user role
+        //        return RedirectToAction(ViewConstants.Calandar, ViewConstants.TimeSlot, new { area = "" });
 
-            }
-            else if (userInfo != null && userInfo.Role == "User")
-            {
-                
+        //    }
+        //    else if (userInfo != null && userInfo.Role == "User")
+        //    {
 
-                return RedirectToAction(ViewConstants.INDEX, ViewConstants.TimeSlotSignUp, new { area = "" });
-            }
-            _logger.LogInformation($"Microsoft365Response Method is call ended");
-            return RedirectToAction(ViewConstants.AUTH, ViewConstants.LOGINVIEW, new { area = "" });
-        }
 
+        //        return RedirectToAction(ViewConstants.INDEX, ViewConstants.TimeSlotSignUp, new { area = "" });
+        //    }
+
+        //    return RedirectToAction(ViewConstants.AUTH, ViewConstants.LOGINVIEW, new { area = "" });
+        //}
+
+        [HttpGet("loginView")]
         public IActionResult loginView()
         {
             _logger.LogInformation($"loginView Method is call started");
