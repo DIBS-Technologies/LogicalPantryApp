@@ -158,36 +158,36 @@ namespace LogicalPantry.Web.Controllers
         }
 
         // Microsoft 365 Authentication
-        public IActionResult Microsoft365Login()
-        {
-            _logger.LogInformation($"Microsoft365Login Method is call started");
-            var properties = new AuthenticationProperties
-            {
-                RedirectUri = Url.Action(nameof(Microsoft365Response))
-            };
-            _logger.LogInformation($"Microsoft365Login Method is call ended");
-            return Challenge(properties, OpenIdConnectDefaults.AuthenticationScheme);
-        }
-
-        public async Task<IActionResult> Microsoft365Response()
-        {
-            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            var userInfo = await CheckIfUserExists(result);
-
-        //    if (userInfo != null && userInfo.Role == "Admin")
+        //public IActionResult Microsoft365Login()
+        //{
+        //    _logger.LogInformation($"Microsoft365Login Method is call started");
+        //    var properties = new AuthenticationProperties
         //    {
-        //        // Redirect based on user role
-        //        return RedirectToAction(ViewConstants.Calandar, ViewConstants.TimeSlot, new { area = "" });
+        //        RedirectUri = Url.Action(nameof(Microsoft365Response))
+        //    };
+        //    _logger.LogInformation($"Microsoft365Login Method is call ended");
+        //    return Challenge(properties, OpenIdConnectDefaults.AuthenticationScheme);
+        //}
 
-        //    }
-        //    else if (userInfo != null && userInfo.Role == "User")
-        //    {
+        //public async Task<IActionResult> Microsoft365Response()
+        //{
+        //    var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        //    var userInfo = await CheckIfUserExists(result);
+
+        ////    if (userInfo != null && userInfo.Role == "Admin")
+        ////    {
+        ////        // Redirect based on user role
+        ////        return RedirectToAction(ViewConstants.Calandar, ViewConstants.TimeSlot, new { area = "" });
+
+        ////    }
+        ////    else if (userInfo != null && userInfo.Role == "User")
+        ////    {
 
 
-        //        return RedirectToAction(ViewConstants.INDEX, ViewConstants.TimeSlotSignUp, new { area = "" });
-        //    }
+        ////        return RedirectToAction(ViewConstants.INDEX, ViewConstants.TimeSlotSignUp, new { area = "" });
+        ////    }
 
-        //    return RedirectToAction(ViewConstants.AUTH, ViewConstants.LOGINVIEW, new { area = "" });
+        ////    return RedirectToAction(ViewConstants.AUTH, ViewConstants.LOGINVIEW, new { area = "" });
         //}
 
         [HttpGet("loginView")]

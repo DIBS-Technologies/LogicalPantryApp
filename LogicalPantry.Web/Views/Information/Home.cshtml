@@ -151,7 +151,7 @@
             }
 
         .nav-fixed #layoutSidenav #layoutSidenav_content {
-            padding-left: 2rem;
+            padding-left: @(isAdmin ? "none" : "2rem");
             top: 3.625rem;
         }
 
@@ -171,7 +171,7 @@
             </div>
             <div class="page-name" id="pageName"></div>
             <div class="navbar-nav">
-                <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar">Pickup</a>
+                @* <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar">Pickup</a> *@
                 <a class="nav-link" href="/@tenantName/Donation/PayPal">Donation</a>
                 <a class="nav-link" href="/Auth/LoginView">Login</a>
                 <input id="page" type="hidden" name="name" value="@pagename" />

@@ -36,23 +36,22 @@ namespace LogicalPantry.Web.Controllers
         [HttpGet("Get")]
         public async Task<IActionResult> Get(int tenantid)
         {
+            try { 
             _logger.LogInformation("Get Object call started");
 
             if (tenantid == 0) { return null; }
             var response =await _informationService.GetTenant(tenantid);
 
                 _logger.LogInformation("Get Object call ended");
-                return NotFound();
+                return Json(response);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while getting tenant.");
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
-        }
-
-            return Json(response);
-
+   
+        } 
 
 
         [HttpGet]

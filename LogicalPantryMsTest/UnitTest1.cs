@@ -26,7 +26,7 @@ public class InformationControllerTests
     public void Get_TenantIdIsZero_ReturnsNull()
     {
         // Arrange
-        string tenantId = "0";
+        string tenantId = 1;
 
         // Act
         var result = _controller.Get(tenantId);

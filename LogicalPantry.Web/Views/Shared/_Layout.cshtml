@@ -76,9 +76,9 @@
             margin: 0;
         }
 
-        #layoutSidenav_nav {
+       /*  #layoutSidenav_nav {
             display: @(isAdmin ? "block" : "none"); /* Hide the sidenav if not admin */
-        }
+        } */
 
         #layoutSidenav_content {
             margin-left: @(isAdmin ? "0" : "20px"); /* Add margin if sidenav is hidden */
@@ -89,12 +89,12 @@
 
         @@media (min-width: 992px) {
             #layoutSidenav #layoutSidenav_content {
-                margin-left: @(isAdmin ? "0" : "20px"); /* Add margin if sidenav is hidden */
+                margin-left: @(isAdmin ? "0" : ""); /* Add margin if sidenav is hidden */
             }
         }
 
         .nav-fixed #layoutSidenav #layoutSidenav_content {
-            padding-left: 2rem;
+            padding-left: @(isAdmin ? "2rem" : "none");
             padding-right: 2rem;
             top: 4rem;
             padding-bottom: 5rem;
@@ -114,7 +114,7 @@
         </div>
         <div class="page-name" id="pageName"></div>
         <div class="navbar-nav">
-            <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar">Pickup</a>
+           @*  <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar">Pickup</a> *@
             <a class="nav-link" href="/@tenantName/Donation/PayPal">Donation</a>
             <a class="nav-link" href="/Auth/LoginView">Login</a>
             <input id="page" type="hidden" name="name" value="@pagename" />
@@ -129,10 +129,10 @@
     </nav>
            
     <div id="layoutSidenav">
-         @if (isAdmin)
-            {
+         
             <div id="layoutSidenav_nav">
-
+           @*  @if(User.IsInRole("Admin"))
+            { *@
                 <nav class="sidenav shadow-right sidenav-light">
                     <div class="sidenav-menu">
                         <div class="nav accordion" id="accordionSidenav">
@@ -152,9 +152,9 @@
                         </div>
                     </div>
                 </nav>
-            
+            @* } *@
         </div> 
-        }
+        
         <div id="layoutSidenav_content">
             <main>
                 <main role="main" class="pb-3">
@@ -187,9 +187,10 @@
                 var handlerValue = $("#page").val();
                 $("#pageName").text(handlerValue ? handlerValue.replace('.html', ' ') : '');
 
-                if ($("#isUser").val() === "True") {
-                    $("#layoutSidenav_nav").remove();
-                }
+                debugger
+                // if ($("#isUser").val() === "True") {
+                //     $("#layoutSidenav_nav").remove();
+                // }
             });
         </script>
     }
