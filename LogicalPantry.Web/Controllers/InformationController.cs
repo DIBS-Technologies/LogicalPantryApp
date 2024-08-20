@@ -1,4 +1,5 @@
-﻿using LogicalPantry.DTOs.TenantDtos;
+﻿using Azure;
+using LogicalPantry.DTOs.TenantDtos;
 using LogicalPantry.Models.Models;
 using LogicalPantry.Services.InformationService;
 using Microsoft.AspNetCore.Hosting;
@@ -37,21 +38,23 @@ namespace LogicalPantry.Web.Controllers
         public async Task<IActionResult> Get(int tenantid)
         {
             _logger.LogInformation("Get Object call started");
-
+            try
+            {            
             if (tenantid == 0) { return null; }
             var response =await _informationService.GetTenant(tenantid);
 
                 _logger.LogInformation("Get Object call ended");
-                return NotFound();
+                return Json(response);
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while getting tenant.");
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
+     
         }
 
-            return Json(response);
+           
 
 
 
