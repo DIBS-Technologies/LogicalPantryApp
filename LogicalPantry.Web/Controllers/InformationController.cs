@@ -179,7 +179,11 @@ namespace LogicalPantry.Web.Controllers
         public async Task<IActionResult> Home()
         {
 
-            var tenantName = TenantName; 
+            var tenantName = TenantName;
+            if (tenantName == null)
+            {
+                return NotFound("Tenant name is missing");
+            }
             var tenanatResponse = await _informationService.GetTenantPageNameForUserAsync(tenantName);
             if (tenanatResponse.Success)
             {

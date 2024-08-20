@@ -262,7 +262,7 @@
 
     <div class="container-fluid">
         <div class="calendar-header">
-            <h3> TimeSlotSignUp</h3>
+            <h3>Pickups</h3>
             @{
                 var userEmails = User.FindFirstValue(ClaimTypes.Email);
             }
@@ -376,7 +376,7 @@
 
             // Handle calendar event click and prevent default behavior
             $('#calendar').on('Calendar.event-click', function (event, instance, elem, evt) {
-                ;         
+                       
                
                 var startTime = evt.start;
                 var endTime = evt.end;

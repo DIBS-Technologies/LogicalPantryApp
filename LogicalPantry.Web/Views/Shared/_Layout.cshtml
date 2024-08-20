@@ -77,7 +77,7 @@
         }
 
        /*  #layoutSidenav_nav {
-            display: @(isAdmin ? "block" : "none"); /* Hide the sidenav if not admin */
+            display: @(isAdmin ? "block" : "none"); /
         } */
 
         #layoutSidenav_content {
@@ -131,8 +131,8 @@
     <div id="layoutSidenav">
          
             <div id="layoutSidenav_nav">
-           @*  @if(User.IsInRole("Admin"))
-            { *@
+            @if(User.IsInRole("user"))
+            {
                 <nav class="sidenav shadow-right sidenav-light">
                     <div class="sidenav-menu">
                         <div class="nav accordion" id="accordionSidenav">
@@ -152,7 +152,7 @@
                         </div>
                     </div>
                 </nav>
-            @* } *@
+            }
         </div> 
         
         <div id="layoutSidenav_content">
