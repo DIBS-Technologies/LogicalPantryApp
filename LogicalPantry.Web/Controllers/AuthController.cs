@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using LogicalPantry.Models.Models;
 using Microsoft.Extensions.Options;
 using System.Security.Policy;
+using Microsoft.AspNetCore.Identity;
 
 namespace LogicalPantry.Web.Controllers
 {
@@ -31,30 +32,29 @@ namespace LogicalPantry.Web.Controllers
         }
 
         // Google Authentication
-        [HttpGet("GoogleLogin")]
+        [HttpPost("GoogleLogin")]
         public IActionResult GoogleLogin()
-        {
-            var tenantName = TenantName;
-           // var tenantUrl = $"/{tenantName}/Auth/GoogleResponse"; // Construct the tenant-specific URL
-
+        {            
             // Redirect to the tenant-specific login URL
             //return Redirect(tenantUrl);
             var properties = new AuthenticationProperties
             {
-               // RedirectUri = Url.Action(nameof(GoogleResponse))
-                RedirectUri = Url.Action("GoogleResponse", "Auth")
-                //RedirectUri = Url.Action(tenantUrl)
-            
-        
+                RedirectUri = $"/{TenantName}/Auth/GoogleResponse"
+                // RedirectUri = Url.Action(nameof(GoogleResponse))
+                // RedirectUri = Url.Action("GoogleResponse", "Auth")
+                // RedirectUri = Url.Action("GoogleResponse", "Auth", new { tenantName = TenantName })
+                //RedirectUri = Url.RouteUrl($"{TenantName}/Auth/GoogleResponse")
 
-           };
-             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
-            //return Redirect(tenantUrl);
+            };
+            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
 
-        [HttpPost("GoogleResponse")]
+
+
+        [HttpGet("GoogleResponse")]
         public async Task<IActionResult> GoogleResponse()
         {
+            var tenantName = TenantName;
             _logger.LogInformation($"GoogleResponse Method is call started");
 
             var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -63,7 +63,114 @@ namespace LogicalPantry.Web.Controllers
             if (userInfo != null && userInfo.Role == "Admin")
             {
                 // Redirect based on user role
-                return RedirectToAction(ViewConstants.Calandar, ViewConstants.TimeSlot, new { area = "" });
+                //  return RedirectToAction(ViewConstants.Calandar, ViewConstants.TimeSlot, new { area = "" });
+                return Redirect($"/{tenantName}/TimeSlot/Calendar");
+        
+            }
+            else if (userInfo != null && userInfo.Role == "User")
+            {
+                if (userInfo.Message == "User registered successfully.")
+                {
+
+                    // return RedirectToAction(ViewConstants.INDEX, ViewConstants.Registration, new { area = "" });
+                    return Redirect($"/{tenantName}/Registration/INDEX");
+                }
+                else
+                {
+                    //return RedirectToAction(ViewConstants.UserCalandar, ViewConstants.TimeSlot, new { area = "" });
+                    return Redirect($"/{tenantName}/TimeSlot/UserCalandar");
+                }
+            }
+            //return RedirectToAction(ViewConstants.LOGINVIEW, ViewConstants.AUTH, new { area = "" });
+            return Redirect($"/{tenantName}/Registration/INDEX");
+        }
+
+
+        //[HttpPost("GoogleLogin")]
+        //public IActionResult GoogleLogin()
+        //{
+        //    var properties = new AuthenticationProperties
+        //    {
+        //        // Set the redirect URI to the tenant-specific GoogleResponse action
+        //        RedirectUri = Url.Action("GoogleResponse", "Auth", new { tenantName = TenantName })
+        //    };
+
+        //    // Challenge the Google authentication scheme
+        //    return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+        //}
+
+        //[HttpGet("GoogleResponse")]
+        //public async Task<IActionResult> GoogleResponse(string tenantName)
+        //{
+        //    var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        //    var userInfo = await CheckIfUserExists(result);
+
+        //    if (userInfo != null)
+        //    {
+        //        if (userInfo.Role == "Admin")
+        //        {
+        //            // Redirect Admin users to the calendar page
+        //            return Redirect($"/{tenantName}/TimeSlot/Calendar");
+        //        }
+        //        else if (userInfo.Role == "User")
+        //        {
+        //            if (userInfo.Message == "User registered successfully.")
+        //            {
+        //                // Redirect registered users to the registration index page
+        //                return Redirect($"/{tenantName}/Registration/INDEX");
+        //            }
+        //            else
+        //            {
+        //                // Redirect unregistered users to the user calendar page
+        //                return Redirect($"/{tenantName}/TimeSlot/UserCalandar");
+        //            }
+        //        }
+        //    }
+
+        //    // Redirect to login view if user info is not available
+        //    return RedirectToAction("Login", "Auth");
+        //}
+
+
+        // Facebook Authentication
+        [HttpPost("FacebookLogin")]
+        public IActionResult FacebookLogin()
+        {
+            _logger.LogInformation($"FacebookLogin Method is call started");
+
+            var properties = new AuthenticationProperties
+            {
+                //RedirectUri = Url.Action(nameof(FacebookResponse))
+                RedirectUri = $"/{TenantName}/Auth/FacebookResponse"
+            };
+            _logger.LogInformation($"FacebookLogin Method is call ended");
+            return Challenge(properties, FacebookDefaults.AuthenticationScheme);
+        }
+
+        [HttpGet("FacebookResponse")]
+        public async Task<IActionResult> FacebookResponse()
+        {
+            _logger.LogInformation($"FacebookResponse Method is call started");
+            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            var userInfo = await CheckIfUserExists(result);
+
+            //if (userInfo != null && userInfo.Role == "Admin")
+            //{
+            //    // Redirect based on user role
+            //    // return RedirectToAction(ViewConstants.Calandar, ViewConstants.TimeSlot, new { area = "" });
+            //    return Redirect($"/{TenantName}/TimeSlot/Calandar");
+            //}
+            //else if (userInfo != null && userInfo.Role == "User")
+            //{
+
+            //    return RedirectToAction(ViewConstants.UserCalandar, ViewConstants.TimeSlot, new { area = "" });
+            //}
+
+            if (userInfo != null && userInfo.Role == "Admin")
+            {
+                // Redirect based on user role
+                //  return RedirectToAction(ViewConstants.Calandar, ViewConstants.TimeSlot, new { area = "" });
+                return Redirect($"/{TenantName}/TimeSlot/Calendar");
 
             }
             else if (userInfo != null && userInfo.Role == "User")
@@ -71,69 +178,35 @@ namespace LogicalPantry.Web.Controllers
                 if (userInfo.Message == "User registered successfully.")
                 {
 
-                    return RedirectToAction(ViewConstants.INDEX, ViewConstants.Registration, new { area = "" });
+                    // return RedirectToAction(ViewConstants.INDEX, ViewConstants.Registration, new { area = "" });
+                    return Redirect($"/{TenantName}/Registration/INDEX");
                 }
                 else
                 {
-                    return RedirectToAction(ViewConstants.UserCalandar, ViewConstants.TimeSlot, new { area = "" });
+                    //return RedirectToAction(ViewConstants.UserCalandar, ViewConstants.TimeSlot, new { area = "" });
+                    return Redirect($"/{TenantName}/TimeSlot/UserCalandar");
                 }
             }
-            return RedirectToAction(ViewConstants.LOGINVIEW, ViewConstants.AUTH, new { area = "" });
 
-
-        }
-
-        // Facebook Authentication
-        [HttpGet("FacebookLogin")]
-        public IActionResult FacebookLogin()
-        {
-            _logger.LogInformation($"FacebookLogin Method is call started");
-
-            var properties = new AuthenticationProperties
-            {
-                RedirectUri = Url.Action(nameof(FacebookResponse))
-            };
-            _logger.LogInformation($"FacebookLogin Method is call ended");
-            return Challenge(properties, FacebookDefaults.AuthenticationScheme);
-        }
-
-        [HttpPost("FacebookResponse")]
-        public async Task<IActionResult> FacebookResponse()
-        {
-            _logger.LogInformation($"FacebookResponse Method is call started");
-            var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            var userInfo = await CheckIfUserExists(result);
-
-            if (userInfo != null && userInfo.Role == "Admin")
-            {
-                // Redirect based on user role
-                return RedirectToAction(ViewConstants.Calandar, ViewConstants.TimeSlot, new { area = "" });
-
-            }
-            else if (userInfo != null && userInfo.Role == "User")
-            {
-
-                return RedirectToAction(ViewConstants.UserCalandar, ViewConstants.TimeSlot, new { area = "" });
-            }
-            _logger.LogInformation($"FacebookResponse Method is call ended");
-            return RedirectToAction(ViewConstants.AUTH, ViewConstants.LOGINVIEW, new { area = "" });
-
+            // return RedirectToAction(ViewConstants.AUTH, ViewConstants.LOGINVIEW, new { area = "" });
+            return Redirect($"/{TenantName}/AUTH/LOGINVIEW");
         }
 
         // Microsoft Authentication
-        [HttpGet("MicrosoftLogin")]
+        [HttpPost("MicrosoftLogin")]
         public IActionResult MicrosoftLogin()
         {
             _logger.LogInformation($"MicrosoftLogin Method is call started");
             var properties = new AuthenticationProperties
             {
-                RedirectUri = Url.Action(nameof(MicrosoftResponse))
+                // RedirectUri = Url.Action(nameof(MicrosoftResponse))
+                RedirectUri = $"/{TenantName}/Auth/MicrosoftResponse"
             };
             _logger.LogInformation($"MicrosoftLogin Method is call ended");
             return Challenge(properties, MicrosoftAccountDefaults.AuthenticationScheme);
         }
 
-        [HttpPost("MicrosoftResponse")]
+        [HttpGet("MicrosoftResponse")]
         public async Task<IActionResult> MicrosoftResponse()
         {
             _logger.LogInformation($"MicrosoftResponse Method is call started");
@@ -143,29 +216,38 @@ namespace LogicalPantry.Web.Controllers
             if (userInfo != null && userInfo.Role == "Admin")
             {
                 // Redirect based on user role
-                return RedirectToAction(ViewConstants.Calandar, ViewConstants.TimeSlot, new { area = "" });
+                //  return RedirectToAction(ViewConstants.Calandar, ViewConstants.TimeSlot, new { area = "" });
+                return Redirect($"/{TenantName}/TimeSlot/Calendar");
 
             }
             else if (userInfo != null && userInfo.Role == "User")
             {
+                if (userInfo.Message == "User registered successfully.")
+                {
 
-                return RedirectToAction(ViewConstants.UserCalandar, ViewConstants.TimeSlot, new { area = "" });
+                    // return RedirectToAction(ViewConstants.INDEX, ViewConstants.Registration, new { area = "" });
+                    return Redirect($"/{TenantName}/Registration/INDEX");
+                }
+                else
+                {
+                    //return RedirectToAction(ViewConstants.UserCalandar, ViewConstants.TimeSlot, new { area = "" });
+                    return Redirect($"/{TenantName}/TimeSlot/UserCalandar");
+                }
             }
-            _logger.LogInformation($"MicrosoftResponse Method is call ended");
-            return RedirectToAction(ViewConstants.AUTH, ViewConstants.LOGINVIEW, new { area = "" });
+
+            // return RedirectToAction(ViewConstants.AUTH, ViewConstants.LOGINVIEW, new { area = "" });
+            return Redirect($"/{TenantName}/AUTH/LOGINVIEW");
 
 
         }
 
-        // Microsoft 365 Authentication
+        //// Microsoft 365 Authentication
         //public IActionResult Microsoft365Login()
         //{
-        //    _logger.LogInformation($"Microsoft365Login Method is call started");
         //    var properties = new AuthenticationProperties
         //    {
         //        RedirectUri = Url.Action(nameof(Microsoft365Response))
         //    };
-        //    _logger.LogInformation($"Microsoft365Login Method is call ended");
         //    return Challenge(properties, OpenIdConnectDefaults.AuthenticationScheme);
         //}
 

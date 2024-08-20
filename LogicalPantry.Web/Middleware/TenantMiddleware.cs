@@ -219,8 +219,8 @@ public class TenantMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-       
-        
+
+
         var path = context.Request.Path.Value;
 
         // Handle root path or empty tenant name
@@ -238,14 +238,13 @@ public class TenantMiddleware
             await _next(context);
             return;
         }
-        
-        var segments = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
-        if (path.Split('/', StringSplitOptions.RemoveEmptyEntries).Any(segment => segment.Equals("Auth", StringComparison.OrdinalIgnoreCase)))
-        {
-            await _next(context);
-            return;
-        }
 
+        var segments = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+        //if (path.Split('/', StringSplitOptions.RemoveEmptyEntries).Any(segment => segment.Equals("Auth", StringComparison.OrdinalIgnoreCase)))
+        //{
+        //    await _next(context);
+        //    return;
+        //}
         if (segments.Length > 0)
         {
             var tenantNameFromUrl = segments[0];
