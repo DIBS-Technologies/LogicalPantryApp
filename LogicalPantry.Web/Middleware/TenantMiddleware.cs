@@ -219,9 +219,7 @@ public class TenantMiddleware
     }
 
     public async Task InvokeAsync(HttpContext context)
-    {
-
-
+    {        
         var path = context.Request.Path.Value;
 
         // Handle root path or empty tenant name
@@ -317,11 +315,11 @@ public class TenantMiddleware
                     await context.Response.WriteAsync("Tenant not found");
                     return;
                 }
+                var tName = tenant.Data.TenantName;
                 var newPath = "/" + string.Join("/", segments.Skip(1));
                 context.Request.Path = newPath;
             }
-        }
-       
+        }      
 
         await _next(context);
     }
