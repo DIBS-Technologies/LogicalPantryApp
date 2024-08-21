@@ -277,7 +277,13 @@ public class TenantMiddleware
                     var informationService = context.RequestServices.GetRequiredService<IInformationService>();
                     var tenant = await informationService.GetTenantIdByEmail(userEmail);
 
-                    if (tenant == null)
+                    if (tenant == null )
+                    {
+                        context.Response.StatusCode = StatusCodes.Status404NotFound;
+                        await context.Response.WriteAsync("Tenant not found");
+                        return;
+                    }
+                    if(tenant.Data.TenantName == null)
                     {
                         context.Response.StatusCode = StatusCodes.Status404NotFound;
                         await context.Response.WriteAsync("Tenant not found");

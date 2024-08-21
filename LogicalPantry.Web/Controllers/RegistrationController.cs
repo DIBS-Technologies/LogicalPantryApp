@@ -7,6 +7,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LogicalPantry.Web.Controllers
 {
+    [Route("Registration")]
     public class RegistrationController : BaseController
     {
         IRegistrationService _registrationService;
@@ -16,6 +17,8 @@ namespace LogicalPantry.Web.Controllers
                 _registrationService = registrationService;
                 _logger = logger;
         }
+
+        [HttpGet("Index")]
         public IActionResult Index()
         {
             _logger.LogInformation($"Index method call started");
@@ -23,7 +26,7 @@ namespace LogicalPantry.Web.Controllers
             return View();
         }
 
-        [HttpPost]
+        [HttpPost("Register")]
         public async Task<IActionResult> Register(UserDto user) 
         {
             _logger.LogInformation($"Register method call started");
@@ -43,8 +46,8 @@ namespace LogicalPantry.Web.Controllers
 
             }
             _logger.LogInformation($"Register method call ended");
-            return RedirectToAction("UserCalendar", "TimeSlot", new { area = "" });
-
+            //return RedirectToAction("UserCalendar", "TimeSlot", new { area = "" });
+            return Redirect($"/{TenantName}/TimeSlot/UserCalendar");
         }
         [HttpGet]
         public object ValidateEmail(string emailId) 

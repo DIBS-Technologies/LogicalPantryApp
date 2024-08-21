@@ -237,7 +237,7 @@ namespace LogicalPantry.Web.Controllers
 
                     if (role != null)
                     {
-                        claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, UserRoles.User.ToString()));
+                        claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.RoleName.ToString()));
 
                         HttpContext.Response.Headers.Add("TenantId", userExists.Data.TenantId.ToString());
 
