@@ -1,9 +1,15 @@
 ﻿@using Microsoft.Extensions.Configuration
+@using System.Security.Claims;
 @inject IConfiguration Configuration
 
 @{
     ViewData["Title"] = "Pay with PayPal";
     var isUser = User.IsInRole("User");
+    var userClaim = User.Claims
+                .Where(c => c.Type == ClaimTypes.Role)
+                .Select(c => c.Value).ToList();
+
+    bool isAdmin = userClaim.Contains("Admin");
 }
 
 <!DOCTYPE html>
@@ -76,10 +82,14 @@
             display: flex;
             justify-content: center;
         }
+
+        .container{
+            margin-left: @(isAdmin ? "" : "50vh")
+        }
     </style>
 </head>
 <body>
-    <div class="container mt-5" @(isUser ? "Style='margin-left:50vh;'" : "")>
+    <div class="container mt-5">
         <div class="row">
             <div class="col-lg-12">
                 <div class="card mb-4">
