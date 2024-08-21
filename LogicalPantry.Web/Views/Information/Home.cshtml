@@ -1,8 +1,17 @@
-﻿@{
+﻿@using System.Security.Claims;
+
+@{
     var tenantName = ViewBag.TenantName as string;
     var pagename = ViewBag.PageName as string;
     var isUser = User.IsInRole("User");
-    var isAdmin = User.IsInRole("Admin");
+    //var isAdmin = User.IsInRole("Admin");
+    var userClaim = User.Claims
+               .Where(c => c.Type == ClaimTypes.Role)
+               .Select(c => c.Value).ToList();
+
+    bool isAdmin = userClaim.Contains("Admin");
+
+    bool isAdmin2 = userClaim.Contains("Admin");
    
 }
 
@@ -18,6 +27,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
     <style>
         html, body {
             margin: 0;
@@ -79,7 +89,7 @@
             text-align: center;
             font-weight: bold;
             color: #1f2d41;
-            font-size: 1.25rem; /* Adjust size as needed */
+            font-size: 1.25rem; 
         }
 
         main {
@@ -160,8 +170,12 @@
             justify-content: right;
         }
 
+        .pickUp {
+            display: @(isAdmin ? "none" : "visible");
+        }
 
     </style>
+
 </head>
 <body class="nav-fixed">
      <div id="layoutSidenav"> 
@@ -169,12 +183,20 @@
             <div class="tenatImage">
                 <img src="~/Image/Demo.jpeg" id="logoImage" style="width: 95px; padding-left: 10px; opacity:100%" />
             </div>
-            <div class="page-name" id="pageName"></div>
+            <div class="page-name" id="pageName">
+                @(!string.IsNullOrEmpty(pagename) ? pagename.Replace(".html", " ") : "")
+            </div>
+
             <div class="navbar-nav">
-                 <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar">Pickup</a> 
+               @*  <a class="nav-link @(isAdmin ? "" : "hidden")"
+                   href="/@tenantName/TimeSlot/UserCalendar"
+                   id="pickUp">
+                    Pickup
+                </a> *@
+
                 <a class="nav-link" href="/@tenantName/Donation/PayPal">Donation</a>
                 <a class="nav-link" href="/@tenantName/Auth/LoginView">Login</a>
-                <input id="page" type="hidden" name="name" value="@pagename" />
+                <input id="pag" type="hidden" name="name" value="@pagename" />
                 <input type="hidden" value="@isUser" id="isUser" />
               
             </div>
@@ -203,9 +225,11 @@
                 // var parts = url.split("/");
                 // var urlParams = new URLSearchParams(window.location.search);
                 // var handlerValue = urlParams.get("pageName");
-
-                var handlerValue = $("#page").val();
+                debugger
+                var handlerValue = $("#pag").val();
                 $("#urlFrameId").attr("src", "/TenantHomePage/" + handlerValue);
+
+                debugger
                 $("#pageName").text(handlerValue ? handlerValue.replace('.html', ' ') : ''); // Handle spaces in pageName
 
                

@@ -226,7 +226,7 @@ namespace LogicalPantry.Web.Controllers
                 }
 
                 TempData["PageName"] = fileNameWithExtension;
-                ViewBag.PageName = pageName;
+                ViewBag.PageName = fileNameWithExtension;
                 ViewBag.TenantId = tenantId;
                 return View();
             }

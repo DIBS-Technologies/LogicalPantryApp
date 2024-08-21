@@ -232,7 +232,7 @@ namespace LogicalPantry.Web.Controllers
 
                 if (userExists.Success)
                 {
-                    // Retrieve user's role from the role service
+                    
                     var role = await _userServices.GetUserRoleAsync(userExists.Data.Id);
 
                     if (role != null)

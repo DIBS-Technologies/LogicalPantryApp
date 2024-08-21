@@ -4,7 +4,17 @@
     var tenantId = ViewBag.TenantId;
     var pagename = ViewBag.PageName as string;
     var isUser = User.IsInRole("User");
-    var isAdmin = User.IsInRole("Admin");
+    //var isAdmin = User.IsInRole("Admin");
+
+    var claimsIdentityRole = System.Security.Claims.ClaimsIdentity.DefaultRoleClaimType.Trim();
+
+    var userClaim = User.Claims
+                .Where(c => c.Type == ClaimTypes.Role)
+                .Select(c => c.Value).ToList();
+
+    bool isAdmin = userClaim.Contains("Admin");
+
+    bool isAdmin2 = userClaim.Contains("Admin");
 }
 <!DOCTYPE html>
 <html>
@@ -76,10 +86,6 @@
             margin: 0;
         }
 
-       /*  #layoutSidenav_nav {
-            display: @(isAdmin ? "block" : "none"); /
-        } */
-
         #layoutSidenav_content {
             margin-left: @(isAdmin ? "0" : "20px"); /* Add margin if sidenav is hidden */
             margin-right: 20px;
@@ -94,7 +100,7 @@
         }
 
         .nav-fixed #layoutSidenav #layoutSidenav_content {
-            padding-left: @(isAdmin ? "2rem" : "none");
+            padding-left: @(isAdmin ? "none" : "2rem");
             padding-right: 2rem;
             top: 4rem;
             padding-bottom: 5rem;
@@ -105,6 +111,10 @@
             justify-content: right;
         }
 
+        #pickUp {
+            display: @(isAdmin ? "none" : "visible");
+        }
+
     </style>
 </head>
 <body class="nav-fixed">
@@ -112,26 +122,37 @@
         <div class="tenatImage">
             <img src="~/Image/Demo.jpeg" id="logoImage" style="width: 95px; padding-left: 10px; opacity:100%" />
         </div>
-        <div class="page-name" id="pageName"></div>
+        <div class="page-name" id="pageName">
+            @(!string.IsNullOrEmpty(pagename) ? pagename.Replace(".html", " ") : "")
+        </div>
+
         <div class="navbar-nav">
-           @*  <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar">Pickup</a> *@
+            <a class="nav-link @(isAdmin ? "" : "hidden")"
+               href="/@tenantName/TimeSlot/UserCalendar"
+               id="pickUp">
+                Pickup
+            </a>
+
             <a class="nav-link" href="/@tenantName/Donation/PayPal">Donation</a>
             <a class="nav-link" href="/@tenantName/Auth/LoginView">Login</a>
-            <input id="page" type="hidden" name="name" value="@pagename" />
+            <input id="page" type="hidden" name="name" value="@TempData["PageName"]" />
             <input type="hidden" value="@isUser" id="isUser" />
             @if (User.Identity.IsAuthenticated)
             {
+
                 var userEmail = User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value;
                 var userName = User.FindFirstValue(ClaimTypes.Name) ?? User.Claims.FirstOrDefault(c => c.Type == "name")?.Value;
                 @* <p>@userName</p> *@
             }
+
         </div>
     </nav>
            
     <div id="layoutSidenav">
          
             <div id="layoutSidenav_nav">
-            @if (User.IsInRole("Admin"))
+    
+            @if (isAdmin)
             {
                 <nav class="sidenav shadow-right sidenav-light">
                     <div class="sidenav-menu">
@@ -184,8 +205,10 @@
                     }
                 });
 
+                debugger
                 var handlerValue = $("#page").val();
-                $("#pageName").text(handlerValue ? handlerValue.replace('.html', ' ') : '');
+                debugger
+                //$(".page-name").text(handlerValue ? handlerValue.replace('.html', ' ') : '');
 
                 debugger
                 // if ($("#isUser").val() === "True") {
