@@ -1,6 +1,9 @@
 ﻿using LogicalPantry.DTOs;
 using LogicalPantry.DTOs.UserDtos;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+using Microsoft.Identity.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,9 +19,15 @@ namespace LogicalPantry.Services.Test.RegistrationService
         private readonly ApplicationDataContext dataContext; // Dependency injection for DataContext
 
         // Constructor with dependency injection
-        public RegistrationTestService(ApplicationDataContext dataContext)
+        public RegistrationTestService()
         {
-            this.dataContext = dataContext;
+            var builder = new DbContextOptionsBuilder<ApplicationDataContext>();
+
+    
+            builder.UseSqlServer("Server=Server1\\SQL19Dev,12181;Database=LogicalPantryDB;User ID=sa;Password=x3wXyCrs;MultipleActiveResultSets=true;TrustServerCertificate=True");
+
+            // Initialize dataContext with the configured options
+            this.dataContext = new ApplicationDataContext(builder.Options);
         }
         //public  ServiceResponse<bool> GetUser(UserDto user)
         //{
@@ -60,13 +69,13 @@ namespace LogicalPantry.Services.Test.RegistrationService
             var response = new ServiceResponse<bool>();
             try
             {
-                // Check if the user with the current UserDto is available in the database
+               
                 var existingUser = dataContext.Users
                     .FirstOrDefault(x => x.Email == user.Email);
 
                 if (existingUser != null)
                 {
-                  // check new added user
+                  
                     bool detailsMatch = existingUser.FullName == user.FullName &&
                                         existingUser.PhoneNumber == user.PhoneNumber;
 

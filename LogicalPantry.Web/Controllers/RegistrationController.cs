@@ -7,6 +7,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace LogicalPantry.Web.Controllers
 {
+    [Route("Registration")]
     public class RegistrationController : BaseController
     {
         IRegistrationService _registrationService;
@@ -23,8 +24,8 @@ namespace LogicalPantry.Web.Controllers
             return View();
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Register(UserDto user) 
+        [HttpPost("Register")]
+        public async Task<IActionResult> Register([FromBody] UserDto user) 
         {
             _logger.LogInformation($"Register method call started");
             var response= await _registrationService.RegisterUser(user);

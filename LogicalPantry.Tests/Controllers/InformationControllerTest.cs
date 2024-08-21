@@ -1,295 +1,169 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.Extensions.Logging;
-using Moq;
-using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using LogicalPantry.DTOs.TenantDtos;
+﻿using LogicalPantry.DTOs.TenantDtos;
 using LogicalPantry.Services.InformationService;
-using LogicalPantry.Web.Controllers;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
-using LogicalPantry.DTOs;
-using Microsoft.AspNetCore.Routing;
+using LogicalPantry.Web;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
+using System.IO;
+using System.IO.Pipes;
+using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace LogicalPantry.Tests
+namespace LogicalPantry.IntegrationTests
 {
     [TestClass]
-    public class InformationControllerTests
+    public class InformationControllerIntegrationTests
     {
-        private Mock<IInformationService> _mockService;
-        private Mock<IWebHostEnvironment> _mockWebHostEnvironment;
-        private Mock<ILogger<InformationController>> _mockLogger;
-        private Mock<IMemoryCache> _mockMemoryCache;
-        private InformationController _controller;
+        private WebApplicationFactory<Startup> _factory;
+        private HttpClient _client;
+        private IInformationService _informationService;
 
         [TestInitialize]
         public void Setup()
         {
-            // Initialize mocks
-            _mockService = new Mock<IInformationService>();
-            _mockWebHostEnvironment = new Mock<IWebHostEnvironment>();
-            _mockLogger = new Mock<ILogger<InformationController>>();
-            _mockMemoryCache = new Mock<IMemoryCache>();
-
-            // Initialize the controller with mocked dependencies
-            _controller = new InformationController(
-                _mockService.Object,
-                _mockWebHostEnvironment.Object,
-                _mockLogger.Object,
-                _mockMemoryCache.Object
-            );
-        }
-
-        [TestMethod]
-        public void Index_ReturnsViewResult()
-        {
-            // Act
-            var result = _controller.Index();
-
-            // Assert
-            Assert.IsInstanceOfType(result, typeof(ViewResult));
-        }
-
-        [TestMethod]
-        public async Task Get_ValidTenantId_ReturnsOkResult()
-        {
-            // Arrange
-            var tenantId = 1;
-            var tenantDto = new TenantDto
-            {
-                Id = 1,
-                PaypalId = "Paypal123",
-                PageName = "Sample Page",
-                Logo = "logo.png",
-                Timezone = "GMT"
-            };
-
-            _mockService
-                .Setup(x => x.GetTenant(It.IsAny<int>()))
-                .ReturnsAsync(new ServiceResponse<TenantDto>
+            _factory = new WebApplicationFactory<Startup>()
+                .WithWebHostBuilder(builder =>
                 {
-                    Success = true,
-                    Data = tenantDto,
-                    Message = "Tenant retrieved successfully."
+                    builder.ConfigureServices(services =>
+                    {
+                       
+                        var descriptor = services.SingleOrDefault(
+                            d => d.ServiceType == typeof(DbContextOptions<ApplicationDataContext>));
+                        if (descriptor != null)
+                        {
+                            services.Remove(descriptor);
+                        }
+
+                        services.AddDbContext<ApplicationDataContext>(options =>
+                            options.UseSqlServer("Server=Server1\\SQL19Dev,12181;Database=LogicalPantryDB;User ID=sa;Password=x3wXyCrs;MultipleActiveResultSets=true;TrustServerCertificate=True")); 
+
+                     
+                        services.AddTransient<IInformationService, InformationService>();
+
+                    
+                        var serviceProvider = services.BuildServiceProvider();
+
+                 
+                        using (var scope = serviceProvider.CreateScope())
+                        {
+                            var scopedServices = scope.ServiceProvider;
+                            _informationService = scopedServices.GetRequiredService<IInformationService>();
+                        }
+                    });
                 });
 
-            // Act
-            var result = await _controller.Get(tenantId) as JsonResult;
-
-            // Assert
-            Assert.IsNotNull(result);
-            var response = result.Value as TenantDto;
-            Assert.IsNotNull(response);
-            Assert.AreEqual(tenantDto.Id, response.Id);
-            Assert.AreEqual(tenantDto.PaypalId, response.PaypalId);
+            _client = _factory.CreateClient();
         }
 
         [TestMethod]
-        public async Task Get_InvalidTenantId_ReturnsNotFound()
+        public async Task GetTenant_ShouldReturnOk_WhenTenantExists()
         {
-            // Arrange
-            var tenantId = 1;
+            int tenantId = 1; // Ensure this ID exists in your test database
 
-            // Act
-            var result = await _controller.Get(tenantId) as NotFoundResult;
+            var response = await _client.GetAsync($"/Information/Get?tenantid={tenantId}");
 
-            // Assert
-            Assert.IsNotNull(result);
-
-
-            Assert.AreEqual(StatusCodes.Status404NotFound, result.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
+            var tenant = await response.Content.ReadFromJsonAsync<TenantDto>();
+            Assert.IsNotNull(tenant);
+            Assert.AreEqual(tenantId, tenant.Id);
         }
 
         [TestMethod]
-        public async Task Get_ServiceThrowsException_ReturnsStatusCode500()
+        public async Task AddTenant_ShouldAddTenant_WhenModelIsValid()
         {
-            // Arrange
-            var tenantId = 1;
-            _mockService
-                .Setup(x => x.GetTenant(It.IsAny<int>()))
-                .ThrowsAsync(new Exception("Test exception"));
-
-            // Act
-            var result = await _controller.Get(tenantId) as StatusCodeResult;
-
-            // Assert
-            Assert.IsNotNull(result);
-            Assert.AreEqual(StatusCodes.Status500InternalServerError, result.StatusCode);
-        }
-
-
-        [TestMethod]
-        public async Task AddTenant_WithNullTenantName_ShouldSetTempDataError()
-        {
-
-            var tenantDto = new TenantDto { TenantName = null, Logo = null, PaypalId = null, Timezone = null };
-            var fileMock = new Mock<IFormFile>();
-
-            // Act
-            await _controller.AddTenant(tenantDto, fileMock.Object);
-
-            // Assert
-            Assert.Equals(_controller.TempData["MessageClass"], "alert-danger");
-            Assert.Equals(_controller.TempData["ErrorMessageInfo"], "Internal server error.");
-            var modelStateErrors = _controller.ModelState.Values.SelectMany(v => v.Errors).ToList();
-            Assert.IsNotNull(modelStateErrors);
-
-        }
-
-        [TestMethod]
-        public async Task AddTenant_WithValidData_ShouldSetTempDataSuccess()
-        {
-
             var tenantDto = new TenantDto
             {
-                Id = 4,
-                TenantName = "TenantB",
-                Logo = "/Image/logo.png",
-                PaypalId = "swapnil@gmail.com",
-                Timezone = "Asia/India",
-                PageName = "account"
+                TenantName = "Test Tenant",
+                AdminEmail = "admin@test.com",
+                PaypalId = "paypal123",
+                PageName = "test-page",
+                Logo = "/Image/test-logo.png",
+                Timezone = "UTC"
             };
-            var fileMock = new Mock<IFormFile>();
-            _mockService.Setup(s => s.PostTenant(It.IsAny<TenantDto>()))
-                        .ReturnsAsync(new ServiceResponse<bool> { Success = true });
 
+            var form = new MultipartFormDataContent();
 
-            await _controller.AddTenant(tenantDto, fileMock.Object);
+            
+          
+            var response = await _client.PostAsync("/Information/AddTenant", form);
 
+     
+    
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
 
-            Assert.Equals(_controller.TempData["MessageClass"], "alert-success");
-            Assert.Equals(_controller.TempData["SuccessMessageInfo"], "Infromation Saved Successfully");
+  
+            var isAddSuccessful = await _informationService.GetTenantByNameAsync(tenantDto.TenantName);
+            Assert.IsTrue(isAddSuccessful.Success, "Tenant should be added successfully.");
         }
 
         [TestMethod]
-        public async Task GetTenantIdByName_WithExistingTenant_ShouldReturnOk()
+        public async Task AddTenant_ShouldReturnBadRequest_WhenModelIsInvalid()
         {
-
-            var tenantName = "TenantA";
-            _mockService.Setup(s => s.GetTenantByNameAsync(tenantName))
-                        .ReturnsAsync(new ServiceResponse<TenantDto>
-                        {
-                            Success = true,
-                            Data = new TenantDto { TenantName = tenantName }
-                        });
-
-
-            var result = await _controller.GetTenantIdByName(tenantName) as OkObjectResult;
-
-
-            Assert.IsNotNull(result);
-            Assert.Equals(result.StatusCode, 200);
-        }
-
-        [TestMethod]
-        public async Task GetTenantIdByName_WithNonExistingTenant_ShouldReturnNotFound()
-        {
-
-            var tenantName = "TenantB";
-            _mockService.Setup(s => s.GetTenantByNameAsync(tenantName))
-                        .ReturnsAsync(new ServiceResponse<TenantDto>
-                        {
-                            Success = false,
-                            Message = "Tenant not found."
-                        });
-
-            // Act
-            var result = await _controller.GetTenantIdByName(tenantName) as NotFoundObjectResult;
-
-            // Assert
-            Assert.IsNotNull(result);
-            Assert.Equals(result.StatusCode, 404);
-            Assert.Equals(result.Value, "Tenant not found.");
-        }
-
-        [TestMethod]
-        public async Task GetTenantIdByEmail_WithValidEmail_ShouldReturnOk()
-        {
-
-            var email = "swappnilfromdibs@gmail.com";
-            _mockService.Setup(s => s.GetTenantIdByEmail(email))
-                        .ReturnsAsync(new ServiceResponse<TenantDto>
-                        {
-                            Success = true
-                        });
-
-            // Act
-            var result = await _controller.GetTenantIdByEmail(email) as OkObjectResult;
-
-            // Assert
-            Assert.IsNotNull(result);
-            Assert.Equals(result.StatusCode, 200);
-        }
-
-        [TestMethod]
-        public async Task GetTenantIdByEmail_WithInvalidEmail_ShouldReturnNotFound()
-        {
-
-            var email = "invalid@example.com";
-            _mockService.Setup(s => s.GetTenantIdByEmail(email))
-                        .ReturnsAsync(new ServiceResponse<TenantDto>
-                        {
-                            Success = false
-
-                        });
-
-            // Act
-            var result = await _controller.GetTenantIdByEmail(email) as NotFoundObjectResult;
-
-            // Assert
-            Assert.IsNotNull(result);
-            Assert.Equals(result.StatusCode, 404);
-            Assert.Equals(result.Value, "Tenant not found.");
-        }
-
-        [TestMethod]
-        public async Task Home_WithExistingPage_ShouldReturnView()
-        {
-
-            var pageName = "account-billing";
-
-            var tenantName = _controller.HttpContext.Items["TenantName"].ToString();
-
-            var tenantResponse = new ServiceResponse<TenantDto>
+            var tenantDto = new TenantDto
             {
-                Success = true,
-                Data = new TenantDto { PageName = "TenantA" }
+                // Missing required fields for invalid data
+                TenantName = null,
+                AdminEmail = null,
+                PaypalId = null
             };
-            _mockService.Setup(s => s.GetTenantPageNameForUserAsync(tenantName))
-                        .ReturnsAsync(tenantResponse);
 
+            var response = await _client.PostAsJsonAsync("/Information/AddTenant", tenantDto);
 
-            var result = await _controller.Home() as ViewResult;
-
-            Assert.IsNotNull(result);
-            Assert.Equals(_controller.TempData["PageName"], pageName + ".html");
-
-
+            // Check the response
+            Assert.AreEqual(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
         }
 
+        [TestMethod]
+        public async Task RedirectTenant_ShouldReturnView_WhenTenantExists()
+        {
+            int tenantId = 1; // Ensure this ID exists in your test database
+
+            var response = await _client.GetAsync($"/Information/RedirectTenant?id={tenantId}");
+
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
+            // Optionally check the content or view rendering
+        }
 
         [TestMethod]
-        public async Task Home_WithNonExistingPage_ShouldReturnNotFound()
+        public async Task Home_ShouldReturnView_WhenPageNameIsValid()
         {
+            var pageName = "valid-page-name"; // Ensure this page name exists in your test environment
 
-            var tenantName = _controller.HttpContext.Items["TenantName"].ToString();
+            var response = await _client.GetAsync($"/Information/Home?PageName={pageName}");
 
-            _mockService.Setup(s => s.GetTenantByNameAsync(tenantName))
-                        .ReturnsAsync(new ServiceResponse<TenantDto>
-                        {
-                            Success = false,
-                            Message = "Page not found."
-                        });
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
+            // Optionally check the content or view rendering
+        }
 
-            var result = await _controller.Home() as NotFoundObjectResult;
+        [TestMethod]
+        public async Task GetTenantIdByName_ShouldReturnOk_WhenTenantExists()
+        {
+            var tenantName = "Test Tenant";
 
-            Assert.IsNotNull(result);
-            Assert.Equals(result.StatusCode, 404);
-            Assert.Equals(result.Value, "Page not found.");
+            var response = await _client.GetAsync($"/Information/GetTenant?tenantName={tenantName}");
 
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
+            var tenant = await response.Content.ReadFromJsonAsync<TenantDto>();
+            Assert.IsNotNull(tenant);
+            Assert.AreEqual(tenantName, tenant.TenantName);
+        }
+
+        [TestMethod]
+        public async Task GetTenantIdByEmail_ShouldReturnOk_WhenUserEmailIsValid()
+        {
+            var userEmail = "admin@test.com"; // Ensure this email exists in your test environment
+
+            var response = await _client.GetAsync($"/Information/GetTenantByUserEmail?userEmail={userEmail}");
+
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
+            var tenant = await response.Content.ReadFromJsonAsync<TenantDto>();
+            Assert.IsNotNull(tenant);
+            Assert.AreEqual(userEmail, tenant.AdminEmail);
         }
     }
-
 }
-

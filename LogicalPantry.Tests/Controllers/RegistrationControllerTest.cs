@@ -1,236 +1,183 @@
-﻿using LogicalPantry.DTOs;
-using LogicalPantry.Services.RegistrationService;
-using LogicalPantry.Web.Controllers;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Logging;
-using Moq;
-using System;
-using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
-using System.Text;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Threading.Tasks;
 using LogicalPantry.DTOs.UserDtos;
 using LogicalPantry.Services.Test.RegistrationService;
+using LogicalPantry.Web;
+using Newtonsoft.Json;
+using System.Text;
 
-namespace LogicalPantry.TestMethods.Controllers
+namespace LogicalPantry.Tests
 {
-
     [TestClass]
-    internal class RegistrationControllerTestMethod
+    public class RegistrationControllerTest
     {
+        private WebApplicationFactory<Startup> _factory;
+        private HttpClient _client;
+        private ApplicationDataContext _context;
+        private IRegistrationTestService _registrationTestService;
 
-            private Mock<IRegistrationService> _mockRegistrationService;
-            private Mock<ILogger<RegistrationController>> _mockLogger;
-            private RegistrationController _controller;
-            private Mock<HttpContext> _mockHttpContext;
+        [TestInitialize]
+        public void Setup()
+        {
+            _factory = new WebApplicationFactory<Startup>()
+                .WithWebHostBuilder(builder =>
+                {
+                    builder.ConfigureServices(services =>
+                    {
+                        
+                        var descriptor = services.SingleOrDefault(
+                            d => d.ServiceType == typeof(DbContextOptions<ApplicationDataContext>));
+                        if (descriptor != null)
+                        {
+                            services.Remove(descriptor);
+                        }
 
-            private RegistrationTestService _registrationTestService;
+                       
+                        var connectionString = "Server=Server1\\SQL19Dev,12181;Database=LogicalPantryDB;User ID=sa;Password=x3wXyCrs;MultipleActiveResultSets=true;TrustServerCertificate=True";
 
-            [TestInitialize]
-            public void Setup()
+                        services.AddDbContext<ApplicationDataContext>(options =>
+                            options.UseSqlServer(connectionString));
+
+                      
+                        services.AddTransient<IRegistrationTestService, RegistrationTestService>();
+
+                        var serviceProvider = services.BuildServiceProvider();
+
+                       
+                        using (var scope = serviceProvider.CreateScope())
+                        {
+                            var scopedServices = scope.ServiceProvider;
+                            _context = scopedServices.GetRequiredService<ApplicationDataContext>();
+                            _registrationTestService = scopedServices.GetRequiredService<IRegistrationTestService>();
+
+                          
+                            _context.Database.EnsureCreated();
+                        }
+                    });
+                });
+
+            _client = _factory.CreateClient();
+        }
+
+        [TestMethod]
+        public async Task Register_ShouldRedirectToUserCalendar_WhenRegistrationIsSuccessful()
+        {
+            var userDto = new UserDto
             {
-                _mockRegistrationService = new Mock<IRegistrationService>();
-                _mockLogger = new Mock<ILogger<RegistrationController>>();
-                _controller = new RegistrationController(_mockRegistrationService.Object, _mockLogger.Object);
-                _mockHttpContext = new Mock<HttpContext>();
-                _controller.TempData = new TempDataDictionary(new DefaultHttpContext(), new Mock<ITempDataProvider>().Object);
+                TenantId = 4,
+                FullName = "Sample User",
+                Email = "swappnilfromdibs2@gmail.com",
+                PhoneNumber = "1234567890",
+                Address = "Sample Address"
+            };
 
+            var content = new StringContent(JsonConvert.SerializeObject(userDto), Encoding.UTF8, "application/json");
+            var response = await _client.PostAsync("/Registration/Register", content);
+
+            Assert.AreEqual(System.Net.HttpStatusCode.Redirect, response.StatusCode);
+            var redirectUri = response.Headers.Location.ToString();
+            Assert.IsTrue(redirectUri.Contains("/TimeSlot/UserCalendar"));
+
+
+            var userInfo =  _registrationTestService.GetUser(userDto);
+
+            Assert.IsNotNull(userInfo);
+            Assert.IsTrue(userInfo.Success);
+            Assert.AreEqual("User details are correct.", userInfo.Message);
+        }
+
+        [TestMethod]
+        public async Task Register_ShouldReturnBadRequest_WhenUserDtoIsNull()
+        {
            
+            var response = await _client.PostAsJsonAsync("/Registration/Register", (UserDto)null);
 
-                var mockHttpContext = new Mock<HttpContext>();
-
-                var items = new Dictionary<object, object>
-                {
-                    ["TenantName"] = "TenantB"
-                };
-
-                mockHttpContext.Setup(ctx => ctx.Items).Returns(items);
-
-                _controller.ControllerContext = new ControllerContext
-                {
-                    HttpContext = mockHttpContext.Object
-                };
-            }
-
-            [TestMethod]
-            public async Task Register_ShouldReturnError_WhenUserDtoIsNull()
-            {
-                UserDto userDto = null;
-
-                var result = await _controller.Register(userDto) as ViewResult;
-
-                var modelState = _controller.ModelState;
-
-                Assert.IsNotNull(result);
-                Assert.Equals(result.ViewName,"Index");
-                Assert.Equals(_controller.TempData["MessageClass"], "alert-danger");
-                Assert.Equals(_controller.TempData["SuccessMessageUser"],"Failed to Save User server error.");
-            }
-
-            [TestMethod]
-            public async Task Register_ShouldReturnError_WhenTenantIdIsInvalid()
-            {
-                var userDto = new UserDto
-                {
-                    TenantId = 0, // TestMethoding When Tenat Id is  0
-                    FullName = "Sample UserName",
-                    Email = "sampleUserName@gmail.com",
-                    PhoneNumber = "1234567890"
-                };
-
-
-                var result = await _controller.Register(userDto) as ViewResult;
-
-                _controller.ModelState.AddModelError("TenantId", "TenantId is required.");
-
-
-                var modelState = _controller.ModelState;
-
-                Assert.IsNotNull(result);
-
-                Assert.Equals(result.ViewName,"Index");
-                Assert.Equals(_controller.TempData["MessageClass"], "alert-danger");
-                Assert.Equals(_controller.TempData["SuccessMessageUser"], "Failed to Save User server error.");
-            }
-
-            [TestMethod]
-            public async Task Register_ShouldReturnError_WhenNameEmailPhoneNumberAreNull()
-            {
-                var userDto = new UserDto
-                {
-                    TenantId = 1,
-                    FullName = null,
-                    Email = null,
-                    PhoneNumber = null
-                };
-
-                var result = await _controller.Register(userDto) as ViewResult;
-
-                _controller.ModelState.AddModelError("FullName", "Full Name is required.");
-                _controller.ModelState.AddModelError("Email", "Email is required.");
-                _controller.ModelState.AddModelError("PhoneNumber", "Phone Number is required.");
-
-                var modelState = _controller.ModelState;
-                Assert.IsNotNull(result);
-                Assert.Equals(result.ViewName, "Index");
-                Assert.IsTrue(modelState["FullName"].Errors.Count > 0, "FullName should have errors.");
-                Assert.IsTrue(modelState["Email"].Errors.Count > 0, "Email should have errors.");
-                Assert.IsTrue(modelState["PhoneNumber"].Errors.Count > 0, "PhoneNumber should have errors.");
-                Assert.Equals(_controller.TempData["MessageClass"], "alert-danger");
-                Assert.Equals(_controller.TempData["SuccessMessageUser"], "Failed to Save User server error.");
+            
+            Assert.AreEqual(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
         }
 
-            [TestMethod]
-            public async Task Register_ShouldReturnError_WhenEmailFormatIsInvalid()
+        [TestMethod]
+        public async Task Register_ShouldReturnBadRequest_WhenTenantIdIsInvalid()
+        {
+            var userDto = new UserDto
             {
+                TenantId = 0, 
+                FullName = "Sample User",
+                Email = "sampleUser@gmail.com",
+                PhoneNumber = "1234567890",
+                Address = "Sample Address"
+            };
 
-                var userDto = new UserDto
-                {
-                    TenantId = 1,
-                    FullName = "Sample User",
-                    Email = "sampleUser@gmail.com",
-                    PhoneNumber = "1234567890",
-                    Address = "Sample Address"
-                };
+            
+            var response = await _client.PostAsJsonAsync("/Registration/Register", userDto);
 
-                var result = await _controller.Register(userDto) as ViewResult;
-
-                Assert.IsNotNull(result);
-                Assert.Equals(result.ViewName, "Index");
-                Assert.Equals(_controller.TempData["MessageClass"], "alert-danger");
-                Assert.Equals(_controller.TempData["SuccessMessageUser"], "Failed to Save User server error.");
-
+            
+            Assert.AreEqual(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
         }
 
-            [TestMethod]
-            public async Task Register_ShouldReturnError_WhenTenantIdMismatch()
+        [TestMethod]
+        public async Task Register_ShouldReturnBadRequest_WhenNameEmailPhoneNumberAreNull()
+        {
+            var userDto = new UserDto
             {
+                TenantId = 1,
+                FullName = null,
+                Email = null,
+                PhoneNumber = null
+            };
 
-                var userDto = new UserDto
-                {
-                    TenantId = 1, // Incorrect TenantId
-                    FullName = "Sample User",
-                    Email = "sampleUser@gmail.com",
-                    PhoneNumber = "1234567890",
-                    Address = "Sample Address"
-                };
+            
+            var response = await _client.PostAsJsonAsync("/Registration/Register", userDto);
 
-                _mockHttpContext.Setup(x => x.Request.Headers["TenantId"]).Returns("2");
-                _controller.ControllerContext = new ControllerContext
-                {
-                    HttpContext = _mockHttpContext.Object
-                };
-
-                var result = await _controller.Register(userDto) as ViewResult;
-
-                Assert.IsNotNull(result);
-                Assert.Equals(result.ViewName, "Index");
-                Assert.Equals(_controller.TempData["MessageClass"], "alert-danger");
-                Assert.Equals(_controller.TempData["SuccessMessageUser"], "Failed to Save User server error.");
-
-            }
-
-            [TestMethod]
-            public async Task Register_ShouldRedirectToUserCalendar_WhenRegistrationIsSuccessful()
-            {
-
-                var userDto = new UserDto
-                {
-                    TenantId = 1,
-                    FullName = "Sample User",
-                    Email = "sampleUser@gmail.com",
-                    PhoneNumber = "1234567890",
-                    Address = "Sample Address"
-                };
-                var registrationResponse = new ServiceResponse<bool> { Success = true };
-                _mockRegistrationService
-                    .Setup(service => service.RegisterUser(It.IsAny<UserDto>()))
-                    .ReturnsAsync(registrationResponse);
-
-
-                 var result = await _controller.Register(userDto) as RedirectToActionResult;
-
-                 var userData = _registrationTestService.GetUser(userDto); // user return  user bool 
-
-
-                    Assert.IsNotNull(result);
-                    Assert.Equals(result.ActionName, "UserCalendar");
-                    Assert.Equals(result.ControllerName, "TimeSlot");
-
-                    Assert.IsTrue(userData.Success);
-                    Assert.Equals(userData.Message, "User details are correct.");
-                    Assert.Equals(result.ControllerName, "TimeSlot");
-
-
-
+            
+            Assert.AreEqual(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
         }
 
-            [TestMethod]
-            public async Task Register_ShouldReturnViewWithError_WhenRegistrationFails()
+        [TestMethod]
+        public async Task Register_ShouldReturnBadRequest_WhenEmailFormatIsInvalid()
+        {
+            var userDto = new UserDto
             {
+                TenantId = 1,
+                FullName = "Sample User",
+                Email = "invalid-email-format",
+                PhoneNumber = "1234567890",
+                Address = "Sample Address"
+            };
 
-                var userDto = new UserDto
-                {
-                    TenantId = 1,
-                    FullName = "Sample User",
-                    Email = "sampleUser@gmail.com",
-                    PhoneNumber = "1234567890",
-                    Address = "Sample Address"
-                };
-                var registrationResponse = new ServiceResponse<bool> { Success = false };
-                _mockRegistrationService
-                    .Setup(service => service.RegisterUser(It.IsAny<UserDto>()))
-                    .ReturnsAsync(registrationResponse);
+            
+            var response = await _client.PostAsJsonAsync("/Registration/Register", userDto);
 
-
-                    var result = await _controller.Register(userDto) as ViewResult;
-
-                    Assert.IsNotNull(result);
-                    Assert.Equals(result.ViewName, "Index");
+            
+            Assert.AreEqual(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
         }
+
+        [TestMethod]
+        public async Task Register_ShouldReturnBadRequest_WhenTenantIdMismatch()
+        {
+            var userDto = new UserDto
+            {
+                TenantId = 1,
+                FullName = "Sample User",
+                Email = "sampleUser@gmail.com",
+                PhoneNumber = "1234567890",
+                Address = "Sample Address"
+            };
+
+          
+            _client.DefaultRequestHeaders.Add("TenantId", "2");
+
+            
+            var response = await _client.PostAsJsonAsync("/Registration/Register", userDto);
+
+            
+            Assert.AreEqual(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
         }
     }
-
+}

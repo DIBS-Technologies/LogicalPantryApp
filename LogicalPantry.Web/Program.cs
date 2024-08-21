@@ -21,11 +21,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddMemoryCache();
 
 //Add output cache
-builder.Services.AddOutputCache(options =>
-{
-    options.AddBasePolicy(builder => builder.Expire(TimeSpan.FromMinutes(2)));
-    options.AddPolicy("ExpireIn30Sec", builder  => builder.Expire(TimeSpan.FromSeconds(2)));
-});
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
@@ -42,6 +38,7 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true; // Only accessible via HTTP
     options.Cookie.IsEssential = true; // Cookie is essential for the application
 });
+
 
 // Configure authentication services
 builder.Services.AddAuthentication(options =>
@@ -85,7 +82,11 @@ builder.Services.AddAuthentication(options =>
     options.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"];
 });
 
-
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("UserPolicy", policy => policy.RequireRole("User"));
+});
 
 
 // Add scoped services for dependency injection

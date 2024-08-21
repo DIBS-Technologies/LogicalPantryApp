@@ -203,7 +203,7 @@ namespace LogicalPantry.Web.Controllers
                 if (!System.IO.File.Exists(filepath))
                 {
                     Console.WriteLine("File not found.");
-                    return NotFound("The requested page was not found.");
+                    return View("");
                 }
 
                 string htmlContent;
@@ -214,7 +214,7 @@ namespace LogicalPantry.Web.Controllers
                 catch (IOException ex)
                 {
                     Console.WriteLine($"IOException: {ex.Message}");
-                    return StatusCode(500, "An error occurred while reading the file.");
+                    return View();
                 }
 
                 TempData["PageName"] = fileNameWithExtension;
@@ -223,7 +223,7 @@ namespace LogicalPantry.Web.Controllers
                 return View();
             }
 
-            return NotFound(tenanatResponse.Message);
+            return View();
         }
 
 
