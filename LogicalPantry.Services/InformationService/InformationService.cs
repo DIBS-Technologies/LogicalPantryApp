@@ -351,7 +351,7 @@ namespace LogicalPantry.Services.InformationService
 
 
         
-        public async Task<ServiceResponse<TenantDto>> GetTenantIdByEmail(string userEmail)
+        public async Task<ServiceResponse<TenantDto>> GetTenantIdByEmail(string userEmail, string tenantName)
         {
             var response = new ServiceResponse<TenantDto>();
 
@@ -368,6 +368,19 @@ namespace LogicalPantry.Services.InformationService
             }
             else
             {
+                tenant = await dataContext.Tenants.FirstOrDefaultAsync(t => t.TenantName == tenantName);
+
+                if (tenant != null)
+                {
+                    response.Data = new TenantDto
+                    {
+                        Id = tenant.Id,
+                        TenantName = tenant.TenantName,
+                        // Add other properties as needed
+                    };
+                    response.Success = true;
+                    response.Message = "Tenant found";
+                }
                 response.Success = false;
                 response.Message = "Tenant not found";
             }
