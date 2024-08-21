@@ -3,7 +3,6 @@
 
 @{
     ViewData["Title"] = "Pay with PayPal";
-
     var isUser = User.IsInRole("User");
 }
 
@@ -39,7 +38,7 @@
             }
 
             .form-group input {
-                width: 50vh;
+                width: 100%; /* Adjust input width to 100% of its container */
             }
 
         .error-message {
@@ -60,7 +59,7 @@
 
         #saveButtonDiv {
             display: flex;
-            justify-content: end;
+            justify-content: center;
         }
 
         .card-body {
@@ -68,25 +67,12 @@
             border: 0.2px solid black;
             border-radius: 1px;
         }
-        .container{
-            margin-left: @(isUser ? "50vh" : "");
-           /* // margin-left: 50vh; */
+
+        #paypal-button-container {
+            margin-top: 1rem;
         }
 
-        #amountlable {
-            display: flex;
-            align-items: center;
-        }
-        #amount{
-            margin-left : 2vh;
-            max-width : 60%;
-        }
         .row {
-            display : flex;
-            justify-content : center;
-        }
-
-        #saveButtonDiv {
             display: flex;
             justify-content: center;
         }
@@ -102,10 +88,12 @@
                     </div>
                     <div class="card-body">
                         <form id="hiddenForm">
-                            <div class="form-group row">
-                                <label for="amount" id="amountlable">Enter amount for donation:</label>
-                                <input type="number" id="amount" class="form-control" name="amount" step="0.01" min="0" required />
-                                <span id="amount-error" class="error-message" style="display: none;">Please enter a valid amount.</span>
+                            <div class="form-group row align-items-center">
+                                <label for="amount" class="col-form-label col-sm-3 text-sm-right">Enter amount :</label>
+                                <div class="col-sm-9">
+                                    <input type="number" id="amount" class="form-control" name="amount" step="0.01" min="0" required />
+                                    <span id="amount-error" class="error-message" style="display: none;">Please enter a valid amount.</span>
+                                </div>
                             </div>
                             <div id="saveButtonDiv">
                                 <button class="saveButton" id="pay-button" type="button">Pay with PayPal</button>
@@ -168,5 +156,3 @@
     </script>
 </body>
 </html>
-
-

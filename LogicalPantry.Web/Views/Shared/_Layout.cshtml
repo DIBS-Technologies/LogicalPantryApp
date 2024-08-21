@@ -112,7 +112,7 @@
         }
 
         #pickUp {
-            display: @(isAdmin ? "none" : "visible");
+            display: @(isAdmin ? "none" : "block");
         }
 
     </style>
@@ -120,14 +120,14 @@
 <body class="nav-fixed">
     <nav class="topnav navbar navbar-expand shadow navbar-light bg-white" id="sidenavAccordion">
         <div class="tenatImage">
-            <img src="~/Image/Demo.jpeg" id="logoImage" style="width: 95px; padding-left: 10px; opacity:100%" />
+            <img src="" id="logoImage" style="width: 95px; padding-left: 10px; opacity:100%" />
         </div>
         <div class="page-name" id="pageName">
             @(!string.IsNullOrEmpty(pagename) ? pagename.Replace(".html", " ") : "")
         </div>
 
         <div class="navbar-nav">
-            <a class="nav-link @(isAdmin ? "" : "hidden")"
+            <a class="nav-link @* @(isAdmin ? "hidden" : "")" *@
                href="/@tenantName/TimeSlot/UserCalendar"
                id="pickUp">
                 Pickup
@@ -196,14 +196,21 @@
                 $.ajax({
                     url: "/@tenantName/Information/Get",
                     method: "GET",
-                    data: { tenantid: @tenantId },
-                    success: function (data) {
-                        $("#logoImage").attr("src", data.ImageUrl);
+                    data: { tenantid: tenantId }, // Ensure tenantId is defined
+                    success: function (imageUrl) {
+                        console.log(imageUrl); // imageUrl is now a string
+                        if (imageUrl) {
+                            $("#logoImage").attr("src", "~/", imageUrl);
+                        } else {
+                            console.error("ImageUrl is missing in the response");
+                        }
                     },
-                    error: function () {
-                        console.error("Cannot find Image src");
+                    error: function (xhr, status, error) {
+                        console.error("Cannot find Image src", status, error);
                     }
                 });
+
+
 
                 var handlerValue = $("#page").val();
                 debugger
