@@ -65,6 +65,7 @@
 
         .form-group {
             margin-bottom: 1rem;
+            margin-left: 10px;
         }
 
             .form-group label {
@@ -108,7 +109,7 @@
                                     <!-- File input -->
                                     <input type="file" name="LogoFile" class="form-control-file" id="logo" />
 
-                                  @*   <!-- Image display -->
+                                @*     <!-- Image display -->
                                     @if (!string.IsNullOrEmpty(Model.Logo))
                                     {
                                         <img src="@Model.Logo" alt="Logo" style="max-width: 150px; margin-left: 15px;" />
