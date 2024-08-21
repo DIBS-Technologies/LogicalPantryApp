@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="~/css/jquery-calendar.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.css">
-
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
 
@@ -149,6 +149,7 @@
             z-index: 10;
         }
 
+
         .badge {
             display: inline-block;
             padding: .25em .4em;
@@ -229,11 +230,13 @@
             /* Left arrow direction */
             .btn.btn-sm.btn-light.btn-move-calendar[data-direction="left"]:before {
                 content: "\2190";
+            
             }
 
             /* Right arrow direction */
             .btn.btn-sm.btn-light.btn-move-calendar[data-direction="right"]:before {
                 content: "\2192";
+           
             }
 
         /* Button hover effect */
@@ -252,8 +255,14 @@
             justify-content: center; 
             border-radius: 4px; 
         }
-      
-       
+
+        /* 8/21/2024 */
+        body.modal-open {
+            overflow-x: hidden;
+            overflow-y: auto;
+        }
+
+
          
         
     </style>
@@ -314,7 +323,8 @@
                 weekday: {
                     timeline: {
                         intervalMinutes: 30,
-                        fromHour: 9
+                        fromHour: 9,
+                        toHour: 20
                     }
                 },
                 events: events,
@@ -328,7 +338,7 @@
                     timeline: {
                         fromHour: 7,
                         toHour: 20,
-                        intervalMinutes: 60,
+                        intervalMinutes: 30,
                         format: 'HH:mm',
                         heightPx: 50,
                         autoResize: true
@@ -455,34 +465,69 @@
 
 
 
-        // Function to show a message in a Bootstrap modal
-        function showMessage(message, isError) {
+        // // Function to show a message in a Bootstrap modal
+        // function showMessage(message, isError) {
           
+        //     var modalTitle = isError ? 'Error' : 'Success';
+        //     var modalClass = isError ? 'text-danger' : 'text-success';
+
+        //     $('#messageModalLabel').text(modalTitle);
+        //     $('#messageModalBody').text(message).removeClass('text-success text-danger').addClass(modalClass);          
+        //     $('#messageModal').modal('show');
+
+
+        //    // $(".nav-fixed").addClass("backgr");
+
+
+           
+
+        //     // Hide the modal with a fade-out effect after 1 second
+        //     setTimeout(function () {
+        //         $('#messageModal').fadeOut(1000, function () {
+        //             $('#messageModal').modal('hide'); // Hide the modal
+        //             $('#messageModal').css('display', 'none'); // Reset display property for future use
+        //             //$(".nav-fixed").removeClass("backgr");
+        //         });
+        //     }, 2000); // 1000 milliseconds = 1 second
+           
+        // }
+
+
+        function showMessage(message, isError) {
             var modalTitle = isError ? 'Error' : 'Success';
             var modalClass = isError ? 'text-danger' : 'text-success';
 
             $('#messageModalLabel').text(modalTitle);
-            $('#messageModalBody').text(message).removeClass('text-success text-danger').addClass(modalClass);          
+            $('#messageModalBody').text(message).removeClass('text-success text-danger').addClass(modalClass);
+            $('#messageModal').modal({
+                backdrop: 'static', // Prevent closing the modal by clicking outside
+                keyboard: false     // Prevent closing the modal with the keyboard
+            });
+
+            // Show the modal
             $('#messageModal').modal('show');
 
+            // Prevent horizontal scroll bar
+            $('body').css({
+                'overflow-y': 'auto',
+                'overflow-x': 'hidden'
+            });
 
-           // $(".nav-fixed").addClass("backgr");
-
-
-           
-
-            // Hide the modal with a fade-out effect after 1 second
+            // Hide the modal with a fade-out effect after 2 seconds
             setTimeout(function () {
                 $('#messageModal').fadeOut(1000, function () {
                     $('#messageModal').modal('hide'); // Hide the modal
                     $('#messageModal').css('display', 'none'); // Reset display property for future use
-                    //$(".nav-fixed").removeClass("backgr");
+                    // Restore the scroll behavior after the modal is hidden
+                    $('body').css({
+                        'overflow-y': 'auto',
+                        'overflow-x': 'hidden'
+                    });
                 });
-            }, 2000); // 1000 milliseconds = 1 second
-           
+            }, 2000); // 2000 milliseconds = 2 seconds
         }
 
-   
+
      
     </script>
 

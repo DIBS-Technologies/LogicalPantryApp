@@ -13,7 +13,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - LogicalPantry.Web</title>
 
-    <link href="/css/default-main.css" rel="stylesheet" />
+  @*    <link href="/css/default-main.css" rel="stylesheet" />  *@
     <link href="~/css/style.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css">
@@ -131,7 +131,7 @@
     <div id="layoutSidenav">
          
             <div id="layoutSidenav_nav">
-            @if(User.IsInRole("Admin"))
+            @if(User.IsInRole("Admins"))
             {
                 <nav class="sidenav shadow-right sidenav-light">
                     <div class="sidenav-menu">

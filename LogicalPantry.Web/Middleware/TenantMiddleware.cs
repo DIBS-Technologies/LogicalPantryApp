@@ -277,19 +277,13 @@ public class TenantMiddleware
                     var informationService = context.RequestServices.GetRequiredService<IInformationService>();
                     var tenant = await informationService.GetTenantIdByEmail(userEmail);
 
-                    if (tenant == null )
+                    if (tenant == null || tenant.Data.TenantName == null)
                     {
                         context.Response.StatusCode = StatusCodes.Status404NotFound;
                         await context.Response.WriteAsync("Tenant not found");
                         return;
                     }
-                    if(tenant.Data.TenantName == null)
-                    {
-                        context.Response.StatusCode = StatusCodes.Status404NotFound;
-                        await context.Response.WriteAsync("Tenant not found");
-                        return;
-                    }
-
+                 
                     var cachedTenantName = tenant.Data.TenantName;
                     _cache.Set(tenantNameFromUrl, (cachedTenantName, userEmail), TimeSpan.FromMinutes(10)); // Added expiration
                     cachedValues = (cachedTenantName, userEmail);
