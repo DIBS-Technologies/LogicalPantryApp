@@ -198,6 +198,7 @@
 //}
 
 
+using LogicalPantry.Models.Models;
 using LogicalPantry.Services.InformationService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
@@ -218,9 +219,7 @@ public class TenantMiddleware
     }
 
     public async Task InvokeAsync(HttpContext context)
-    {
-
-
+    {        
         var path = context.Request.Path.Value;
 
         // Handle root path or empty tenant name
@@ -242,6 +241,8 @@ public class TenantMiddleware
         var segments = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
         //if (path.Split('/', StringSplitOptions.RemoveEmptyEntries).Any(segment => segment.Equals("Auth", StringComparison.OrdinalIgnoreCase)))
         //{
+        //    //var newPath = "/" + string.Join("/", segments.Skip(1));
+        //    //context.Request.Path = newPath;
         //    await _next(context);
         //    return;
         //}
@@ -266,6 +267,8 @@ public class TenantMiddleware
                     context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                     await context.Response.WriteAsync("Unauthorized: User email not found");
                     return;
+
+
                 }
 
                 // Check if tenant and user email are cached
@@ -274,7 +277,13 @@ public class TenantMiddleware
                     var informationService = context.RequestServices.GetRequiredService<IInformationService>();
                     var tenant = await informationService.GetTenantIdByEmail(userEmail);
 
-                    if (tenant == null)
+                    if (tenant == null )
+                    {
+                        context.Response.StatusCode = StatusCodes.Status404NotFound;
+                        await context.Response.WriteAsync("Tenant not found");
+                        return;
+                    }
+                    if(tenant.Data.TenantName == null)
                     {
                         context.Response.StatusCode = StatusCodes.Status404NotFound;
                         await context.Response.WriteAsync("Tenant not found");
@@ -299,7 +308,24 @@ public class TenantMiddleware
                 var newPath = "/" + string.Join("/", segments.Skip(1));
                 context.Request.Path = newPath;
             }
-        }
+            else
+            {
+
+                var cachedTenantName = tenantNameFromUrl;
+                context.Items["TenantName"] = cachedTenantName;
+                var informationService = context.RequestServices.GetRequiredService<IInformationService>();
+                var tenant = await informationService.GetTenantByNameAsync(cachedTenantName);
+                if (tenant.Success == false)
+                {
+                    context.Response.StatusCode = StatusCodes.Status404NotFound;
+                    await context.Response.WriteAsync("Tenant not found");
+                    return;
+                }
+                var tName = tenant.Data.TenantName;
+                var newPath = "/" + string.Join("/", segments.Skip(1));
+                context.Request.Path = newPath;
+            }
+        }      
 
         await _next(context);
     }

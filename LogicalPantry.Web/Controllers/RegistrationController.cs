@@ -17,6 +17,8 @@ namespace LogicalPantry.Web.Controllers
                 _registrationService = registrationService;
                 _logger = logger;
         }
+
+        [HttpGet("Index")]
         public IActionResult Index()
         {
             _logger.LogInformation($"Index method call started");
@@ -44,8 +46,8 @@ namespace LogicalPantry.Web.Controllers
 
             }
             _logger.LogInformation($"Register method call ended");
-            return RedirectToAction("UserCalendar", "TimeSlot", new { area = "" });
-
+            //return RedirectToAction("UserCalendar", "TimeSlot", new { area = "" });
+            return Redirect($"/{TenantName}/TimeSlot/UserCalendar");
         }
         [HttpGet]
         public object ValidateEmail(string emailId) 

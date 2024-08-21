@@ -78,59 +78,12 @@ namespace LogicalPantry.Web.Controllers
                 else
                 {
                     //return RedirectToAction(ViewConstants.UserCalandar, ViewConstants.TimeSlot, new { area = "" });
-                    return Redirect($"/{tenantName}/TimeSlot/UserCalandar");
+                    return Redirect($"/{tenantName}/TimeSlot/UserCalendar");
                 }
             }
             //return RedirectToAction(ViewConstants.LOGINVIEW, ViewConstants.AUTH, new { area = "" });
             return Redirect($"/{tenantName}/Registration/INDEX");
         }
-
-
-        //[HttpPost("GoogleLogin")]
-        //public IActionResult GoogleLogin()
-        //{
-        //    var properties = new AuthenticationProperties
-        //    {
-        //        // Set the redirect URI to the tenant-specific GoogleResponse action
-        //        RedirectUri = Url.Action("GoogleResponse", "Auth", new { tenantName = TenantName })
-        //    };
-
-        //    // Challenge the Google authentication scheme
-        //    return Challenge(properties, GoogleDefaults.AuthenticationScheme);
-        //}
-
-        //[HttpGet("GoogleResponse")]
-        //public async Task<IActionResult> GoogleResponse(string tenantName)
-        //{
-        //    var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        //    var userInfo = await CheckIfUserExists(result);
-
-        //    if (userInfo != null)
-        //    {
-        //        if (userInfo.Role == "Admin")
-        //        {
-        //            // Redirect Admin users to the calendar page
-        //            return Redirect($"/{tenantName}/TimeSlot/Calendar");
-        //        }
-        //        else if (userInfo.Role == "User")
-        //        {
-        //            if (userInfo.Message == "User registered successfully.")
-        //            {
-        //                // Redirect registered users to the registration index page
-        //                return Redirect($"/{tenantName}/Registration/INDEX");
-        //            }
-        //            else
-        //            {
-        //                // Redirect unregistered users to the user calendar page
-        //                return Redirect($"/{tenantName}/TimeSlot/UserCalandar");
-        //            }
-        //        }
-        //    }
-
-        //    // Redirect to login view if user info is not available
-        //    return RedirectToAction("Login", "Auth");
-        //}
-
 
         // Facebook Authentication
         [HttpPost("FacebookLogin")]
@@ -184,7 +137,7 @@ namespace LogicalPantry.Web.Controllers
                 else
                 {
                     //return RedirectToAction(ViewConstants.UserCalandar, ViewConstants.TimeSlot, new { area = "" });
-                    return Redirect($"/{TenantName}/TimeSlot/UserCalandar");
+                    return Redirect($"/{TenantName}/TimeSlot/UserCalendar");
                 }
             }
 
@@ -241,43 +194,12 @@ namespace LogicalPantry.Web.Controllers
 
         }
 
-        //// Microsoft 365 Authentication
-        //public IActionResult Microsoft365Login()
-        //{
-        //    var properties = new AuthenticationProperties
-        //    {
-        //        RedirectUri = Url.Action(nameof(Microsoft365Response))
-        //    };
-        //    return Challenge(properties, OpenIdConnectDefaults.AuthenticationScheme);
-        //}
-
-        //public async Task<IActionResult> Microsoft365Response()
-        //{
-        //    var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        //    var userInfo = await CheckIfUserExists(result);
-
-        ////    if (userInfo != null && userInfo.Role == "Admin")
-        ////    {
-        ////        // Redirect based on user role
-        ////        return RedirectToAction(ViewConstants.Calandar, ViewConstants.TimeSlot, new { area = "" });
-
-        ////    }
-        ////    else if (userInfo != null && userInfo.Role == "User")
-        ////    {
-
-
-        ////        return RedirectToAction(ViewConstants.INDEX, ViewConstants.TimeSlotSignUp, new { area = "" });
-        ////    }
-
-        ////    return RedirectToAction(ViewConstants.AUTH, ViewConstants.LOGINVIEW, new { area = "" });
-        //}
-
         [HttpGet("loginView")]
         public IActionResult loginView()
         {
-            _logger.LogInformation($"loginView Method is call started");
-            _logger.LogInformation("loginView page accessed.");
-            _logger.LogInformation($"loginView Method is call ended");
+            //_logger.LogInformation($"loginView Method is call started");
+            //_logger.LogInformation("loginView page accessed.");
+            //_logger.LogInformation($"loginView Method is call ended");
             return View();
         }
 

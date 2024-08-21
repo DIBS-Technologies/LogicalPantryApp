@@ -77,7 +77,7 @@
         }
 
        /*  #layoutSidenav_nav {
-            display: @(isAdmin ? "block" : "none"); /* Hide the sidenav if not admin */
+            display: @(isAdmin ? "block" : "none"); /
         } */
 
         #layoutSidenav_content {
@@ -123,8 +123,6 @@
             {
                 var userEmail = User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value;
                 var userName = User.FindFirstValue(ClaimTypes.Name) ?? User.Claims.FirstOrDefault(c => c.Type == "name")?.Value;
-
-                var role = User.FindFirstValue(ClaimTypes.Role) ?? User.Claims.Select(c => c.Value).FirstOrDefault();
                 @* <p>@userName</p> *@
             }
         </div>
@@ -189,6 +187,10 @@
                 var handlerValue = $("#page").val();
                 $("#pageName").text(handlerValue ? handlerValue.replace('.html', ' ') : '');
 
+                debugger
+                // if ($("#isUser").val() === "True") {
+                //     $("#layoutSidenav_nav").remove();
+                // }
             });
         </script>
     }

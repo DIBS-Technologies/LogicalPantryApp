@@ -301,6 +301,11 @@ namespace LogicalPantry.Services.InformationService
 
                         response.Success = true;
                     }
+                    
+                }
+                else
+                {
+                    response.Success = false;
                 }
             }
             catch (Exception ex)
