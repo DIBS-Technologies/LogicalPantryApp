@@ -27,7 +27,7 @@ namespace LogicalPantry.Services.InformationService
 
         Task<ServiceResponse<TenantDto>> GetTenantByNameAsync(string tenantName);
 
-        Task<ServiceResponse<TenantDto>> GetTenantIdByEmail(string userEmail);
+        Task<ServiceResponse<TenantDto>> GetTenantIdByEmail(string userEmail , string tenantName);
 
     }
 }
