@@ -35,26 +35,42 @@ namespace LogicalPantry.Web.Controllers
         }
 
         [HttpGet("Get")]
-        public async Task<IActionResult> Get(int tenantid)
+        public async Task<IActionResult> Get(string tenantid)
         {
             _logger.LogInformation("Get Object call started");
             try
-            {            
-            if (tenantid == 0) { return null; }
-            var response =await _informationService.GetTenant(tenantid);
+            {
+                if (!int.TryParse(tenantid, out int tenantId) || tenantId == 0)
+                {
+                    return BadRequest("Invalid tenant ID");
+                }
+
+                var response = await _informationService.GetTenant(tenantId);
+                if (response?.Data == null)
+                {
+                    return NotFound("Tenant data not found");
+                }
+
+                // Assuming response.Data is of type TenantDto
+                var tenantDto = response.Data;
+                if (string.IsNullOrEmpty(tenantDto.Logo))
+                {
+                    return NotFound("ImageUrl not found");
+                }
 
                 _logger.LogInformation("Get Object call ended");
-                return NotFound();
+                return Ok(tenantDto.Logo); 
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "An error occurred while getting tenant.");
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
-     
         }
 
-           
+
+
+
 
 
 

@@ -243,17 +243,17 @@ namespace LogicalPantry.Web.Controllers
                 if (result.Success)
                 {
                     _logger.LogInformation("DeleteUser method call ended");
-                    return NoContent(); 
+                    return View("Index"); 
                 }
                 else
                 {
-                    return NotFound("User not found."); 
+                    return View("Index");
                 }
                 
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "Internal server error.");
+                return View("Index");
             }
         }
 
