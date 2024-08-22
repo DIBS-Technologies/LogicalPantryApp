@@ -78,9 +78,12 @@ namespace LogicalPantry.Web.Controllers
         [Route("AddTenant")]        
         public async Task<IActionResult> AddTenant()
         {
+            // Log the starting of the Index method execution.
+            _logger.LogInformation("AddTenant Get method call started");
             var tenantName = TenantName;
             var response = await _informationService.GetTenantByNameAsync(tenantName);
-
+            // Log the ending of the Index method execution.
+            _logger.LogInformation("AddTenant Get method call ended");
             return View(response.Data);
         }
 
@@ -88,8 +91,9 @@ namespace LogicalPantry.Web.Controllers
         [HttpPost("AddTenant")]
         public async Task<IActionResult> AddTenant(TenantDto tenantDto, IFormFile LogoFile)
         {
+            // Log the starting of the Index method execution.
+            _logger.LogInformation("AddTenant post method call started");
             tenantDto.TenantName = TenantName;
-
             if (LogoFile != null && LogoFile.Length > 0)
             {
                 // Generate a unique file name to avoid conflicts
@@ -124,18 +128,23 @@ namespace LogicalPantry.Web.Controllers
                 ModelState.AddModelError("", response.Message);
             }
 
-
+            // Log the ending of the Index method execution.
+            _logger.LogInformation("AddTenant post method call ended");
             return View(tenantDto);
         }
 
         public async Task<IActionResult> RedirectTenant(int id)
         {
+            // Log the starting of the Index method execution.
+            _logger.LogInformation("RedirectTenant  method call started");
             var response = _informationService.GetTenant(id);
             if (response.Result.Success)
             {
 
                 return View(response.Result.Data);
             }
+            // Log the ending of the Index method execution.
+            _logger.LogInformation("RedirectTenant  method call ended");
             return NotFound(response.Result.Message);
         }
 
@@ -145,8 +154,8 @@ namespace LogicalPantry.Web.Controllers
         [HttpGet("Home")]
         public async Task<IActionResult> Home(string PageName)
         {
-
-
+            // Log the starting of the Index method execution.
+            _logger.LogInformation("Home method call started");
             var tenanatResponse = await _informationService.GetTenantPageNameForUserAsync(PageName);
             if (tenanatResponse.Success)
             {
@@ -187,14 +196,16 @@ namespace LogicalPantry.Web.Controllers
 
                 return View();
             }
-
+            // Log the ending of the Index method execution.
+            _logger.LogInformation("Home method call ended");
             return NotFound(tenanatResponse.Message);
         }
 
         [HttpGet("/{action?}")]
         public async Task<IActionResult> Home()
         {
-
+            // Log the started of the Index method execution.
+            _logger.LogInformation("Home method call started");
             var tenantName = TenantName;
             if (tenantName == null)
             {
@@ -246,7 +257,8 @@ namespace LogicalPantry.Web.Controllers
                 ViewBag.TenantId = tenantId;
                 return View();
             }
-
+            // Log the ended of the Index method execution.
+            _logger.LogInformation("Home method call ended");
             return View();
         }
 
@@ -254,12 +266,15 @@ namespace LogicalPantry.Web.Controllers
         [HttpGet("GetTenant")]
         public async Task<IActionResult> GetTenantIdByName(string tenantName)
         {
+            // Log the starting of the Index method execution.
+            _logger.LogInformation("GetTenantIdByName method call started");
             var response = await _informationService.GetTenantByNameAsync(tenantName);
             if (response.Success)
             {
                 return Ok(response.Data);
             }
-
+            // Log the ending of the Index method execution.
+            _logger.LogInformation("GetTenantIdByName method call ended");
             return NotFound(response.Message);
         }
 
@@ -267,12 +282,15 @@ namespace LogicalPantry.Web.Controllers
         [HttpGet("GetTenantByUserEmail")]
         public async Task<IActionResult> GetTenantIdByEmail(string userEmail, string tenantname)
         {
+            // Log the starting of the Index method execution.
+            _logger.LogInformation("GetTenantIdByEmail method call started");
             var response = await _informationService.GetTenantIdByEmail(userEmail, tenantname);
             if (response.Success)
             {
                 return Ok(response.Data);
             }
-
+            // Log the ending of the Index method execution.
+            _logger.LogInformation("GetTenantIdByEmail method call ended");
             return NotFound(response.Message);
         }
 

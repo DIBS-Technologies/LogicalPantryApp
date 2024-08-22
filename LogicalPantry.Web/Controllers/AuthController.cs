@@ -34,7 +34,10 @@ namespace LogicalPantry.Web.Controllers
         // Google Authentication
         [HttpPost("GoogleLogin")]
         public IActionResult GoogleLogin()
-        {            
+        {
+            // Log the beginning of the Index method execution.
+            _logger.LogInformation($"FacebookResponse Method is call started");
+
             // Redirect to the tenant-specific login URL
             //return Redirect(tenantUrl);
             var properties = new AuthenticationProperties
@@ -46,6 +49,8 @@ namespace LogicalPantry.Web.Controllers
                 //RedirectUri = Url.RouteUrl($"{TenantName}/Auth/GoogleResponse")
 
             };
+            // Log the ending of the Index method execution.
+            _logger.LogInformation($"FacebookResponse Method is call ended");
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
 
@@ -55,6 +60,7 @@ namespace LogicalPantry.Web.Controllers
         public async Task<IActionResult> GoogleResponse()
         {
             var tenantName = TenantName;
+            // Log the beginning of the Index method execution.
             _logger.LogInformation($"GoogleResponse Method is call started");
 
             var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
@@ -81,14 +87,19 @@ namespace LogicalPantry.Web.Controllers
                     return Redirect($"/{tenantName}/TimeSlot/UserCalendar");
                 }
             }
+
+            // Log the ending of the Index method execution.
+            _logger.LogInformation($"GoogleResponse Method is call ended");
             //return RedirectToAction(ViewConstants.LOGINVIEW, ViewConstants.AUTH, new { area = "" });
             return Redirect($"/{tenantName}/Registration/INDEX");
+
         }
 
         // Facebook Authentication
         [HttpPost("FacebookLogin")]
         public IActionResult FacebookLogin()
         {
+            // Log the starting of the Index method execution.
             _logger.LogInformation($"FacebookLogin Method is call started");
 
             var properties = new AuthenticationProperties
@@ -96,6 +107,7 @@ namespace LogicalPantry.Web.Controllers
                 //RedirectUri = Url.Action(nameof(FacebookResponse))
                 RedirectUri = $"/{TenantName}/Auth/FacebookResponse"
             };
+            // Log the ending of the Index method execution.
             _logger.LogInformation($"FacebookLogin Method is call ended");
             return Challenge(properties, FacebookDefaults.AuthenticationScheme);
         }
@@ -103,6 +115,7 @@ namespace LogicalPantry.Web.Controllers
         [HttpGet("FacebookResponse")]
         public async Task<IActionResult> FacebookResponse()
         {
+            // Log the starting of the Index method execution.
             _logger.LogInformation($"FacebookResponse Method is call started");
             var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             var userInfo = await CheckIfUserExists(result);
@@ -140,6 +153,8 @@ namespace LogicalPantry.Web.Controllers
                     return Redirect($"/{TenantName}/TimeSlot/UserCalendar");
                 }
             }
+            // Log the ending of the Index method execution.
+            _logger.LogInformation($"FacebookResponse Method is call ended");
 
             // return RedirectToAction(ViewConstants.AUTH, ViewConstants.LOGINVIEW, new { area = "" });
             return Redirect($"/{TenantName}/AUTH/LOGINVIEW");
@@ -149,12 +164,14 @@ namespace LogicalPantry.Web.Controllers
         [HttpPost("MicrosoftLogin")]
         public IActionResult MicrosoftLogin()
         {
+            // Log the starting of the Index method execution.
             _logger.LogInformation($"MicrosoftLogin Method is call started");
             var properties = new AuthenticationProperties
             {
                 // RedirectUri = Url.Action(nameof(MicrosoftResponse))
                 RedirectUri = $"/{TenantName}/Auth/MicrosoftResponse"
             };
+            // Log the ending of the Index method execution.
             _logger.LogInformation($"MicrosoftLogin Method is call ended");
             return Challenge(properties, MicrosoftAccountDefaults.AuthenticationScheme);
         }
@@ -162,6 +179,7 @@ namespace LogicalPantry.Web.Controllers
         [HttpGet("MicrosoftResponse")]
         public async Task<IActionResult> MicrosoftResponse()
         {
+            // Log the starting of the Index method execution.
             _logger.LogInformation($"MicrosoftResponse Method is call started");
             var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             var userInfo = await CheckIfUserExists(result);
@@ -188,6 +206,8 @@ namespace LogicalPantry.Web.Controllers
                 }
             }
 
+            // Log the ending of the Index method execution.
+            _logger.LogInformation($"MicrosoftResponse Method is call ended");
             // return RedirectToAction(ViewConstants.AUTH, ViewConstants.LOGINVIEW, new { area = "" });
             return Redirect($"/{TenantName}/AUTH/LOGINVIEW");
 
@@ -206,8 +226,10 @@ namespace LogicalPantry.Web.Controllers
         // Logout
         public async Task<IActionResult> Logout()
         {
+            // Log the starting of the Index method execution.
             _logger.LogInformation($"Logout Method is call started");
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            // Log the ending of the Index method execution.
             _logger.LogInformation($"Logout Method is call ended");
             return RedirectToAction(ViewConstants.LOGINVIEW, ViewConstants.AUTH);
         }
@@ -215,6 +237,7 @@ namespace LogicalPantry.Web.Controllers
         // Check if user exists and update claims
         private async Task<UserInfo> CheckIfUserExists(AuthenticateResult result)
         {
+            // Log the starting of the Index method execution.
             _logger.LogInformation($"CheckIfUserExists Method is call started");
             if (result.Succeeded)
             {
@@ -255,6 +278,7 @@ namespace LogicalPantry.Web.Controllers
                     
                 }
             }
+            // Log the ending of the Index method execution.
             _logger.LogInformation($"CheckIfUserExists Method is call ended");
             return null;
         }

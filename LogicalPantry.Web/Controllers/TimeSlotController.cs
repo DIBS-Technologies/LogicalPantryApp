@@ -31,9 +31,7 @@ namespace LogicalPantry.Web.Controllers
         [HttpPost("AddEvent")]
         public async Task<IActionResult> AddEvent([FromBody] TimeSlotDto timeSlotDto)
         {
-            _logger.LogInformation("AddEvent method call started.");
-
-            
+            _logger.LogInformation("AddEvent method call started.");        
             if (timeSlotDto == null)
             {
                 return BadRequest("Event data is null.");
@@ -86,22 +84,25 @@ namespace LogicalPantry.Web.Controllers
         [HttpGet("EditTimeSlotUser")]
         public async Task<IActionResult> EditTimeSlotUser(string id)
         {
+            // Log the starting of the Index method execution.
+            _logger.LogInformation("EditTimeSlotUser Get method call started");
             if (string.IsNullOrEmpty(id) || !int.TryParse(id, out int timeSlotId))
             {
                 return BadRequest("Invalid time slot ID.");
             }
 
             var response = await _userSercvice.GetUsersbyTimeSlotId(timeSlotId);
-
-            _logger.LogInformation("EditTimeSlotUser method call started.");
             if (response.Success && response.Data != null)
             {
+                // Log the ending of the Index method execution.
+                _logger.LogInformation("EditTimeSlotUser method call started.");
                 return View(response.Data.ToList()); // Ensure that you handle the error case appropriately
             }
             else
             {
                 return NotFound("Users not found for the specified time slot.");
             }
+
         }
 
 
@@ -257,7 +258,7 @@ namespace LogicalPantry.Web.Controllers
         public async Task<IActionResult> UserCalendar()
         {
             _logger.LogInformation("Calendar page accessed");
-        // Helper method to get the start of the current week (Sunday)
+            // Helper method to get the start of the current week (Sunday)
         
             // Fetch events from the database
             var events = await _timeSlotService.GetAllEventsAsync();
