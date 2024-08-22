@@ -334,6 +334,7 @@
             });
 
             $('#saveEventBtn').on('click', function () {
+                debugger;
                 var eventData = {
                     timeSlotName: $('#eventTitle').val(),
                     startTime: $('#eventStart').val(),
@@ -346,12 +347,14 @@
                     contentType: 'application/json',
                     data: JSON.stringify(eventData),
                     success: function (response) {
-                        // alert('Event added successfully!');
+                        // // location.reload();
+                        window.location.reload(); // Refreshes the page
+                         //alert('Event added successfully!');
                         $('#eventModal').modal('hide');
-                        location.reload();
+                        
                     },
                     error: function (xhr, status, error) {
-                        //alert('Error adding event: ' + error);
+                        alert('Error adding event: ' + error);
                     }
                 });
             });
