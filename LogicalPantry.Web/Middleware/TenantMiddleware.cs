@@ -281,7 +281,7 @@ public class TenantMiddleware
                         await context.Response.WriteAsync("Tenant not found");
                         return;
                     }
-                 
+                    context.Items["TenantImage"] = tenant.Data?.Logo;
                     var cachedTenantName = tenant.Data.TenantName;
                     _cache.Set(tenantNameFromUrl, (cachedTenantName, userEmail), TimeSpan.FromMinutes(10)); // Added expiration
                     cachedValues = (cachedTenantName, userEmail);
@@ -314,6 +314,7 @@ public class TenantMiddleware
                     return;
                 }
                 var tName = tenant.Data.TenantName;
+                context.Items["TenantImage"] = tenant.Data?.Logo;
                 var newPath = "/" + string.Join("/", segments.Skip(1));
                 context.Request.Path = newPath;
             }

@@ -80,6 +80,16 @@ namespace LogicalPantry.Web.Controllers
         public async Task<IActionResult> AddTenant()
         {
             var tenantName = TenantName;
+            var tenantIdString = HttpContext.Session.GetString("TenantId");
+
+            if (!int.TryParse(tenantIdString, out int tenantId) || tenantId == 0)
+            {
+                return BadRequest("Invalid tenant ID");
+            }
+            var PageName = HttpContext.Session.GetString("PageName");
+
+            ViewBag.TenantId = tenantId;
+            ViewBag.PageName = PageName;
             var response = await _informationService.GetTenantByNameAsync(tenantName);
 
             return View(response.Data);
@@ -250,6 +260,7 @@ namespace LogicalPantry.Web.Controllers
 
                 HttpContext.Session.SetString("TenantId", tenantId.ToString());
                 HttpContext.Session.SetString("PageName", fileNameWithExtension);
+                HttpContext.Session.SetString("TenantImage", tenanatResponse.Data?.Logo);
                 return View();
             }
             else

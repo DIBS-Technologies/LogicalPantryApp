@@ -210,6 +210,16 @@ namespace LogicalPantry.Web.Controllers
             _logger.LogInformation("Calendar page accessed");
             _logger.LogInformation("Calendar method call started.");
 
+            var tenantIdString = HttpContext.Session.GetString("TenantId");
+
+            if (!int.TryParse(tenantIdString, out int tenantId) || tenantId == 0)
+            {
+                return BadRequest("Invalid tenant ID");
+            }
+            var PageName = HttpContext.Session.GetString("PageName");
+
+            ViewBag.TenantId = tenantId;
+            ViewBag.PageName = PageName;
 
             // Fetch events from the database
             var events = await _timeSlotService.GetAllEventsAsync();
