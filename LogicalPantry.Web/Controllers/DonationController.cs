@@ -1,4 +1,5 @@
 ﻿using LogicalPantry.DTOs.PayPalSettingDtos;
+using LogicalPantry.Models.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LogicalPantry.Web.Controllers
@@ -19,6 +20,21 @@ namespace LogicalPantry.Web.Controllers
         public IActionResult PayPal()
         {
             _logger.LogInformation($"PayPal method call started");
+
+            var tenantIdString = HttpContext.Session.GetString("TenantId");
+
+
+            var Logo = HttpContext.Session.GetString("TenantImage");
+            if (!int.TryParse(tenantIdString, out int tenantId) || tenantId == 0)
+            {
+                return BadRequest("Invalid tenant ID");
+            }
+            var PageName = HttpContext.Session.GetString("PageName");
+
+            ViewBag.TenantId = tenantId;
+            ViewBag.PageName = PageName;
+            ViewBag.Logo = "~/" + Logo;
+
             _logger.LogInformation($"PayPal method call ended");
 
             return View();
@@ -33,12 +49,6 @@ namespace LogicalPantry.Web.Controllers
             {
                 return BadRequest("Invalid payment details");
             }
-
-            // Here you would typically verify and save the payment details
-            // For example, save to your database, notify users, etc.
-
-            // Just for demo purposes, let's return OK
-
             _logger.LogInformation($"CompletePayment method call ended");
 
             return Ok();

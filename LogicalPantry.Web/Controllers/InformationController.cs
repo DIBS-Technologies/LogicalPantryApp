@@ -3,6 +3,7 @@ using LogicalPantry.DTOs.TenantDtos;
 using LogicalPantry.Models.Models;
 using LogicalPantry.Services.InformationService;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using System.Reflection;
@@ -81,6 +82,16 @@ namespace LogicalPantry.Web.Controllers
             // Log the starting of the Index method execution.
             _logger.LogInformation("AddTenant Get method call started");
             var tenantName = TenantName;
+            var tenantIdString = HttpContext.Session.GetString("TenantId");
+
+            if (!int.TryParse(tenantIdString, out int tenantId) || tenantId == 0)
+            {
+                return BadRequest("Invalid tenant ID");
+            }
+            var PageName = HttpContext.Session.GetString("PageName");
+
+            ViewBag.TenantId = tenantId;
+            ViewBag.PageName = PageName;
             var response = await _informationService.GetTenantByNameAsync(tenantName);
             // Log the ending of the Index method execution.
             _logger.LogInformation("AddTenant Get method call ended");
@@ -252,14 +263,26 @@ namespace LogicalPantry.Web.Controllers
                     return View();
                 }
 
-                TempData["PageName"] = fileNameWithExtension;
+            
                 ViewBag.PageName = fileNameWithExtension;
                 ViewBag.TenantId = tenantId;
+                TempData["TenantId"] = tenantId;
+                TempData["PageName"] = fileNameWithExtension;
+
+                HttpContext.Session.SetString("TenantId", tenantId.ToString());
+                HttpContext.Session.SetString("PageName", fileNameWithExtension);
+                HttpContext.Session.SetString("TenantImage", tenanatResponse.Data?.Logo);
                 return View();
             }
             // Log the ended of the Index method execution.
             _logger.LogInformation("Home method call ended");
-            return View();
+            else
+            {
+                ViewBag.ErrorMessage = "Tenant Not Found.";
+                return View("Error");
+            }
+
+            
         }
 
 
@@ -280,7 +303,7 @@ namespace LogicalPantry.Web.Controllers
 
 
         [HttpGet("GetTenantByUserEmail")]
-        public async Task<IActionResult> GetTenantIdByEmail(string userEmail, string tenantname)
+        public async Task<IActionResult> GetTenantIdByEmail(string userEmail/*, string tenantname*/)
         {
             // Log the starting of the Index method execution.
             _logger.LogInformation("GetTenantIdByEmail method call started");

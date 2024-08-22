@@ -96,6 +96,8 @@ namespace LogicalPantry.Web.Controllers
             {
                 // Log the ending of the Index method execution.
                 _logger.LogInformation("EditTimeSlotUser method call started.");
+                @TempData["MessageClass"] = "alert-success";
+                @TempData["SuccessMessageBatch"] = "User Saved Successfully";
                 return View(response.Data.ToList()); // Ensure that you handle the error case appropriately
             }
             else
@@ -209,6 +211,16 @@ namespace LogicalPantry.Web.Controllers
             _logger.LogInformation("Calendar page accessed");
             _logger.LogInformation("Calendar method call started.");
 
+            var tenantIdString = HttpContext.Session.GetString("TenantId");
+
+            if (!int.TryParse(tenantIdString, out int tenantId) || tenantId == 0)
+            {
+                return BadRequest("Invalid tenant ID");
+            }
+            var PageName = HttpContext.Session.GetString("PageName");
+
+            ViewBag.TenantId = tenantId;
+            ViewBag.PageName = PageName;
 
             // Fetch events from the database
             var events = await _timeSlotService.GetAllEventsAsync();
