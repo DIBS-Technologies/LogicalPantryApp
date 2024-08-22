@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Eventing.Reader;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -351,11 +352,13 @@ namespace LogicalPantry.Services.InformationService
 
 
         
-        public async Task<ServiceResponse<TenantDto>> GetTenantIdByEmail(string userEmail, string tenantName)
+        public async Task<ServiceResponse<TenantDto>> GetTenantIdByEmail(string userEmail/*, string tenantName*/)
         {
             var response = new ServiceResponse<TenantDto>();
 
             var tenant = await dataContext.Tenants.FirstOrDefaultAsync(t => t.AdminEmail == userEmail);
+            
+
             if (tenant != null)
             {
                 response.Data = new TenantDto
@@ -368,9 +371,10 @@ namespace LogicalPantry.Services.InformationService
             }
             else
             {
-                tenant = await dataContext.Tenants.FirstOrDefaultAsync(t => t.TenantName == tenantName);
+                var user = await dataContext.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
+                tenant = await dataContext.Tenants.FirstOrDefaultAsync(t => t.Id == user.TenantId);
 
-                if (tenant != null)
+                if (tenant.Id == user.TenantId)
                 {
                     response.Data = new TenantDto
                     {
@@ -381,8 +385,17 @@ namespace LogicalPantry.Services.InformationService
                     response.Success = true;
                     response.Message = "Tenant found";
                 }
-                response.Success = false;
-                response.Message = "Tenant not found";
+                //else if (tenant.Id != user.TenantId)
+                //{
+                //    response.Success = false;
+                //    response.Message = "User is alredy added for another tenant";
+                //}
+                else
+                {
+                    response.Success = false;
+                    response.Message = "Tenant not found";
+                }
+               
             }
 
             return response;

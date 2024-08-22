@@ -26,20 +26,39 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <style>
-        body {
+        html, body {
+            height: 100%;
             margin: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
             font-family: Arial, sans-serif;
-            overflow: scroll;
         }
 
-        .sidenav-light .sidenav-menu .nav-link:hover {
-            color: #0061f2;
+        #layoutSidenav {
+            display: flex;
+            flex-direction: column;
+            flex: 1; /* Allows the layout to fill available space */
+        }
+
+        #layoutSidenav_content {
+            flex: 1; /* Allows the main content to grow and shrink */
+            padding: 10px;
+        }
+
+        footer {
+            display: flex;
+            justify-content: center;
+            padding: 1rem;
             background-color: #f1f1f1;
-            border-radius: 0.2rem;
-            margin: 0rem 0.5rem 0rem 0.75rem;
-            padding-left: 0.5rem !important;
+            color: #000;
+            margin-top: auto; /* Pushes the footer to the bottom */
+            width: 100%;
         }
 
+        /* Styles for navigation and layout */
         .topnav {
             display: flex;
             justify-content: space-between;
@@ -52,21 +71,21 @@
             box-sizing: border-box;
         }
 
-        .topnav .navbar-nav {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
+            .topnav .navbar-nav {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
 
-        .topnav .nav-link {
-            font-weight: normal;
-            transition: color 0.3s, font-weight 0.3s;
-        }
+            .topnav .nav-link {
+                font-weight: normal;
+                transition: color 0.3s, font-weight 0.3s;
+            }
 
-        .topnav .nav-link:hover {
-            color: #0061f2;
-            font-weight: bold;
-        }
+                .topnav .nav-link:hover {
+                    color: #0061f2;
+                    font-weight: bold;
+                }
 
         .page-name {
             flex: 1;
@@ -130,37 +149,57 @@
             color: #000;
         }
 
-        #layoutSidenav {
-            display: flex;
-            flex-direction: column;
-            height: 80vh;
-            width: 100vw;
-            margin: 0;
+        #layoutSidenav_nav {
+            display: @(isAdmin ? "block" : "none");
+            flex-shrink: 0;
         }
 
-        #layoutSidenav_content {
-            margin-left: @(isAdmin ? "0" : "20px"); /* Add margin if sidenav is hidden */
-            margin-right: 20px;
-            transition: margin 0.15s ease-in-out;
-            padding: @(!isAdmin ? "0" : "10px");
+        .sidenav {
+            background-color: #fff;
+            color: #1f2d41;
+            box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
         }
 
-        @@media (min-width: 992px) {
-            #layoutSidenav #layoutSidenav_content {
-                margin-left: @(isAdmin ? "0" : ""); /* Add margin if sidenav is hidden */
+        .sidenav-menu {
+            padding: 1rem;
+        }
+
+            .sidenav-menu .nav-link {
+                display: block;
+                padding: 0.5rem 1rem;
+                color: #1f2d41;
+                text-decoration: none;
             }
-        }
 
-        .nav-fixed #layoutSidenav #layoutSidenav_content {
-            padding-left: @(isAdmin ? "none" : "2rem");
-            padding-right: 2rem;
-            top: 4rem;
-            padding-bottom: 5rem;
-        }
+                .sidenav-menu .nav-link:hover {
+                    background-color: #f1f1f1;
+                    border-radius: 0.2rem;
+                }
 
-        footer {
-            display: flex;
-            justify-content: right;
+        /* Media Queries */
+        @@media (max-width: 768px) {
+            .topnav {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+                .topnav .navbar-nav {
+                    flex-direction: column;
+                    width: 100%;
+                }
+
+            .sidenav {
+                position: absolute;
+                top: 50px;
+                left: 0;
+                width: 100%;
+                height: calc(100vh - 60px);
+                overflow-y: auto;
+            }
+
+            #layoutSidenav_content {
+                margin-left: 0;
+            }
         }
 
         #pickUp {

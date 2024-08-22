@@ -287,9 +287,9 @@ namespace LogicalPantry.Web.Controllers
 
 
         [HttpGet("GetTenantByUserEmail")]
-        public async Task<IActionResult> GetTenantIdByEmail(string userEmail, string tenantname)
+        public async Task<IActionResult> GetTenantIdByEmail(string userEmail/*, string tenantname*/)
         {
-            var response = await _informationService.GetTenantIdByEmail(userEmail, tenantname);
+            var response = await _informationService.GetTenantIdByEmail(userEmail/*, tenantname*/);
             if (response.Success)
             {
                 return Ok(response.Data);

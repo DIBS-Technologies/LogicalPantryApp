@@ -8,10 +8,16 @@
 <head>
     <meta charset="utf-8">
     <title>Calendar</title>
+
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="~/css/jquery-calendar.min.css">
-    <link rel="stylesheet" href="~/css/jquery-calendar.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.css">
+    @*  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet"> *@
+  
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+ 
+   
     <style>
       
 
@@ -114,22 +120,22 @@
             gap: 10px; /* Adjust gap between select and button */
         }
 
-        /* Arrow styling */
+    /* 
         .btn.btn-sm.btn-light.btn-move-calendar:before {
             font-size: 30;
             margin: 0 2px;
            
         }
-        /* Left arrow direction */
+
         .btn.btn-sm.btn-light.btn-move-calendar[data-direction="left"]:before {
             content: "\2190";
            
         }
 
-        /* Right arrow direction */
+   
         .btn.btn-sm.btn-light.btn-move-calendar[data-direction="right"]:before {
             content: "\2192";
-        }
+        } */
 
         /* Button hover effect */
         .btn.btn-sm.btn-light.btn-move-calendar:hover {
@@ -241,16 +247,24 @@
         </div>
     </div>
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+ @*    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/moment.js/moment-with-locales.min.js"></script>
     <script src="~/jquery.touchswipe/jquery.touchswipe.min.js"></script>
    
+    <script src="~/js/jquery-calendar.min.js"></script> *@
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/moment.js/moment-with-locales.min.js"></script>
+    <script src="~/jquery.touchswipe/jquery.touchswipe.min.js"></script>
+    <link rel="stylesheet" href="~/css/jquery-calendar.min.css">
     <script src="~/js/jquery-calendar.min.js"></script>
 
     <script>
         $(document).ready(function () {
-            ;
+           
             var events = @Html.Raw(Json.Serialize(Model.Events));          
 
             $('#calendar').Calendar({
@@ -258,7 +272,8 @@
                 weekday: {
                     timeline: {
                         intervalMinutes: 30,
-                        fromHour: 9
+                        fromHour: 7, // Adjusted from 9 to 7
+                        toHour: 20
                     }
                 },
                 events: events,
