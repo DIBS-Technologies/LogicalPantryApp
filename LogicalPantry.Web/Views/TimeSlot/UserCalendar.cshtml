@@ -12,66 +12,16 @@
     <meta charset="utf-8">
     <title>Calendar</title>
 
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="~/css/jquery-calendar.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.css">
-   @*  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet"> *@
+@*     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet"> *@
 
-    <style>
-
-        /* Ensure calendar events have a fixed z-index */
-        /* Remove hover styles */
-
-        /* .calendar-event {
-            height: auto !important;
-            overflow: hidden;
-            position: relative;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-        }
-
-            .calendar-event:hover {
-                top: 477.458px !important;
-                left: 0% !important;
-                width: 100% !important;
-                z-index: auto !important;
-                height: 101px !important;
-                height: auto !important;
-                
-            } */
-
-       
-/* 
-        .calendar-event {
-     
-            height: auto !important;
-             overflow: hidden; 
-            position: relative;
-            white-space: nowrap;
-             text-overflow: ellipsis; 
-        }
-
-         
-            .calendar-event:hover {
-                height: auto !important;
-          
-                 overflow: hidden; 
-                position: relative;
-                white-space: nowrap;
-                 text-overflow: ellipsis; 
-            }
-
-        .calendar.event-mouseleave
-        {
-            height: auto !important;
-
-            overflow: hidden;
-            position: relative;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-        } */
-
+    <style>      
 
         #layoutSidenav_content {
             margin-left: -200px;
@@ -142,6 +92,7 @@
         }
 
         .calendar-categories {
+            height: 16px;
             margin-bottom: 10px;
             overflow-x: auto;
             width: 100%;
@@ -215,29 +166,47 @@
             background-color: #00000F;
         }
 
-        .calendar-timeline
-         {
+        .calendar-timeline 
+        {
             padding-top: 41px;
             margin-top: 60px;
+        }
      
-         }  
+         
 
-            /* Arrow styling */
-            .btn.btn-sm.btn-light.btn-move-calendar:before {
+      /*   
+        .btn.btn-sm.btn-light.btn-move-calendar:before {
+            font-size: 24px;
+            margin: 0 5px; 
+
+      
+        .btn.btn-sm.btn-light.btn-move-calendar[data-direction="left"]:before {
+            content: "\2190"; 
+        }
+
+      
+        .btn.btn-sm.btn-light.btn-move-calendar[data-direction="right"]:before {
+            content: "\2192"; 
+        }
+ */
+
+ 
+     
+            /* .btn.btn-sm.btn-light.btn-move-calendar:before {
                 font-size: 30;
                 margin: 0 2px;
             }
-            /* Left arrow direction */
+      
             .btn.btn-sm.btn-light.btn-move-calendar[data-direction="left"]:before {
                 content: "\2190";
             
             }
 
-            /* Right arrow direction */
+            
             .btn.btn-sm.btn-light.btn-move-calendar[data-direction="right"]:before {
                 content: "\2192";
            
-            }
+            } */
 
         /* Button hover effect */
         .btn.btn-sm.btn-light.btn-move-calendar:hover {
@@ -278,7 +247,7 @@
 
     <div class="container-fluid">
         <div class="calendar-header">
-            <h3>Pickups</h3>
+            <h3>Pickup</h3>
             @{
                 var userEmails = User.FindFirstValue(ClaimTypes.Email);
             }
@@ -294,7 +263,7 @@
             </div>
         </div>
             <!-- Modal for displaying messages -->
-            <div class="modal fade2" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+       @*      <div class="modal fade2" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-c2">
                         <div class="modal-header">
@@ -310,16 +279,24 @@
                     </div>
                 </div>
             </div>
-   
+    *@
     </div>
+
+  @*   <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/moment.js/moment-with-locales.min.js"></script>
+    <script src="~/jquery.touchswipe/jquery.touchswipe.min.js"></script>
+    <script src="~/js/jquery-calendar.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script> *@
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/moment.js/moment-with-locales.min.js"></script>
     <script src="~/jquery.touchswipe/jquery.touchswipe.min.js"></script>
+    <link rel="stylesheet" href="~/css/jquery-calendar.min.css">
     <script src="~/js/jquery-calendar.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
     <script>
+
         $(document).ready(function () {
         
             var events = @Html.Raw(Json.Serialize(Model.Events));
@@ -343,9 +320,9 @@
                 },
                 weekday: {
                     timeline: {
-                        fromHour: 7,
+                        fromHour: 11,
                         toHour: 20,
-                        intervalMinutes: 30,
+                        intervalMinutes: 60,
                         format: 'HH:mm',
                         heightPx: 50,
                         autoResize: true
@@ -500,41 +477,72 @@
         // }
 
 
+        // function showMessage(message, isError) {
+        //     var modalTitle = isError ? 'Error' : 'Success';
+        //     var modalClass = isError ? 'text-danger' : 'text-success';
+
+        //     $('#messageModalLabel').text(modalTitle);
+        //     $('#messageModalBody').text(message).removeClass('text-success text-danger').addClass(modalClass);
+        //     $('#messageModal').modal({
+        //         backdrop: 'static', // Prevent closing the modal by clicking outside
+        //         keyboard: false     // Prevent closing the modal with the keyboard
+        //     });
+
+        //     // Show the modal
+        //     $('#messageModal').modal('show');
+
+        //     // Prevent horizontal scroll bar
+        //     $('body').css({
+        //         'overflow-y': 'auto',
+        //         'overflow-x': 'hidden'
+        //     });
+
+        //     // Hide the modal with a fade-out effect after 2 seconds
+        //     setTimeout(function () {
+        //         $('#messageModal').fadeOut(1000, function () {
+        //             $('#messageModal').modal('hide'); // Hide the modal
+        //             $('#messageModal').css('display', 'none'); // Reset display property for future use
+        //             // Restore the scroll behavior after the modal is hidden
+        //             $('body').css({
+        //                 'overflow-y': 'auto',
+        //                 'overflow-x': 'hidden'
+        //             });
+        //         });
+        //     }, 2000); // 2000 milliseconds = 2 seconds
+        // }
         function showMessage(message, isError) {
             var modalTitle = isError ? 'Error' : 'Success';
-            var modalClass = isError ? 'text-danger' : 'text-success';
+            var modalClass = isError ? 'error' : 'success';
 
-            $('#messageModalLabel').text(modalTitle);
-            $('#messageModalBody').text(message).removeClass('text-success text-danger').addClass(modalClass);
-            $('#messageModal').modal({
-                backdrop: 'static', // Prevent closing the modal by clicking outside
-                keyboard: false     // Prevent closing the modal with the keyboard
+            Swal.fire({
+                title: modalTitle,
+                text: message,
+                icon: modalClass,
+                timer: 2000, // Auto-close after 2 seconds
+                showConfirmButton: false, // No need for a Close button
+                customClass: {
+                    container: 'swal-container',
+                    popup: 'swal-popup',
+                    title: 'swal-title',
+                    content: 'swal-content'
+                },
+                didClose: function () {
+                    // Restore the scroll behavior after the modal is hidden
+                    $('body').css({
+                        'overflow-y': 'auto',
+                        'overflow-x': 'hidden'
+                    });
+                }
             });
-
-            // Show the modal
-            $('#messageModal').modal('show');
 
             // Prevent horizontal scroll bar
             $('body').css({
                 'overflow-y': 'auto',
                 'overflow-x': 'hidden'
             });
-
-            // Hide the modal with a fade-out effect after 2 seconds
-            setTimeout(function () {
-                $('#messageModal').fadeOut(1000, function () {
-                    $('#messageModal').modal('hide'); // Hide the modal
-                    $('#messageModal').css('display', 'none'); // Reset display property for future use
-                    // Restore the scroll behavior after the modal is hidden
-                    $('body').css({
-                        'overflow-y': 'auto',
-                        'overflow-x': 'hidden'
-                    });
-                });
-            }, 2000); // 2000 milliseconds = 2 seconds
         }
 
-        
+
      
     </script>
 

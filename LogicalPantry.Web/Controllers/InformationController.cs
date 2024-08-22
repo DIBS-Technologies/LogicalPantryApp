@@ -227,7 +227,8 @@ namespace LogicalPantry.Web.Controllers
                 if (!System.IO.File.Exists(filepath))
                 {
                     Console.WriteLine("File not found.");
-                    return View("");
+                    // return View("");
+                    return NotFound("The requested page name was not found.");
                 }
 
                 string htmlContent;
@@ -246,6 +247,7 @@ namespace LogicalPantry.Web.Controllers
                 ViewBag.TenantId = tenantId;
                 return View();
             }
+         
 
             return View();
         }
@@ -265,9 +267,9 @@ namespace LogicalPantry.Web.Controllers
 
 
         [HttpGet("GetTenantByUserEmail")]
-        public async Task<IActionResult> GetTenantIdByEmail(string userEmail, string tenantname)
+        public async Task<IActionResult> GetTenantIdByEmail(string userEmail/*, string tenantname*/)
         {
-            var response = await _informationService.GetTenantIdByEmail(userEmail, tenantname);
+            var response = await _informationService.GetTenantIdByEmail(userEmail/*, tenantname*/);
             if (response.Success)
             {
                 return Ok(response.Data);

@@ -200,6 +200,7 @@
 
 using LogicalPantry.Models.Models;
 using LogicalPantry.Services.InformationService;
+using LogicalPantry.Services.UserServices;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Memory;
 using System;
@@ -275,10 +276,17 @@ public class TenantMiddleware
                 if (!_cache.TryGetValue(tenantNameFromUrl, out (string TenantName, string UserEmail) cachedValues))
                 {
                     var informationService = context.RequestServices.GetRequiredService<IInformationService>();
-                    var tenant = await informationService.GetTenantIdByEmail(userEmail, tenantNameFromUrl);
+                    var tenant = await informationService.GetTenantIdByEmail(userEmail);
+
 
                     if (tenant == null || tenant.Data == null || tenant.Data?.TenantName == null)
                     {
+                        //var userService = context.RequestServices.GetRequiredService<IUserService>();
+                        //var tenant1 = await userService.GetUserByEmailAsync(userEmail);
+
+                        //if (tenant1.Data.Id == null)
+                        //{                            
+                        //}
                         context.Response.StatusCode = StatusCodes.Status404NotFound;
                         await context.Response.WriteAsync("Tenant not found");
                         return;
