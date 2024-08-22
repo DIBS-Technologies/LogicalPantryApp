@@ -267,8 +267,6 @@ public class TenantMiddleware
                     context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                     await context.Response.WriteAsync("Unauthorized: User email not found");
                     return;
-
-
                 }
 
                 // Check if tenant and user email are cached

@@ -40,7 +40,7 @@ namespace LogicalPantry.IntegrationTests
                         }
 
                         services.AddDbContext<ApplicationDataContext>(options =>
-                            options.UseSqlServer("Server=Server1\\SQL19Dev,12181;Database=LogicalPantryDB;User ID=sa;Password=x3wXyCrs;MultipleActiveResultSets=true;TrustServerCertificate=True")); 
+                            options.UseSqlServer("Server=Server1\\SQL19Dev,12181;Database=LogicalPantryDB;User ID=sa;Password=x3wXyCrs;MultipleActiveResultSets=true;TrustServerCertificate=True")); // get from appsetings 
 
                      
                         services.AddTransient<IInformationService, InformationService>();
@@ -71,6 +71,7 @@ namespace LogicalPantry.IntegrationTests
             var tenant = await response.Content.ReadFromJsonAsync<TenantDto>();
             Assert.IsNotNull(tenant);
             Assert.AreEqual(tenantId, tenant.Id);
+            // logo 
         }
 
         [TestMethod]
@@ -86,14 +87,13 @@ namespace LogicalPantry.IntegrationTests
                 Timezone = "UTC"
             };
 
+            // All Data Should be check 
+
             var form = new MultipartFormDataContent();
 
-            
-          
             var response = await _client.PostAsync("/Information/AddTenant", form);
 
-     
-    
+ 
             Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
 
   
@@ -102,7 +102,7 @@ namespace LogicalPantry.IntegrationTests
         }
 
         [TestMethod]
-        public async Task AddTenant_ShouldReturnBadRequest_WhenModelIsInvalid()
+        public async Task AddTenant_ShouldReturnBadRequest_WhenModelIsInvalid() //  
         {
             var tenantDto = new TenantDto
             {
@@ -130,7 +130,7 @@ namespace LogicalPantry.IntegrationTests
         }
 
         [TestMethod]
-        public async Task Home_ShouldReturnView_WhenPageNameIsValid()
+        public async Task Home_ShouldReturnView_WhenPageNameIsValid() // Negative 
         {
             var pageName = "valid-page-name"; // Ensure this page name exists in your test environment
 

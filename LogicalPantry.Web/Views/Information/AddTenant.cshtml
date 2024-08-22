@@ -157,85 +157,87 @@
     <script src="~/js/timezones.min.js"></script>
     <script>
         $(document).ready(function () {
-            populateTimeZones();
-           // $('#logo').on('blur change keyup', validateLogo);
-            $('#name').on('blur change keyup', validateName);
-            $('#paypalId').on('blur change keyup', validatePaypalId);
-            $('#timeZone').on('blur change', validateTimeZone);
+    populateTimeZones();
+    $('#name').on('blur change keyup', validateName);
+    $('#paypalId').on('blur change keyup', validatePaypalId);
+    $('#timeZone').on('blur change', validateTimeZone);
+    $('#logo').on('change', validateLogo);
 
-            $('.saveButton').on('click', function () {
-                validateForm();
-                if (validateForm()) {
-                    $(".saveButton").prop("disabled", false);
-                }
-            });
-        });
-
-        function populateTimeZones() {
-            var timezones = moment.tz.names();
-            var $timeZoneSelect = $('#timeZone');
-            $.each(timezones, function (index, timezone) {
-                $timeZoneSelect.append($('<option>', { value: timezone, text: timezone }));
-            });
-            $timeZoneSelect.val('@Model.Timezone'); // Set the selected timezone
+    $('.saveButton').on('click', function () {
+        if (validateForm()) {
+            $(".saveButton").prop("disabled", false);
         }
+    });
+});
 
-        // function validateLogo() {
-        //     var logo = $("#logo").val();
-        //     if (logo.trim() === "") {
-        //         $("#logo-error").text("Logo is required.").show();
-        //         return false;
-        //     } else {
-        //         $("#logo-error").text("").hide();
-        //         return true;
-        //     }
-        // }
+function populateTimeZones() {
+    var timezones = moment.tz.names();
+    var $timeZoneSelect = $('#timeZone');
+    $.each(timezones, function (index, timezone) {
+        $timeZoneSelect.append($('<option>', { value: timezone, text: timezone }));
+    });
+    $timeZoneSelect.val('@Model.Timezone'); // Set the selected timezone
+}
 
-        function validateName() {
-            var name = $("#name").val();
-            if (name.trim() === "") {
-                $("#name-error").text("Name is required.").show();
-                return false;
-            } else {
-                $("#name-error").text("").hide();
-                return true;
-            }
-        }
+function validateLogo() {
+    var logoFile = $("#logo").val();
+    if (!logoFile) {
+        $("#logo-error").text("Logo is required.").show();
+        return false;
+    } else {
+        $("#logo-error").text("").hide();
+        return true;
+    }
+}
 
-        function validatePaypalId() {
-            var paypalId = $("#paypalId").val();
-            if (paypalId.trim() === "") {
-                $("#paypalId-error").text("Paypal ID is required.").show();
-                return false;
-            } else if (!isValidEmail(paypalId)) {
-                $("#paypalId-error").text("Invalid Paypal ID format.").show();
-                return false;
-            } else {
-                $("#paypalId-error").text("").hide();
-                return true;
-            }
-        }
+function validateName() {
+    var name = $("#name").val();
+    if (name.trim() === "") {
+        $("#name-error").text("Name is required.").show();
+        return false;
+    } else {
+        $("#name-error").text("").hide();
+        return true;
+    }
+}
 
-        function validateTimeZone() {
-            var timeZone = $("#timeZone").val();
-            if (timeZone.trim() === "") {
-                $("#timeZone-error").text("Time Zone is required.").show();
-                return false;
-            } else {
-                $("#timeZone-error").text("").hide();
-                return true;
-            }
-        }
+function validatePaypalId() {
+    var paypalId = $("#paypalId").val();
+    if (paypalId.trim() === "") {
+        $("#paypalId-error").text("Paypal ID is required.").show();
+        return false;
+    } else if (!isValidEmail(paypalId)) {
+        $("#paypalId-error").text("Invalid Paypal ID format.").show();
+        return false;
+    } else {
+        $("#paypalId-error").text("").hide();
+        return true;
+    }
+}
 
-        function validateForm() {
-            var isValid = true;
-            //isValid = validateLogo() && isValid;
-            isValid = validateName() && isValid;
-            isValid = validatePaypalId() && isValid;
-            isValid = validateTimeZone() && isValid;
-            $(".saveButton").prop("disabled", !isValid);
-            return isValid;
-        }
+function validateTimeZone() {
+    var timeZone = $("#timeZone").val();
+    if (!timeZone || timeZone.trim() === "") {
+        $("#timeZone-error").text("Time Zone is required.").show();
+        return false;
+    } else {
+        $("#timeZone-error").text("").hide();
+        return true;
+    }
+}
+
+function validateForm() {
+    var isValid = true;
+    isValid = validateLogo() && isValid;
+    isValid = validateName() && isValid;
+    isValid = validatePaypalId() && isValid;
+    isValid = validateTimeZone() && isValid;
+
+    $(".saveButton").prop("disabled", !isValid);
+    return isValid;
+}
+
+
 
         function isValidEmail(email) {
             var emailRegex = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;

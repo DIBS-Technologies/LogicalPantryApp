@@ -50,6 +50,14 @@ namespace LogicalPantry.Web.Controllers
         }
 
 
+        //[HttpGet("Logout")]
+        //public IActionResult Logout()
+        //{
+        //    HttpContext.SignOutAsync();
+
+        //    return RedirectToAction("Auth","loginview");
+        //}
+
 
         [HttpGet("GoogleResponse")]
         public async Task<IActionResult> GoogleResponse()
@@ -204,12 +212,14 @@ namespace LogicalPantry.Web.Controllers
         }
 
         // Logout
+        [Route("Logout")]
         public async Task<IActionResult> Logout()
         {
             _logger.LogInformation($"Logout Method is call started");
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             _logger.LogInformation($"Logout Method is call ended");
-            return RedirectToAction(ViewConstants.LOGINVIEW, ViewConstants.AUTH);
+            //return RedirectToAction(ViewConstants.LOGINVIEW, ViewConstants.AUTH);
+            return Redirect($"/{TenantName}/AUTH/LOGINVIEW");
         }
 
         // Check if user exists and update claims

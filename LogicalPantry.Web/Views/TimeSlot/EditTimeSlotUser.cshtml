@@ -57,10 +57,21 @@
         }
         #main {
             padding: 2%;
-            margin-left: 6%;
+           
             margin-right: 5%;
-            margin-top: 5%;
+            
         } 
+        .page-header .page-header-content {
+            padding-top: 3rem;
+            padding-bottom: 0;
+        }
+
+        #main {
+            padding: 2%;
+            /* margin-left: 6%; */
+            margin-right: 5%;
+        }
+
          /* .container {
             margin: 10%;
         } */
@@ -90,12 +101,8 @@
             </div>
 
             <div class="card-body">
-                @if (!string.IsNullOrEmpty(TempData["SuccessMessageBatch"] as string))
-                {
-                    <div id="successMessageBatch" class="alert">
-                        @TempData["SuccessMessageBatch"]
-                    </div>
-                }
+                
+                
 
                 @if (!string.IsNullOrEmpty(TempData["ErrorMessageBatch"] as string))
                 {
@@ -284,7 +291,7 @@
                         dataType: 'json',
                         success: function (response) {
                             if (response.success) {
-                                $('#successMessageBatch').text('Changes saved successfully.').fadeIn().delay(2000).fadeOut();
+                            $('#SuccessMessageBatch').text('Changes saved successfully.').fadeIn().delay(2000).fadeOut();
                                 sessionStorage.removeItem('userStatuses');
                                 toggleSaveButton();
                             } else {

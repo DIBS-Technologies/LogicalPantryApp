@@ -1,16 +1,19 @@
 ﻿@using Microsoft.Extensions.Configuration
-@using System.Security.Claims;
+@using System.Security.Claims
 @inject IConfiguration Configuration
 
 @{
     ViewData["Title"] = "Pay with PayPal";
+    var isAuthenticated = User.Identity.IsAuthenticated;
     var isUser = User.IsInRole("User");
-    var userClaim = User.Claims
+    var userClaims = User.Claims
                 .Where(c => c.Type == ClaimTypes.Role)
                 .Select(c => c.Value).ToList();
 
-    bool isAdmin = userClaim.Contains("Admin");
+    bool isAdmin = userClaims.Contains("Admin");
 }
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -24,8 +27,6 @@
             width: 100%;
             max-width: 800px; /* Increase card width for larger screens */
             margin: auto;
-            padding: 1.5rem; /* Add some padding inside the card */
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
         }
 
         .card-header {
@@ -38,19 +39,13 @@
             margin-bottom: 1rem;
         }
 
-            .form-group label {
-                display: block;
-                margin-bottom: 0.5rem; /* Space between label and input */
-            }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+        }
 
-            .form-group input {
-                width: 100%; /* Adjust input width to 100% of its container */
-            }
-
-        .error-message {
-            color: red;
-            font-size: 0.875rem;
-            margin-top: 0.5rem; /* Space above the error message */
+        .form-group .form-control {
+            width: 100%;
         }
 
         .saveButton {
@@ -68,49 +63,122 @@
             justify-content: center;
         }
 
-        .card-body {
-            padding: 1.35rem;
-            border: 0.2px solid black;
-            border-radius: 1px;
+        .error-message {
+            color: red;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
         }
 
-        #paypal-button-container {
-            margin-top: 1rem;
-        }
-
-        .row {
+        .centered-content {
             display: flex;
-            justify-content: center;
+            justify-content: center; /* Center content horizontally */
+            align-items: center; /* Center content vertically */
+            width: 100vw; /* Full viewport width */
+            margin-top: 3.25%; /* Remove default margins */
         }
 
-        .container{
-            margin-left: @(isAdmin ? "" : "50vh")
+        .container {
+            max-width: 800px; /* Adjust as needed for larger screens */
+            width: 100%; /* Full width of parent */
+            margin-left: auto;
+            margin-right: auto; /* Center horizontally */
+            padding: 0 1rem; /* Optional: Add padding for smaller screens */
+        }
+
+        .admin-content {
+            margin-left: 0; /* No left margin for admin users */
+        }
+
+        .centered-content {
+            display: flex;
+            justify-content: center; /* Center content horizontally */
+            align-items: center; /* Center content vertically */
+            width: 100vw; /* Full viewport width */
+            margin-top: 3.25%;
+           
+        }
+
+        centered-content {
+            display: flex;
+            justify-content: center; /* Center content horizontally */
+            align-items: center; /* Center content vertically */
+            width: 100vw; /* Full viewport width */
+            margin-top: 3.25%; /* Remove default margins */
+        }
+
+
+        .container {
+            max-width: 800px; /* Adjust as needed for larger screens */
+            width: 100%; /* Full width of parent */
+            margin-left: auto;
+            margin-right: auto; /* Center horizontally */
+            padding: 0 1rem; /* Optional: Add padding for smaller screens */
+        }
+
+        .left-aligned-content {
+            display: flex;
+            justify-content: flex-start; /* Align content to the left */
+            align-items: center; /* Center content vertically */
+            width: 100vw; /* Full viewport width */
+            margin-top: 3.25%;
+           
+        }
+
+        .container {
+            max-width: 800px; /* Adjust as needed for larger screens */
+            width: 100%; /* Full width of parent */
+            margin: 0; /* No margin by default, handled by flex container */
+            padding: 0 1rem; /* Optional: Add padding for smaller screens */
+        }
+
+        @@media (max-width: 576px) {
+            .card {
+                padding: 1rem;
+            }
+
+            .card-header {
+                font-size: 1.5rem;
+            }
+
+            .saveButton {
+                font-size: 0.875rem;
+                padding: 0.5rem 1rem;
+            }
+
+            .form-group {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .form-group label {
+                margin-right: 0;
+                margin-bottom: 0.25rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="card mb-4">
-                    <div class="card-header">
-                        Pay with PayPal
-                    </div>
-                    <div class="card-body">
-                        <form id="hiddenForm">
-                            <div class="form-group row align-items-center">
-                                <label for="amount" class="col-form-label col-sm-3 text-sm-right">Enter amount :</label>
-                                <div class="col-sm-9">
+    <div id="content" class="centered-content">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 col-md-10 col-sm-12">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            Pay with PayPal
+                        </div>
+                        <div class="card-body">
+                            <form id="hiddenForm">
+                                <div class="form-group">
+                                    <label for="amount">Enter amount:</label>
                                     <input type="number" id="amount" class="form-control" name="amount" step="0.01" min="0" required />
                                     <span id="amount-error" class="error-message" style="display: none;">Please enter a valid amount.</span>
                                 </div>
-                            </div>
-                            <div id="saveButtonDiv">
-                                <button class="saveButton" id="pay-button" type="button">Pay with PayPal</button>
-                            </div>
-                        </form>
-                        <!-- Container for PayPal button -->
-                        <div id="paypal-button-container" style="display: none;"></div>
+                                <div id="saveButtonDiv">
+                                    <button class="saveButton" id="pay-button" type="button">Pay with PayPal</button>
+                                </div>
+                            </form>
+                            <div id="paypal-button-container" style="display: none;"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -119,32 +187,49 @@
 
     <script src="https://www.paypal.com/sdk/js?client-id=@Configuration["PayPal:ClientId"]"></script>
     <script>
+      
+            document.addEventListener('DOMContentLoaded', function () {
+                var isAuthenticated = @Html.Raw(Json.Serialize(User.Identity.IsAuthenticated));
+                var isUser = @Html.Raw(Json.Serialize(User.IsInRole("User")));
+                var isAdmin = @Html.Raw(Json.Serialize(User.Claims.Any(c => c.Type == ClaimTypes.Role && c.Value == "Admin")));
+
+                var content = document.getElementById('content');
+
+                if (isAuthenticated) {
+                    if (isAdmin) {
+                        content.classList.add('left-aligned-content'); // Align content to the left for admins
+                    } else if (isUser) {
+                        content.classList.add('centered-content'); // Center content for regular users
+                    }
+                } else {
+                    content.classList.add('centered-content'); // Center content for non-authenticated users
+                }
+            });
+    
+
+
         document.getElementById('pay-button').addEventListener('click', function (event) {
-            event.preventDefault(); // Prevent the default form submission
+            event.preventDefault();
 
             var amount = document.getElementById('amount').value;
             var errorMessage = document.getElementById('amount-error');
 
             if (!amount || amount <= 0) {
-                // Show error message
                 errorMessage.style.display = 'block';
                 return;
             }
 
-            // Hide the error message if input is valid
             errorMessage.style.display = 'none';
 
-            // Hide the form and show the PayPal button container
             document.getElementById('hiddenForm').style.display = 'none';
             document.getElementById('paypal-button-container').style.display = 'block';
 
-            // Render the PayPal button with the user-specified amount
             paypal.Buttons({
                 createOrder: function (data, actions) {
                     return actions.order.create({
                         purchase_units: [{
                             amount: {
-                                value: amount // Use the user input amount
+                                value: amount
                             }
                         }]
                     });
@@ -161,7 +246,7 @@
                     console.error(err);
                     alert('An error occurred during the transaction');
                 }
-            }).render('#paypal-button-container'); // Renders the PayPal button into the container
+            }).render('#paypal-button-container');
         });
     </script>
 </body>
