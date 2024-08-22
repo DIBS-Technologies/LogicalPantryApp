@@ -10,9 +10,10 @@
                 .Select(c => c.Value).ToList();
     bool isAdmin = userClaim.Contains("Admin");
 
-    tenantId = TempData["TenantId"];
-    pagename = TempData["PageName"] as string;
+    // tenantId = TempData["TenantId"];
+    // pagename = TempData["PageName"] as string;
     var isAuthenticated = User.Identity.IsAuthenticated;
+    var Logo = ViewBag.Logo as string;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -248,7 +249,7 @@
 <body class="nav-fixed">
     <nav class="topnav navbar navbar-expand shadow navbar-light bg-white" id="sidenavAccordion">
         <div class="tenantImage">
-            <img id="logoImage" src="~/Image/Demo.jpeg" style="width: 95px; padding-left: 10px; opacity: 100%;" />
+            <img id="logoImage" src="~/Image/Demo.jpeg" style="width: 95px; padding-left: 10px; opacity: 100%;" alt="logo" />
         </div>
         <div class="page-name" id="pageName">
             @(!string.IsNullOrEmpty(pagename) ? pagename.Replace(".html", " ") : "")
@@ -299,7 +300,7 @@
                     @RenderBody()
                 </main>
             </main>
-            <footer style="display: flex; justify-content: center; align-items: center; padding: 10px; background-color: #f8f9fa; color: #6c757d; width: 100%; position: relative; bottom: 0;">
+            <footer style="display: flex; justify-content: center; align-items: center; padding: 10px; background-color: #eff3f9; color: #6c757d; width: 100%; position: relative; bottom: 0;">
                 <div class="container-end" style="display: flex; justify-content: center; width: 100%;">
                     <p class="mb-0" style="color: black;">&copy; @DateTime.Now.Year - LogicalPantry</p>
                 </div>
@@ -309,6 +310,9 @@
     @section Scripts {
         <script>
             $(document).ready(function () {
+
+                console.log("Document Is Ready");
+
                 function fetchImageUrl(tenantId) {
                     return new Promise((resolve, reject) => {
                         $.ajax({
@@ -320,7 +324,7 @@
 
                                 if (imageUrl) {
                                     const tenantDiv = $('.tenantImage');
-
+                                    console.log("Logo Set");
                                     if (tenantDiv.length > 0) {
                                         // Remove any existing image with the same ID to avoid duplicates
                                         tenantDiv.find('#logoImage').remove();
@@ -361,13 +365,7 @@
                     }
                 }
 
-
-                var tenantIdString = sessionStorage.getItem('TenantId');
-                var pageName = sessionStorage.getItem('PageName');
-
-                // Convert tenantId to an integer
-                var tenantId = parseInt(tenantIdString, 10);
-                updateImage(tenantId);
+                updateImage(@tenantId);
 
                 var handlerValue = $("#page").val();
                 $(".page-name").text(pageName ? pageName.replace('.html', ' ') : '');

@@ -218,7 +218,7 @@ namespace LogicalPantry.Web.Controllers
             _logger.LogInformation($"Logout Method is call started");
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             _logger.LogInformation($"Logout Method is call ended");
-            
+            HttpContext.SignOutAsync();
             //return RedirectToAction(ViewConstants.LOGINVIEW, ViewConstants.AUTH);
             return Redirect($"/{TenantName}");
         }

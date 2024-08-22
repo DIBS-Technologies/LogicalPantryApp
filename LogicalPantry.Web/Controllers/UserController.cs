@@ -47,6 +47,16 @@ namespace LogicalPantry.Web.Controllers
         public async Task<IActionResult> ManageUsers()
         {
             _logger.LogInformation("GetAllusers object call started.");
+            var tenantIdString = HttpContext.Session.GetString("TenantId");
+
+            if (!int.TryParse(tenantIdString, out int tenantId) || tenantId == 0)
+            {
+                return BadRequest("Invalid tenant ID");
+            }
+            var PageName = HttpContext.Session.GetString("PageName");
+
+            ViewBag.TenantId = tenantId;
+            ViewBag.PageName = PageName;
             var response = await _userService.GetAllRegisteredUsersAsync();
             _logger.LogInformation("GetAllusers object call ended.");
 
