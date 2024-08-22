@@ -96,6 +96,8 @@ namespace LogicalPantry.Web.Controllers
             _logger.LogInformation("EditTimeSlotUser method call started.");
             if (response.Success && response.Data != null)
             {
+                @TempData["MessageClass"] = "alert-success";
+                @TempData["SuccessMessageBatch"] = "User Saved Successfully";
                 return View(response.Data.ToList()); // Ensure that you handle the error case appropriately
             }
             else

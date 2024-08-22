@@ -65,6 +65,7 @@
             padding: 0 1rem;
             background-color: #fff;
             height: 60px;
+            width: 100%;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             box-sizing: border-box;
         }
@@ -91,6 +92,60 @@
             font-weight: bold;
             color: #1f2d41;
             font-size: 1.25rem;
+        }
+
+        #layoutSidenav {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            width: 100%;
+        }
+
+        #layoutSidenav_nav {
+            display: @(isAdmin ? "block" : "none");
+            flex-shrink: 0;
+        }
+
+        #layoutSidenav_content {
+            flex: 1;
+            margin-left: @(isAdmin ? "0" : "20px");
+            margin-right: 20px;
+            transition: margin 0.15s ease-in-out;
+            padding: @(isAdmin ? "10px" : "0");
+        }
+
+        .sidenav {
+            background-color: #fff;
+            color: #1f2d41;
+            box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidenav-menu {
+            padding: 1rem;
+        }
+
+        .sidenav-menu .nav-link {
+            display: block;
+            padding: 0.5rem 1rem;
+            color: #1f2d41;
+            text-decoration: none;
+        }
+
+        .sidenav-menu .nav-link:hover {
+            background-color: #f1f1f1;
+            border-radius: 0.2rem;
+        }
+
+        footer {
+            display: flex;
+            justify-content: center;
+            padding: 1rem;
+            background-color: #f1f1f1;
+        }
+
+        footer p {
+            margin: 0;
+            color: #000;
         }
 
         #layoutSidenav_nav {
@@ -146,10 +201,41 @@
             }
         }
 
+        #pickUp {
+            display: @(isAdmin ? "none" : "block");
+        }
+
+        /* Media Queries */
+        @@media (max-width: 768px) {
+            .topnav {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .topnav .navbar-nav {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .sidenav {
+                position: absolute;
+                top: 50px;
+                left: 0;
+                width: 100%;
+                height: calc(100vh - 60px);
+                overflow-y: auto;
+            }
+
+            #layoutSidenav_content {
+                margin-left: 0;
+            }
+        }
+
         @@media (min-width: 769px) {
             .sidenav {
                 width: 250px;
                 position: fixed;
+               
                 bottom: 0;
             }
 
@@ -162,7 +248,7 @@
 <body class="nav-fixed">
     <nav class="topnav navbar navbar-expand shadow navbar-light bg-white" id="sidenavAccordion">
         <div class="tenantImage">
-            <img id="logoImage" src="" style="width: 95px; padding-left: 10px; opacity: 100%;" />
+            <img id="logoImage" src="" style="width: 95px; padding-left: 10px; opacity: 100%;"  />
         </div>
         <div class="page-name" id="pageName">
             @(!string.IsNullOrEmpty(pagename) ? pagename.Replace(".html", " ") : "")
@@ -170,10 +256,15 @@
         <div class="navbar-nav">
             @if (isAuthenticated && (isAdmin || User.IsInRole("User")))
             {
-                <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar" id="pickUp">Pickup</a>
+                    <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar" id="pickUp">Pickup</a>
             }
             <a class="nav-link" href="/@tenantName/Donation/PayPal">Donation</a>
-            <a class="nav-link" href="/@tenantName/Auth/LoginView">Login</a>
+            @if (isAuthenticated)
+            {
+                <a class="nav-link" href="/@tenantName/Auth/Logout">Logout</a>
+            }else{
+                <a class="nav-link" href="/@tenantName/Auth/LoginView">LogIn</a>
+            }
             <input id="page" type="hidden" name="name" value="@TempData["PageName"]" />
             <input type="hidden" value="@isUser" id="isUser" />
             @if (User.Identity.IsAuthenticated)
@@ -208,9 +299,9 @@
                     @RenderBody()
                 </main>
             </main>
-            <footer>
-                <div class="container-end">
-                    <p class="mb-0">&copy; @DateTime.Now.Year - LogicalPantry</p>
+            <footer style="display: flex; justify-content: center; align-items: center; padding: 10px; background-color: #f8f9fa; color: #6c757d; width: 100%; position: relative; bottom: 0;">
+                <div class="container-end" style="display: flex; justify-content: center; width: 100%;">
+                    <p class="mb-0" style="color: black;">&copy; @DateTime.Now.Year - LogicalPantry</p>
                 </div>
             </footer>
         </div>
@@ -269,6 +360,7 @@
                         console.error("Failed to update image", error);
                     }
                 }
+
 
                 var tenantIdString = sessionStorage.getItem('TenantId');
                 var pageName = sessionStorage.getItem('PageName');

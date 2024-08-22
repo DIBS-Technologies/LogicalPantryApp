@@ -3,6 +3,7 @@ using LogicalPantry.DTOs.TenantDtos;
 using LogicalPantry.Models.Models;
 using LogicalPantry.Services.InformationService;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 using System.Reflection;
@@ -227,8 +228,7 @@ namespace LogicalPantry.Web.Controllers
                 if (!System.IO.File.Exists(filepath))
                 {
                     Console.WriteLine("File not found.");
-                    // return View("");
-                    return NotFound("The requested page name was not found.");
+                    return View("");
                 }
 
                 string htmlContent;
@@ -242,14 +242,23 @@ namespace LogicalPantry.Web.Controllers
                     return View();
                 }
 
-                TempData["PageName"] = fileNameWithExtension;
+            
                 ViewBag.PageName = fileNameWithExtension;
                 ViewBag.TenantId = tenantId;
+                TempData["TenantId"] = tenantId;
+                TempData["PageName"] = fileNameWithExtension;
+
+                HttpContext.Session.SetString("TenantId", tenantId.ToString());
+                HttpContext.Session.SetString("PageName", fileNameWithExtension);
                 return View();
             }
-         
+            else
+            {
+                ViewBag.ErrorMessage = "Tenant Not Found.";
+                return View("Error");
+            }
 
-            return View();
+            
         }
 
 

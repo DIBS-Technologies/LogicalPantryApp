@@ -5,13 +5,12 @@
     var pagename = ViewBag.PageName as string;
     var isUser = User.IsInRole("User");
     var tenantId = ViewBag.TenantId;
-    //var isAdmin = User.IsInRole("Admin");
     var userClaim = User.Claims
                .Where(c => c.Type == ClaimTypes.Role)
                .Select(c => c.Value).ToList();
 
     bool isAdmin = userClaim.Contains("Admin");
-
+    var isAuthenticated = User.Identity.IsAuthenticated;
 }
 
 <!DOCTYPE html>
@@ -47,12 +46,11 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-             /* Adjust as needed for margins */
             box-sizing: border-box;
-            overflow: hidden; /* Prevent scrollbars within the content */
-            padding-left: 20px;
-            padding-bottom: 20px;
-            padding: @(!isAdmin ? "0" : "10px");
+            overflow: hidden;
+            padding: 20px; /* Default padding */
+            margin-left: 0;
+            margin-right: 0;
         }
 
         .topnav {
@@ -88,7 +86,7 @@
             text-align: center;
             font-weight: bold;
             color: #1f2d41;
-            font-size: 1.25rem; 
+            font-size: 1.25rem;
         }
 
         main {
@@ -97,7 +95,7 @@
             align-items: center;
             justify-content: center;
             width: 100%;
-            overflow: hidden; 
+            overflow: hidden;
         }
 
         iframe {
@@ -114,14 +112,7 @@
             color: #6c757d;
             position: relative;
             bottom: 0;
-            width: 100%; 
-        }
-
-        .nav-fixed #layoutSidenav #layoutSidenav_content {
-            
-            /*  padding-left: 10rem; */
-           
-            /* top: 3.625rem; */
+            width: 100%;
         }
 
         .footer-custom {
@@ -154,90 +145,131 @@
             padding-left: 0.5rem !important;
         }
 
-      
-            #layoutSidenav_content {
-                padding : @@(isUser ? "0" : "10");
-            }
-
+        /* Adjust padding and margin for specific conditions */
         .nav-fixed #layoutSidenav #layoutSidenav_content {
-            padding-left: @(isAdmin ? "none" : "2rem");
-            top: 3.625rem;
+            padding-left: @(isAdmin ? "0" : "20px");
+            padding-right: @(isAdmin ? "0" : "20px");
+            margin-left: @(isAdmin ? "2rem" : "0");
+            margin-right: @(isAdmin ? "2rem" : "0");
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #layoutSidenav {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        #layoutSidenav_content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            padding: 20px; /* Adjust as needed */
         }
 
         footer {
             display: flex;
-            justify-content: right;
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically if needed */
+            padding: 10px;
+            background-color: #f8f9fa;
+            color: #6c757d;
+            width: 100%;
         }
 
-       /*  .pickUp {
-            display: @(isAdmin ? "none" : "block");
-        } */
+        .nav-fixed #layoutSidenav #layoutSidenav_content {
+            padding-left: @(isAdmin ? "5%" : "0");
+            padding-right: 0;
+            margin-left: 2rem;
+            margin-right: 2rem;
+        }
 
     </style>
 
 </head>
-<body class="nav-fixed">
-     <div id="layoutSidenav"> 
+<body class="@(isAdmin ? "nav-fixed" : "")">
+    <div id="layoutSidenav">
         <nav class="topnav navbar navbar-expand shadow navbar-light bg-white" id="sidenavAccordion">
-            <div class="tenatImage">
-                <img src="~/Image/Demo.jpeg" id="logoImage" style="width: 95px; padding-left: 10px; opacity:100%" />
+            <div class="tenantImage">
+                <img id="logoImage" style="width: 95px; padding-left: 10px; opacity:100%" />
             </div>
             <div class="page-name" id="pageName">
                 @(!string.IsNullOrEmpty(pagename) ? pagename.Replace(".html", " ") : "")
             </div>
 
             <div class="navbar-nav">
-               @*  <a class="nav-link @(isAdmin ? "" : "hidden")"
-                   href="/@tenantName/TimeSlot/UserCalendar"
-                   id="pickUp">
-                    Pickup
-                </a> *@
-
+                @if (User.Identity.IsAuthenticated && (isAdmin || isUser))
+                {
+                    <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar" id="pickUp">Pickup</a>
+                }
                 <a class="nav-link" href="/@tenantName/Donation/PayPal">Donation</a>
-                <a class="nav-link" href="/@tenantName/Auth/LoginView">Login</a>
+                @if (isAuthenticated)
+                {
+                    <a class="nav-link" href="/@tenantName/Auth/Logout">Logout</a>
+                }
+                else
+                {
+                    <a class="nav-link" href="/@tenantName/Auth/LoginView">LogIn</a>
+                }
                 <input id="pag" type="hidden" name="name" value="@pagename" />
                 <input type="hidden" value="@isUser" id="isUser" />
-              
             </div>
         </nav>
-        <div id="layoutSidenav_content" style="@(isUser ? "Padding : 0;" : "")"> 
-            <main>
-                <iframe src="" id="urlFrameId"></iframe>
+        <div id="layoutSidenav_content">
+           <main style="flex: 1; overflow: hidden;">
+                <iframe src="" id="urlFrameId" style="width: 100%; height: 100%; border: none; display: block; overflow: hidden;"></iframe>
             </main>
-      @*       <footer class"d-flex" style="display:flex; justify-content:center">
-                <div class="container" style="display:flex; justify-content:center">
-                    <p class="mb-0" style="color:black; ">&copy; @DateTime.Now.Year - LogicalPantry</p>
-                   
+            @* <footer style="display: flex; justify-content: center; align-items: center; padding: 10px; background-color: #f8f9fa; color: #6c757d; width: 100%; position: relative; bottom: 0;">
+                <div class="container-end" style="display: flex; justify-content: center; width: 100%;">
+                    <p class="mb-0" style="color: black;">&copy; @DateTime.Now.Year - LogicalPantry</p>
                 </div>
             </footer> *@
-            <footer class="text-light py-2 fixed-bottom text-center">
-               <div class="container">
-                    <p class="mb-0" style="color:black">&copy; @DateTime.Now.Year - LogicalPantry</p>
-                </div>
-            </footer>
-         </div> 
+        </div>
     </div>
     @section Scripts {
         <script>
             $(document).ready(function () {
                 var userEmail = '@User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value';
 
-                debugger
-                function fetchImageUrl(tenantId) {
+                async function fetchImageUrl(tenantId) {
                     return new Promise((resolve, reject) => {
                         $.ajax({
                             url: `/@tenantName/Information/Get`,
                             method: "GET",
                             data: { tenantid: tenantId },
-                            success: function (imageUrl) {
-                                console.log(imageUrl);
-                                if (imageUrl) {
-                                    var basePath = "~/Image";
-                                    var path = basePath + imageUrl;
-                                    $("#logoImage").attr("src", path);
+                            success: function (response) {
+                                const imageUrl = response;
 
-                                    $("#logoImage").attr("src", imageUrl);
-                                    resolve(imageUrl);
+                                if (imageUrl) {
+                                    const tenantDiv = $('.tenantImage');
+
+                                    if (tenantDiv.length > 0) {
+                                        tenantDiv.find('#logoImage').remove();
+
+                                        const img = $('<img>', {
+                                            id: 'logoImage',
+                                            src: imageUrl,
+                                            style: 'width: 95px; padding-left: 10px; opacity: 100%;'
+                                        });
+
+                                        tenantDiv.append(img);
+
+                                        resolve(imageUrl);
+                                    } else {
+                                        console.error("No element found with class 'tenantImage'");
+                                        reject(new Error("No element found with class 'tenantImage'"));
+                                    }
                                 } else {
                                     console.error("ImageUrl is missing in the response");
                                     reject(new Error("ImageUrl is missing in the response"));
@@ -251,7 +283,6 @@
                     });
                 }
 
-                // Usage with async/await
                 async function updateImage(tenantId) {
                     try {
                         await fetchImageUrl(tenantId);
@@ -260,22 +291,28 @@
                     }
                 }
 
-                // Call the function
                 updateImage(@tenantId);
 
 
-                debugger
+                var tenantId = @ViewBag.TenantId ?? 'null'; // Default to 'null' if ViewBag.TenantId is null
+                var pageName = '@ViewBag.PageName';
+
+                // Convert tenantId to a string if needed
+                if (tenantId !== 'null') {
+                    tenantId = tenantId.toString(); // Ensure tenantId is a string
+                }
+                // sessionStorage.setItem('TenantId', @tenantId);
+                // sessionStorage.setItem('PageName', @pagename);
+
                 var handlerValue = $("#pag").val();
                 $("#urlFrameId").attr("src", "/TenantHomePage/" + handlerValue);
 
-                debugger
-                $("#pageName").text(handlerValue ? handlerValue.replace('.html', ' ') : ''); // Handle spaces in pageName
-
-               
-
+                $("#pageName").text(handlerValue ? handlerValue.replace('.html', ' ') : '');
             });
         </script>
     }
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js" crossorigin="anonymous"></script>
 </body>
+</html>
+
 </html>
