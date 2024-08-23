@@ -21,20 +21,7 @@ namespace LogicalPantry.Web.Controllers
         {
             _logger.LogInformation($"PayPal method call started");
 
-            var tenantIdString = HttpContext.Session.GetString("TenantId");
-
-
-            var Logo = HttpContext.Session.GetString("TenantImage");
-            if (!int.TryParse(tenantIdString, out int tenantId) || tenantId == 0)
-            {
-                return BadRequest("Invalid tenant ID");
-            }
-            var PageName = HttpContext.Session.GetString("PageName");
-
-            ViewBag.TenantId = tenantId;
-            ViewBag.PageName = PageName;
-            ViewBag.Logo = "~/" + Logo;
-
+            ViewBag.TenantId = TenantId;
             _logger.LogInformation($"PayPal method call ended");
 
             return View();

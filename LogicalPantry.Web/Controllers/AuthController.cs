@@ -77,9 +77,8 @@ namespace LogicalPantry.Web.Controllers
             }
             else if (userInfo != null && userInfo.Role == "User")
             {
-                if (userInfo.Message == "User registered successfully.")
+                if (userInfo.IsRegistered == false)
                 {
-
                     // return RedirectToAction(ViewConstants.INDEX, ViewConstants.Registration, new { area = "" });
                     return Redirect($"/{tenantName}/Registration/INDEX");
                 }
@@ -238,8 +237,8 @@ namespace LogicalPantry.Web.Controllers
                 {
                     return null;
                 }
-
-                var userExists = await _userServices.GetUserByEmailAsync(userEmail);
+                var tenantId = TenantId;
+                var userExists = await _userServices.GetUserByEmailAsync(userEmail, (int)tenantId);
 
                 if (userExists.Success)
                 {
@@ -258,7 +257,8 @@ namespace LogicalPantry.Web.Controllers
                         {
                             UserId = userExists.Data.Id,
                             Role = role.RoleName,
-                            Message = userExists.Message
+                            Message = userExists.Message,
+                            IsRegistered = userExists.Data.IsRegistered
                         };
                     }
 
@@ -275,6 +275,7 @@ namespace LogicalPantry.Web.Controllers
             public int UserId { get; set; }
             public string Role { get; set; }
             public string Message { get; set; }
+            public bool IsRegistered { get; set; }    
         }
 
        

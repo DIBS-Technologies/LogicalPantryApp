@@ -269,26 +269,22 @@ public class TenantMiddleware
                     await context.Response.WriteAsync("Unauthorized: User email not found");
                     return;
                 }
+                var informationService = context.RequestServices.GetRequiredService<IInformationService>();
+                var tenant = await informationService.GetTenantIdByEmail(userEmail, tenantNameFromUrl);
 
                 // Check if tenant and user email are cached
                 if (!_cache.TryGetValue(tenantNameFromUrl, out (string TenantName, string UserEmail) cachedValues))
                 {
-                    var informationService = context.RequestServices.GetRequiredService<IInformationService>();
-                    var tenant = await informationService.GetTenantIdByEmail(userEmail);
+                    
 
 
                     if (tenant == null || tenant.Data == null || tenant.Data?.TenantName == null)
-                    {
-                        //var userService = context.RequestServices.GetRequiredService<IUserService>();
-                        //var tenant1 = await userService.GetUserByEmailAsync(userEmail);
-
-                        //if (tenant1.Data.Id == null)
-                        //{                            
-                        //}
+                    {                      
                         context.Response.StatusCode = StatusCodes.Status404NotFound;
                         await context.Response.WriteAsync("Tenant not found");
                         return;
                     }
+                    context.Items["TenantId"] = tenant.Data.Id;
                     context.Items["TenantImage"] = tenant.Data?.Logo;
                     var cachedTenantName = tenant.Data.TenantName;
                     _cache.Set(tenantNameFromUrl, (cachedTenantName, userEmail), TimeSpan.FromMinutes(10)); // Added expiration
@@ -303,8 +299,10 @@ public class TenantMiddleware
                     return;
                 }
 
+           
                 context.Items["TenantName"] = cachedValues.TenantName;
                 context.Items["UserEmail"] = cachedValues.UserEmail;
+                context.Items["TenantId"] = tenant.Data.Id;
                 var newPath = "/" + string.Join("/", segments.Skip(1));
                 context.Request.Path = newPath;
             }
@@ -321,6 +319,7 @@ public class TenantMiddleware
                     await context.Response.WriteAsync("Tenant not found");
                     return;
                 }
+                context.Items["TenantId"] = tenant.Data.Id;
                 var tName = tenant.Data.TenantName;
                 context.Items["TenantImage"] = tenant.Data?.Logo;
                 var newPath = "/" + string.Join("/", segments.Skip(1));

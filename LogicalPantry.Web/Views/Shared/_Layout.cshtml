@@ -32,33 +32,19 @@
         }
 
         body {
-            display: flex;
-            flex-direction: column;
+            margin: 0;
             font-family: Arial, sans-serif;
+            overflow: scroll;
         }
 
-        #layoutSidenav {
-            display: flex;
-            flex-direction: column;
-            flex: 1; /* Allows the layout to fill available space */
-        }
-
-        #layoutSidenav_content {
-            flex: 1; /* Allows the main content to grow and shrink */
-            padding: 10px;
-        }
-
-        footer {
-            display: flex;
-            justify-content: center;
-            padding: 1rem;
+        .sidenav-light .sidenav-menu .nav-link:hover {
+            color: #0061f2;
             background-color: #f1f1f1;
-            color: #000;
-            margin-top: auto; /* Pushes the footer to the bottom */
-            width: 100%;
+            border-radius: 0.2rem;
+            margin: 0rem 0.5rem 0rem 0.75rem;
+            padding-left: 0.5rem !important;
         }
 
-        /* Styles for navigation and layout */
         .topnav {
             display: flex;
             justify-content: space-between;
@@ -125,45 +111,6 @@
             padding: 1rem;
         }
 
-        .sidenav-menu .nav-link {
-            display: block;
-            padding: 0.5rem 1rem;
-            color: #1f2d41;
-            text-decoration: none;
-        }
-
-        .sidenav-menu .nav-link:hover {
-            background-color: #f1f1f1;
-            border-radius: 0.2rem;
-        }
-
-        footer {
-            display: flex;
-            justify-content: center;
-            padding: 1rem;
-            background-color: #f1f1f1;
-        }
-
-        footer p {
-            margin: 0;
-            color: #000;
-        }
-
-        #layoutSidenav_nav {
-            display: @(isAdmin ? "block" : "none");
-            flex-shrink: 0;
-        }
-
-        .sidenav {
-            background-color: #fff;
-            color: #1f2d41;
-            box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .sidenav-menu {
-            padding: 1rem;
-        }
-
             .sidenav-menu .nav-link {
                 display: block;
                 padding: 0.5rem 1rem;
@@ -175,6 +122,55 @@
                     background-color: #f1f1f1;
                     border-radius: 0.2rem;
                 }
+
+        footer {
+            display: flex;
+            justify-content: center;
+            padding: 1rem;
+            background-color: #f1f1f1;
+        }
+
+            footer p {
+                margin: 0;
+                color: #000;
+            }
+
+        #layoutSidenav {
+            display: flex;
+            flex-direction: column;
+            height: 80vh;
+            width: 100vw;
+            margin: 0;
+        }
+
+        #layoutSidenav_content {
+            margin-left: @(isAdmin ? "0" : "20px"); /* Add margin if sidenav is hidden */
+            margin-right: 20px;
+            transition: margin 0.15s ease-in-out;
+            padding: @(!isAdmin ? "0" : "10px");
+        }
+
+        @@media (min-width: 992px) {
+            #layoutSidenav #layoutSidenav_content {
+                margin-left: @(isAdmin ? "0" : ""); /* Add margin if sidenav is hidden */
+            }
+        }
+
+        .nav-fixed #layoutSidenav #layoutSidenav_content {
+            padding-left: @(isAdmin ? "none" : "2rem");
+            padding-right: 2rem;
+            top: 4rem;
+            padding-bottom: 5rem;
+        }
+
+        footer {
+            display: flex;
+            justify-content: right;
+        }
+
+        #pickUp {
+            display: @(isAdmin ? "none" : "block");
+        }
 
         /* Media Queries */
         @@media (max-width: 768px) {
@@ -202,41 +198,10 @@
             }
         }
 
-        #pickUp {
-            display: @(isAdmin ? "none" : "block");
-        }
-
-        /* Media Queries */
-        @@media (max-width: 768px) {
-            .topnav {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .topnav .navbar-nav {
-                flex-direction: column;
-                width: 100%;
-            }
-
-            .sidenav {
-                position: absolute;
-                top: 50px;
-                left: 0;
-                width: 100%;
-                height: calc(100vh - 60px);
-                overflow-y: auto;
-            }
-
-            #layoutSidenav_content {
-                margin-left: 0;
-            }
-        }
-
         @@media (min-width: 769px) {
             .sidenav {
                 width: 250px;
                 position: fixed;
-               
                 bottom: 0;
             }
 
@@ -249,7 +214,7 @@
 <body class="nav-fixed">
     <nav class="topnav navbar navbar-expand shadow navbar-light bg-white" id="sidenavAccordion">
         <div class="tenantImage">
-            <img id="logoImage" src="~/Image/Demo.jpeg" style="width: 95px; padding-left: 10px; opacity: 100%;" alt="logo" />
+            <img id="logoImage"  style="width: 95px; padding-left: 10px; opacity: 100%;" alt="logo" />
         </div>
         <div class="page-name" id="pageName">
             @(!string.IsNullOrEmpty(pagename) ? pagename.Replace(".html", " ") : "")

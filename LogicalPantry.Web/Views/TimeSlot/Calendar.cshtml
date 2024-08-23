@@ -164,14 +164,14 @@
         <div class="calendar-header">
             <h3>TimeSlot </h3>
             <div class="d-flex align-items-center">
-                <div class="dropdown d-inline">
+               @*  <div class="dropdown d-inline">
                     <select id="eventSelect" class="form-control" onchange="handleSelectChange()">
                         <option value="" selected disabled>Type</option>
                         <option value="1" data-title="Food Pickup">Food Pickup</option>
                         <option value="2" data-title="Volunteer">Volunteer</option>
                         <option value="3" data-title="Appointment">Appointment</option>
                     </select>
-                </div>
+                </div> *@
                 <button type="button" class="btn btn-success" id="addEventBtn">Add Event</button>
             </div>
         </div>
@@ -273,7 +273,7 @@
                     timeline: {
                         intervalMinutes: 30,
                         fromHour: 7, // Adjusted from 9 to 7
-                        toHour: 20
+                        toHour: 23
                     }
                 },
                 events: events,
@@ -286,8 +286,8 @@
                 weekday: {
                     timeline: {
                         fromHour: 7,
-                        toHour: 20,
-                        intervalMinutes: 60,
+                        toHour: 23,
+                        intervalMinutes: 30,
                         format: 'HH:mm',
                         heightPx: 50,
                         autoResize: true
@@ -346,15 +346,14 @@
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(eventData),
-                    success: function (response) {
-                        // // location.reload();
-                        window.location.reload(); // Refreshes the page
-                         //alert('Event added successfully!');
+                    success: function (response) {        
+                        window.location.reload();                        
                         $('#eventModal').modal('hide');
                         
                     },
                     error: function (xhr, status, error) {
-                        alert('Error adding event: ' + error);
+                        window.location.reload();
+                        //alert('Error adding event: ' + error);
                     }
                 });
             });

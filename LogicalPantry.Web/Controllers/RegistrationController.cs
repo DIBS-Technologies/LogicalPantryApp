@@ -1,4 +1,5 @@
 ﻿using LogicalPantry.DTOs.UserDtos;
+using LogicalPantry.Services.InformationService;
 using LogicalPantry.Services.RegistrationService;
 using LogicalPantry.Services.UserServices;
 using Microsoft.AspNetCore.Mvc;
@@ -10,12 +11,14 @@ namespace LogicalPantry.Web.Controllers
     [Route("Registration")]
     public class RegistrationController : BaseController
     {
+        IInformationService _informationService;
         IRegistrationService _registrationService;
         private readonly ILogger _logger;
-        public RegistrationController(IRegistrationService registrationService, ILogger<RegistrationController> logger)
+        public RegistrationController(IRegistrationService registrationService, IInformationService informationService, ILogger<RegistrationController> logger)
         {
                 _registrationService = registrationService;
                 _logger = logger;
+            _informationService = informationService;
         }
 
         [HttpGet("Index")]
@@ -30,10 +33,17 @@ namespace LogicalPantry.Web.Controllers
         public async Task<IActionResult> Register(UserDto user) 
         {
             _logger.LogInformation($"Register method call started");
+            var tenantName = TenantName;
+            var tenant = await _informationService.GetTenantByNameAsync(tenantName);
+            if (tenant != null)
+            {
+                user.TenantId = tenant.Data.Id;
+            }
             var response= await _registrationService.RegisterUser(user);
 
-         
-            if(response != null && response.Success)
+           
+
+            if (response != null && response.Success)
             {
                 @TempData["MessageClass"] = "alert-success";
                 @TempData["SuccessMessageUser"] = "Registartion Successfull";

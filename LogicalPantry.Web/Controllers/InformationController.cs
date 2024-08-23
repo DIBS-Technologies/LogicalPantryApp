@@ -80,15 +80,15 @@ namespace LogicalPantry.Web.Controllers
         public async Task<IActionResult> AddTenant()
         {
             var tenantName = TenantName;
-            var tenantIdString = HttpContext.Session.GetString("TenantId");
+            //var tenantIdString = HttpContext.Session.GetString("TenantId");
 
-            if (!int.TryParse(tenantIdString, out int tenantId) || tenantId == 0)
-            {
-                return BadRequest("Invalid tenant ID");
-            }
+            //if (!int.TryParse(tenantIdString, out int tenantId) || tenantId == 0)
+            //{
+            //    return BadRequest("Invalid tenant ID");
+            //}
             var PageName = HttpContext.Session.GetString("PageName");
 
-            ViewBag.TenantId = tenantId;
+            //ViewBag.TenantId = tenantId;
             ViewBag.PageName = PageName;
             var response = await _informationService.GetTenantByNameAsync(tenantName);
 
@@ -218,7 +218,8 @@ namespace LogicalPantry.Web.Controllers
                 var tenantId = tenanatResponse.Data.Id;
                 if (pageName == null)
                 {
-                    return NotFound("The requested page name was not found.");
+                    //return NotFound("The requested page name was not found.");
+                    return View();
                 }
 
                 var fileExtension = ".html";
@@ -287,9 +288,9 @@ namespace LogicalPantry.Web.Controllers
 
 
         [HttpGet("GetTenantByUserEmail")]
-        public async Task<IActionResult> GetTenantIdByEmail(string userEmail/*, string tenantname*/)
+        public async Task<IActionResult> GetTenantIdByEmail(string userEmail, string tenantname)
         {
-            var response = await _informationService.GetTenantIdByEmail(userEmail/*, tenantname*/);
+            var response = await _informationService.GetTenantIdByEmail(userEmail, tenantname);
             if (response.Success)
             {
                 return Ok(response.Data);
