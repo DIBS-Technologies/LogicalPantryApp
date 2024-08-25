@@ -1,10 +1,8 @@
 ﻿@using System.Security.Claims;
 @model LogicalPantry.DTOs.TimeSlotDtos.UserCalendarDto
 
-
 @{
     var tenantName = ViewBag.TenantName as string;
-   // Layout = User.IsInRole("User") ? "~/Shared/_UserLayout.cshtml" : "~/Shared/_Layout.cshtml";
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -12,53 +10,43 @@
     <meta charset="utf-8">
     <title>Calendar</title>
 
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="~/css/jquery-calendar.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.css">
-@*     <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet"> *@
 
-    <style>      
-
-        #layoutSidenav_content {
-            margin-left: -200px;
+    <style>
+        body {
+            font-family: Arial, sans-serif;
         }
 
-        .backgr {
-            background-color: grey;
-            opacity: 0.5;
-        }
-        .modal-content {
-            background: none;
-            display: none;
-            width: 100px;
-            height: 100px;
-        }   
-        .modal.fade {
-            background: none;
-            display: none !important; 
-        }      
-        .modal-backdrop {
-            opacity: 0 !important; 
-            display: none !important; 
-        }  
-
-        .modal {
-            background: none;
-            overflow-y: visible;
-            overflow-x:visible;
-        }
-        .calendar-header {
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
+        .page-header-title {
+            text-align: center;
+            font-size: 2rem;
         }
 
-        .dropdown-menu {
+        .full-width-text {
+            width: 100%;
+            text-align: center;
+            background-color: #f8f9fa; /* Light background for contrast */
+            padding: 10px 0;
+            font-size: 1rem;
+            color: #6c757d; /* Subtle color */
+            border-top: 1px solid #e9ecef; /* Light border */
+            margin-top: 10px; /* Space above the text */
+        }
+
+        .container-fluid {
+            padding: 15px;
+        }
+
+        #calendar {
+            margin-top: 20px;
+        }
+
+        /* .dropdown-menu {
             max-height: 2.5rem;
             overflow-y: auto;
             white-space: nowrap;
@@ -68,483 +56,397 @@
         .dropdown-item {
             white-space: nowrap;
         }
-
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .dropdown-menu {
-            display: none;
-            position: absolute;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            z-index: 1000;
-        }
-
-            .dropdown-menu.show {
-                display: block;
-            }
-
-        select {
-            display: block;
-            width: 100%;
-        }
-
-        .calendar-categories {
-            height: 16px;
-            margin-bottom: 10px;
-            overflow-x: auto;
-            width: 100%;
-            margin: 12px;
-            z-index: 10;
-        }
-
-
-        .badge {
-            display: inline-block;
-            padding: .25em .4em;
-            font-size: 75%;
-            font-weight: 700;
-            line-height: 1;
-            text-align: center;
-            white-space: nowrap;
-            vertical-align: baseline;
-            padding: 7px;
-            border-radius: .25rem;
-            transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-        }
-
-        .row > * {
-            flex-shrink: 0;
-            max-width: 100%;
-            padding-right: calc(var(--bs-gutter-x)* .5);
-            padding-left: calc(var(--bs-gutter-x)* .5);
-            margin-top: var(--bs-gutter-y);
-        }
-
-        .container-fluid {
-            max-width: 90%;
-            margin-top: 50px;
-            margin: 50px auto;
-        }
-
-        h3 {
-            margin: 0;
-        }
-
-        #calendar {
-            margin-top: 20px;
-        }
-
-        /* New CSS */
-        .dropdown select {
-            display: inline-block;
-            width: 200px; /* Adjust width as needed */
-            margin-right: 10px; /* Reduce gap between select and button */
-        }
-
+ */
         .btn-success {
-            margin-left: 0; /* Remove extra margin if not needed */
+            margin-left: 0;
         }
 
         .calendar-header .d-flex {
             align-items: center;
-            gap: 10px; /* Adjust gap between select and button */
-        }
-       /*  .modal-c2 {
-            background-color: #fff;
-        } */
-
-        .modal-c2 {
-            background-color: #c1c1c1;
-            
+            gap: 10px;
         }
 
-        .modal .fade2
-        {
-            background-color: #00000F;
-        }
-
-        .calendar-timeline 
-        {
-            padding-top: 41px;
-            margin-top: 60px;
-        }
-     
-         
-
-      /*   
-        .btn.btn-sm.btn-light.btn-move-calendar:before {
-            font-size: 24px;
-            margin: 0 5px; 
-
-      
-        .btn.btn-sm.btn-light.btn-move-calendar[data-direction="left"]:before {
-            content: "\2190"; 
-        }
-
-      
-        .btn.btn-sm.btn-light.btn-move-calendar[data-direction="right"]:before {
-            content: "\2192"; 
-        }
- */
-
- 
-     
-            /* .btn.btn-sm.btn-light.btn-move-calendar:before {
-                font-size: 30;
-                margin: 0 2px;
-            }
-      
-            .btn.btn-sm.btn-light.btn-move-calendar[data-direction="left"]:before {
-                content: "\2190";
-            
+        @@media (max-width: 768px) {
+            .page-header-title {
+                font-size: 1.5rem;
             }
 
-            
-            .btn.btn-sm.btn-light.btn-move-calendar[data-direction="right"]:before {
-                content: "\2192";
-           
+            .calendar-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+/* 
+            .dropdown-menu {
+                width: 100%;
+                max-height: 5rem;
+            }
+
+            .dropdown select {
+                width: 100%;
             } */
-
-        /* Button hover effect */
-        .btn.btn-sm.btn-light.btn-move-calendar:hover {
-            background-color: #f0f0f0;
-            border-color: #333; 
-            color: black;
         }
 
-        .btn.btn-sm.btn-default.btn-move-calendar {
-            background-color: white; 
-            border: 2px solid black;
-            padding: 10px 20px; 
-            display: flex;
-            align-items: center; 
-            justify-content: center; 
-            border-radius: 4px; 
+        .page-header-title {
+           
         }
 
-        /* 8/21/2024 */
-        body.modal-open {
-            overflow-x: hidden;
-            overflow-y: auto;
+        .page-header-title{
+            justify-content: center;
+            font-size : 50%;
+            font-weight :bold;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .page-header.page-header-light {
+            color: rgba(31, 45, 65, 0.5);
         }
 
 
-        .topnav .navbar-nav {
-            font-size: 15px;
-            display: flex;
-            flex-direction: row;
-            margin-left: auto;
+        .container-fluid {
+            padding: 80px;
+
         }
 
-         
-        
+        .page-header > .container:first-of-type {
+            background: aliceblue;
+        }
+
+     
+
+        .nav-fixed #layoutSidenav #layoutSidenav_content {
+            padding-left: 0;
+            top: 3.625rem;
+        }
+
+        .page-header.page-header-light .page-header-subtitle#pickup {
+            color: rgb(0 0 0);
+        }
+       
+
+
+        .container-fluid {
+            padding: 5% 5%;
+            margin-top: -5%;
+        }
+
+        .border-bottom {
+            border-bottom: 1px solid #ffffff !important;
+        }
+       
     </style>
 </head>
 <body>
+    <header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4 .pgaeheader">
+        <div class="container">
+        <div class="page-header-content">
+            <div class="row align-items-center justify-content-center pt-3">
+                <div class="col-12 text-center">
+                        <h3 class="page-header-subtitle mb-1 pickup" id="pickup">
+                        Pick-Up
+                    </h3>
+                </div>
+                <div class="col-12 text-center">
+                    <div class="page-header-subtitle">
+                        All Times Are In EST
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </header>
+
+    
 
     <div class="container-fluid">
         <div class="calendar-header">
-            <h3>Pickup</h3>
             @{
                 var userEmails = User.FindFirstValue(ClaimTypes.Email);
             }
             <input type="hidden" name="Email" value="@userEmails" class="form-control" id="Email" placeholder="Enter Email" disabled />
-           
-           
-
         </div>
 
         <div class="row">
-            <div class="col">
+            <div class="col-12">
                 <div id="calendar"></div>
             </div>
         </div>
-            <!-- Modal for displaying messages -->
-       @*      <div class="modal fade2" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-c2">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="messageModalLabel">Message</h5>
-                           
-                        </div>
-                        <div class="modal-body" id="messageModalBody">
-                            <!-- Message will be inserted here -->
-                        </div>
+
+        <!-- Modal for displaying messages -->
+        @*<div class="modal fade2" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-c2">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="messageModalLabel">Message</h5>
+                    </div>
+                    <div class="modal-body" id="messageModalBody">
+                        <!-- Message will be inserted here -->
+                    </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
-                    </div>
                 </div>
             </div>
-    *@
+        </div>*@
     </div>
-
-  @*   <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/moment.js/moment-with-locales.min.js"></script>
-    <script src="~/jquery.touchswipe/jquery.touchswipe.min.js"></script>
-    <script src="~/js/jquery-calendar.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script> *@
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/moment.js/moment-with-locales.min.js"></script>
     <script src="~/jquery.touchswipe/jquery.touchswipe.min.js"></script>
-    <link rel="stylesheet" href="~/css/jquery-calendar.min.css">
     <script src="~/js/jquery-calendar.min.js"></script>
+  
     <script>
-
         $(document).ready(function () {
-        
             var events = @Html.Raw(Json.Serialize(Model.Events));
 
+            $(document).ready(function () {
 
-            $('#calendar').Calendar({
-                locale: 'en',
-                weekday: {
-                    timeline: {
-                        intervalMinutes: 30,
-                        fromHour: 9,
-                        toHour: 20
-                    }
-                },
-                events: events,
-                view: 'week',
-                defaultView: {
-                    largeScreen: 'week',
-                    smallScreen: 'day',
-                    smallScreenThreshold: 1000
-                },
-                weekday: {
-                    timeline: {
-                        fromHour: 11,
-                        toHour: 20,
-                        intervalMinutes: 60,
-                        format: 'HH:mm',
-                        heightPx: 50,
-                        autoResize: true
+                var events = @Html.Raw(Json.Serialize(Model.Events));
+
+
+                $('#calendar').Calendar({
+                    locale: 'en',
+                    weekday: {
+                        timeline: {
+                            intervalMinutes: 30,
+                            fromHour: 7,
+                            toHour: 23
+                        }
                     },
-                    dayline: {
-                        weekdays: [0, 1, 2, 3, 4, 5, 6],
-                        format: 'MM/DD',
+                    events: events,
+                    view: 'week',
+                    defaultView: {
+                        largeScreen: 'week',
+                        smallScreen: 'day',
+                        smallScreenThreshold: 1000
+                    },
+                    weekday: {
+                        timeline: {
+                            fromHour: 7,
+                            toHour: 23,
+                            intervalMinutes: 30,
+                            format: 'HH:mm',
+                            heightPx: 50,
+                            autoResize: true
+                        },
+                        dayline: {
+                            weekdays: [0, 1, 2, 3, 4, 5, 6],
+                            format: 'MM/DD',
+                            heightPx: 31,
+                            month: {
+                                format: 'MMMM YYYY',
+                                heightPx: 30,
+                                weekFormat: 'w'
+                            }
+                        }
+                    },
+                    month: {
+                        format: 'MMMM YYYY',
                         heightPx: 31,
-                        month: {
-                            format: 'MMMM YYYY',
-                            heightPx: 30,
-                            weekFormat: 'w'
+                        weekline: {
+                            format: 'w',
+                            heightPx: 80
+                        },
+                        dayheader: {
+                            weekdays: [0, 1, 2, 3, 4, 5, 6],
+                            format: 'dddd',
+                            heightPx: 30
+                        },
+                        day: {
+                            format: 'MM/DD'
+                        }
+                    },
+                    unixTimestamp: moment().format('X'),
+                    event: {
+                        hover: {
+                            delay: 500000
                         }
                     }
-                },
-                month: {
-                    format: 'MMMM YYYY',
-                    heightPx: 31,
-                    weekline: {
-                        format: 'w',
-                        heightPx: 80
-                    },
-                    dayheader: {
-                        weekdays: [0, 1, 2, 3, 4, 5, 6],
-                        format: 'dddd',
-                        heightPx: 30
-                    },
-                    day: {
-                        format: 'MM/DD'
-                    }
-                },
-                unixTimestamp: moment().format('X'),
-                event: {
-                    hover: {
-                        delay: 500000
-                    }
-                }
 
-         
-            }).init();
+
+                }).init();
 
 
 
-            
 
-            // Handle calendar event click and prevent default behavior
-            $('#calendar').on('Calendar.event-click', function (event, instance, elem, evt) {
-                       
-               
-                var startTime = evt.start;
-                var endTime = evt.end;
-                var timeSlotName = evt.title;
 
-                var startTimeISO = new Date(startTime * 1000).toISOString();
-                var endTimeISO = new Date(endTime * 1000).toISOString();
+                // Handle calendar event click and prevent default behavior
+                $('#calendar').on('Calendar.event-click', function (event, instance, elem, evt) {
 
-                // Retrieve time slot ID based on the event details
-                $.ajax({
-                    url: 'GetTimeSlotId',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({
-                        StartTime: startTimeISO,
-                        EndTime: endTimeISO,
-                        TimeSlotName: timeSlotName
-                    }),
-                    success: function (response) {
-                        // $('#modal-content').css('display', 'None');
-                        if (response && response.timeSlotId) {
-                            // Get user email from the claims
-                            var userEmail = $('#Email').val();
 
-                            // Retrieve user ID based on email
-                            $.ajax({
-                                url: '/@tenantName/User/GetUserIdByEmail',
-                                type: 'POST',
-                                contentType: 'application/json',
-                                data: JSON.stringify({ Email: userEmail }),
-                                success: function (userResponse) {
-                                    
-                                    if (userResponse && userResponse.userId) {
-                                        // Sign up for the time slot
-                                        $.ajax({
-                                            url: '/@tenantName/TimeSlotSignup/AddTimeSlotSignUps',
-                                            type: 'POST',
-                                            contentType: 'application/json',
-                                            data: JSON.stringify({
-                                                TimeSlotId: response.timeSlotId,
-                                                UserId: userResponse.userId,
-                                                Attended: false
-                                            }),
-                                            success: function (signupResponse) {
-                                                showMessage(signupResponse.message);
-                                                // Delay redirection by 2 seconds
-                                               // setTimeout(function () {
-                                                   // window.location.href = '/@tenantName/TimeSlot/UserCalendar';
-                                                //}, 3000); // 2000 milliseconds = 2 seconds
-                                            },
-                                            error: function (xhr, status, error) {
-                                                var response = xhr.responseJSON;
-                                                showMessage(response ? response.message : error, true);
-                                            }
-                                        });
-                                    } else {
-                                        showMessage('User not found.', true);
+                    var startTime = evt.start;
+                    var endTime = evt.end;
+                    var timeSlotName = evt.title;
+
+                    var startTimeISO = new Date(startTime * 1000).toISOString();
+                    var endTimeISO = new Date(endTime * 1000).toISOString();
+
+                    // Retrieve time slot ID based on the event details
+                    $.ajax({
+                        url: 'GetTimeSlotId',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            StartTime: startTimeISO,
+                            EndTime: endTimeISO,
+                            TimeSlotName: timeSlotName
+                        }),
+                        success: function (response) {
+                            // $('#modal-content').css('display', 'None');
+                            if (response && response.timeSlotId) {
+                                // Get user email from the claims
+                                var userEmail = $('#Email').val();
+
+                                // Retrieve user ID based on email
+                                $.ajax({
+                                    url: '/@tenantName/User/GetUserIdByEmail',
+                                    type: 'POST',
+                                    contentType: 'application/json',
+                                    data: JSON.stringify({ Email: userEmail }),
+                                    success: function (userResponse) {
+
+                                        if (userResponse && userResponse.userId) {
+                                            // Sign up for the time slot
+                                            $.ajax({
+                                                url: '/@tenantName/TimeSlotSignup/AddTimeSlotSignUps',
+                                                type: 'POST',
+                                                contentType: 'application/json',
+                                                data: JSON.stringify({
+                                                    TimeSlotId: response.timeSlotId,
+                                                    UserId: userResponse.userId,
+                                                    Attended: false
+                                                }),
+                                                success: function (signupResponse) {
+                                                    showMessage(signupResponse.message);
+                                                    // Delay redirection by 2 seconds
+                                                    // setTimeout(function () {
+                                                    // window.location.href = '/@tenantName/TimeSlot/UserCalendar';
+                                                    //}, 3000); // 2000 milliseconds = 2 seconds
+                                                },
+                                                error: function (xhr, status, error) {
+                                                    var response = xhr.responseJSON;
+                                                    showMessage(response ? response.message : error, true);
+                                                }
+                                            });
+                                        } else {
+                                            showMessage('User not found.', true);
+                                        }
+                                    },
+                                    error: function (xhr, status, error) {
+                                        showMessage('Error retrieving user ID: ' + error, true);
                                     }
-                                },
-                                error: function (xhr, status, error) {
-                                    showMessage('Error retrieving user ID: ' + error, true);
-                                }
-                            });
-                        } else {
-                            showMessage('Time slot not found.', true);
+                                });
+                            } else {
+                                showMessage('Time slot not found.', true);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            showMessage('Error retrieving time slot ID: ' + error, true);
                         }
+                    });
+                });
+
+
+            });
+
+
+
+            // // Function to show a message in a Bootstrap modal
+            // function showMessage(message, isError) {
+
+            //     var modalTitle = isError ? 'Error' : 'Success';
+            //     var modalClass = isError ? 'text-danger' : 'text-success';
+
+            //     $('#messageModalLabel').text(modalTitle);
+            //     $('#messageModalBody').text(message).removeClass('text-success text-danger').addClass(modalClass);
+            //     $('#messageModal').modal('show');
+
+
+            //    // $(".nav-fixed").addClass("backgr");
+
+
+
+
+            //     // Hide the modal with a fade-out effect after 1 second
+            //     setTimeout(function () {
+            //         $('#messageModal').fadeOut(1000, function () {
+            //             $('#messageModal').modal('hide'); // Hide the modal
+            //             $('#messageModal').css('display', 'none'); // Reset display property for future use
+            //             //$(".nav-fixed").removeClass("backgr");
+            //         });
+            //     }, 2000); // 1000 milliseconds = 1 second
+
+            // }
+
+
+            // function showMessage(message, isError) {
+            //     var modalTitle = isError ? 'Error' : 'Success';
+            //     var modalClass = isError ? 'text-danger' : 'text-success';
+
+            //     $('#messageModalLabel').text(modalTitle);
+            //     $('#messageModalBody').text(message).removeClass('text-success text-danger').addClass(modalClass);
+            //     $('#messageModal').modal({
+            //         backdrop: 'static', // Prevent closing the modal by clicking outside
+            //         keyboard: false     // Prevent closing the modal with the keyboard
+            //     });
+
+            //     // Show the modal
+            //     $('#messageModal').modal('show');
+
+            //     // Prevent horizontal scroll bar
+            //     $('body').css({
+            //         'overflow-y': 'auto',
+            //         'overflow-x': 'hidden'
+            //     });
+
+            //     // Hide the modal with a fade-out effect after 2 seconds
+            //     setTimeout(function () {
+            //         $('#messageModal').fadeOut(1000, function () {
+            //             $('#messageModal').modal('hide'); // Hide the modal
+            //             $('#messageModal').css('display', 'none'); // Reset display property for future use
+            //             // Restore the scroll behavior after the modal is hidden
+            //             $('body').css({
+            //                 'overflow-y': 'auto',
+            //                 'overflow-x': 'hidden'
+            //             });
+            //         });
+            //     }, 2000); // 2000 milliseconds = 2 seconds
+            // }
+            function showMessage(message, isError) {
+                var modalTitle = isError ? 'Error' : 'Success';
+                var modalClass = isError ? 'error' : 'success';
+
+                Swal.fire({
+                    title: modalTitle,
+                    text: message,
+                    icon: modalClass,
+                    timer: 2000, // Auto-close after 2 seconds
+                    showConfirmButton: false, // No need for a Close button
+                    customClass: {
+                        container: 'swal-container',
+                        popup: 'swal-popup',
+                        title: 'swal-title',
+                        content: 'swal-content'
                     },
-                    error: function (xhr, status, error) {
-                        showMessage('Error retrieving time slot ID: ' + error, true);
+                    didClose: function () {
+                        // Restore the scroll behavior after the modal is hidden
+                        $('body').css({
+                            'overflow-y': 'auto',
+                            'overflow-x': 'hidden'
+                        });
                     }
                 });
-            });
 
-          
+                // Prevent horizontal scroll bar
+                $('body').css({
+                    'overflow-y': 'auto',
+                    'overflow-x': 'hidden'
+                });
+            }
+
         });
-
-
-
-        // // Function to show a message in a Bootstrap modal
-        // function showMessage(message, isError) {
-          
-        //     var modalTitle = isError ? 'Error' : 'Success';
-        //     var modalClass = isError ? 'text-danger' : 'text-success';
-
-        //     $('#messageModalLabel').text(modalTitle);
-        //     $('#messageModalBody').text(message).removeClass('text-success text-danger').addClass(modalClass);          
-        //     $('#messageModal').modal('show');
-
-
-        //    // $(".nav-fixed").addClass("backgr");
-
-
-           
-
-        //     // Hide the modal with a fade-out effect after 1 second
-        //     setTimeout(function () {
-        //         $('#messageModal').fadeOut(1000, function () {
-        //             $('#messageModal').modal('hide'); // Hide the modal
-        //             $('#messageModal').css('display', 'none'); // Reset display property for future use
-        //             //$(".nav-fixed").removeClass("backgr");
-        //         });
-        //     }, 2000); // 1000 milliseconds = 1 second
-           
-        // }
-
-
-        // function showMessage(message, isError) {
-        //     var modalTitle = isError ? 'Error' : 'Success';
-        //     var modalClass = isError ? 'text-danger' : 'text-success';
-
-        //     $('#messageModalLabel').text(modalTitle);
-        //     $('#messageModalBody').text(message).removeClass('text-success text-danger').addClass(modalClass);
-        //     $('#messageModal').modal({
-        //         backdrop: 'static', // Prevent closing the modal by clicking outside
-        //         keyboard: false     // Prevent closing the modal with the keyboard
-        //     });
-
-        //     // Show the modal
-        //     $('#messageModal').modal('show');
-
-        //     // Prevent horizontal scroll bar
-        //     $('body').css({
-        //         'overflow-y': 'auto',
-        //         'overflow-x': 'hidden'
-        //     });
-
-        //     // Hide the modal with a fade-out effect after 2 seconds
-        //     setTimeout(function () {
-        //         $('#messageModal').fadeOut(1000, function () {
-        //             $('#messageModal').modal('hide'); // Hide the modal
-        //             $('#messageModal').css('display', 'none'); // Reset display property for future use
-        //             // Restore the scroll behavior after the modal is hidden
-        //             $('body').css({
-        //                 'overflow-y': 'auto',
-        //                 'overflow-x': 'hidden'
-        //             });
-        //         });
-        //     }, 2000); // 2000 milliseconds = 2 seconds
-        // }
-        function showMessage(message, isError) {
-            var modalTitle = isError ? 'Error' : 'Success';
-            var modalClass = isError ? 'error' : 'success';
-
-            Swal.fire({
-                title: modalTitle,
-                text: message,
-                icon: modalClass,
-                timer: 2000, // Auto-close after 2 seconds
-                showConfirmButton: false, // No need for a Close button
-                customClass: {
-                    container: 'swal-container',
-                    popup: 'swal-popup',
-                    title: 'swal-title',
-                    content: 'swal-content'
-                },
-                didClose: function () {
-                    // Restore the scroll behavior after the modal is hidden
-                    $('body').css({
-                        'overflow-y': 'auto',
-                        'overflow-x': 'hidden'
-                    });
-                }
-            });
-
-            // Prevent horizontal scroll bar
-            $('body').css({
-                'overflow-y': 'auto',
-                'overflow-x': 'hidden'
-            });
-        }
-
-
-     
     </script>
-
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

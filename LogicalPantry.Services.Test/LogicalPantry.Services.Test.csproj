@@ -10,8 +10,4 @@
     <ProjectReference Include="..\LogicalPantry.DTOs\LogicalPantry.DTOs.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="InfromationServiceTest\" />
-  </ItemGroup>
-
 </Project>

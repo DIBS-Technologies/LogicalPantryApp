@@ -3,21 +3,21 @@
 @{
     ViewData["Title"] = "Edit Time Slot Users";
     var tenantName = ViewBag.TenantName as string;
- 
 }
-
 
 @Html.AntiForgeryToken()
 
 <head>
     <link href="~/css/site.css" rel="stylesheet" />
-    <link href="~/css/style.css" rel="stylesheet" />
+    <link href="~/css/StyleSheet.css" rel="stylesheet" />
     <style>
+        /* Flexbox to align the Save button */
         #saveButtonDiv {
             display: flex;
             justify-content: end;
         }
 
+        /* Sidebar and footer customization */
         .sidenav-light {
             background-color: #fff;
             color: #1f2d41;
@@ -25,15 +25,11 @@
 
             .sidenav-light .sidenav-menu .nav-link:hover {
                 color: #0061f2;
+                background-color: #f1f1f1;
+                border-radius: 0.2rem;
+                margin: 0rem 0.5rem 0rem 0.75rem;
+                padding-left: 0.5rem !important;
             }
-
-        .sidenav .sidenav-menu .nav .sidenav-menu-heading {
-            padding: 1.75rem 1rem 0.75rem;
-            font-size: 0.7rem;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
 
         .hidden {
             display: none;
@@ -44,134 +40,194 @@
             color: #1f2d41;
         }
 
-        .sidenav-light .sidenav-menu .nav-link:hover {
-            color: #0061f2;
-            background-color: #f1f1f1;
-            border-radius: 0.2rem;
-            margin: 0rem 0.5rem 0rem 0.75rem;
-            padding-left: 0.5rem !important;
-        }
-
         .card-header {
             justify-content: center;
         }
+
         #main {
             padding: 2%;
-           
             margin-right: 5%;
-            
-        } 
+        }
+
         .page-header .page-header-content {
             padding-top: 3rem;
             padding-bottom: 0;
         }
 
-        #main {
-            padding: 2%;
-            /* margin-left: 6%; */
-            margin-right: 5%;
+        .container {
+            padding: 2rem;
         }
 
-         /* .container {
-            margin: 10%;
-        } */
+        .card {
+            width: 100%;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .container-fluid {
+            max-width: 90%;
+            margin: 10px auto;
+        }
+
+        .card-header {
+            text-align: center;
+            font-weight: 500;
+            padding: 1.5%;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 0.5rem;
+            }
+
+            .form-group .form-control {
+                width: 100%;
+            }
+
+        .saveButton, .btn-custom {
+            background-color: #1A2A52;
+            color: white;
+            border-radius: 5px;
+            border: none;
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+            .btn-custom svg {
+                margin-right: 0.5rem;
+            }
+
+        .form-control-file {
+            width: 100%;
+            max-width: 200px;
+        }
+
+        .form-group.row {
+            margin-bottom: 1rem;
+        }
+
+            .form-group.row .col-form-label {
+                margin-bottom: 0;
+                text-align: right;
+            }
+
+            .form-group.row .col-sm-10 {
+                padding-left: 0;
+            }
+
+        .form-group input, .form-group select {
+            width: 100%;
+        }
+
+        @@media (max-width: 768px) {
+            .form-group {
+                margin-left: 0;
+            }
+        }
+
+        .nav-fixed #layoutSidenav #layoutSidenav_nav .sidenav {
+            padding-top: 0rem;
+        }
     </style>
 </head>
 
 <main id="main">
-    <header class="page-header pb-10">
-        <div class="container">
-            <div class="page-header-content pt-4">
-                <div class="row align-items-center justify-content-between">
-                    <div class="col-auto mt-4">
-                    </div>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <div class="container mt-n10">
-        <div class="card mb-4">
-            <div class="card-header d-flex justify-content-center align-items-center">
-                @{
-                    DateTime startDate = TempData["StartTime"] != null ? (DateTime)TempData["StartTime"] : DateTime.MinValue;
-                    string formattedDate = startDate.ToString("MMM dd h tt");
-                }
-                @formattedDate
-            </div>
-
-            <div class="card-body">
-                
-                
-
-                @if (!string.IsNullOrEmpty(TempData["ErrorMessageBatch"] as string))
-                {
-                    <div id="errorMessageBatch" class="alert">
-                        @TempData["ErrorMessageBatch"]
-                    </div>
-                }
-
-                <table class="table table-bordered table-hover" id="userTable" cellspacing="0">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Email</th>
-                            <th>Phone</th>
-                            <th>Attended</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var user in Model)
-                        {
-                            <tr>
-                                <td>@user.FullName</td>
-                                <td>@user.Email</td>
-                                <td>@user.PhoneNumber</td>
-                                <td>
-                                    <div class="checkbox-wrapper-4">
-                                        @* <input class="inp-cbx" type="checkbox" id="allowCheckbox_@user.Id" data-user-id="@user.Id" @(user.IsAllow ? "checked" : "") /> *@
-                                        <input class="inp-cbx" type="checkbox" id="allowCheckbox_@user.Id" data-user-id="@user.Id" @(user.Attended ? "checked" : "") />
-
-                                        <label class="cbx" for="allowCheckbox_@user.Id">
-                                            <span>
-                                                <svg width="12px" height="10px">
-                                                    <use xlink:href="#check-4"></use>
-                                                </svg>
-                                            </span>
-                                        </label>
-                                        <svg class="inline-svg">
-                                            <symbol id="check-4" viewBox="0 0 12 10">
-                                                <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
-                                            </symbol>
-                                        </svg>
-                                    </div>
-                                </td>
-                            </tr>
+    <div class="container mt-4" id="tenantInfoContainer">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        @{
+                            DateTime startDate = TempData["StartTime"] != null ? (DateTime)TempData["StartTime"] : DateTime.MinValue;
+                            string formattedDate = startDate.ToString("MMM dd h tt");
                         }
-                    </tbody>
-                </table>
+                        @formattedDate
+                    </div>
+                    <div class="card-body">
+                        @if (!string.IsNullOrEmpty(TempData["ErrorMessageBatch"] as string))
+                        {
+                            <div id="errorMessageBatch" class="alert">
+                                @TempData["ErrorMessageBatch"]
+                            </div>
+                        }
 
-                <div id="saveButtonDiv">
-                    <button class="saveButton" type="button" disabled>Save</button>
+                        <table class="table table-bordered table-hover" id="userTable" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Attended</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var user in Model)
+                                {
+                                    <tr>
+                                        <td>@user.FullName</td>
+                                        <td>@user.Email</td>
+                                        <td>@user.PhoneNumber</td>
+                                        <td>
+                                            <div class="checkbox-wrapper-4">
+                                                <input class="inp-cbx" type="checkbox" id="allowCheckbox_@user.Id" data-user-id="@user.Id" @(user.Attended ? "checked" : "") />
+                                                <label class="cbx" for="allowCheckbox_@user.Id">
+                                                    <span>
+                                                        <svg width="12px" height="10px">
+                                                            <use xlink:href="#check-4"></use>
+                                                        </svg>
+                                                    </span>
+                                                </label>
+                                                <svg class="inline-svg">
+                                                    <symbol id="check-4" viewBox="0 0 12 10">
+                                                        <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+                                                    </symbol>
+                                                </svg>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                        <div id="saveButtonDiv">
+                            <button class="saveButton" type="button" disabled>Save</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 </main>
 
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
-    @* <script>
+    <script>
         $(document).ready(function () {
-            ;
+            // Function to get query parameters from the URL
+            function getQueryParameter(name) {
+                const urlParams = new URLSearchParams(window.location.search);
+                return urlParams.get(name);
+            }
+
+            // Extract the timeSlotId from the URL
+            var timeSlotId = getQueryParameter('id');
+            console.log('Time Slot ID:', timeSlotId);
+
+            // Handle checkbox changes
             $(".inp-cbx").on("change", function () {
                 var checkbox = $(this);
                 var userId = checkbox.data("user-id");
                 var isChecked = checkbox.prop("checked");
 
                 var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '[]');
-
                 var userStatus = userStatuses.find(u => u.Id === userId);
+
                 if (userStatus) {
                     userStatus.IsAttended = isChecked;
                 } else {
@@ -182,22 +238,35 @@
                 toggleSaveButton();
             });
 
+            // Save button click handler
             $(".saveButton").on("click", function () {
-                ;
                 var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '[]');
                 if (userStatuses.length === 0) {
                     return;
                 }
 
+                // Add the timeSlotId to each user's data
+                var updatedUserStatuses = userStatuses.map(function (userStatus) {
+                    return {
+                        Id: +userStatus.Id,
+                        Attended: userStatus.IsAttended,
+                        TimeSlotId: +timeSlotId
+                    };
+                });
+
+                // Building the tenant-specific URL for the AJAX request
+                var tenantName = '@tenantName';
+                var url = '/' + tenantName + '/User/UpdateUserBatch';
+
                 $.ajax({
-                    url: '@Url.Action(tenantName,"UpdateUserBatch", "User")',
+                    url: url,
                     type: 'POST',
-                    data: JSON.stringify(userStatuses),
+                    data: JSON.stringify(updatedUserStatuses),
                     contentType: 'application/json; charset=utf-8',
                     dataType: 'json',
                     success: function (response) {
                         if (response.success) {
-                            $('#successMessageBatch').text('Changes saved successfully.').fadeIn().delay(2000).fadeOut();
+                            $('#SuccessMessageBatch').text('Changes saved successfully.').fadeIn().delay(2000).fadeOut();
                             sessionStorage.removeItem('userStatuses');
                             toggleSaveButton();
                         } else {
@@ -207,9 +276,10 @@
                     error: function () {
                         $('#errorMessageBatch').text('Error saving changes.').fadeIn().delay(2000).fadeOut();
                     }
-                });
+                })
             });
 
+            // Function to toggle Save button based on sessionStorage data
             function toggleSaveButton() {
                 var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '[]');
                 if (userStatuses.length > 0) {
@@ -218,152 +288,6 @@
                     $(".saveButton").prop("disabled", true);
                 }
             }
-
-            toggleSaveButton(); // Initialize the save button state on page load
-        });
-          </script>
- *@
-
-
-    <script>
-        $(document).ready(function () {
-              ;
-                 // Function to get query parameters from the URL
-                function getQueryParameter(name) {
-                    const urlParams = new URLSearchParams(window.location.search);
-                    return urlParams.get(name);
-                }
-
-                // Extract the timeSlotId from the URL
-                var timeSlotId = getQueryParameter('id');
-                console.log('Time Slot ID:', timeSlotId);
-
-
-            $(".inp-cbx").on("change", function () {
-                ;
-                var checkbox = $(this);
-                var userId = checkbox.data("user-id");
-                var isChecked = checkbox.prop("checked");
-
-                var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '[]');
-
-                var userStatus = userStatuses.find(u => u.Id === userId);
-                if (userStatus) {
-                    userStatus.IsAttended = isChecked;
-                } else {
-                    userStatuses.push({ Id: userId, IsAttended: isChecked });
-                }
-
-                sessionStorage.setItem('userStatuses', JSON.stringify(userStatuses));
-                toggleSaveButton();
-            });
-
-
-            $(".saveButton").on("click", function () {
-                ;
-                    var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '[]');
-                    if (userStatuses.length === 0) {
-                        return;
-                    }
-
-                    // Add the timeSlotId to each user's data
-                    var updatedUserStatuses = userStatuses.map(function (userStatus) {
-                        return {
-                            Id: +userStatus.Id,
-                            Attended: userStatus.IsAttended,
-                            TimeSlotId: +timeSlotId // Add timeSlotId to each user's data
-                        };
-                    });
-
-                    var requestData = {
-                        userStatuses: updatedUserStatuses
-                    };
-
-                    // Building the tenant-specific URL for the AJAX request
-                    var tenantName = '@tenantName';
-                    var url = '/' + tenantName + '/User/UpdateUserBatch';
-
-                    $.ajax({
-                        url: url,
-                        type: 'POST',
-                        data: JSON.stringify(updatedUserStatuses),
-                        contentType: 'application/json; charset=utf-8',
-                        dataType: 'json',
-                        success: function (response) {
-                            if (response.success) {
-                            $('#SuccessMessageBatch').text('Changes saved successfully.').fadeIn().delay(2000).fadeOut();
-                                sessionStorage.removeItem('userStatuses');
-                                toggleSaveButton();
-                            } else {
-                                $('#errorMessageBatch').text('Error saving changes.').fadeIn().delay(2000).fadeOut();
-                            }
-                        },
-                        error: function () {
-                            $('#errorMessageBatch').text('Error saving changes.').fadeIn().delay(2000).fadeOut();
-                        }
-                    });
-                });
-
-            // $(".saveButton").on("click", function () {
-            //     ;
-            //     var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '[]');
-            //     if (userStatuses.length === 0) {
-            //         return;
-            //     }
-
-
-            //     ;
-            //      // Add the timeSlotId to each user's data
-            //     var updatedUserStatuses = userStatuses.map(function(userStatus) {
-            //         return {
-            //             userId: userStatus.userId,
-            //             attended: userStatus.attended,
-            //             timeSlotId: timeSlotId // Add timeSlotId to each user's data
-            //         };
-            //     });
-
-            //     var requestData = {
-            //         userStatuses: updatedUserStatuses
-            //     };
-
-            //     // Building the tenant-specific URL for the AJAX request
-            //     var tenantName = '@tenantName';
-            //     var url = '/' + tenantName + '/User/UpdateUserBatch';
-
-            //     $.ajax({
-            //         url: url,
-            //         type: 'POST',
-            //         data: JSON.stringify(requestData),
-            //         contentType: 'application/json; charset=utf-8',
-            //         dataType: 'json',
-            //         success: function (response) {
-            //             if (response.success) {
-            //                 $('#successMessageBatch').text('Changes saved successfully.').fadeIn().delay(2000).fadeOut();
-            //                 sessionStorage.removeItem('userStatuses');
-            //                 toggleSaveButton();
-            //             } else {
-            //                 $('#errorMessageBatch').text('Error saving changes.').fadeIn().delay(2000).fadeOut();
-            //             }
-            //         },
-            //         error: function () {
-            //             $('#errorMessageBatch').text('Error saving changes.').fadeIn().delay(2000).fadeOut();
-            //         }
-            //     });
-            // });
-
-          
-
-            function toggleSaveButton() {
-             
-                var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '[]');
-                if (userStatuses.length > 0) {
-                    $(".saveButton").prop("disabled", false);
-                } else {
-                    $(".saveButton").prop("disabled", true);
-                }
-            }
-
-            toggleSaveButton(); // Initialize the save button state on page load
         });
     </script>
 }

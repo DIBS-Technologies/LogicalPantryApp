@@ -70,15 +70,14 @@ namespace LogicalPantry.Tests
         {
             var userDto = new UserDto
             {
-                TenantId = 4,
+                
                 FullName = "Sample User",
                 Email = "swappnilfromdibs2@gmail.com",
                 PhoneNumber = "1234567890",
                 Address = "Sample Address"
             };
-
-            var content = new StringContent(JsonConvert.SerializeObject(userDto), Encoding.UTF8, "application/json");
-            var response = await _client.PostAsync("/Registration/Register", content);
+           
+            var response = await _client.Post("/Registration/Register", userDto);
 
             Assert.AreEqual(System.Net.HttpStatusCode.Redirect, response.StatusCode);
             var redirectUri = response.Headers.Location.ToString();

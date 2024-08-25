@@ -26,7 +26,7 @@ namespace LogicalPantry.Services.Test.TenantTestService
         public async Task<bool> IsAddSuccessful(TenantDto tenantDto)
         {
             var tenant = _context.Tenants
-                .FirstOrDefault(t => t.TenantName == tenantDto.TenantName && t.AdminEmail == tenantDto.AdminEmail);
+                .FirstOrDefault(t => t.TenantName == tenantDto.TenantName && t.AdminEmail == tenantDto.AdminEmail && t.PaypalId == tenantDto.PaypalId && t.PageName == tenantDto.PageName);
             return tenant != null;
         }
 

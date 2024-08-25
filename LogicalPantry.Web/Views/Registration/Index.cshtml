@@ -12,19 +12,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="~/css/StyleSheet.css" />
+    <link rel="stylesheet" href="~/css/StyleSheet.css">
     <style>
         .card {
             width: 100%;
-            max-width: 800px; /* Increase card width for larger screens */
+            max-width: 800px;
             margin: auto;
-            padding: 1.5rem; /* Add some padding inside the card */
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+        }
+
+        .container-fluid {
+            max-width: 90%;
+            margin: 10px auto;
         }
 
         .card-header {
             text-align: center;
             font-weight: 500;
-            font-size: 22px;
+            padding: 1.5%;
         }
 
         .form-group {
@@ -40,23 +45,6 @@
             width: 100%;
         }
 
-    /*     @@media (min-width: 992px) {
-            .form-group {
-                display: flex;
-                align-items: center;
-            }
-
-            .form-group label {
-                flex: 0 0 150px;
-                max-width: 150px;
-                margin-bottom: 0;
-            }
-
-            .form-group .form-control {
-                flex: 1 1 auto;
-            }
-        } */
-
         .saveButton {
             background-color: #1A2A52;
             color: white;
@@ -65,26 +53,28 @@
             font-size: 1rem;
             padding: 0.5rem 2rem;
             margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         #saveButtonDiv {
-    display: flex;
-    justify-content: end;
-}
-
-        #main {
-            padding: 2%;
-            margin-left: 6%;
-            margin-right: 5%;
-            margin-top: 5%;
+            display: flex;
+            justify-content: end;
         }
+
         .container {
-            margin-left : 50vh;
+            padding: 2rem;
+        }
+
+        #tenantInfoContainer {
+            margin-top: -3%;
+            padding-top: 0;
         }
     </style>
 </head>
 <body>
-    <div class="container mt-5">
+    <div class="container mt-4" id="tenantInfoContainer">
         <div class="row">
             <div class="col-lg-12">
                 <div class="card mb-4">
@@ -105,6 +95,7 @@
                                 @TempData["ErrorMessageUser"]
                             </div>
                         }
+
                         <form method="post" id="register" action="/@tenantName/Registration/Register">
                             <div class="form-group">
                                 <label for="FullName">Name<span class="mandatory">*</span></label>
@@ -134,7 +125,6 @@
                             <div id="saveButtonDiv">
                                 <button class="saveButton" type="submit" onclick="return validateForm();">Register</button>
                             </div>
-
                         </form>
                     </div>
                 </div>
@@ -213,7 +203,7 @@
         }
 
         function isValidEmail(email) {
-             var emailRegex = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+            var emailRegex = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
             return emailRegex.test(email);
         }
 
@@ -224,4 +214,3 @@
     </script>
 </body>
 </html>
-

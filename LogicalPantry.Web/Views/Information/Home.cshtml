@@ -31,7 +31,7 @@
             margin: 0;
             padding: 0;
             height: 100%;
-            /* Prevent scrollbars */
+            overflow: hidden; /* Prevent scrollbars */
         }
 
         #layoutSidenav {
@@ -48,9 +48,11 @@
             flex-direction: column;
             box-sizing: border-box;
             overflow: hidden;
-            padding: 20px; /* Default padding */
-            margin-left: 0;
-            margin-right: 0;
+            margin: 0;
+            padding-left: @(isAuthenticated ? (isAdmin ? "15rem" : "0") : "0");
+            padding-right: @(isAuthenticated ? "0" : "0");
+            top: @(isAuthenticated ? (isAdmin ? "3.625rem" : "4rem") : "auto");
+            padding-bottom: @(isAuthenticated ? "5rem" : "0");
         }
 
         .topnav {
@@ -95,7 +97,10 @@
             align-items: center;
             justify-content: center;
             width: 100%;
-            overflow: hidden;
+            height: 100%; /* Full height */
+            padding: 0; /* Remove padding */
+            margin: 0; /* Remove margin */
+            overflow: hidden; /* Hide overflow */
         }
 
         iframe {
@@ -113,6 +118,7 @@
             position: relative;
             bottom: 0;
             width: 100%;
+            padding : 10px;
         }
 
         .footer-custom {
@@ -145,54 +151,44 @@
             padding-left: 0.5rem !important;
         }
 
-        /* Adjust padding and margin for specific conditions */
-        .nav-fixed #layoutSidenav #layoutSidenav_content {
-            padding-left: @(isAdmin ? "0" : "20px");
-            padding-right: @(isAdmin ? "0" : "20px");
-            margin-left: @(isAdmin ? "2rem" : "0");
-            margin-right: @(isAdmin ? "2rem" : "0");
-        }
-
         .hidden {
             display: none;
         }
 
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-        }
-
-        #layoutSidenav {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
+        .tenantImage {
+            max-width: 50px;
         }
 
         #layoutSidenav_content {
             flex: 1;
             display: flex;
             flex-direction: column;
-            padding: 20px; /* Adjust as needed */
-        }
-
-        footer {
-            display: flex;
-            justify-content: center; /* Center horizontally */
-            align-items: center; /* Center vertically if needed */
-            padding: 10px;
-            background-color: #f8f9fa;
-            color: #6c757d;
-            width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+            margin: 0;
+            padding-left: @(User.Identity.IsAuthenticated ? (isAdmin ? "15rem" : "0") : "0");
+            padding-right: @(User.Identity.IsAuthenticated ? "0" : "0");
+            top: @(User.Identity.IsAuthenticated ? (isAdmin ? "3.625rem" : "4rem") : "auto");
+            padding-bottom: @(User.Identity.IsAuthenticated ? "5rem" : "0");
         }
 
         .nav-fixed #layoutSidenav #layoutSidenav_content {
-            padding-left: @(isAdmin ? "5%" : "0");
+            padding-left: 0;
             padding-right: 0;
-            margin-left: 2rem;
-            margin-right: 2rem;
+            top: 1rem;
+            padding-bottom: 5rem;
+        }
+
+        .nav-fixed #layoutSidenav #layoutSidenav_content {
+            padding-left: @(User.Identity.IsAuthenticated ? (isAdmin ? "7.5rem" : "") : "0");
+            /* padding-right: 2rem; */
+            top: 1rem;
+            padding-bottom: @(User.Identity.IsAuthenticated ? (isAdmin ? "0rem" : "5rem") : "0");
+            ;
+        }
+
+        .nav-fixed #layoutSidenav #layoutSidenav_nav .sidenav {
+            padding-top: 0rem;
         }
 
     </style>
@@ -202,14 +198,14 @@
     <div id="layoutSidenav">
         <nav class="topnav navbar navbar-expand shadow navbar-light bg-white" id="sidenavAccordion">
             <div class="tenantImage">
-                <img id="logoImage" src="~/Image/Demo.jpeg" style="width: 95px; padding-left: 10px; opacity:100%" />
+                <img id="logoImage" src="../images/logo.svg" style="max-width : 50px;padding-left: 10px; opacity:100%" />
             </div>
             <div class="page-name" id="pageName">
                 @(!string.IsNullOrEmpty(pagename) ? pagename.Replace(".html", " ") : "")
             </div>
 
             <div class="navbar-nav">
-                @if (User.Identity.IsAuthenticated && (isAdmin || isUser))
+                @if (isAuthenticated && (isAdmin || isUser))
                 {
                     <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar" id="pickUp">Pickup</a>
                 }
@@ -226,15 +222,11 @@
                 <input type="hidden" value="@isUser" id="isUser" />
             </div>
         </nav>
+        
         <div id="layoutSidenav_content">
-           <main style="flex: 1; overflow: hidden;">
-                <iframe src="" id="urlFrameId" style="width: 100%; height: 100%; border: none; display: block; overflow: hidden;"></iframe>
+            <main>
+                <iframe src="" id="urlFrameId"></iframe>
             </main>
-            @* <footer style="display: flex; justify-content: center; align-items: center; padding: 10px; background-color: #f8f9fa; color: #6c757d; width: 100%; position: relative; bottom: 0;">
-                <div class="container-end" style="display: flex; justify-content: center; width: 100%;">
-                    <p class="mb-0" style="color: black;">&copy; @DateTime.Now.Year - LogicalPantry</p>
-                </div>
-            </footer> *@
         </div>
     </div>
     @section Scripts {
@@ -293,7 +285,6 @@
 
                 updateImage(@tenantId);
 
-
                 var tenantId = @ViewBag.TenantId ?? 'null'; // Default to 'null' if ViewBag.TenantId is null
                 var pageName = '@ViewBag.PageName';
 
@@ -301,18 +292,16 @@
                 if (tenantId !== 'null') {
                     tenantId = tenantId.toString(); // Ensure tenantId is a string
                 }
-                // sessionStorage.setItem('TenantId', @tenantId);
-                // sessionStorage.setItem('PageName', @pagename);
 
                 var handlerValue = $("#pag").val();
                 $("#urlFrameId").attr("src", "/TenantHomePage/" + handlerValue);
 
-                $("#pageName").text(handlerValue ? handlerValue.replace('.html', ' ') : '');
+                $("#pageName").text(handlerValue ? handlerValue.replace('.html', ' ') : ' ');
+
+                // AJAX call to update the sidebar dynamically based on tenant
+                // Note: Ensure the sidebar is handled on the server-side based on tenantId if needed
             });
         </script>
     }
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js" crossorigin="anonymous"></script>
 </body>
-</html>
-
 </html>

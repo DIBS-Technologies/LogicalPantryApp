@@ -189,6 +189,8 @@
     <script>
       
             document.addEventListener('DOMContentLoaded', function () {
+
+                debugger
                 var isAuthenticated = @Html.Raw(Json.Serialize(User.Identity.IsAuthenticated));
                 var isUser = @Html.Raw(Json.Serialize(User.IsInRole("User")));
                 var isAdmin = @Html.Raw(Json.Serialize(User.Claims.Any(c => c.Type == ClaimTypes.Role && c.Value == "Admin")));

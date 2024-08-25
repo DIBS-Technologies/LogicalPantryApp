@@ -116,7 +116,7 @@ namespace LogicalPantry.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveEvent(TimeSlotDto timeSlotDto)
+        public async Task<IActionResult> SaveEvent([FromBody]TimeSlotDto timeSlotDto)
         {
             _logger.LogInformation("SaveEvent method call started.");
 

@@ -12,10 +12,14 @@ namespace LogicalPantry.Web.Controllers
     {
         IRegistrationService _registrationService;
         private readonly ILogger _logger;
+
+       // private IHttpContext _httpContext;
         public RegistrationController(IRegistrationService registrationService, ILogger<RegistrationController> logger)
         {
                 _registrationService = registrationService;
                 _logger = logger;
+              // _httpContext = context;
+
         }
 
         [HttpGet("Index")]
@@ -26,10 +30,16 @@ namespace LogicalPantry.Web.Controllers
             return View();
         }
 
+        
         [HttpPost("Register")]
         public async Task<IActionResult> Register(UserDto user) 
         {
             _logger.LogInformation($"Register method call started");
+
+            var tenantId = HttpContext.Items["TenantId"]?.ToString();
+
+            user.TenantId = int.Parse(tenantId);
+
             var response= await _registrationService.RegisterUser(user);
 
          

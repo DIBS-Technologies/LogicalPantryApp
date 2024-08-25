@@ -69,6 +69,8 @@ namespace LogicalPantry.Services.Test.RegistrationService
             var response = new ServiceResponse<bool>();
             try
             {
+
+                // Check All Data of User 
                
                 var existingUser = dataContext.Users
                     .FirstOrDefault(x => x.Email == user.Email);
