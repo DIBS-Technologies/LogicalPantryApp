@@ -33,10 +33,10 @@ namespace LogicalPantry.Web.Controllers
             _logger.LogInformation("Index method call started.");
 
             _logger.LogInformation("Index method call ended.");
-            return View();
+             return View();
         }
 
-        [HttpGet]
+        [HttpGet("GetUsersbyTimeSlot")]
         public object GetUsersbyTimeSlot(DateTime timeSlot)
         {
             _logger.LogInformation("GetUsersbyTimeSlot method call started.");
@@ -45,14 +45,10 @@ namespace LogicalPantry.Web.Controllers
                 return BadRequest(new { Message = "Invalid time slot provided." });
             }
 
-            var response = _timeSlotSignupService.GetUserbyTimeSlot(timeSlot).Result;
+            var response = _timeSlotSignupService.GetUserbyTimeSlot(timeSlot);
             _logger.LogInformation("GetUsersbyTimeSlot method call ended.");
             return response;
         }
-
-
-
-   
 
 
         [HttpPost("AddTimeSlotSignUps")]

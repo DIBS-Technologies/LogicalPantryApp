@@ -3,6 +3,7 @@ using LogicalPantry.Services.Test.TenantTestService;
 using LogicalPantry.Web;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Net.Http;
@@ -14,13 +15,22 @@ namespace LogicalPantry.Tests
     [TestClass]
     public class TenantControllerTest
     {
+
         private WebApplicationFactory<Startup> _factory;
         private HttpClient _client;
         private ITenantTestService _tenantTestService;
+        private IConfiguration _configuration;
 
         [TestInitialize]
         public void Setup()
         {
+            //Setup configuration to load appsettings.json
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory()) //Ensure the correct path
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+
+            _configuration = builder.Build();
+
             _factory = new WebApplicationFactory<Startup>()
                 .WithWebHostBuilder(builder =>
                 {
@@ -35,9 +45,10 @@ namespace LogicalPantry.Tests
                         }
 
                         // Add ApplicationDbContext using a real database for testing
+                        var connectionString = _configuration.GetConnectionString("DefaultSQLConnection");
                         services.AddDbContext<ApplicationDataContext>(options =>
                         {
-                            options.UseSqlServer("Server=Server1\\SQL19Dev,12181;Database=LogicalPantryDB;User ID=sa;Password=x3wXyCrs;MultipleActiveResultSets=true;TrustServerCertificate=True"); // Update this connection string
+                            options.UseSqlServer(connectionString); 
                         });
 
                         // Register the test implementation of ITenantTestService

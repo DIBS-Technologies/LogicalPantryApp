@@ -1,8 +1,6 @@
 ﻿@model LogicalPantry.DTOs.TimeSlotDtos.CalendarViewModel
-
 @{
     var tenantName = ViewBag.TenantName as string;
-
 }
 
 <!DOCTYPE html>
@@ -167,7 +165,7 @@
             </div>
 
 
-            <script src="~/lib/jquery/dist/jquery.min.js"></script>
+         @*    <script src="~/lib/jquery/dist/jquery.min.js"></script> *@
             <script src="~/lib/bootstrap/bootstrap/js/bootstrap.bundle.min.js"></script>
             <script src="~/js/moment.js/moment-with-locales.min.js"></script>
             <script src="~/jquery.touchswipe/jquery.touchswipe.min.js"></script>
@@ -204,7 +202,7 @@
             };
 
             $.ajax({
-            url: '@tenantName/TimeSlot/AddEvent',
+            url: '/@tenantName/TimeSlot/AddEvent',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(eventData),
@@ -235,7 +233,7 @@
 
                         if (userId) {
                             $.ajax({
-                                url: '@tenantName/TimeSlotSignup',
+                                url: 'TenantB/TimeSlotSignup',
                                 type: 'POST',
                                 contentType: 'application/json',
                                 data: JSON.stringify({

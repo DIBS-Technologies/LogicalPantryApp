@@ -1,4 +1,6 @@
-﻿using LogicalPantry.DTOs.UserDtos;
+﻿using LogicalPantry.DTOs;
+using LogicalPantry.DTOs.TimeSlotSignupDtos;
+using LogicalPantry.DTOs.UserDtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +16,7 @@ namespace LogicalPantry.Services.Test.UserServiceTest
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
-        Task CheckUserPostResponse(UserDto user);
+        Task<ServiceResponse<UserDto>> CheckUserPostResponse(UserDto user);
 
         /// <summary>
         ///  Check user data when user updated
@@ -34,5 +36,8 @@ namespace LogicalPantry.Services.Test.UserServiceTest
         Task<UserDto> GetUserByIdAsync(int userId);
         Task<bool> AddUserAsync(UserDto userDto);
         Task<bool> DeleteUserAsync(int userId);
+        Task<ServiceResponse<bool>> CheckUserDeleteResponse(int userId);
+
+        Task<ServiceResponse<List<TimeSlotSignupDto>>> CheckUpdateUserBatch(List<UserDto> userDto);
     }
 }

@@ -88,9 +88,13 @@
         }
 
         .page-header-title {
+           
+        }
+
+        .page-header-title{
             justify-content: center;
-            font-size: 50%;
-            font-weight: bold;
+            font-size : 50%;
+            font-weight :bold;
             font-family: 'Roboto', sans-serif;
         }
 
@@ -108,7 +112,7 @@
         }
 
 
-        .modal-c2 {
+          .modal-c2 {
             background-color: #c1c1c1;
         }
 
@@ -120,7 +124,7 @@
             padding-top: 41px;
             margin-top: 60px;
         }
-
+     
 
         .nav-fixed #layoutSidenav #layoutSidenav_content {
             padding-left: 0;
@@ -287,7 +291,6 @@
                                 // Get user email from the claims
                                 var userEmail = $('#Email').val();
 
-                                debugger
                                 // Retrieve user ID based on email
                                 $.ajax({
                                     url: '/@tenantName/User/GetUserIdByEmail',

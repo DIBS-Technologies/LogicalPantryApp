@@ -1,7 +1,9 @@
-﻿using LogicalPantry.DTOs.PayPalSettingDtos;
+﻿
+using LogicalPantry.DTOs.PayPalSettingDtos;
 using LogicalPantry.Services.Test.TimeSlotSignUpService;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using System;
@@ -20,11 +22,20 @@ namespace LogicalPantry.Tests.Controllers
         private WebApplicationFactory<Startup> _factory;
         private HttpClient _client;
         private ApplicationDataContext _context;
-       
+        private IConfiguration _configuration;
 
         [TestInitialize]
         public void Setup()
         {
+
+            //Setup configuration to load appsettings.json
+
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory()) //Ensure the correct path
+                .AddJsonFile("appsettings.json", optional:true, reloadOnChange:true);
+
+            _configuration = builder.Build();
+
             _factory = new WebApplicationFactory<Startup>()
                 .WithWebHostBuilder(builder =>
                 {
@@ -39,7 +50,7 @@ namespace LogicalPantry.Tests.Controllers
                         }
 
 
-                        var connectionString = "Server=Server1\\SQL19Dev,12181;Database=LogicalPantryDB;User ID=sa;Password=x3wXyCrs;MultipleActiveResultSets=true;TrustServerCertificate=True";
+                        var connectionString = _configuration.GetConnectionString("DefaultSQLConnection");
 
                         services.AddDbContext<ApplicationDataContext>(options =>
                             options.UseSqlServer(connectionString));
@@ -63,17 +74,33 @@ namespace LogicalPantry.Tests.Controllers
         }
 
         [TestMethod]
-        public async Task PayPalReturnview()
+        public async Task PayPal_ReturnsView_WithValidSessionData()
         {
+           
             // Act
-            var response = await _client.GetAsync("/Donation/PayPal");
-            //Assert
-            Assert.IsNotNull(response);
+            var response = await _client.GetAsync("/LogicalPantry/TimeSlotSignup/PayPal");
+
+            // Assert
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
 
             var content = await response.Content.ReadAsStringAsync();
-            Assert.IsNotNull(content, "Response content is null or empty");
+
         }
+
+        [TestMethod]
+        public async Task PayPal_ReturnsBadRequest_WithInvalidTenantId()
+        {
+           
+            // Act
+            var response = await _client.GetAsync("/TenantB/Donation/PayPal");
+
+            // Assert
+            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
+            var content = await response.Content.ReadAsStringAsync();
+            Assert.IsTrue(content.Contains("Invalid tenant ID"));
+        }
+
+
 
         [TestMethod]
         public async Task CompletePayment_ValidData_ReturnsOk()
@@ -89,7 +116,7 @@ namespace LogicalPantry.Tests.Controllers
             var content = new StringContent(JsonConvert.SerializeObject(paymentDto), Encoding.UTF8, "application/json");
 
             // Act
-            var response = await _client.PostAsync("/Donation/CompletePayment", content);
+            var response = await _client.PostAsync("/TenantB/Donation/CompletePayment", content);
 
             // Assert
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
@@ -108,11 +135,13 @@ namespace LogicalPantry.Tests.Controllers
             var content = new StringContent(JsonConvert.SerializeObject(paymentDto), Encoding.UTF8, "application/json");
 
             // Act
-            var response = await _client.PostAsync("/Donation/CompletePayment", content);
+            var response = await _client.PostAsync("/TenantB/Donation/CompletePayment", content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Response Status Code: {response.StatusCode}");
+            Console.WriteLine($"Response Content: {responseContent}");
 
             // Assert
             Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
-            var responseContent = await response.Content.ReadAsStringAsync();
             Assert.AreEqual("Invalid payment details", responseContent);
         }
     }

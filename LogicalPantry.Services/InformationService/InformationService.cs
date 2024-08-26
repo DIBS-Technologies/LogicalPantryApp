@@ -35,6 +35,7 @@ namespace LogicalPantry.Services.InformationService
             return await dataContext.Tenants
                 .FirstOrDefaultAsync(t => t.TenantName == identifier); // Adjust according to your identifier
         }
+
         public async Task<ServiceResponse<TenantDto>> GetTenant(int tenantId)
         {
             var response = new ServiceResponse<TenantDto>();

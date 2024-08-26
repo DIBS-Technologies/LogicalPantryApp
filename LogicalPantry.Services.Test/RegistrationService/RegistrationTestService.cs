@@ -1,6 +1,7 @@
 ﻿using LogicalPantry.DTOs;
 using LogicalPantry.DTOs.UserDtos;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Identity.Client;
@@ -17,18 +18,31 @@ namespace LogicalPantry.Services.Test.RegistrationService
 
 
         private readonly ApplicationDataContext dataContext; // Dependency injection for DataContext
+        private IConfiguration _configuration;
+
 
         // Constructor with dependency injection
         public RegistrationTestService()
         {
+
             var builder = new DbContextOptionsBuilder<ApplicationDataContext>();
 
-    
-            builder.UseSqlServer("Server=Server1\\SQL19Dev,12181;Database=LogicalPantryDB;User ID=sa;Password=x3wXyCrs;MultipleActiveResultSets=true;TrustServerCertificate=True");
+            //Set up configuration to load appsettings json 
+            var builder1 = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory()) //Ensure the correct path
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+
+            _configuration = builder1.Build();
+
+            var connectionString = _configuration.GetConnectionString("DefaultSQLConnection");
+
+            builder.UseSqlServer(connectionString);
 
             // Initialize dataContext with the configured options
             this.dataContext = new ApplicationDataContext(builder.Options);
         }
+
+
         //public  ServiceResponse<bool> GetUser(UserDto user)
         //{
         //    var response = new ServiceResponse<bool>();

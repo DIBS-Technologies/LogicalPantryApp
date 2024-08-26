@@ -10,8 +10,13 @@ using LogicalPantry.DTOs.UserDtos;
 
 using LogicalPantry.Web;
 using Newtonsoft.Json;
-using Microsoft.EntityFrameworkCore;
+using System.Text;
+using Microsoft.Extensions.Configuration;
+using System.Configuration;
+using LogicalPantry.DTOs.TimeSlotSignupDtos;
+using System.Net;
 using LogicalPantry.Services.Test.UserServiceTest;
+using Microsoft.EntityFrameworkCore;
 
 namespace LogicalPantry.Tests
 {
@@ -20,13 +25,21 @@ namespace LogicalPantry.Tests
     {
         private WebApplicationFactory<Startup> _factory;
         private HttpClient _client;
-        private IUserServiceTest _userTestService;
+        private ApplicationDataContext _context;
+        private IUserServiceTest _userServiceTest;
+        private IConfiguration _configuration;
 
         // This method is called before each test method is run.
         [TestInitialize]
         public void Setup()
         {
-            // Create a factory for the web application, configuring it for testing.
+            // Setup configuration to load appsettings.json
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory()) //Ensure the correct path
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+
+            _configuration = builder.Build();
+
             _factory = new WebApplicationFactory<Startup>()
                 .WithWebHostBuilder(builder =>
                 {
@@ -40,8 +53,8 @@ namespace LogicalPantry.Tests
                             services.Remove(descriptor);
                         }
 
-                        // Register an in-memory database for testing.
-                        var connectionString = "Server=Server1\\SQL19Dev,12181;Database=LogicalPantryDB;User ID=sa;Password=x3wXyCrs;MultipleActiveResultSets=true;TrustServerCertificate=True";
+
+                        var connectionString = _configuration.GetConnectionString("DefaultSQLConnection");
 
                         services.AddDbContext<ApplicationDataContext>(options =>
                             options.UseSqlServer(connectionString));
@@ -55,7 +68,8 @@ namespace LogicalPantry.Tests
                         using (var scope = serviceProvider.CreateScope())
                         {
                             var scopedServices = scope.ServiceProvider;
-                            _userTestService = scopedServices.GetRequiredService<IUserServiceTest>();
+                            _context = scopedServices.GetRequiredService<ApplicationDataContext>();
+                            _userServiceTest = scopedServices.GetRequiredService<IUserServiceTest>();
 
                             // Ensure the in-memory database is created.
                             var db = scopedServices.GetRequiredService<ApplicationDataContext>();
@@ -68,48 +82,163 @@ namespace LogicalPantry.Tests
             _client = _factory.CreateClient();
         }
 
-        // Test method for updating users.
+
+        /// <summary>
+        ///Tests the <see cref="UpdateUser_when_ValidData"/> method to ensure it correctly update user by given user data.
+        /// </summary>
+        /// <returns>A <see cref="UserDto"/> representing the updated user information.</returns>
+
         [TestMethod]
-        public async Task UpdateUsers_ShouldReturnSuccess_WhenUpdateIsValid()
+        public async Task UpdateUser_when_ValidData()
         {
-            //  Define initial users and add them to the in-memory database.
-            var initialUsers = new List<UserDto>
+
+            // Arrange
+            var userId = 70;
+            var isAllow = true;
+
+            var userDto = new UserDto
             {
-                new UserDto { Id = 1, FullName = "Initial User 1", Email = "initialuser1@example.com", PhoneNumber = "1234567890" },
-                new UserDto { Id = 2, FullName = "Initial User 2", Email = "initialuser2@example.com", PhoneNumber = "0987654321" }
+                Id = userId,
+                IsAllow = isAllow,
             };
 
-            // Add initial users.
-            foreach (var userDto in initialUsers)
-            {
-                var responseAdd = await _client.PostAsJsonAsync("/User/AddUser", userDto);
-                Assert.AreEqual(System.Net.HttpStatusCode.OK, responseAdd.StatusCode);
-            }
+            //Act
+            var response = await _client.PostAsync($"/TenantB/User/UpdateUser?userId={userId}&isAllow={isAllow}", null);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Response status code: {response.StatusCode}");
+            Console.WriteLine($"Response Content: {responseContent}");
 
-            // Define updated user data.
-            var updatedUsers = new List<UserDto>
+
+            //Assert
+            response.EnsureSuccessStatusCode();
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
+
+            //check if the data saved correctly in the database
+
+            var user = await _userServiceTest.CheckUserPostResponse(userDto);
+
+            Assert.IsNotNull(user);
+            Assert.AreEqual(userDto.Id, user.Data.Id);
+            Assert.AreEqual(userDto.IsAllow, user.Data.IsAllow);
+
+        }
+
+        /// <summary>
+        ///Tests the <see cref="UpdateUserBatch_when_ValidData"/> method to ensure it correctly update the List of the users.
+        /// </summary>
+        ///<returns>A <see cref="List<UserDto></UserDto>"/> representing the multiple updated user information.</returns>
+        [TestMethod]
+        public async Task UpdateUserBatch_when_ValidData()
+        {
+            //Arrage
+            var userDto = new List<UserDto>
             {
-                new UserDto { Id = 1, FullName = "Updated User 1", Email = "updateduser1@example.com", PhoneNumber = "1111111111" },
-                new UserDto { Id = 2, FullName = "Updated User 2", Email = "updateduser2@example.com", PhoneNumber = "2222222222" }
+                new UserDto{Id = 61, TimeSlotId = 82, Attended = true},
+                new UserDto{Id = 67, TimeSlotId = 82, Attended =true},
             };
 
-            // Send a PUT request to update users.
-            var response = await _client.PutAsJsonAsync("/User/UpdateUsers", updatedUsers);
+            var content = new StringContent(JsonConvert.SerializeObject(userDto), Encoding.UTF8, "application/json");
 
-            // Assert: Verify the response status code and that the users were updated.
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
+            //Act
 
-            // Check the database to ensure the users are updated.
-            foreach (var updatedUserDto in updatedUsers)
+            var response = await _client.PostAsync("/TenantB/User/UpdateUserBatch", content);
+
+            //Assert
+            Assert.IsNotNull(response);
+
+            var users = await _userServiceTest.CheckUpdateUserBatch(userDto);
+            Assert.IsNotNull(users);
+
+            foreach (var expected in userDto)
             {
-                var user = await _userTestService.GetUserByIdAsync(updatedUserDto.Id);
-                Assert.IsNotNull(user);
-                // Ensure the updated user's data matches what was sent in the request.
-                Assert.AreEqual(updatedUserDto.FullName, user.FullName);
-                Assert.AreEqual(updatedUserDto.Email, user.Email);
-                Assert.AreEqual(updatedUserDto.PhoneNumber, user.PhoneNumber);
+                var actual = users.Data
+                    .FirstOrDefault(x => x.UserId == expected.Id && x.TimeSlotId == expected.TimeSlotId && x.Attended == expected.Attended);
+                Assert.IsNotNull(actual);
+
+                Assert.AreEqual(expected.TimeSlotId, actual.TimeSlotId);
+                Assert.AreEqual(expected.Attended, actual.Attended);
+
             }
         }
+
+        /// <summary>
+        ///Tests the <see cref="ManageUsers_GetAllRegisterUsers"/> method to ensure it correctly retrieves All the register users.
+        /// </summary>
+        /// <returns></returns>
+
+        [TestMethod]
+        public async Task ManageUsers_GetAllRegisterUsers()
+        {
+            //Arrange
+            var userCount = 3;
+
+            var tenantId = 5;
+
+            var session = _client.DefaultRequestHeaders;
+            session.Add("TenantId", tenantId.ToString());
+
+            //Act
+            var response = await _client.GetAsync("/TenantB/User/ManageUsers");
+            var responseContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Response status code: {response.StatusCode}");
+            Console.WriteLine($"Response Content: {responseContent}");
+
+            //Assert
+            Assert.IsNotNull(response);
+            response.EnsureSuccessStatusCode();
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
+
+        }
+
+        /// <summary>
+        /// Tests the <see cref="GetUserIdByEmail"/> method to ensure it correctly retrieves the user ID for a given email address.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+
+        [TestMethod]
+        public async Task GetUserIdByEmail()
+        {
+            //Arrange
+            var userEmail = "swappnilfromdibs2@gmail.com";
+
+            var userDto = new UserDto
+            {
+                Email = userEmail,
+            };
+            var content = new StringContent(JsonConvert.SerializeObject(userDto), Encoding.UTF8, "application/json");
+
+            //Act
+            var response = await _client.PostAsync("/TenantB/User/GetUserIdByEmail", content);
+
+            //Assert
+            response.EnsureSuccessStatusCode();
+            Assert.IsNotNull(response);
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
+        }
+
+        /// <summary>
+        /// Tests the <see cref="DeleteUserById"/> method to ensure it correctly delete user form the database for a given id.
+        /// </summary>
+        /// <returns></returns>
+
+        [TestMethod]
+        public async Task DeleteUserById()
+        {
+            //Arrange
+            var userId = 71;
+            //Act
+            var response = await _client.DeleteAsync($"/TenantB/User/DeleteUser/{userId}");
+            //Assert
+            Assert.IsNotNull(response);
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
+            var DeleteUser = await _userServiceTest.CheckUserDeleteResponse(userId);
+            Assert.IsNotNull(DeleteUser);
+            Assert.IsTrue(true);
+            Assert.AreEqual("User deleted Successfully", DeleteUser.Message);
+        }
+
+     
+    
 
         // Test method for adding a user.
         [TestMethod]
@@ -130,7 +259,7 @@ namespace LogicalPantry.Tests
             Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
 
             // Retrieve the added user from the database to confirm
-            var addedUser = await _userTestService.GetUserByEmailAsync(newUser.Email);
+            var addedUser = await _userServiceTest.GetUserByIdAsync(newUser.Id);
             Assert.IsNotNull(addedUser);
 
             // added data matches what was sent in the request.
@@ -153,7 +282,7 @@ namespace LogicalPantry.Tests
             Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
 
             // Confirm the user was removed from the database.
-            var deletedUser = await _userTestService.GetUserByIdAsync(userId);
+            var deletedUser = await _userServiceTest.GetUserByIdAsync(userId);
             Assert.IsNull(deletedUser);
         }
     }

@@ -3,6 +3,7 @@ using LogicalPantry.Services.InformationService;
 using LogicalPantry.Web;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Newtonsoft.Json;
@@ -22,20 +23,24 @@ namespace LogicalPantry.IntegrationTests
         private WebApplicationFactory<Startup> _factory;
         private HttpClient _client;
         private IInformationService _informationService;
-        /// <summary>
-        /// Initialize required services  to frtch data from api   works as startup.cs  
-        /// </summary>
+        private IConfiguration _configuration;
+
         [TestInitialize]
         public void Setup()
         {
-            //web application factory setup 
+            //Setup configuration to load appsettings.json
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory()) //Ensure the correct path
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+
+            _configuration = builder.Build();
+
             _factory = new WebApplicationFactory<Startup>()
                 .WithWebHostBuilder(builder =>
                 {
                     builder.ConfigureServices(services =>
                     {
-                       
-                        // generate db context 
+
                         var descriptor = services.SingleOrDefault(
                             d => d.ServiceType == typeof(DbContextOptions<ApplicationDataContext>));
                         if (descriptor != null)
@@ -43,11 +48,12 @@ namespace LogicalPantry.IntegrationTests
                             services.Remove(descriptor);
                         }
 
-                        // Initialize sql server
+                        // Configure in-memory database or real database as needed
+                        var connectionString = _configuration.GetConnectionString("DefaultSQLConnection");
                         services.AddDbContext<ApplicationDataContext>(options =>
-                            options.UseSqlServer("Server=Server1\\SQL19Dev,12181;Database=LogicalPantryDB;User ID=sa;Password=x3wXyCrs;MultipleActiveResultSets=true;TrustServerCertificate=True")); 
+                            options.UseSqlServer(connectionString));
 
-                        //Register service 
+
                         services.AddTransient<IInformationService, InformationService>();
 
                     
@@ -63,6 +69,7 @@ namespace LogicalPantry.IntegrationTests
                 });
 
             _client = _factory.CreateClient();
+            _client.BaseAddress = new Uri("https://localhost:7041");
         }
 
         /// <summary>
@@ -72,10 +79,10 @@ namespace LogicalPantry.IntegrationTests
         [TestMethod]
         public async Task GetTenant_ShouldReturnOk_WhenTenantExists()
         {
-            int tenantId = 1; // Ensure this ID exists in your test database
+            int tenantId = 5; // Ensure this ID exists in your test database
 
-            var response = await _client.GetAsync($"/Information/Get?tenantid={tenantId}");
-
+            var response = await _client.GetAsync($"/TenantB/Information/Get?tenantid={tenantId}");
+            var responseContent = await response.Content.ReadAsStringAsync();
             Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
             var tenant = await response.Content.ReadFromJsonAsync<TenantDto>();
             Assert.IsNotNull(tenant);
@@ -108,7 +115,7 @@ namespace LogicalPantry.IntegrationTests
             // generate form 
             var form = new MultipartFormDataContent();
 
-            var response = await _client.PostAsync("/Information/AddTenant", form);
+            var response = await _client.PostAsync("TenantB/Information/AddTenant", form);
 
             // if tenant added return  ststus ocde  200  with ok 
             Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
@@ -133,7 +140,7 @@ namespace LogicalPantry.IntegrationTests
                 PaypalId = null
             };
 
-            var response = await _client.PostAsJsonAsync("/Information/AddTenant", tenantDto);
+            var response = await _client.PostAsJsonAsync("/TenantB/Information/AddTenant", tenantDto);
 
             // Check the response
             Assert.AreEqual(System.Net.HttpStatusCode.BadRequest, response.StatusCode);

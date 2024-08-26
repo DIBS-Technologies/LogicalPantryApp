@@ -97,14 +97,6 @@ builder.Services.AddAuthorization(options =>
 });
 
 
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(10); // changed from 30 to 90 minutes  on 19/10/23 swapnil
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-});
-
-
 // Add scoped services for dependency injection
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleService, RoleService>();

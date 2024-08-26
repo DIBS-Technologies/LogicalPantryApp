@@ -157,7 +157,7 @@ namespace LogicalPantry.Services.UserServices
 
                 dataContext.Users.Remove(user);
                 /// Records delete for all tables 
-                //await dataContext.SaveChangesAsync();
+                await dataContext.SaveChangesAsync();
 
                 response.Data = true;
                 response.Success = true;
