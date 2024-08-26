@@ -309,7 +309,7 @@ namespace LogicalPantry.Web.Controllers
         {
             // Log the starting of the Index method execution.
             _logger.LogInformation("GetTenantIdByEmail method call started");
-            var response = await _informationService.GetTenantIdByEmail(userEmail /*tenantname*/);
+            var response = await _informationService.GetTenantIdByEmail(userEmail,tenantname);
             if (response.Success)
             {
                 return Ok(response.Data);
