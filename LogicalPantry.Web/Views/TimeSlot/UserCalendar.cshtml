@@ -31,12 +31,28 @@
         .full-width-text {
             width: 100%;
             text-align: center;
-            background-color: #f8f9fa; /* Light background for contrast */
+            background-color: #f8f9fa;
             padding: 10px 0;
             font-size: 1rem;
-            color: #6c757d; /* Subtle color */
-            border-top: 1px solid #e9ecef; /* Light border */
-            margin-top: 10px; /* Space above the text */
+            color: #6c757d; 
+            border-top: 1px solid #e9ecef; 
+            margin-top: 10px; 
+        }
+
+        .modal.fade {
+            background: none;
+            display: none !important;
+        }
+
+        .modal-backdrop {
+            opacity: 0 !important;
+            display: none !important;
+        }
+
+        .modal {
+            background: none;
+            overflow-y: visible;
+            overflow-x: visible;
         }
 
         .container-fluid {
@@ -47,17 +63,7 @@
             margin-top: 20px;
         }
 
-        /* .dropdown-menu {
-            max-height: 2.5rem;
-            overflow-y: auto;
-            white-space: nowrap;
-            width: 200px;
-        }
 
-        .dropdown-item {
-            white-space: nowrap;
-        }
- */
         .btn-success {
             margin-left: 0;
         }
@@ -76,15 +82,8 @@
                 flex-direction: column;
                 align-items: flex-start;
             }
-/* 
-            .dropdown-menu {
-                width: 100%;
-                max-height: 5rem;
-            }
 
-            .dropdown select {
-                width: 100%;
-            } */
+           
         }
 
         .page-header-title {
@@ -112,6 +111,19 @@
             background: aliceblue;
         }
 
+
+          .modal-c2 {
+            background-color: #c1c1c1;
+        }
+
+        .modal .fade2 {
+            background-color: #00000F;
+        }
+
+        .calendar-timeline {
+            padding-top: 41px;
+            margin-top: 60px;
+        }
      
 
         .nav-fixed #layoutSidenav #layoutSidenav_content {
@@ -134,6 +146,9 @@
             border-bottom: 1px solid #ffffff !important;
         }
        
+
+
+
     </style>
 </head>
 <body>
@@ -172,25 +187,9 @@
             </div>
         </div>
 
-        <!-- Modal for displaying messages -->
-        @*<div class="modal fade2" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-c2">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="messageModalLabel">Message</h5>
-                    </div>
-                    <div class="modal-body" id="messageModalBody">
-                        <!-- Message will be inserted here -->
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>*@
+
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/moment.js/moment-with-locales.min.js"></script>
     <script src="~/jquery.touchswipe/jquery.touchswipe.min.js"></script>
@@ -349,70 +348,6 @@
 
 
             });
-
-
-
-            // // Function to show a message in a Bootstrap modal
-            // function showMessage(message, isError) {
-
-            //     var modalTitle = isError ? 'Error' : 'Success';
-            //     var modalClass = isError ? 'text-danger' : 'text-success';
-
-            //     $('#messageModalLabel').text(modalTitle);
-            //     $('#messageModalBody').text(message).removeClass('text-success text-danger').addClass(modalClass);
-            //     $('#messageModal').modal('show');
-
-
-            //    // $(".nav-fixed").addClass("backgr");
-
-
-
-
-            //     // Hide the modal with a fade-out effect after 1 second
-            //     setTimeout(function () {
-            //         $('#messageModal').fadeOut(1000, function () {
-            //             $('#messageModal').modal('hide'); // Hide the modal
-            //             $('#messageModal').css('display', 'none'); // Reset display property for future use
-            //             //$(".nav-fixed").removeClass("backgr");
-            //         });
-            //     }, 2000); // 1000 milliseconds = 1 second
-
-            // }
-
-
-            // function showMessage(message, isError) {
-            //     var modalTitle = isError ? 'Error' : 'Success';
-            //     var modalClass = isError ? 'text-danger' : 'text-success';
-
-            //     $('#messageModalLabel').text(modalTitle);
-            //     $('#messageModalBody').text(message).removeClass('text-success text-danger').addClass(modalClass);
-            //     $('#messageModal').modal({
-            //         backdrop: 'static', // Prevent closing the modal by clicking outside
-            //         keyboard: false     // Prevent closing the modal with the keyboard
-            //     });
-
-            //     // Show the modal
-            //     $('#messageModal').modal('show');
-
-            //     // Prevent horizontal scroll bar
-            //     $('body').css({
-            //         'overflow-y': 'auto',
-            //         'overflow-x': 'hidden'
-            //     });
-
-            //     // Hide the modal with a fade-out effect after 2 seconds
-            //     setTimeout(function () {
-            //         $('#messageModal').fadeOut(1000, function () {
-            //             $('#messageModal').modal('hide'); // Hide the modal
-            //             $('#messageModal').css('display', 'none'); // Reset display property for future use
-            //             // Restore the scroll behavior after the modal is hidden
-            //             $('body').css({
-            //                 'overflow-y': 'auto',
-            //                 'overflow-x': 'hidden'
-            //             });
-            //         });
-            //     }, 2000); // 2000 milliseconds = 2 seconds
-            // }
             function showMessage(message, isError) {
                 var modalTitle = isError ? 'Error' : 'Success';
                 var modalClass = isError ? 'error' : 'success';
@@ -447,7 +382,10 @@
 
         });
     </script>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
+
+
+
