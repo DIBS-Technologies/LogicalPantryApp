@@ -13,11 +13,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="~/css/Style.css">
     <link rel="stylesheet" href="~/css/StyleSheet.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
     <style>
+        html body {
+            overflow : hidden;
+
+        }
         .card {
             width: 100%;
             max-width: 800px; 
             margin: auto;
+        }
+
+        #layoutSidenav {
+            margin-top: -3%;
         }
 
 
@@ -122,9 +132,11 @@
 
 
 
-        .page-header > .container:first-of-type {
+        .page-header > .container-fluid:first-of-type {
            max-height : 100vh;
-            padding: 2rem;
+          /*   padding: 1rem; */
+            margin-bottom: -10px;
+            
         }
 
         .page-header-compact .page-header-content .page-header-title {
@@ -144,22 +156,25 @@
         .container-fluid {
             margin-left: 60px;
         }
+
+        footer {
+            background-color: #eff3f9;
+            color: #6c757d;
+            text-align: center;
+            padding: 1rem;
+            width: 100%;
+            position: relative;
+            bottom: 0;
+            flex-shrink: 0;
+        }
+
+        #layoutSidenav_content {
+            margin-bottom: -4%;
+        }
+
+
     </style>
 </head>
-@* <header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4">
-
-    <div class="container">
-        <div class="page-header-content">
-            <div class="row align-items-center justify-content-between pt-3">
-                <div class="col-auto mb-3">
-                    <h1 class="page-header-title">
-                        Tenant Information
-                    </h1>
-                </div>
-            </div>
-        </div>
-    </div>
-</header> *@
 <body>
    
 
@@ -230,14 +245,19 @@
             </div>
         </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.34/moment-timezone-with-data.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <
     <script src="~/js/timezones.full.js"></script>
     <script src="~/js/timezones.full.min.js"></script>
     <script src="~/js/timezones.js"></script>
     <script src="~/js/timezones.min.js"></script>
     <script>
         $(document).ready(function () {
+
+            $('#successMessageUser').fadeIn().delay(2000).fadeOut();
+            $('#errorMessageUser').fadeIn().delay(2000).fadeOut();
 
             var pageClass = $('body').attr('class');
 
@@ -249,7 +269,7 @@
             $('#name').on('blur change keyup', validateName);
             $('#paypalId').on('blur change keyup', validatePaypalId);
             $('#timeZone').on('blur change', validateTimeZone);
-            $('#logo').on('change', validateLogo);
+            // $('#logo').on('change', validateLogo);
 
             $('.saveButton').on('click', function () {
                 if (validateForm()) {
@@ -316,7 +336,7 @@
 
         function validateForm() {
             var isValid = true;
-            isValid = validateLogo() && isValid;
+            // isValid = validateLogo() && isValid;
             isValid = validateName() && isValid;
             isValid = validatePaypalId() && isValid;
             isValid = validateTimeZone() && isValid;
@@ -324,16 +344,14 @@
             return isValid;
         }
 
-
-
         function isValidEmail(email) {
             var emailRegex = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
             return emailRegex.test(email);
         }
     </script>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+   
     <script src="https://cdn.jsdelivr.net/npm/@@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="~/js/scripts.js"></script>
+   @*  <script src="~/js/scripts.js"></script> *@
 </body>
 </html>

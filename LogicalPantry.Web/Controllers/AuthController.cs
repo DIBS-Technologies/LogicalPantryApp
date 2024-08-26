@@ -24,6 +24,7 @@ namespace LogicalPantry.Web.Controllers
         private readonly IUserService _userServices;
         private readonly IRoleService _roleService;
         private readonly ILogger _logger;
+
         public AuthController(IUserService userServices, IRoleService roleService , ILogger<AuthController> logger)
         {
             _userServices = userServices;
@@ -210,7 +211,7 @@ namespace LogicalPantry.Web.Controllers
                 else
                 {
                     //return RedirectToAction(ViewConstants.UserCalandar, ViewConstants.TimeSlot, new { area = "" });
-                    return Redirect($"/{TenantName}/TimeSlot/UserCalandar");
+                    return Redirect($"/{TenantName}/TimeSlot/UserCalendar");
                 }
             }
 
@@ -232,22 +233,19 @@ namespace LogicalPantry.Web.Controllers
         }
 
         // Logout
+        [HttpGet]
         [Route("Logout")]
         public async Task<IActionResult> Logout()
         {
-            // Log the starting of the Index method execution.
-            _logger.LogInformation($"Logout Method is call started");
+            await HttpContext.SignOutAsync();
+          // Log the starting of the Index method execution.
+          _logger.LogInformation($"Logout Method is call started");
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            // Log the ending of the Index method execution.
-            _logger.LogInformation($"Logout Method is call ended");
-
-            Response.Cookies.Delete(".AspNetCore.Mvc.CookieTempDataProvider");
-            Response.Cookies.Delete(".AspNetCore.Mvc.CookieTempDataProvider");
-            Response.Cookies.Delete(".AspNetCore.Cookies");
-    
+          
+            // Clear the session
             HttpContext.Session.Clear();
 
-            //return RedirectToAction(ViewConstants.LOGINVIEW, ViewConstants.AUTH);
+          
             return Redirect($"/{TenantName}");
         }
 
@@ -268,7 +266,7 @@ namespace LogicalPantry.Web.Controllers
                     return null;
                 }
                 var tenantId = TenantId;
-                var userExists = await _userServices.GetUserByEmailAsync(userEmail, (int)tenantId);
+                var userExists = await _userServices.GetUserByEmailAsync(userEmail,(int)tenantId);
 
                 if (userExists.Success)
                 {

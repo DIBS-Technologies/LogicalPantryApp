@@ -31,11 +31,11 @@ namespace LogicalPantry.Web.Controllers
         IRegistrationService _registrationService;
 
         private readonly ILogger _logger;
-        public UserController(IUserService userService, ILogger<UserController> logger, IRegistrationService _registrationService)
+        public UserController(IUserService userService, ILogger<UserController> logger, IRegistrationService registrationService)
         {
             _userService = userService;
             _logger = logger;
-            _registrationService = _registrationService;
+            _registrationService = registrationService;
         }
 
         public IActionResult Index()
@@ -216,7 +216,7 @@ namespace LogicalPantry.Web.Controllers
         }
 
         [HttpPost("GetUserIdByEmail")]
-        public async Task<IActionResult> GetUserIdByEmail([FromBody] UserDto dto)
+        public async Task<IActionResult> GetUserIdByEmail([FromBody]UserDto dto)
         {
             _logger.LogInformation("GetUserIdByEmail method call Started");
             if (dto == null || string.IsNullOrEmpty(dto.Email))
@@ -273,6 +273,12 @@ namespace LogicalPantry.Web.Controllers
         [HttpGet("Register")]
         public async Task<IActionResult> Register()
         {
+
+            var PageName = HttpContext.Session.GetString("PageName");
+
+            //ViewBag.TenantId = tenantId;
+            ViewBag.PageName = PageName;
+
             return View();
         }
 
@@ -297,7 +303,7 @@ namespace LogicalPantry.Web.Controllers
             {
                 @TempData["MessageClass"] = "alert-danger";
                 @TempData["SuccessMessageUser"] = "Failed to Save User server error.";
-                return View("Index");
+                return Redirect($"/{TenantName}/TimeSlot/UserCalendar");
 
             }
             _logger.LogInformation($"Register method call ended");

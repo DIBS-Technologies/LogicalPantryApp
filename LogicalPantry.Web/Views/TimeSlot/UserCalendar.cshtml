@@ -34,9 +34,9 @@
             background-color: #f8f9fa;
             padding: 10px 0;
             font-size: 1rem;
-            color: #6c757d; 
-            border-top: 1px solid #e9ecef; 
-            margin-top: 10px; 
+            color: #6c757d;
+            border-top: 1px solid #e9ecef;
+            margin-top: 10px;
         }
 
         .modal.fade {
@@ -82,8 +82,9 @@
                 flex-direction: column;
                 align-items: flex-start;
             }
+        }
 
-           
+        .page-header-title {
         }
 
         .page-header-title {
@@ -104,7 +105,6 @@
 
         .container-fluid {
             padding: 80px;
-
         }
 
         .page-header > .container:first-of-type {
@@ -134,7 +134,7 @@
         .page-header.page-header-light .page-header-subtitle#pickup {
             color: rgb(0 0 0);
         }
-       
+
 
 
         .container-fluid {
@@ -145,33 +145,29 @@
         .border-bottom {
             border-bottom: 1px solid #ffffff !important;
         }
-       
-
-
-
     </style>
 </head>
 <body>
     <header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4 .pgaeheader">
         <div class="container">
-        <div class="page-header-content">
-            <div class="row align-items-center justify-content-center pt-3">
-                <div class="col-12 text-center">
+            <div class="page-header-content">
+                <div class="row align-items-center justify-content-center pt-3">
+                    <div class="col-12 text-center">
                         <h3 class="page-header-subtitle mb-1 pickup" id="pickup">
-                        PickUp
-                    </h3>
-                </div>
-                <div class="col-12 text-center">
-                    <div class="page-header-subtitle">
-                        All Times Are In EST
+                            PickUp
+                        </h3>
+                    </div>
+                    <div class="col-12 text-center">
+                        <div class="page-header-subtitle">
+                            All Times Are In EST
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        </div>
     </header>
 
-    
+
 
     <div class="container-fluid">
         <div class="calendar-header">
@@ -190,11 +186,14 @@
 
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/moment.js/moment-with-locales.min.js"></script>
     <script src="~/jquery.touchswipe/jquery.touchswipe.min.js"></script>
     <script src="~/js/jquery-calendar.min.js"></script>
-  
+
     <script>
         $(document).ready(function () {
             var events = @Html.Raw(Json.Serialize(Model.Events));
@@ -204,64 +203,64 @@
                 var events = @Html.Raw(Json.Serialize(Model.Events));
 
 
-            $('#calendar').Calendar({
-                locale: 'en',
-                weekday: {
-                    timeline: {
-                        intervalMinutes: 30,
-                        fromHour: 7,
-                        toHour: 23
-                    }
-                },
-                events: events,
-                view: 'week',
-                defaultView: {
-                    largeScreen: 'week',
-                    smallScreen: 'day',
-                    smallScreenThreshold: 1000
-                },
-                weekday: {
-                    timeline: {
-                        fromHour: 7,
-                        toHour: 23,
-                        intervalMinutes: 30,
-                        format: 'HH:mm',
-                        heightPx: 50,
-                        autoResize: true
+                $('#calendar').Calendar({
+                    locale: 'en',
+                    weekday: {
+                        timeline: {
+                            intervalMinutes: 30,
+                            fromHour: 7,
+                            toHour: 23
+                        }
                     },
-                    dayline: {
-                        weekdays: [0, 1, 2, 3, 4, 5, 6],
-                        format: 'MM/DD',
+                    events: events,
+                    view: 'week',
+                    defaultView: {
+                        largeScreen: 'week',
+                        smallScreen: 'day',
+                        smallScreenThreshold: 1000
+                    },
+                    weekday: {
+                        timeline: {
+                            fromHour: 7,
+                            toHour: 23,
+                            intervalMinutes: 30,
+                            format: 'HH:mm',
+                            heightPx: 50,
+                            autoResize: true
+                        },
+                        dayline: {
+                            weekdays: [0, 1, 2, 3, 4, 5, 6],
+                            format: 'MM/DD',
+                            heightPx: 31,
+                            month: {
+                                format: 'MMMM YYYY',
+                                heightPx: 30,
+                                weekFormat: 'w'
+                            }
+                        }
+                    },
+                    month: {
+                        format: 'MMMM YYYY',
                         heightPx: 31,
-                        month: {
-                            format: 'MMMM YYYY',
-                            heightPx: 30,
-                            weekFormat: 'w'
+                        weekline: {
+                            format: 'w',
+                            heightPx: 80
+                        },
+                        dayheader: {
+                            weekdays: [0, 1, 2, 3, 4, 5, 6],
+                            format: 'dddd',
+                            heightPx: 30
+                        },
+                        day: {
+                            format: 'MM/DD'
+                        }
+                    },
+                    unixTimestamp: moment().format('X'),
+                    event: {
+                        hover: {
+                            delay: 500000
                         }
                     }
-                },
-                month: {
-                    format: 'MMMM YYYY',
-                    heightPx: 31,
-                    weekline: {
-                        format: 'w',
-                        heightPx: 80
-                    },
-                    dayheader: {
-                        weekdays: [0, 1, 2, 3, 4, 5, 6],
-                        format: 'dddd',
-                        heightPx: 30
-                    },
-                    day: {
-                        format: 'MM/DD'
-                    }
-                },
-                unixTimestamp: moment().format('X'),
-                event: {
-                    hover: {
-                        delay: 500000
-                    }
-                }
 
 
                 }).init();
