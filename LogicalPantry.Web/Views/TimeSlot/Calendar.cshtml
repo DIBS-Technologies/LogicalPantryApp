@@ -407,7 +407,7 @@
 
 
             $('#calendar').on('Calendar.event-click', function (event, instance, elem, evt) {
-                ;
+                debugger;
                 // $('#calendar-modal').attr
                 var startTime = evt.start;
                 var endTime = evt.end;
@@ -428,10 +428,27 @@
                         TimeSlotName: timeSlotName
                     }),
                     success: function (response) {
-                        ;
+                   
                         if (response && response.timeSlotId) {
                             // Redirect to EditTimeSlotUser with the time slot ID
-                            window.location.href = 'EditTimeSlotUser?id=' + response.timeSlotId;
+                           window.location.href = 'EditTimeSlotUser?id=' + response.timeSlotId;
+                            // var id = response.timeSlotId;
+                            // $.ajax({
+                            //     url: '/@tenantName/TimeSlot/EditTimeSlotUser',
+                            //     type: 'POST',
+                            //     contentType: 'application/json',
+                            //     data: JSON.stringify({
+                            //         Id: id // Ensure this matches the property name in the model
+                            //     }),
+                          
+                            //     success: function (result) {
+                            //         // Handle the result, such as updating the view
+                            //         // This might involve updating part of the page with the returned data
+                            //     },
+                            //     error: function (xhr, status, error) {
+                            //         alert('Error during request: ' + error);
+                            //     }
+                            // });
 
                         } else {
                             alert('Time slot not found.');

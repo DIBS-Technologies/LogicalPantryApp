@@ -873,50 +873,65 @@ namespace LogicalPantry.Services.UserServices
             try
             {
                 //// Retrieve users associated with the specified time slot
-                var users = await dataContext.TimeSlots
-                    .Where(ts => ts.Id == timeSlotId)
+                //var users = await dataContext.TimeSlots
+                //    .Where(ts => ts.Id == timeSlotId)
+                //    .Join(dataContext.Users,
+                //        ts => ts.UserId,
+                //        u => u.Id,
+                //        (ts, u) => new
+                //        {
+                //            User = u,
+                //            TimeSlot = ts
+                //        })
+                //    .Select(result => new UserDto
+                //    {
+                //        Id = result.User.Id,
+                //        FullName = result.User.FullName,
+                //        Email = result.User.Email,
+                //        PhoneNumber = result.User.PhoneNumber,
+                //        Attended = dataContext.TimeSlotSignups
+                //                    .Where(tsu => tsu.UserId == result.User.Id && tsu.TimeSlotId == timeSlotId)
+                //                    .Select(tsu => tsu.Attended)
+                //                    .FirstOrDefault() // Returns the value of `Attended` if found, or `false` if not found
+                //    })
+                //    .ToListAsync();
+
+                // Retrieve users associated with the specified time slot with role 'User'
+                var users = await dataContext.TimeSlotSignups
+                    .Where(tsu => tsu.TimeSlotId == timeSlotId) // Filter by TimeSlotId
                     .Join(dataContext.Users,
-                        ts => ts.UserId,
+                        tsu => tsu.UserId,
                         u => u.Id,
-                        (ts, u) => new
+                        (tsu, u) => new { tsu, User = u })
+                    .Join(dataContext.UserRoles,
+                        combined => combined.User.Id,
+                        ur => ur.UserId,
+                        (combined, ur) => new { combined.User, combined.tsu, UserRole = ur })
+                    .Join(dataContext.Roles,
+                        combined => combined.UserRole.RoleId,
+                        r => r.Id,
+                        (combined, r) => new
                         {
-                            User = u,
-                            TimeSlot = ts
+                            User = combined.User,
+                            Attended = combined.tsu.Attended, // Include Attended field from TimeSlotSignups
+                            RoleName = r.RoleName // Include RoleName for filtering
                         })
+                    .Where(result => result.RoleName == "User") // Filter by RoleName
                     .Select(result => new UserDto
                     {
                         Id = result.User.Id,
                         FullName = result.User.FullName,
                         Email = result.User.Email,
                         PhoneNumber = result.User.PhoneNumber,
-                        Attended = dataContext.TimeSlotSignups
-                                    .Where(tsu => tsu.UserId == result.User.Id && tsu.TimeSlotId == timeSlotId)
-                                    .Select(tsu => tsu.Attended)
-                                    .FirstOrDefault() // Returns the value of `Attended` if found, or `false` if not found
+                        Address = result.User.Address,
+                        IsAllow = result.User.IsAllow,
+                        IsRegistered = result.User.IsRegistered,
+                        Attended = result.Attended // Include Attended field
                     })
                     .ToListAsync();
 
 
-                // Retrieve users associated with the specified time slot
-                //var users = await dataContext.TimeSlots
-                //    .Where(ts => ts.Id == timeSlotId)
-                //    .Join(dataContext.Users,
-                //        ts => ts.UserId,
-                //        u => u.Id,
-                //        (ts, u) => new { User = u, TimeSlot = ts })
-                //    .GroupJoin(dataContext.TimeSlotSignups.Where(tsu => tsu.TimeSlotId == timeSlotId),
-                //        result => result.User.Id,
-                //        tsu => tsu.UserId,
-                //        (result, tsuGroup) => new { result.User, result.TimeSlot, TimeSlotSignups = tsuGroup.FirstOrDefault() })
-                //    .Select(joinedResult => new UserDto
-                //    {
-                //        Id = joinedResult.User.Id,
-                //        FullName = joinedResult.User.FullName,
-                //        Email = joinedResult.User.Email,
-                //        PhoneNumber = joinedResult.User.PhoneNumber,
-                //       // Attended = joinedResult.TimeSlotSignups != null ? joinedResult.TimeSlotSignups.Attended : (bool?)null
-                //    })
-                //    .ToListAsync();
+
 
 
                 if (!users.Any())

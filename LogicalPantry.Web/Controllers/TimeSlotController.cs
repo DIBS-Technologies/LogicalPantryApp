@@ -6,6 +6,7 @@ using LogicalPantry.Services.UserServices;
 using Microsoft.AspNetCore.Mvc;
 using Tweetinvi.Core.Events;
 using LogicalPantry.Services.InformationService;
+using Azure.Core;
 
 namespace LogicalPantry.Web.Controllers
 {
@@ -142,14 +143,18 @@ namespace LogicalPantry.Web.Controllers
         //}
 
         [HttpGet("EditTimeSlotUser")]
-        public async Task<IActionResult> EditTimeSlotUser(string id)
+        public async Task<IActionResult> EditTimeSlotUser(string Id)
         {
             // Log the starting of the Index method execution.
             _logger.LogInformation("EditTimeSlotUser Get method call started");
-            if (string.IsNullOrEmpty(id) || !int.TryParse(id, out int timeSlotId))
+            if (string.IsNullOrEmpty(Id) || !int.TryParse(Id, out int timeSlotId))
             {
                 return BadRequest("Invalid time slot ID.");
             }
+            //if (Id == 0)
+            //{
+            //    return BadRequest("Invalid time slot ID.");
+            //}
 
             var response = await _userSercvice.GetUsersbyTimeSlotId(timeSlotId);
             if (response.Success && response.Data != null)
@@ -162,10 +167,43 @@ namespace LogicalPantry.Web.Controllers
             }
             else
             {
-                return NotFound("Users not found for the specified time slot.");
+                return View(response.Data.ToList());
+                //return NotFound("Users not found for the specified time slot.");
             }
 
         }
+
+        //[HttpPost("EditTimeSlotUser")]
+        //public async Task<IActionResult> EditTimeSlotUser([FromBody] TimeSlotDto request)
+        //{
+        //    // Log the starting of the EditTimeSlotUser method execution.
+        //    _logger.LogInformation("EditTimeSlotUser POST method call started");
+
+        //    //if (string.IsNullOrEmpty(Id) || !int.TryParse(Id, out int timeSlotId))
+        //    //{
+        //    //    return BadRequest("Invalid time slot ID.");
+        //    //}
+        //    if (request.Id <= 0)
+        //    {
+        //        return BadRequest("Invalid time slot ID.");
+        //    }
+
+        //    var response = await _userSercvice.GetUsersbyTimeSlotId(request.Id);
+        //    if (response.Success && response.Data != null)
+        //    {
+        //        // Log the ending of the EditTimeSlotUser method execution.
+        //        _logger.LogInformation("EditTimeSlotUser method executed successfully.");
+        //        TempData["MessageClass"] = "alert-success";
+        //        TempData["SuccessMessageBatch"] = "User Saved Successfully";
+        //        return View(response.Data.ToList());
+        //       // return View();
+        //    }
+        //    else
+        //    {
+        //        // Handle the case where users are not found.
+        //        return View(new List<UserDto>()); // Return an empty list to the view
+        //    }
+        //}
 
 
         private long ToUnixTimestamp(DateTime dateTime)
