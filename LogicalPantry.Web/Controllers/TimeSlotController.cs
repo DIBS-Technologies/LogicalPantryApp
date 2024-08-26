@@ -27,23 +27,78 @@ namespace LogicalPantry.Web.Controllers
             _informationService = informationService;
         }
 
-       
+
+        //[HttpPost("AddEvent")]
+        //public async Task<IActionResult> AddEvent([FromBody] TimeSlotDto timeSlotDto)
+        //{
+        //    _logger.LogInformation("AddEvent method call started.");
+        //    if (timeSlotDto == null)
+        //    {
+        //        return BadRequest("Event data is null.");
+        //    }
+
+        //    var tenantName = TenantName;
+        //    var tenanatResponse = await _informationService.GetTenantPageNameForUserAsync(tenantName);
+        //    if (tenanatResponse.Success)
+        //    {
+        //        timeSlotDto.TenantId = tenanatResponse.Data.Id;
+
+        //    }
+        //    var userEmail = UserEmail;
+        //    var userResponse = await _userSercvice.GetUserIdByEmail(userEmail);
+        //    if (userResponse.Success)
+        //    {
+        //        timeSlotDto.UserId = userResponse.Data;
+        //    }
+
+
+        //    if (ModelState.IsValid)
+        //    {
+        //        var success = await _timeSlotService.AddTimeSlotAsync(timeSlotDto);
+
+
+        //        if (success)
+        //        {
+        //            // Return a JSON response indicating success
+        //            return Ok(new { success = true, message = "Event added successfully." });
+        //        }
+        //        else
+        //        {
+        //            // Return a server error response
+        //            return StatusCode(500, "An error occurred while saving the time slot. Please try again.");
+        //        }
+
+        //    }
+        //    else
+        //    {
+
+
+        //        _logger.LogInformation("AddEvent method call ended.");
+        //        return BadRequest(ModelState); // Return a bad request response with validation errors
+        //    }
+
+        //    return Ok();
+        //}
+
+
+
         [HttpPost("AddEvent")]
         public async Task<IActionResult> AddEvent([FromBody] TimeSlotDto timeSlotDto)
         {
-            _logger.LogInformation("AddEvent method call started.");        
+            _logger.LogInformation("AddEvent method call started.");
+
             if (timeSlotDto == null)
             {
                 return BadRequest("Event data is null.");
             }
 
             var tenantName = TenantName;
-            var tenanatResponse = await _informationService.GetTenantPageNameForUserAsync(tenantName);
-            if (tenanatResponse.Success)
+            var tenantResponse = await _informationService.GetTenantPageNameForUserAsync(tenantName);
+            if (tenantResponse.Success)
             {
-                timeSlotDto.TenantId = tenanatResponse.Data.Id;
-
+                timeSlotDto.TenantId = tenantResponse.Data.Id;
             }
+
             var userEmail = UserEmail;
             var userResponse = await _userSercvice.GetUserIdByEmail(userEmail);
             if (userResponse.Success)
@@ -51,33 +106,30 @@ namespace LogicalPantry.Web.Controllers
                 timeSlotDto.UserId = userResponse.Data;
             }
 
-
             if (ModelState.IsValid)
             {
                 var success = await _timeSlotService.AddTimeSlotAsync(timeSlotDto);
-
                 if (success)
                 {
-                    //return Ok(Response); // Return a success response
-                    //return RedirectToAction("Calendar");
-                    return View();
+                    // return Redirect($"/{tenantName}/TimeSlot/Calendar");
+                    // Return a JSON response indicating success
+                     return Json(new { success = true });
+                   // return Ok(success);
+                    //return View();
                 }
                 else
                 {
-                    return StatusCode(500, "An error occurred while saving the time slot. Please try again."); // Return a server error response
+                    // Return a server error response
+                    return StatusCode(500, "An error occurred while saving the time slot. Please try again.");
                 }
-
             }
             else
             {
-
-
                 _logger.LogInformation("AddEvent method call ended.");
                 return BadRequest(ModelState); // Return a bad request response with validation errors
             }
-          
-            return Ok();
         }
+
 
 
         //[HttpGet("EditTimeSlotUser")]
@@ -227,7 +279,7 @@ namespace LogicalPantry.Web.Controllers
             // Log the number of events fetched
             _logger.LogInformation($"Fetched {events.Count()} events from the database.");
 
-            // Log details of each event
+            //// Log details of each event
             foreach (var e in events)
             {
                 _logger.LogInformation($"Event: Start={e.StartTime}, End={e.EndTime}, Title={e.TimeSlotName}");

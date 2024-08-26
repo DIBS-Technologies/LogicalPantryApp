@@ -24,7 +24,7 @@
         .calendar-header {
             margin-bottom: 20px;
             display: flex;
-            justify-content: space-around;
+            justify-content: end;
             align-items: center;
         }
 
@@ -220,7 +220,7 @@
                         <h5 class="modal-title" id="eventModalLabel">Event Details</h5>
                     </div>
                     <div class="modal-body">
-                        <form id="eventForm">
+                        <form id="eventForm" method="post">
                             <div class="form-group">
                                 <label for="eventTitle">Title:</label>
                                 <input type="text" class="form-control" id="eventTitle" name="Title" required>
@@ -341,21 +341,70 @@
                 };
 
                 $.ajax({
-                    url: 'AddEvent',
+                    url: 'AddEvent', // Ensure the URL is correct
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(eventData),
                     success: function (response) {
-                        window.location.reload();
-                        $('#eventModal').modal('hide');
-
+                        if (response.success) {
+                   
+                            // alert('sucessfully  1');
+                            // Example URL based on response data
+                             var redirectUrl = '/@tenantName/TimeSlot/Calendar';
+                             window.location.href = redirectUrl;
+                        } else {
+                            alert('Error adding event.');
+                        }
                     },
                     error: function (xhr, status, error) {
-                        window.location.reload();
-                        //alert('Error adding event: ' + error);
+                        console.error('Error adding event:', error);
+                        alert('Error adding event: ' + error);
                     }
                 });
             });
+
+            // $('#saveEventBtn').on('click', function () {
+            //     debugger;
+            //     var eventData = {
+            //         timeSlotName: $('#eventTitle').val(),
+            //         startTime: $('#eventStart').val(),
+            //         endTime: $('#eventEnd').val()
+            //     };
+
+            //     $.ajax({
+            //         url: 'AddEvent', // Ensure the URL is correct
+            //         type: 'POST',
+            //         contentType: 'application/json',
+            //         data: JSON.stringify(eventData),
+            //         success: function (response) {
+            //             alert('call  adding event.');
+            //             // if (response.success) {
+            //             //     $.ajax({
+            //             //         url: '/@tenantName/TimeSlot/Calendar', 
+            //             //         type: 'GET', 
+            //             //         success: function (calendarHtml) {
+            //             //             $('#calendarContainer').html(calendarHtml); 
+            //             //         },
+            //             //         error: function (xhr, status, error) {
+            //             //             console.error('Error loading calendar:', error);
+            //             //             alert('Error loading calendar: ' + error);
+            //             //         }
+            //             //     });
+            //             // } else {
+            //             //     alert('Error adding event.');
+            //             // }
+            //         },
+            //         error: function (xhr, status, error) {
+            //             console.error('Error adding event:', error);
+            //             alert('Error adding event: ' + error);
+            //         }
+            //     });
+            // });
+
+
+
+
+
 
             $('#calendar').on('Calendar.event-click', function (event, instance, elem, evt) {
                 ;
@@ -402,7 +451,7 @@
             }
 
             $('#saveEventBtn').on('click', function (e) {
-                e.preventDefault();
+                 e.preventDefault();
 
                 // Clear previous validation messages
                 $('.validation-message').text('');
@@ -432,9 +481,9 @@
                 }
 
                 // If all fields are valid, submit the form
-                if (isValid) {
-                    $('#eventForm').submit(); // Submit the form or call your saving logic here
-                }
+                // if (isValid) {
+                //     $('#eventForm').submit(); // Submit the form or call your saving logic here
+                // }
             });
         });
     </script>
