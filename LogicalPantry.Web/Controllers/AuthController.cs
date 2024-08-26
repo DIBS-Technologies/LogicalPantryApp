@@ -77,8 +77,9 @@ namespace LogicalPantry.Web.Controllers
             }
             else if (userInfo != null && userInfo.Role == "User")
             {
-                if (userInfo.IsRegistered == false)
+                if (userInfo.Message == "User registered successfully.")
                 {
+
                     // return RedirectToAction(ViewConstants.INDEX, ViewConstants.Registration, new { area = "" });
                     return Redirect($"/{tenantName}/Registration/INDEX");
                 }
