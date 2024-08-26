@@ -1,4 +1,5 @@
 ﻿using LogicalPantry.DTOs.UserDtos;
+using LogicalPantry.Services.InformationService;
 using LogicalPantry.Services.RegistrationService;
 using LogicalPantry.Services.UserServices;
 using Microsoft.AspNetCore.Mvc;
@@ -10,16 +11,14 @@ namespace LogicalPantry.Web.Controllers
     [Route("Registration")]
     public class RegistrationController : BaseController
     {
+        IInformationService _informationService;
         IRegistrationService _registrationService;
         private readonly ILogger _logger;
-
-       // private IHttpContext _httpContext;
-        public RegistrationController(IRegistrationService registrationService, ILogger<RegistrationController> logger)
+        public RegistrationController(IRegistrationService registrationService, IInformationService informationService, ILogger<RegistrationController> logger)
         {
                 _registrationService = registrationService;
                 _logger = logger;
-              // _httpContext = context;
-
+            _informationService = informationService;
         }
 
         [HttpGet("Index")]
@@ -42,8 +41,9 @@ namespace LogicalPantry.Web.Controllers
 
             var response= await _registrationService.RegisterUser(user);
 
-         
-            if(response != null && response.Success)
+           
+
+            if (response != null && response.Success)
             {
                 @TempData["MessageClass"] = "alert-success";
                 @TempData["SuccessMessageUser"] = "Registartion Successfull";

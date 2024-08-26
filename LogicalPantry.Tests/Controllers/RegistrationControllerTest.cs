@@ -61,7 +61,7 @@ namespace LogicalPantry.Tests
                         }
                     });
                 });
-
+           
             _client = _factory.CreateClient();
         }
 

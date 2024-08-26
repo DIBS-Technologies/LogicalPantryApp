@@ -51,17 +51,12 @@ namespace LogicalPantry.Web.Controllers
         public async Task<IActionResult> ManageUsers()
         {
             _logger.LogInformation("GetAllusers object call started.");
-            var tenantIdString = HttpContext.Session.GetString("TenantId");
-
-            if (!int.TryParse(tenantIdString, out int tenantId) || tenantId == 0)
-            {
-                return BadRequest("Invalid tenant ID");
-            }
+            var tenantId = TenantId;
             var PageName = HttpContext.Session.GetString("PageName");
 
             ViewBag.TenantId = tenantId;
             ViewBag.PageName = PageName;
-            var response = await _userService.GetAllRegisteredUsersAsync();
+            var response = await _userService.GetAllRegisteredUsersAsync((int)tenantId);
             _logger.LogInformation("GetAllusers object call ended.");
 
             return View(response.Data);
@@ -154,14 +149,14 @@ namespace LogicalPantry.Web.Controllers
         //}
 
         [HttpPost("UpdateUser")] //ThisExpressionSyntax is ForbidResult allow method
-        public async Task<IActionResult> UpdateUser(int userId, bool isAllow)
+        public async Task<IActionResult> UpdateUser([FromBody] UserDto user)
         {
-            if (userId <= 0)
+            if (user != null)
             {
                 return BadRequest("Invalid user ID.");
             }
 
-            var userDto = new UserDto { Id = userId, IsAllow = isAllow };
+            var userDto = new UserDto { Id = user.Id, IsAllow = user.IsAllow };
 
             var response = await _userService.UpdateUserAsync(userDto);
 
@@ -169,12 +164,16 @@ namespace LogicalPantry.Web.Controllers
             {
                 TempData["MessageClass"] = "alert-success";
                 TempData["SuccessMessageUser"] = "User Saved Successfully";
+                // Log the ending of the Index method execution.
+                _logger.LogInformation("UpdateUser post method call ended");
                 return Ok(new { success = true });
             }
             else
             {
                 TempData["MessageClass"] = "alert-danger";
                 TempData["SuccessMessageUser"] = "Internal server error.";
+                // Log the ending of the Index method execution.
+                _logger.LogInformation("UpdateUser post method call ended");
                 return StatusCode(500, "Internal server error.");
             }
         }

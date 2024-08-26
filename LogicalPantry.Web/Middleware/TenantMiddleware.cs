@@ -270,22 +270,16 @@ public class TenantMiddleware
                     return;
                 }
                 var informationService = context.RequestServices.GetRequiredService<IInformationService>();
-                var tenant = await informationService.GetTenantIdByEmail(userEmail);
+                var tenant = await informationService.GetTenantIdByEmail(userEmail, tenantNameFromUrl);
+
                 // Check if tenant and user email are cached
                 if (!_cache.TryGetValue(tenantNameFromUrl, out (string TenantName, string UserEmail) cachedValues))
                 {
-                   
-                    //var tenant = await informationService.GetTenantIdByEmail(userEmail);
+                    
 
 
                     if (tenant == null || tenant.Data == null || tenant.Data?.TenantName == null)
-                    {
-                        //var userService = context.RequestServices.GetRequiredService<IUserService>();
-                        //var tenant1 = await userService.GetUserByEmailAsync(userEmail);
-
-                        //if (tenant1.Data.Id == null)
-                        //{                            
-                        //}
+                    {                      
                         context.Response.StatusCode = StatusCodes.Status404NotFound;
                         await context.Response.WriteAsync("Tenant not found");
                         return;
@@ -305,10 +299,9 @@ public class TenantMiddleware
                     return;
                 }
 
-                context.Items["TenantId"] = tenant.Data?.Id;
-
                 context.Items["TenantName"] = cachedValues.TenantName;
                 context.Items["UserEmail"] = cachedValues.UserEmail;
+                context.Items["TenantId"] = tenant.Data.Id;
                 var newPath = "/" + string.Join("/", segments.Skip(1));
                 context.Request.Path = newPath;
             }
@@ -317,7 +310,6 @@ public class TenantMiddleware
 
                 var cachedTenantName = tenantNameFromUrl;
                 context.Items["TenantName"] = cachedTenantName;
-                
                 var informationService = context.RequestServices.GetRequiredService<IInformationService>();
                 var tenant = await informationService.GetTenantByNameAsync(cachedTenantName);
                 if (tenant.Success == false)

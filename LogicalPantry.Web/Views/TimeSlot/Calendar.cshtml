@@ -186,6 +186,21 @@
             {
                 <button type="button" class="btn btn-success" id="addEventBtn">Add Event</button>
             } *@
+    <div class="container-fluid">
+        <div class="calendar-header">
+            <h3>TimeSlot </h3>
+            <div class="d-flex align-items-center">
+               @*  <div class="dropdown d-inline">
+                    <select id="eventSelect" class="form-control" onchange="handleSelectChange()">
+                        <option value="" selected disabled>Type</option>
+                        <option value="1" data-title="Food Pickup">Food Pickup</option>
+                        <option value="2" data-title="Volunteer">Volunteer</option>
+                        <option value="3" data-title="Appointment">Appointment</option>
+                    </select>
+                </div> *@
+                <button type="button" class="btn btn-success" id="addEventBtn">Add Event</button>
+            </div>
+        </div>
 
 
             <div class="row">
@@ -247,65 +262,65 @@
                     var buttonHtml = '<button type="button" class="btn btn-success" id="addEventBtn">Add Event</button>';
                     $('.nav-fixed .container').append(buttonHtml);
 
-                    $('#calendar').Calendar({
-                        locale: 'en',
-                        weekday: {
-                            timeline: {
-                                intervalMinutes: 30,
-                                fromHour: 7, // Adjusted from 9 to 7
-                                toHour: 23
-                            }
-                        },
-                        events: events,
-                        view: 'week',
-                        defaultView: {
-                            largeScreen: 'week',
-                            smallScreen: 'day',
-                            smallScreenThreshold: 1000
-                        },
-                        weekday: {
-                            timeline: {
-                                fromHour: 7,
-                                toHour: 23,
-                                intervalMinutes: 30,
-                                format: 'HH:mm',
-                                heightPx: 50,
-                                autoResize: true
-                            },
-                            dayline: {
-                                weekdays: [0, 1, 2, 3, 4, 5, 6],
-                                format: 'MM/DD',
-                                heightPx: 31,
-                                month: {
-                                    format: 'MMMM YYYY',
-                                    heightPx: 30,
-                                    weekFormat: 'w'
-                                }
-                            }
-                        },
+            $('#calendar').Calendar({
+                locale: 'en',
+                weekday: {
+                    timeline: {
+                        intervalMinutes: 30,
+                        fromHour: 7, // Adjusted from 9 to 7
+                        toHour: 23
+                    }
+                },
+                events: events,
+                view: 'week',                
+                defaultView: {
+                    largeScreen: 'week',
+                    smallScreen: 'day',
+                    smallScreenThreshold: 1000
+                },
+                weekday: {
+                    timeline: {
+                        fromHour: 7,
+                        toHour: 23,
+                        intervalMinutes: 30,
+                        format: 'HH:mm',
+                        heightPx: 50,
+                        autoResize: true
+                    },
+                    dayline: {
+                        weekdays: [0, 1, 2, 3, 4, 5, 6],
+                        format: 'MM/DD',
+                        heightPx: 31,
                         month: {
                             format: 'MMMM YYYY',
-                            heightPx: 31,
-                            weekline: {
-                                format: 'w',
-                                heightPx: 80
-                            },
-                            dayheader: {
-                                weekdays: [0, 1, 2, 3, 4, 5, 6],
-                                format: 'dddd',
-                                heightPx: 30
-                            },
-                            day: {
-                                format: 'MM/DD'
-                            }
-                        },
-                        unixTimestamp: moment().format('X'),
-                        event: {
-                            hover: {
-                                delay: 5000000
-                            },
-
+                            heightPx: 30,
+                            weekFormat: 'w'
                         }
+                    }
+                },
+                month: {
+                    format: 'MMMM YYYY',
+                    heightPx: 31,
+                    weekline: {
+                        format: 'w',
+                        heightPx: 80
+                    },
+                    dayheader: {
+                        weekdays: [0, 1, 2, 3, 4, 5, 6],
+                        format: 'dddd',
+                        heightPx: 30
+                    },
+                    day: {
+                        format: 'MM/DD'
+                    }
+                },
+                unixTimestamp: moment().format('X'),
+                event: {
+                    hover: {
+                        delay: 5000000
+                    },
+                
+                }
 
                     }).init();
 
@@ -313,30 +328,30 @@
                         $('#eventModal').modal('show');
                     });
 
-                    $('#saveEventBtn').on('click', function () {
-                        debugger;
-                        var eventData = {
-                            timeSlotName: $('#eventTitle').val(),
-                            startTime: $('#eventStart').val(),
-                            endTime: $('#eventEnd').val()
-                        };
+            $('#saveEventBtn').on('click', function () {
+                debugger;
+                var eventData = {
+                    timeSlotName: $('#eventTitle').val(),
+                    startTime: $('#eventStart').val(),
+                    endTime: $('#eventEnd').val()
+                };
 
-                        $.ajax({
-                            url: 'AddEvent',
-                            type: 'POST',
-                            contentType: 'application/json',
-                            data: JSON.stringify(eventData),
-                            success: function (response) {
-                                window.location.reload();
-                                $('#eventModal').modal('hide');
-
-                            },
-                            error: function (xhr, status, error) {
-                                //window.location.reload();
-                                //alert('Error adding event: ' + error);
-                            }
-                        });
-                    });
+                $.ajax({
+                    url: 'AddEvent',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(eventData),
+                    success: function (response) {        
+                        window.location.reload();                        
+                        $('#eventModal').modal('hide');
+                        
+                    },
+                    error: function (xhr, status, error) {
+                        window.location.reload();
+                        //alert('Error adding event: ' + error);
+                    }
+                });
+            });
 
                     $('#calendar').on('Calendar.event-click', function (event, instance, elem, evt) {
                         ;

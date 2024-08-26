@@ -205,64 +205,64 @@
                 var events = @Html.Raw(Json.Serialize(Model.Events));
 
 
-                $('#calendar').Calendar({
-                    locale: 'en',
-                    weekday: {
-                        timeline: {
-                            intervalMinutes: 30,
-                            fromHour: 7,
-                            toHour: 23
-                        }
+            $('#calendar').Calendar({
+                locale: 'en',
+                weekday: {
+                    timeline: {
+                        intervalMinutes: 30,
+                        fromHour: 7,
+                        toHour: 23
+                    }
+                },
+                events: events,
+                view: 'week',
+                defaultView: {
+                    largeScreen: 'week',
+                    smallScreen: 'day',
+                    smallScreenThreshold: 1000
+                },
+                weekday: {
+                    timeline: {
+                        fromHour: 7,
+                        toHour: 23,
+                        intervalMinutes: 30,
+                        format: 'HH:mm',
+                        heightPx: 50,
+                        autoResize: true
                     },
-                    events: events,
-                    view: 'week',
-                    defaultView: {
-                        largeScreen: 'week',
-                        smallScreen: 'day',
-                        smallScreenThreshold: 1000
-                    },
-                    weekday: {
-                        timeline: {
-                            fromHour: 7,
-                            toHour: 23,
-                            intervalMinutes: 30,
-                            format: 'HH:mm',
-                            heightPx: 50,
-                            autoResize: true
-                        },
-                        dayline: {
-                            weekdays: [0, 1, 2, 3, 4, 5, 6],
-                            format: 'MM/DD',
-                            heightPx: 31,
-                            month: {
-                                format: 'MMMM YYYY',
-                                heightPx: 30,
-                                weekFormat: 'w'
-                            }
-                        }
-                    },
-                    month: {
-                        format: 'MMMM YYYY',
+                    dayline: {
+                        weekdays: [0, 1, 2, 3, 4, 5, 6],
+                        format: 'MM/DD',
                         heightPx: 31,
-                        weekline: {
-                            format: 'w',
-                            heightPx: 80
-                        },
-                        dayheader: {
-                            weekdays: [0, 1, 2, 3, 4, 5, 6],
-                            format: 'dddd',
-                            heightPx: 30
-                        },
-                        day: {
-                            format: 'MM/DD'
-                        }
-                    },
-                    unixTimestamp: moment().format('X'),
-                    event: {
-                        hover: {
-                            delay: 500000
+                        month: {
+                            format: 'MMMM YYYY',
+                            heightPx: 30,
+                            weekFormat: 'w'
                         }
                     }
+                },
+                month: {
+                    format: 'MMMM YYYY',
+                    heightPx: 31,
+                    weekline: {
+                        format: 'w',
+                        heightPx: 80
+                    },
+                    dayheader: {
+                        weekdays: [0, 1, 2, 3, 4, 5, 6],
+                        format: 'dddd',
+                        heightPx: 30
+                    },
+                    day: {
+                        format: 'MM/DD'
+                    }
+                },
+                unixTimestamp: moment().format('X'),
+                event: {
+                    hover: {
+                        delay: 500000
+                    }
+                }
 
 
                 }).init();

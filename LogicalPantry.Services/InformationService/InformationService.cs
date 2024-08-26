@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using LogicalPantry.DTOs;
 using LogicalPantry.DTOs.TenantDtos;
+using LogicalPantry.DTOs.UserDtos;
 using LogicalPantry.Models.Models;
+using LogicalPantry.Models.Models.Enums;
 using LogicalPantry.Services.UserServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -352,7 +354,7 @@ namespace LogicalPantry.Services.InformationService
 
 
         
-        public async Task<ServiceResponse<TenantDto>> GetTenantIdByEmail(string userEmail/*, string tenantName*/)
+        public async Task<ServiceResponse<TenantDto>> GetTenantIdByEmail(string userEmail, string tenantName)
         {
             var response = new ServiceResponse<TenantDto>();
 
@@ -372,30 +374,50 @@ namespace LogicalPantry.Services.InformationService
             else
             {
                 var user = await dataContext.Users.FirstOrDefaultAsync(u => u.Email == userEmail);
-                tenant = await dataContext.Tenants.FirstOrDefaultAsync(t => t.Id == user.TenantId);
-
-                if (tenant.Id == user.TenantId)
+                if (user == null)
                 {
-                    response.Data = new TenantDto
+                    tenant = await dataContext.Tenants.FirstOrDefaultAsync(t => t.TenantName == tenantName);
+                    if (tenant != null)
                     {
-                        Id = tenant.Id,
-                        TenantName = tenant.TenantName,
-                        // Add other properties as needed
-                    };
-                    response.Success = true;
-                    response.Message = "Tenant found";
-                }
-                //else if (tenant.Id != user.TenantId)
-                //{
-                //    response.Success = false;
-                //    response.Message = "User is alredy added for another tenant";
-                //}
-                else
-                {
+                        response.Data = new TenantDto
+                        {
+                            Id = tenant.Id,
+                            TenantName = tenant.TenantName,
+                            // Add other properties as needed
+                        };
+                        response.Success = true;
+                        return response;
+                    }
                     response.Success = false;
                     response.Message = "Tenant not found";
                 }
-               
+                else
+                {
+                    tenant = await dataContext.Tenants.FirstOrDefaultAsync(t => t.Id == user.TenantId);
+
+                    if (tenant.Id == user.TenantId)
+                    {
+                        response.Data = new TenantDto
+                        {
+                            Id = tenant.Id,
+                            TenantName = tenant.TenantName,
+                            // Add other properties as needed
+                        };
+                        response.Success = true;
+                        response.Message = "Tenant found";
+                    }
+                    //else if (tenant.Id != user.TenantId)
+                    //{
+                    //    response.Success = false;
+                    //    response.Message = "User is alredy added for another tenant";
+                    //}
+                    else
+                    {
+                        response.Success = false;
+                        response.Message = "Tenant not found";
+                    }
+
+                }
             }
 
             return response;
