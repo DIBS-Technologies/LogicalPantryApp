@@ -160,12 +160,16 @@ namespace LogicalPantry.Web.Controllers
             {
                 TempData["MessageClass"] = "alert-success";
                 TempData["SuccessMessageUser"] = "User Saved Successfully";
+                // Log the ending of the Index method execution.
+                _logger.LogInformation("UpdateUser post method call ended");
                 return Ok(new { success = true });
             }
             else
             {
                 TempData["MessageClass"] = "alert-danger";
                 TempData["SuccessMessageUser"] = "Internal server error.";
+                // Log the ending of the Index method execution.
+                _logger.LogInformation("UpdateUser post method call ended");
                 return StatusCode(500, "Internal server error.");
             }
         }
