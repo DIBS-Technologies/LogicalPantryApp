@@ -152,6 +152,10 @@
             width: 100%;
             max-width: 1200px;
         }
+
+        .container-fluid {
+            margin-left: 58px;
+        }
     </style>
 </head>
 @* <header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4">
@@ -172,12 +176,17 @@
 
 <body>
     <div class="container mt-4">
-        <div class="container-flui">
+        <div class="container-fluid">
             <div class="calendar-header">
                 <div class="d-flex align-items-center justify-content-end">
                     <button type="button" class="btn btn-success" id="addEventBtn">Add Event</button>
                 </div>
             </div>
+           @*  @section HeaderButton
+            {
+                <button type="button" class="btn btn-success" id="addEventBtn">Add Event</button>
+            } *@
+
 
             <div class="row">
                 <div class="col">
@@ -235,6 +244,8 @@
                 $(document).ready(function () {
 
                     var events = @Html.Raw(Json.Serialize(Model.Events));
+                    var buttonHtml = '<button type="button" class="btn btn-success" id="addEventBtn">Add Event</button>';
+                    $('.nav-fixed .container').append(buttonHtml);
 
                     $('#calendar').Calendar({
                         locale: 'en',

@@ -1,19 +1,27 @@
-﻿@using System.Security.Claims;
+﻿@using System.Security.Claims
+
 @{
+    // Retrieve necessary data from ViewBag and User Claims
     var tenantName = ViewBag.TenantName as string;
     var tenantId = ViewBag.TenantId;
     var pagename = ViewBag.PageName as string;
     var isUser = User.IsInRole("User");
+
+    // Check user roles and authentication status
     var userClaim = User.Claims
-                .Where(c => c.Type == ClaimTypes.Role)
-                .Select(c => c.Value).ToList();
+                        .Where(c => c.Type == ClaimTypes.Role)
+                        .Select(c => c.Value).ToList();
     bool isAdmin = userClaim.Contains("Admin");
 
     var isAuthenticated = User.Identity.IsAuthenticated;
     var Logo = ViewBag.Logo as string;
     var userEmail = User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value;
     var userName = User.FindFirstValue(ClaimTypes.Name) ?? User.Claims.FirstOrDefault(c => c.Type == "name")?.Value;
+
+    // Determine the appropriate padding based on authentication and role
+    string paddingLeft = !isAuthenticated && isUser ? "1rem" : "15rem";
 }
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -26,7 +34,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-    <style>
+    @* <style>
         body {
             margin: 0;
             font-family: Arial, sans-serif;
@@ -193,10 +201,209 @@
             max-width: 90%;
             margin: 10px auto;
         }
-    </style>
+    </style> *@
+
+    <style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    .container {
+        max-width: 950px;
+    }
+
+    .topnav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 1rem;
+        background-color: #fff;
+        height: 60px;
+        width: 100%;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        box-sizing: border-box;
+    }
+
+    .topnav .navbar-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .topnav .nav-link {
+        font-weight: normal;
+        transition: color 0.3s, font-weight 0.3s;
+        text-decoration: none;
+    }
+
+    .topnav .nav-link:hover {
+        color: #0061f2;
+        font-weight: bold;
+    }
+
+    .page-name {
+        flex: 1;
+        text-align: center;
+        font-weight: bold;
+        color: #1f2d41;
+        font-size: 1.25rem;
+    }
+
+    #layoutSidenav {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+
+    #layoutSidenav_nav {
+        display: @(isAdmin ? "block" : "none");
+        flex-shrink: 0;
+    }
+
+    #layoutSidenav_content {
+        flex: 1;
+        margin-left: @(isAdmin ? "250px" : "20px");
+        margin-right: 20px;
+        transition: margin 0.15s ease-in-out;
+        padding: @(isAdmin ? "10px" : "0");
+        overflow: auto;
+    }
+
+    .sidenav {
+        background-color: #fff;
+        color: #1f2d41;
+        box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidenav-menu {
+        padding: 1rem;
+    }
+
+    .sidenav-menu .nav-link {
+        display: block;
+        padding: 0.5rem 1rem;
+        color: #1f2d41;
+        text-decoration: none;
+    }
+
+    .sidenav-menu .nav-link:hover {
+        background-color: #f1f1f1;
+        border-radius: 0.2rem;
+    }
+
+    footer {
+        display: flex;
+        justify-content: center;
+        padding: 1rem;
+        background-color: #eff3f9;
+        color: #6c757d;
+        width: 100%;
+        position: relative;
+        bottom: 0;
+        text-align: center;
+        flex-shrink: 0;
+    }
+
+    footer p {
+        margin: 0;
+        color: black;
+    }
+
+    /* Hide scrollbar */
+    body::-webkit-scrollbar {
+        display: none;
+    }
+
+    .container-fluid {
+        max-width: 90%;
+        margin: 10px auto;
+    }
+
+    /* Media Queries */
+    @@media (max-width: 768px) {
+        .topnav {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .topnav .navbar-nav {
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .sidenav {
+            position: absolute;
+            top: 60px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 60px);
+            overflow-y: auto;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #layoutSidenav_content {
+            margin-left: 0;
+        }
+    }
+
+    @@media (min-width: 769px) {
+        .sidenav {
+            width: 250px;
+            position: fixed;
+            top: 60px;
+            bottom: 0;
+        }
+
+        #layoutSidenav_content {
+            margin-left: 250px;
+        }
+    }
+
+    .page-header > .container-fluid:first-of-type {
+        max-height: 40vh;
+        display: flex;
+        justify-content: center;
+    }
+
+    .page-header-compact .page-header-content .page-header-title {
+        font-size: 1.5rem;
+    }
+
+    .nav-fixed #layoutSidenav #layoutSidenav_nav .sidenav {
+        padding-top: 0rem;
+    }
+
+    .container-fluid {
+        max-width: 90%;
+        margin: 10px auto;
+    }
+
+        .container-xl {
+            display:flex;
+            justify-content: center;
+        }
+
+        .sidenav-light .sidenav-menu .nav-link:hover {
+            color: black;
+            background-color: #ffffff90;
+            border-radius: 0.2rem;
+            margin: 0rem 0.5rem 0rem 0.75rem;
+            padding-left: 0.5rem !important;
+            color: brown;
+        }
+
+        .container-fluid{
+            margin-left: 60px;
+        }
+</style>
+
 </head>
 <body class="nav-fixed">
-    <header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4">
+    <header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4" id="layoutHeader">
         <div class="container-fluid mt-5 p-1">
             <div class="page-header-content">
                 <div class="row align-items-center justify-content-between pt-3">
@@ -246,7 +453,7 @@
             }
             else
             {
-                <a class="nav-link" href="/@tenantName/Auth/Login">Login</a>
+                <a class="nav-link" href="/@tenantName/Auth/loginView">Login</a>
             }
         </div>
     </nav>
@@ -259,22 +466,20 @@
                     <div class="sidenav-menu">
                         <div class="nav accordion" id="accordionSidenav">
                             <div class="sidenav-menu-heading">Admin</div>
-                            <a class="nav-link" href="/@tenantName/UserManagement/Index">
+                            <a class="nav-link" href="/@tenantName/TimeSlot/Calendar">
+                                <div class="nav-link-icon"><i data-feather="calendar"></i></div>
+                                Pickup Slots
+                            </a>
+                            <a class="nav-link" href="/@tenantName/User/ManageUsers">
                                 <div class="nav-link-icon"><i data-feather="users"></i></div>
                                 User Management
                             </a>
-                            <a class="nav-link" href="/@tenantName/Payment/Payment">
-                                <div class="nav-link-icon"><i data-feather="dollar-sign"></i></div>
-                                Payments
-                            </a>
-                            <a class="nav-link" href="/@tenantName/TimeSlot/AdminCalendar">
-                                <div class="nav-link-icon"><i data-feather="calendar"></i></div>
-                                Calendar
-                            </a>
-                            <a class="nav-link" href="/@tenantName/Admin/Orders">
+                            <a class="nav-link" href="/@tenantName/Information/AddTenant">
                                 <div class="nav-link-icon"><i data-feather="file"></i></div>
-                                Orders
+                                Information
                             </a>
+                            
+                           
                         </div>
                     </div>
                 </nav>
@@ -301,6 +506,95 @@
     <script>
         feather.replace();
     </script>
+
+    <script>
+    $(document).ready(function () {
+    var pageHeaderTitle = '';
+
+    // Get the current path
+    var path = window.location.pathname;
+
+    console.log("pathe", path);
+    debugger
+    // Determine the page header title based on the path
+    if (path.includes('Calendar')) {
+    pageHeaderTitle = 'Time-Slot';
+    } else if (path.includes('AddTenant')) {
+    pageHeaderTitle = 'Information';
+    } else if (path.includes('ManageUsers')) {
+    pageHeaderTitle = 'User Management';
+    } else if (path.includes('Registration')) {
+    pageHeaderTitle = 'User Registration';
+    } else if (path.includes('TimeSlotSignUp')) {
+    pageHeaderTitle = 'TimeSlotSignUp';
+    } else {
+    pageHeaderTitle = 'Default Title'; // Fallback title
+    }
+
+    // Set the page header title
+    $('.page-header-title').text(pageHeaderTitle);
+
+
+            var userEmail = '@User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value';
+
+            async function fetchImageUrl(tenantId) {
+                return new Promise((resolve, reject) => {
+                    $.ajax({
+                        url: `/@tenantName/Information/Get`,
+                        method: "GET",
+                        data: { tenantid: tenantId },
+                        success: function (response) {
+                            const imageUrl = response;
+
+                            if (imageUrl) {
+                                const tenantDiv = $('.tenantImage');
+
+                                if (tenantDiv.length > 0) {
+                                    tenantDiv.find('#logoImage').remove();
+
+                                    const img = $('<img>', {
+                                        id: 'logoImage',
+                                        src: imageUrl,
+                                        style: 'width: 95px; padding-left: 10px; opacity: 100%;'
+                                    });
+
+                                    tenantDiv.append(img);
+
+                                    resolve(imageUrl);
+                                } else {
+                                    console.error("No element found with class 'tenantImage'");
+                                    reject(new Error("No element found with class 'tenantImage'"));
+                                }
+                            } else {
+                                console.error("ImageUrl is missing in the response");
+                                reject(new Error("ImageUrl is missing in the response"));
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Cannot find Image src", status, error);
+                            reject(new Error(`Cannot find Image src: ${status} ${error}`));
+                        }
+                    });
+                });
+            }
+
+            async function updateImage(tenantId) {
+                try {
+                    await fetchImageUrl(tenantId);
+                } catch (error) {
+                    console.error("Failed to update image", error);
+                }
+            }
+
+            updateImage(@tenantId);
+
+    });
+
+    </script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+   
 
     @RenderSection("Scripts", required: false)
 </body>

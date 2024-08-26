@@ -299,7 +299,12 @@
                 $("#pageName").text(handlerValue ? handlerValue.replace('.html', ' ') : ' ');
 
                 // AJAX call to update the sidebar dynamically based on tenant
-                // Note: Ensure the sidebar is handled on the server-side based on tenantId if needed
+                var isAuthenticated = '@isAuthenticated'.toLowerCase() === 'true';
+
+                // Hide the header if not authenticated
+                if (!isAuthenticated) {
+                    $('header').hide();
+                }
             });
         </script>
     }

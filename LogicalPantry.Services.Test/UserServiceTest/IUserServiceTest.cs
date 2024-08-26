@@ -29,5 +29,10 @@ namespace LogicalPantry.Services.Test.UserServiceTest
         /// <param name="user"></param>
         /// <returns></returns>
         Task CheckUserDeleteResponse(UserDto user);
+
+
+        Task<UserDto> GetUserByIdAsync(int userId);
+        Task<bool> AddUserAsync(UserDto userDto);
+        Task<bool> DeleteUserAsync(int userId);
     }
 }

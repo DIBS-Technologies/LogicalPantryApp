@@ -9,7 +9,9 @@
 
 <head>
     <link href="~/css/site.css" rel="stylesheet" />
+    <link href="~/css/Style.css" rel="stylesheet" />
     <link href="~/css/StyleSheet.css" rel="stylesheet" />
+   
     <style>
         /* Flexbox to align the Save button */
         #saveButtonDiv {
@@ -209,6 +211,10 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script>
         $(document).ready(function () {
+
+            $(document).ready(function () {
+                $('header.page-header').remove(); // Removes the header with class 'page-header'
+            });
             // Function to get query parameters from the URL
             function getQueryParameter(name) {
                 const urlParams = new URLSearchParams(window.location.search);

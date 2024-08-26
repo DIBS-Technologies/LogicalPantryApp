@@ -20,6 +20,7 @@ using LogicalPantry.DTOs.TimeSlotDtos;
 using LogicalPantry.Models.Models;
 using Newtonsoft.Json;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using LogicalPantry.Services.RegistrationService;
 
 namespace LogicalPantry.Web.Controllers
 {
@@ -27,11 +28,14 @@ namespace LogicalPantry.Web.Controllers
     public class UserController : BaseController
     {
         IUserService _userService;
+        IRegistrationService _registrationService;
+
         private readonly ILogger _logger;
-        public UserController(IUserService userService, ILogger<UserController> logger)
+        public UserController(IUserService userService, ILogger<UserController> logger, IRegistrationService _registrationService)
         {
             _userService = userService;
             _logger = logger;
+            _registrationService = _registrationService;
         }
 
         public IActionResult Index()
@@ -265,6 +269,50 @@ namespace LogicalPantry.Web.Controllers
             {
                 return View("Index");
             }
+        }
+
+        [HttpGet("Register")]
+        public async Task<IActionResult> Register()
+        {
+            return View();
+        }
+
+        [HttpPost("Register")]
+        public async Task<IActionResult> Register(UserDto user)
+        {
+            _logger.LogInformation($"Register method call started");
+
+            var tenantId = HttpContext.Items["TenantId"]?.ToString();
+
+            user.TenantId = int.Parse(tenantId);
+
+            var response = await _registrationService.RegisterUser(user);
+
+
+            if (response != null && response.Success)
+            {
+                @TempData["MessageClass"] = "alert-success";
+                @TempData["SuccessMessageUser"] = "Registartion Successfull";
+            }
+            else
+            {
+                @TempData["MessageClass"] = "alert-danger";
+                @TempData["SuccessMessageUser"] = "Failed to Save User server error.";
+                return View("Index");
+
+            }
+            _logger.LogInformation($"Register method call ended");
+            //return RedirectToAction("UserCalendar", "TimeSlot", new { area = "" });
+            return Redirect($"/{TenantName}/TimeSlot/UserCalendar");
+        }
+        [HttpGet]
+        public object ValidateEmail(string emailId)
+        {
+            _logger.LogInformation($"ValidateEmail method call started");
+            var response = _registrationService.CheckEmailIsExist(emailId);
+            _logger.LogInformation($"ValidateEmail method call ended");
+
+            return response;
         }
 
 

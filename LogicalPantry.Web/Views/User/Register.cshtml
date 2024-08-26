@@ -83,14 +83,14 @@
             margin-bottom: 1rem;
         }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-        }
+            .form-group label {
+                display: block;
+                margin-bottom: 0.5rem;
+            }
 
-        .form-group .form-control {
-            width: 100%;
-        }
+            .form-group .form-control {
+                width: 100%;
+            }
 
         .saveButton {
             background-color: #1A2A52;
@@ -127,15 +127,13 @@
 </head>
 <body>
     <!-- Page Title Container -->
-    
-
     <!-- Registration Container -->
     <div class="registration-container">
         <div class="card mb-4">
             <div class="card-body">
-                <div class="card-image">
+               @*  <div class="card-image">
                     <!-- Image or icon -->
-                </div>
+                </div> *@
                 <div class="form-container">
                     <div class="card-header">
                         Registration
@@ -154,7 +152,7 @@
                         </div>
                     }
 
-                    <form method="post" id="register" action="/@tenantName/Registration/Register">
+                    <form method="post" id="register" action="/@tenantName/User/Register">
                         <div class="form-group">
                             <label for="FullName">Name<span class="mandatory">*</span></label>
                             <input name="FullName" class="form-control" id="FullName" placeholder="Enter Name" />
@@ -170,7 +168,7 @@
                                 var userEmails = User.FindFirstValue(ClaimTypes.Email);
                             }
                             <label for="Email">Email<span class="mandatory">*</span></label>
-                            <input type="email" name="Email" value="@userEmails" class="form-control" id="Email" placeholder="Enter Email" disabled/>
+                            <input type="email" name="Email" value="@userEmails" class="form-control" id="Email" placeholder="Enter Email" disabled />
                             <input type="hidden" name="Email" value="@userEmails" />
                             <span class="text-danger errorfont" id="Email-error"></span>
                         </div>
@@ -195,6 +193,8 @@
             $('#FullName, #Address, #Email, #PhoneNumber').on('blur change keyup', function () {
                 validateField(this);
             });
+
+            $('header.page-header').remove();
         });
 
         function validateField(field) {
