@@ -79,6 +79,8 @@ namespace LogicalPantry.Services.RegistrationService
                 return response;
             }
 
+       
+
             try
             {
                 // Check if the email already exists in the database

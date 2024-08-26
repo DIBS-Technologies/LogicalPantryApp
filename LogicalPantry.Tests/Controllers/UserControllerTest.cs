@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 using LogicalPantry.DTOs.UserDtos;
-using LogicalPantry.Services.Test.RegistrationService;
+using LogicalPantry.Services.Test.UserService;
 using LogicalPantry.Web;
 using Newtonsoft.Json;
 using System.Text;
@@ -17,17 +17,18 @@ using LogicalPantry.DTOs.TimeSlotSignupDtos;
 using System.Net;
 using LogicalPantry.Services.Test.UserServiceTest;
 
-namespace LogicalPantry.Tests.Controllers
+namespace LogicalPantry.Tests
 {
+    [TestClass]
     public class UserControllerTest
     {
-
         private WebApplicationFactory<Startup> _factory;
         private HttpClient _client;
         private ApplicationDataContext _context;
         private IUserServiceTest _userServiceTest;
         private IConfiguration _configuration;
 
+        // This method is called before each test method is run.
         [TestInitialize]
         public void Setup()
         {
@@ -43,7 +44,7 @@ namespace LogicalPantry.Tests.Controllers
                 {
                     builder.ConfigureServices(services =>
                     {
-
+                        // Remove the existing DbContext registration (use an in-memory database for testing).
                         var descriptor = services.SingleOrDefault(
                             d => d.ServiceType == typeof(DbContextOptions<ApplicationDataContext>));
                         if (descriptor != null)
@@ -57,24 +58,26 @@ namespace LogicalPantry.Tests.Controllers
                         services.AddDbContext<ApplicationDataContext>(options =>
                             options.UseSqlServer(connectionString));
 
-
-                        services.AddTransient<IRegistrationTestService, RegistrationTestService>();
+                        // Register the test service.
+                        services.AddTransient<IUserServiceTest, UserServicesTest>();
 
                         var serviceProvider = services.BuildServiceProvider();
 
-
+                        // Create a scope to get the DbContext and the test service.
                         using (var scope = serviceProvider.CreateScope())
                         {
                             var scopedServices = scope.ServiceProvider;
                             _context = scopedServices.GetRequiredService<ApplicationDataContext>();
                             _userServiceTest = scopedServices.GetRequiredService<IUserServiceTest>();
 
-
-                            _context.Database.EnsureCreated();
+                            // Ensure the in-memory database is created.
+                            var db = scopedServices.GetRequiredService<ApplicationDataContext>();
+                            db.Database.EnsureCreated();
                         }
                     });
                 });
 
+            // Create an HttpClient for sending requests to the API.
             _client = _factory.CreateClient();
         }
 
@@ -233,5 +236,65 @@ namespace LogicalPantry.Tests.Controllers
             Assert.AreEqual("User deleted Successfully", DeleteUser.Message);
         }
 
+            // Assert: Verify the response status code and that the users were updated.
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
+
+            // Check the database to ensure the users are updated.
+            foreach (var updatedUserDto in updatedUsers)
+            {
+                var user = await _userTestService.GetUserByIdAsync(updatedUserDto.Id);
+                Assert.IsNotNull(user);
+                // Ensure the updated user's data matches what was sent in the request.
+                Assert.AreEqual(updatedUserDto.FullName, user.FullName);
+                Assert.AreEqual(updatedUserDto.Email, user.Email);
+                Assert.AreEqual(updatedUserDto.PhoneNumber, user.PhoneNumber);
+            }
+        }
+
+        // Test method for adding a user.
+        [TestMethod]
+        public async Task AddUser_ShouldReturnSuccess_WhenAdditionIsValid()
+        {
+            //  Define a new user to add.
+            var newUser = new UserDto
+            {
+                FullName = "New User",
+                Email = "newuser@example.com",
+                PhoneNumber = "3333333333"
+            };
+
+            // Send a POST request to add the new user.
+            var response = await _client.PostAsJsonAsync("/User/AddUser", newUser);
+
+            // Verify the response status code is OK (200).
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
+
+            // Retrieve the added user from the database to confirm
+            var addedUser = await _userTestService.GetUserByEmailAsync(newUser.Email);
+            Assert.IsNotNull(addedUser);
+
+            // added data matches what was sent in the request.
+            Assert.AreEqual(newUser.FullName, addedUser.FullName);
+            Assert.AreEqual(newUser.Email, addedUser.Email);
+            Assert.AreEqual(newUser.PhoneNumber, addedUser.PhoneNumber);
+        }
+
+        // Test method for deleting a user.
+        [TestMethod]
+        public async Task DeleteUser_ShouldReturnSuccess_WhenDeletionIsValid()
+        {
+            //  Define a user to deleted.
+            var userId = 1;
+
+            // Send a DELETE request to remove the user.
+            var response = await _client.DeleteAsync($"/User/DeleteUser/{userId}");
+
+            //  Verify the response status code is OK (200).
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
+
+            // Confirm the user was removed from the database.
+            var deletedUser = await _userTestService.GetUserByIdAsync(userId);
+            Assert.IsNull(deletedUser);
+        }
     }
 }

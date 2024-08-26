@@ -59,7 +59,7 @@ namespace LogicalPantry.IntegrationTests
                     
                         var serviceProvider = services.BuildServiceProvider();
 
-                 
+                        // declare scope 
                         using (var scope = serviceProvider.CreateScope())
                         {
                             var scopedServices = scope.ServiceProvider;
@@ -72,7 +72,10 @@ namespace LogicalPantry.IntegrationTests
             _client.BaseAddress = new Uri("https://localhost:7041");
         }
 
-        
+        /// <summary>
+        ///  check if tenant  with given name exisist in database if found return true else return  false  status code will be ok 
+        /// </summary>
+        /// <returns></returns>
         [TestMethod]
         public async Task GetTenant_ShouldReturnOk_WhenTenantExists()
         {
@@ -81,15 +84,23 @@ namespace LogicalPantry.IntegrationTests
             var response = await _client.GetAsync($"/TenantB/Information/Get?tenantid={tenantId}");
             var responseContent = await response.Content.ReadAsStringAsync();
             Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
-            //var tenant = await response.Content.ReadFromJsonAsync<TenantDto>();
-            Assert.IsNotNull(response);
-            Assert.IsNotNull(responseContent);
+            var tenant = await response.Content.ReadFromJsonAsync<TenantDto>();
+            Assert.IsNotNull(tenant);
+
+            // check tenant id is mating  with user 
+            Assert.AreEqual(tenantId, tenant.Id);
             // logo 
         }
+
+        /// <summary>
+        ///   If Model is Valid then add tenant information
+        /// </summary>
+        /// <returns></returns>
 
         [TestMethod]
         public async Task AddTenant_ShouldAddTenant_WhenModelIsValid()
         {
+            // Data for testing info
             var tenantDto = new TenantDto
             {
                 TenantName = "Test Tenant",
@@ -101,18 +112,23 @@ namespace LogicalPantry.IntegrationTests
             };
 
             // All Data Should be check 
+            // generate form 
             var form = new MultipartFormDataContent();
 
             var response = await _client.PostAsync("TenantB/Information/AddTenant", form);
 
- 
+            // if tenant added return  ststus ocde  200  with ok 
             Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
 
-  
+            // checks  record is added in database  if data match then returns true else return false 
             var isAddSuccessful = await _informationService.GetTenantByNameAsync(tenantDto.TenantName);
             Assert.IsTrue(isAddSuccessful.Success, "Tenant should be added successfully.");
         }
 
+        /// <summary>
+        ///  When Model is invalid then  return 404 bad request 
+        /// </summary>
+        /// <returns></returns>
         [TestMethod]
         public async Task AddTenant_ShouldReturnBadRequest_WhenModelIsInvalid() //  
         {
@@ -130,51 +146,83 @@ namespace LogicalPantry.IntegrationTests
             Assert.AreEqual(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
         }
 
+        /// <summary>
+        /// Returns index page with data   of tenent based on tenant id 
+        /// </summary>
+        /// <returns></returns>
         [TestMethod]
         public async Task RedirectTenant_ShouldReturnView_WhenTenantExists()
         {
             int tenantId = 1; // Ensure this ID exists in your test database
 
+            //redirect to home page 
             var response = await _client.GetAsync($"/Information/RedirectTenant?id={tenantId}");
 
             Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
             // Optionally check the content or view rendering
         }
-
+        /// <summary>
+        ///    if user entered Tenant name is correct  then it should return page name  rendered in iframe
+        /// </summary>
+        /// <returns></returns>
         [TestMethod]
         public async Task Home_ShouldReturnView_WhenPageNameIsValid() // Negative 
         {
-            var pageName = "valid-page-name"; // Ensure this page name exists in your test environment
+            // test data 
+            var pageName = "Test Tenant"; // Ensure this page name exists in your test environment
 
+            // api ressponse 
             var response = await _client.GetAsync($"/Information/Home?PageName={pageName}");
 
             Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
             // Optionally check the content or view rendering
         }
 
+        /// <summary>
+        ///   checks tenant with page  name availble in database 
+        /// </summary>
+        /// <returns></returns>
         [TestMethod]
         public async Task GetTenantIdByName_ShouldReturnOk_WhenTenantExists()
         {
+            // test data 
             var tenantName = "Test Tenant";
 
+            // get service response
             var response = await _client.GetAsync($"/Information/GetTenant?tenantName={tenantName}");
 
+            // status 
             Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
+
+            // 
             var tenant = await response.Content.ReadFromJsonAsync<TenantDto>();
+            //
             Assert.IsNotNull(tenant);
+
+            // comapre test and actual data 
             Assert.AreEqual(tenantName, tenant.TenantName);
         }
 
+        /// <summary>
+        ///  Get Tenant Infomation by email
+        /// </summary>
+        /// <returns></returns>
         [TestMethod]
         public async Task GetTenantIdByEmail_ShouldReturnOk_WhenUserEmailIsValid()
         {
-            var userEmail = "admin@test.com"; // Ensure this email exists in your test environment
 
+            // mail for test 
+            var userEmail = "admin@test.com"; 
+
+            // Api Call
             var response = await _client.GetAsync($"/Information/GetTenantByUserEmail?userEmail={userEmail}");
 
+            // status respone
             Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
             var tenant = await response.Content.ReadFromJsonAsync<TenantDto>();
             Assert.IsNotNull(tenant);
+
+            // check  email with response
             Assert.AreEqual(userEmail, tenant.AdminEmail);
         }
     }

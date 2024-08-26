@@ -163,9 +163,18 @@ namespace LogicalPantry.Services.Test.UserServiceTest
             return response;
         }
 
-        public Task CheckUserPutResponse(UserDto user)
-        {
-            throw new NotImplementedException();
+            public async Task<bool> DeleteUserAsync(int userId)
+            {
+                var user = await dataContext.Users.FindAsync(userId);
+                if (user == null)
+                    return false;
+
+                dataContext.Users.Remove(user);
+                await dataContext.SaveChangesAsync();
+                return true;
+            }
         }
     }
-}
+
+
+

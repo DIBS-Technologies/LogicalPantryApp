@@ -81,7 +81,10 @@ namespace LogicalPantry.IntegrationTests
 
             _client = _factory.CreateClient();
         }
-
+        /// <summary>
+        ///   Add  Events
+        /// </summary>
+        /// <returns></returns>
         [TestMethod]
         public async Task AddEvent_ShouldReturnOk_WhenEventIsAddedSuccessfully()
         {

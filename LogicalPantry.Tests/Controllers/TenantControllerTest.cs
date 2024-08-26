@@ -116,6 +116,10 @@ namespace LogicalPantry.Tests
             Assert.IsTrue(isUpdateSuccessful, "Tenant should be updated successfully.");
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
         [TestMethod]
         public async Task AddTenant_ShouldReturnBadRequest_WhenModelIsInvalid()
         {
@@ -127,6 +131,7 @@ namespace LogicalPantry.Tests
                 PaypalId = null
             };
 
+            // service response 
             var response = await _client.PostAsJsonAsync("/Tenant/EditTenant", tenantDto);
 
             // Check the response
@@ -136,9 +141,10 @@ namespace LogicalPantry.Tests
         [TestMethod]
         public async Task EditTenant_ShouldReturnNotFound_WhenTenantDoesNotExist()
         {
+            /// test data 
             var tenantDto = new TenantDto
             {
-                Id = 999, // Assuming this ID does not exist
+                Id = 999, // ID does not exist
                 TenantName = "Nonexistent Tenant",
                 AdminEmail = "nonexistent@test.com",
                 PaypalId = "paypal999",
@@ -146,7 +152,7 @@ namespace LogicalPantry.Tests
                 Logo = "/Pages/nonexistent-logo.png",
                 Timezone = "UTC"
             };
-
+            // Api response 
             var response = await _client.PostAsJsonAsync("/Tenant/EditTenant", tenantDto);
 
             // Check the response

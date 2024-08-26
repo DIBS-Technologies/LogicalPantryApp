@@ -1,64 +1,52 @@
-﻿@using System.Security.Claims;
+﻿@using System.Security.Claims
+
 @{
+    // Retrieve necessary data from ViewBag and User Claims
     var tenantName = ViewBag.TenantName as string;
     var tenantId = ViewBag.TenantId;
     var pagename = ViewBag.PageName as string;
     var isUser = User.IsInRole("User");
-    var claimsIdentityRole = System.Security.Claims.ClaimsIdentity.DefaultRoleClaimType.Trim();
+
+    // Check user roles and authentication status
     var userClaim = User.Claims
-                .Where(c => c.Type == ClaimTypes.Role)
-                .Select(c => c.Value).ToList();
+                        .Where(c => c.Type == ClaimTypes.Role)
+                        .Select(c => c.Value).ToList();
     bool isAdmin = userClaim.Contains("Admin");
 
-    // tenantId = TempData["TenantId"];
-    // pagename = TempData["PageName"] as string;
     var isAuthenticated = User.Identity.IsAuthenticated;
     var Logo = ViewBag.Logo as string;
+    var userEmail = User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value;
+    var userName = User.FindFirstValue(ClaimTypes.Name) ?? User.Claims.FirstOrDefault(c => c.Type == "name")?.Value;
+
+    // Determine the appropriate padding based on authentication and role
+    string paddingLeft = !isAuthenticated && isUser ? "1rem" : "15rem";
 }
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - LogicalPantry.Web</title>
-    <link href="~/css/style.css" rel="stylesheet" />
+    <link href="~/css/StyleSheet.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-        }
 
+    @* <style>
         body {
-            display: flex;
-            flex-direction: column;
+            margin: 0;
             font-family: Arial, sans-serif;
-        }
-
-        #layoutSidenav {
             display: flex;
             flex-direction: column;
-            flex: 1; /* Allows the layout to fill available space */
+            min-height: 100vh;
         }
 
-        #layoutSidenav_content {
-            flex: 1; /* Allows the main content to grow and shrink */
-            padding: 10px;
+        .container {
+            max-width: 950px;
         }
 
-        footer {
-            display: flex;
-            justify-content: center;
-            padding: 1rem;
-            background-color: #f1f1f1;
-            color: #000;
-            margin-top: auto; /* Pushes the footer to the bottom */
-            width: 100%;
-        }
-
-        /* Styles for navigation and layout */
         .topnav {
             display: flex;
             justify-content: space-between;
@@ -80,6 +68,7 @@
             .topnav .nav-link {
                 font-weight: normal;
                 transition: color 0.3s, font-weight 0.3s;
+                text-decoration: none;
             }
 
                 .topnav .nav-link:hover {
@@ -98,8 +87,7 @@
         #layoutSidenav {
             display: flex;
             flex-direction: column;
-            min-height: 100vh;
-            width: 100%;
+            flex: 1;
         }
 
         #layoutSidenav_nav {
@@ -109,49 +97,11 @@
 
         #layoutSidenav_content {
             flex: 1;
-            margin-left: @(isAdmin ? "0" : "20px");
+            margin-left: @(isAdmin ? "250px" : "20px");
             margin-right: 20px;
             transition: margin 0.15s ease-in-out;
             padding: @(isAdmin ? "10px" : "0");
-        }
-
-        .sidenav {
-            background-color: #fff;
-            color: #1f2d41;
-            box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .sidenav-menu {
-            padding: 1rem;
-        }
-
-        .sidenav-menu .nav-link {
-            display: block;
-            padding: 0.5rem 1rem;
-            color: #1f2d41;
-            text-decoration: none;
-        }
-
-        .sidenav-menu .nav-link:hover {
-            background-color: #f1f1f1;
-            border-radius: 0.2rem;
-        }
-
-        footer {
-            display: flex;
-            justify-content: center;
-            padding: 1rem;
-            background-color: #f1f1f1;
-        }
-
-        footer p {
-            margin: 0;
-            color: #000;
-        }
-
-        #layoutSidenav_nav {
-            display: @(isAdmin ? "block" : "none");
-            flex-shrink: 0;
+            overflow: auto;
         }
 
         .sidenav {
@@ -176,6 +126,23 @@
                     border-radius: 0.2rem;
                 }
 
+        footer {
+            display: flex;
+            justify-content: center;
+            padding: 1rem;
+            background-color: #eff3f9;
+            color: #6c757d;
+            width: 100%;
+            position: relative;
+            bottom: 0;
+            text-align: center;
+        }
+
+            footer p {
+                margin: 0;
+                color: black;
+            }
+
         /* Media Queries */
         @@media (max-width: 768px) {
             .topnav {
@@ -190,41 +157,12 @@
 
             .sidenav {
                 position: absolute;
-                top: 50px;
+                top: 60px;
                 left: 0;
                 width: 100%;
                 height: calc(100vh - 60px);
                 overflow-y: auto;
-            }
-
-            #layoutSidenav_content {
-                margin-left: 0;
-            }
-        }
-
-        #pickUp {
-            display: @(isAdmin ? "none" : "block");
-        }
-
-        /* Media Queries */
-        @@media (max-width: 768px) {
-            .topnav {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .topnav .navbar-nav {
-                flex-direction: column;
-                width: 100%;
-            }
-
-            .sidenav {
-                position: absolute;
-                top: 50px;
-                left: 0;
-                width: 100%;
-                height: calc(100vh - 60px);
-                overflow-y: auto;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             }
 
             #layoutSidenav_content {
@@ -236,7 +174,7 @@
             .sidenav {
                 width: 250px;
                 position: fixed;
-               
+                top: 60px;
                 bottom: 0;
             }
 
@@ -244,140 +182,420 @@
                 margin-left: 250px;
             }
         }
-    </style>
+
+        .page-header > .container-fluid:first-of-type {
+            max-height: 40vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        .page-header-compact .page-header-content .page-header-title {
+            font-size: 1.5rem;
+        }
+
+        .nav-fixed #layoutSidenav #layoutSidenav_nav .sidenav {
+            padding-top: 0rem;
+        }
+
+        .container-fluid {
+            max-width: 90%;
+            margin: 10px auto;
+        }
+    </style> *@
+
+    <style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    .container {
+        max-width: 950px;
+    }
+
+    .topnav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 1rem;
+        background-color: #fff;
+        height: 60px;
+        width: 100%;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        box-sizing: border-box;
+    }
+
+    .topnav .navbar-nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .topnav .nav-link {
+        font-weight: normal;
+        transition: color 0.3s, font-weight 0.3s;
+        text-decoration: none;
+    }
+
+    .topnav .nav-link:hover {
+        color: #0061f2;
+        font-weight: bold;
+    }
+
+    .page-name {
+        flex: 1;
+        text-align: center;
+        font-weight: bold;
+        color: #1f2d41;
+        font-size: 1.25rem;
+    }
+
+    #layoutSidenav {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+
+    #layoutSidenav_nav {
+        display: @(isAdmin ? "block" : "none");
+        flex-shrink: 0;
+    }
+
+    #layoutSidenav_content {
+        flex: 1;
+        margin-left: @(isAdmin ? "250px" : "20px");
+        margin-right: 20px;
+        transition: margin 0.15s ease-in-out;
+        padding: @(isAdmin ? "10px" : "0");
+        overflow: auto;
+    }
+
+    .sidenav {
+        background-color: #fff;
+        color: #1f2d41;
+        box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .sidenav-menu {
+        padding: 1rem;
+    }
+
+    .sidenav-menu .nav-link {
+        display: block;
+        padding: 0.5rem 1rem;
+        color: #1f2d41;
+        text-decoration: none;
+    }
+
+    .sidenav-menu .nav-link:hover {
+        background-color: #f1f1f1;
+        border-radius: 0.2rem;
+    }
+
+    footer {
+        display: flex;
+        justify-content: center;
+        padding: 1rem;
+        background-color: #eff3f9;
+        color: #6c757d;
+        width: 100%;
+        position: relative;
+        bottom: 0;
+        text-align: center;
+        flex-shrink: 0;
+    }
+
+    footer p {
+        margin: 0;
+        color: black;
+    }
+
+    /* Hide scrollbar */
+    body::-webkit-scrollbar {
+        display: none;
+    }
+
+    .container-fluid {
+        max-width: 90%;
+        margin: 10px auto;
+    }
+
+    /* Media Queries */
+    @@media (max-width: 768px) {
+        .topnav {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .topnav .navbar-nav {
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .sidenav {
+            position: absolute;
+            top: 60px;
+            left: 0;
+            width: 100%;
+            height: calc(100vh - 60px);
+            overflow-y: auto;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #layoutSidenav_content {
+            margin-left: 0;
+        }
+    }
+
+    @@media (min-width: 769px) {
+        .sidenav {
+            width: 250px;
+            position: fixed;
+            top: 60px;
+            bottom: 0;
+        }
+
+        #layoutSidenav_content {
+            margin-left: 250px;
+        }
+    }
+
+    .page-header > .container-fluid:first-of-type {
+        max-height: 40vh;
+        display: flex;
+        justify-content: center;
+    }
+
+    .page-header-compact .page-header-content .page-header-title {
+        font-size: 1.5rem;
+    }
+
+    .nav-fixed #layoutSidenav #layoutSidenav_nav .sidenav {
+        padding-top: 0rem;
+    }
+
+    .container-fluid {
+        max-width: 90%;
+        margin: 10px auto;
+    }
+
+        .container-xl {
+            display:flex;
+            justify-content: center;
+        }
+
+        .sidenav-light .sidenav-menu .nav-link:hover {
+            color: black;
+            background-color: #ffffff90;
+            border-radius: 0.2rem;
+            margin: 0rem 0.5rem 0rem 0.75rem;
+            padding-left: 0.5rem !important;
+            color: brown;
+        }
+
+        .container-fluid{
+            margin-left: 60px;
+        }
+</style>
+
 </head>
 <body class="nav-fixed">
+    <header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4" id="layoutHeader">
+        <div class="container-fluid mt-5 p-1">
+            <div class="page-header-content">
+                <div class="row align-items-center justify-content-between pt-3">
+                    <div class="col-auto mb-3">
+                        <h1 class="page-header-title">
+                            <div class="page-header-icon"><i data-feather="file"></i></div>
+                        </h1>
+                    </div>
+                    <div class="col-12 col-xl-auto mb-3"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
     <nav class="topnav navbar navbar-expand shadow navbar-light bg-white" id="sidenavAccordion">
         <div class="tenantImage">
-            <img id="logoImage" src="~/Image/Demo.jpeg" style="width: 95px; padding-left: 10px; opacity: 100%;" alt="logo" />
+            <img id="logoImage" src="../../images/logo.svg" style="max-width : 50px;padding-left: 10px; opacity:100%" alt="logo" />
         </div>
         <div class="page-name" id="pageName">
             @(!string.IsNullOrEmpty(pagename) ? pagename.Replace(".html", " ") : "")
         </div>
         <div class="navbar-nav">
-            @if (isAuthenticated && (isAdmin || User.IsInRole("User")))
+            @if (isAuthenticated && (!isAdmin || isUser))
             {
-                    <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar" id="pickUp">Pickup</a>
+                <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar" id="pickUp">Pickup</a>
             }
             <a class="nav-link" href="/@tenantName/Donation/PayPal">Donation</a>
             @if (isAuthenticated)
             {
-                <a class="nav-link" href="/@tenantName/Auth/Logout">Logout</a>
-            }else{
-                <a class="nav-link" href="/@tenantName/Auth/LoginView">LogIn</a>
+                <li class="nav-item dropdown no-caret dropdown-user me-3 me-lg-4">
+                    <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="~/assets/sass/freepik/profiles/person.svg" /></a>
+                    <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
+                        <h6 class="dropdown-header d-flex align-items-center">
+                            <img class="dropdown-user-img" src="~/assets/sass/freepik/profiles/profile-6.png" />
+                            <div class="dropdown-user-details">
+                                <div class="dropdown-user-details-name">@userName</div>
+                                <div class="dropdown-user-details-email">@userEmail</div>
+                            </div>
+                        </h6>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="/@tenantName/Auth/Logout">
+                            <div class="dropdown-item-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></div>
+                            Logout
+                        </a>
+                    </div>
+                </li>
             }
-            <input id="page" type="hidden" name="name" value="@TempData["PageName"]" />
-            <input type="hidden" value="@isUser" id="isUser" />
-            @if (User.Identity.IsAuthenticated)
+            else
             {
-                var userEmail = User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value;
-                var userName = User.FindFirstValue(ClaimTypes.Name) ?? User.Claims.FirstOrDefault(c => c.Type == "name")?.Value;
-                @* <p>@userName</p> *@
+                <a class="nav-link" href="/@tenantName/Auth/loginView">Login</a>
             }
         </div>
     </nav>
 
     <div id="layoutSidenav">
         <div id="layoutSidenav_nav">
-            @if (isAdmin)
+            @if (isAuthenticated && isAdmin)
             {
                 <nav class="sidenav shadow-right sidenav-light">
                     <div class="sidenav-menu">
                         <div class="nav accordion" id="accordionSidenav">
-                            <div class="sidenav-menu-heading">Main Menu</div>
-                            <a class="nav-link" href="/@tenantName/TimeSlot/Calendar">Pickup Slots</a>
-                            <a class="nav-link" href="/@tenantName/Information/AddTenant">Information</a>
-                            <a class="nav-link" href="/@tenantName/User/ManageUsers">Users</a>
+                            <div class="sidenav-menu-heading">Admin</div>
+                            <a class="nav-link" href="/@tenantName/TimeSlot/Calendar">
+                                <div class="nav-link-icon"><i data-feather="calendar"></i></div>
+                                Pickup Slots
+                            </a>
+                            <a class="nav-link" href="/@tenantName/User/ManageUsers">
+                                <div class="nav-link-icon"><i data-feather="users"></i></div>
+                                User Management
+                            </a>
+                            <a class="nav-link" href="/@tenantName/Information/AddTenant">
+                                <div class="nav-link-icon"><i data-feather="file"></i></div>
+                                Information
+                            </a>
+                            
+                           
                         </div>
                     </div>
                 </nav>
             }
         </div>
-
         <div id="layoutSidenav_content">
             <main>
-                <main role="main" class="pb-3">
-                    @RenderBody()
-                </main>
+                @RenderBody()
             </main>
-            <footer style="display: flex; justify-content: center; align-items: center; padding: 10px; background-color: #eff3f9; color: #6c757d; width: 100%; position: relative; bottom: 0;">
-                <div class="container-end" style="display: flex; justify-content: center; width: 100%;">
-                    <p class="mb-0" style="color: black;">&copy; @DateTime.Now.Year - LogicalPantry</p>
-                </div>
-            </footer>
         </div>
     </div>
-    @section Scripts {
-        <script>
-            $(document).ready(function () {
 
-                console.log("Document Is Ready");
+    <footer class="footer-admin mt-auto footer-light">
+        <div class="container-xl px-4">
+            <div class="d-flex align-items-center justify-content-between small">
+                <div class="text-muted">Copyright &copy; 2024 LogicalPantry</div>
+            </div>
+        </div>
+    </footer>
 
-                function fetchImageUrl(tenantId) {
-                    return new Promise((resolve, reject) => {
-                        $.ajax({
-                            url: `/@tenantName/Information/Get`,
-                            method: "GET",
-                            data: { tenantid: tenantId },
-                            success: function (response) {
-                                const imageUrl = response;
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
+    <script>
+        feather.replace();
+    </script>
 
-                                if (imageUrl) {
-                                    const tenantDiv = $('.tenantImage');
-                                    console.log("Logo Set");
-                                    if (tenantDiv.length > 0) {
-                                        // Remove any existing image with the same ID to avoid duplicates
-                                        tenantDiv.find('#logoImage').remove();
+    <script>
+    $(document).ready(function () {
+    var pageHeaderTitle = '';
 
-                                        // Create a new img element
-                                        const img = $('<img>', {
-                                            id: 'logoImage',
-                                            src: imageUrl,
-                                            style: 'width: 95px; padding-left: 10px; opacity: 100%;'
-                                        });
+    // Get the current path
+    var path = window.location.pathname;
 
-                                        // Append the new img element to the div
-                                        tenantDiv.append(img);
-
-                                        resolve(imageUrl);
-                                    } else {
-                                        console.error("No element found with class 'tenantImage'");
-                                        reject(new Error("No element found with class 'tenantImage'"));
-                                    }
-                                } else {
-                                    console.error("ImageUrl is missing in the response");
-                                    reject(new Error("ImageUrl is missing in the response"));
-                                }
-                            },
-                            error: function (xhr, status, error) {
-                                console.error("Cannot find Image src", status, error);
-                                reject(new Error(`Cannot find Image src: ${status} ${error}`));
-                            }
-                        });
-                    });
-                }
-
-                async function updateImage(tenantId) {
-                    try {
-                        await fetchImageUrl(tenantId);
-                    } catch (error) {
-                        console.error("Failed to update image", error);
-                    }
-                }
-
-                updateImage(@tenantId);
-
-                var handlerValue = $("#page").val();
-                $(".page-name").text(pageName ? pageName.replace('.html', ' ') : '');
-
-                if ($("#isUser").val() === "True") {
-                    $("#layoutSidenav_nav").remove();
-                }
-            });
-        </script>
+    console.log("pathe", path);
+    debugger
+    // Determine the page header title based on the path
+    if (path.includes('Calendar')) {
+    pageHeaderTitle = 'Time-Slot';
+    } else if (path.includes('AddTenant')) {
+    pageHeaderTitle = 'Information';
+    } else if (path.includes('ManageUsers')) {
+    pageHeaderTitle = 'User Management';
+    } else if (path.includes('Registration')) {
+    pageHeaderTitle = 'User Registration';
+    } else if (path.includes('TimeSlotSignUp')) {
+    pageHeaderTitle = 'TimeSlotSignUp';
+    } else {
+    pageHeaderTitle = 'Default Title'; // Fallback title
     }
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.all.min.js" crossorigin="anonymous"></script>
-    @await RenderSectionAsync("Scripts", required: false)
-    @await RenderSectionAsync("Styles", required: false)
+
+    // Set the page header title
+    $('.page-header-title').text(pageHeaderTitle);
+
+
+            var userEmail = '@User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value';
+
+            async function fetchImageUrl(tenantId) {
+                return new Promise((resolve, reject) => {
+                    $.ajax({
+                        url: `/@tenantName/Information/Get`,
+                        method: "GET",
+                        data: { tenantid: tenantId },
+                        success: function (response) {
+                            const imageUrl = response;
+
+                            if (imageUrl) {
+                                const tenantDiv = $('.tenantImage');
+
+                                if (tenantDiv.length > 0) {
+                                    tenantDiv.find('#logoImage').remove();
+
+                                    const img = $('<img>', {
+                                        id: 'logoImage',
+                                        src: imageUrl,
+                                        style: 'width: 95px; padding-left: 10px; opacity: 100%;'
+                                    });
+
+                                    tenantDiv.append(img);
+
+                                    resolve(imageUrl);
+                                } else {
+                                    console.error("No element found with class 'tenantImage'");
+                                    reject(new Error("No element found with class 'tenantImage'"));
+                                }
+                            } else {
+                                console.error("ImageUrl is missing in the response");
+                                reject(new Error("ImageUrl is missing in the response"));
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Cannot find Image src", status, error);
+                            reject(new Error(`Cannot find Image src: ${status} ${error}`));
+                        }
+                    });
+                });
+            }
+
+            async function updateImage(tenantId) {
+                try {
+                    await fetchImageUrl(tenantId);
+                } catch (error) {
+                    console.error("Failed to update image", error);
+                }
+            }
+
+            updateImage(@tenantId);
+
+    });
+
+    </script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+   
+
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

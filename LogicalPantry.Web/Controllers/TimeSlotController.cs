@@ -58,7 +58,9 @@ namespace LogicalPantry.Web.Controllers
 
                 if (success)
                 {
-                    return Ok(); // Return a success response
+                    //return Ok(Response); // Return a success response
+                    //return RedirectToAction("Calendar");
+                    return View();
                 }
                 else
                 {
@@ -66,9 +68,15 @@ namespace LogicalPantry.Web.Controllers
                 }
 
             }
-            _logger.LogInformation("AddEvent method call ended.");
-            return BadRequest(ModelState); // Return a bad request response with validation errors
+            else
+            {
 
+
+                _logger.LogInformation("AddEvent method call ended.");
+                return BadRequest(ModelState); // Return a bad request response with validation errors
+            }
+          
+            return Ok();
         }
 
 
@@ -117,7 +125,7 @@ namespace LogicalPantry.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SaveEvent(TimeSlotDto timeSlotDto)
+        public async Task<IActionResult> SaveEvent([FromBody]TimeSlotDto timeSlotDto)
         {
             _logger.LogInformation("SaveEvent method call started.");
 
@@ -210,17 +218,8 @@ namespace LogicalPantry.Web.Controllers
             var tenantName = HttpContext.Items["TenantName"] as string;
             _logger.LogInformation("Calendar page accessed");
             _logger.LogInformation("Calendar method call started.");
-
-            var tenantIdString = HttpContext.Session.GetString("TenantId");
-
-            if (!int.TryParse(tenantIdString, out int tenantId) || tenantId == 0)
-            {
-                return BadRequest("Invalid tenant ID");
-            }
-            var PageName = HttpContext.Session.GetString("PageName");
-
-            ViewBag.TenantId = tenantId;
-            ViewBag.PageName = PageName;
+            ViewBag.TenantId = TenantId;
+            //ViewBag.PageName = PageName;
 
             // Fetch events from the database
             var events = await _timeSlotService.GetAllEventsAsync();

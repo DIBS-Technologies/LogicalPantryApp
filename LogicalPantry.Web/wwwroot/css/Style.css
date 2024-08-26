@@ -20519,28 +20519,22 @@ body {
     background-color: rgba(0, 0, 0, 0.25);
 }
 
-.sidenav-light {
-    background-color: #1A2A52;
-    color: #1f2d41;
-}
 
-    .sidenav-light .sidenav-menu .sidenav-menu-heading {
-        color: #a2acba;
-    }
 
-    .sidenav-light .sidenav-menu .nav-link {
+   
+    ..sidenav-menu .nav-link {
         color: #fff;
     }
 
-        .sidenav-light .sidenav-menu .nav-link .nav-link-icon {
+        ..sidenav-menu .nav-link .nav-link-icon {
             color: #a2acba;
         }
 
-        .sidenav-light .sidenav-menu .nav-link .sidenav-collapse-arrow {
+        ..sidenav-menu .nav-link .sidenav-collapse-arrow {
             color: #a2acba;
         }
 
-        .sidenav-light .sidenav-menu .nav-link:hover {
+        ..sidenav-menu .nav-link:hover {
             color: black;
             background-color: #ffffff90;
             border-radius: 0.2rem;
@@ -20548,23 +20542,23 @@ body {
             padding-left: 0.5rem !important;
         }
 
-        .sidenav-light .sidenav-menu .nav-link.active {
+        ..sidenav-menu .nav-link.active {
             color: #0061f2;
         }
 
-            .sidenav-light .sidenav-menu .nav-link.active .nav-link-icon {
+            ..sidenav-menu .nav-link.active .nav-link-icon {
                 color: #0061f2;
             }
 
-    .sidenav-light .sidenav-menu-nested {
+    ..sidenav-menu-nested {
         border-left-color: #d7dce3;
     }
 
-    .sidenav-light .sidenav-footer {
+    ..sidenav-footer {
         background-color: rgba(31, 45, 65, 0.05);
     }
 
-        .sidenav-light .sidenav-footer .sidenav-footer-subtitle {
+        ..sidenav-footer .sidenav-footer-subtitle {
             color: #687281;
         }
 

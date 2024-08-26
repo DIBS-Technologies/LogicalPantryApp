@@ -30,6 +30,12 @@ namespace LogicalPantry.Services.Test.UserServiceTest
         /// </summary>
         /// <param name="user"></param>
         /// <returns></returns>
+        Task CheckUserDeleteResponse(UserDto user);
+
+
+        Task<UserDto> GetUserByIdAsync(int userId);
+        Task<bool> AddUserAsync(UserDto userDto);
+        Task<bool> DeleteUserAsync(int userId);
         Task<ServiceResponse<bool>> CheckUserDeleteResponse(int userId);
 
         Task<ServiceResponse<List<TimeSlotSignupDto>>> CheckUpdateUserBatch(List<UserDto> userDto);

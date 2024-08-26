@@ -1,6 +1,7 @@
 ﻿using LogicalPantry.DTOs;
 using LogicalPantry.DTOs.Roledtos;
 using LogicalPantry.DTOs.UserDtos;
+using LogicalPantry.Models.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace LogicalPantry.Services.UserServices
 {
     public interface IUserService
     {
-        Task<ServiceResponse<IEnumerable<UserDto>>> GetAllRegisteredUsersAsync();
+        Task<ServiceResponse<IEnumerable<UserDto>>> GetAllRegisteredUsersAsync(int tenantId);
         Task<ServiceResponse<UserDto>> GetUserByIdAsync(int id);
         Task<ServiceResponse<UserDto>> UpdateUserAsync(UserDto userDto);
         Task<ServiceResponse<bool>> DeleteUserAsync(int id);
@@ -22,7 +23,7 @@ namespace LogicalPantry.Services.UserServices
         //Task<ServiceResponse<bool>> UpdateUserAttendanceStatusAsync(List<UserAttendedDto> userAllowStatusDto);
         Task<ServiceResponse<bool>> UpdateUserAttendanceStatusAsync(List<UserDto> userAttendedDtos);
 
-        Task<ServiceResponse<UserDto>> GetUserByEmailAsync(string email);
+        Task<ServiceResponse<UserDto>> GetUserByEmailAsync(string email,int tenantId);
 
         Task<ServiceResponse<IEnumerable<UserDto>>> GetUsersbyTimeSlot(DateTime timeSlot, int tenentId);
 

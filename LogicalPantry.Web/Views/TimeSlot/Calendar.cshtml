@@ -1,6 +1,5 @@
 ﻿@{
     var tenantName = ViewBag.TenantName as string;
-
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -13,21 +12,28 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="~/css/jquery-calendar.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.css">
-    @*  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet"> *@
-  
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
- 
-   
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="~/css/StyleSheet.css">
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
     <style>
-      
+        /* Styling for the page header */
+        .page-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
 
         .calendar-header {
-            margin-bottom: 20px;
+            margin: 20px auto;
             display: flex;
-            justify-content: space-around;
+            justify-content: space-between;
             align-items: center;
+            width: 100%;
+            max-width: 1200px;
         }
-        .dropdown-menu {
+
+        /* .dropdown-menu {
             max-height: 2.5rem;
             overflow-y: auto;
             white-space: nowrap;
@@ -53,7 +59,7 @@
 
             .dropdown-menu.show {
                 display: block;
-            }
+            } */
 
         select {
             display: block;
@@ -82,18 +88,9 @@
             transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
         }
 
-        .row > * {
-            flex-shrink: 0;
-            max-width: 100%;
-            padding-right: calc(var(--bs-gutter-x)* .5);
-            padding-left: calc(var(--bs-gutter-x)* .5);
-            margin-top: var(--bs-gutter-y);
-        }
-
         .container-fluid {
             max-width: 90%;
-            margin-top: 50px;
-            margin: 50px auto;
+            margin: 10px auto;
         }
 
         h3 {
@@ -104,40 +101,15 @@
             margin-top: 20px;
         }
 
-        /* New CSS */
-        .dropdown select {
-            display: inline-block;
-            width: 200px; /* Adjust width as needed */
-            margin-right: 10px; /* Reduce gap between select and button */
-        }
-
         .btn-success {
-            margin-left: 0; /* Remove extra margin if not needed */
+            margin-left: 0;
         }
 
         .calendar-header .d-flex {
             align-items: center;
-            gap: 10px; /* Adjust gap between select and button */
+            gap: 10px;
         }
 
-    /* 
-        .btn.btn-sm.btn-light.btn-move-calendar:before {
-            font-size: 30;
-            margin: 0 2px;
-           
-        }
-
-        .btn.btn-sm.btn-light.btn-move-calendar[data-direction="left"]:before {
-            content: "\2190";
-           
-        }
-
-   
-        .btn.btn-sm.btn-light.btn-move-calendar[data-direction="right"]:before {
-            content: "\2192";
-        } */
-
-        /* Button hover effect */
         .btn.btn-sm.btn-light.btn-move-calendar:hover {
             background-color: #f0f0f0;
             border-color: #333;
@@ -145,7 +117,7 @@
         }
 
         .btn.btn-sm.btn-default.btn-move-calendar {
-            background-color: white; 
+            background-color: white;
             border: 2px solid black;
             padding: 10px 20px;
             display: flex;
@@ -154,118 +126,141 @@
             border-radius: 4px;
         }
 
+        .calendar-categories {
+            height: 0;
+        }
 
-        
+        .nav-fixed #layoutSidenav #layoutSidenav_nav .sidenav {
+            padding-top: 0rem;
+        }
+
+        .page-header > .container-fluid:first-of-type {
+            display: flex;
+            justify-content: center;
+        }
+
+
+        .page-header-compact .page-header-content .page-header-title {
+            font-size: 1.5rem;
+        }
+
+        .calendar-header {
+            margin: 20px auto;
+            display: flex;
+            justify-content: end;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .container-fluid {
+            margin-left: 58px;
+        }
     </style>
 </head>
+@* <header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4">
+
+    <div class="container">
+        <div class="page-header-content">
+            <div class="row align-items-center justify-content-between pt-3">
+                <div class="col-auto mb-3">
+                    <h1 class="page-header-title">
+                        TimeSlot
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </div>
+</header> *@
+
 
 <body>
+    <div class="container mt-4">
+        <div class="container-fluid">
+            <div class="calendar-header">
+                <div class="d-flex align-items-center justify-content-end">
+                    <button type="button" class="btn btn-success" id="addEventBtn">Add Event</button>
+                </div>
+            </div>
+           @*  @section HeaderButton
+            {
+                <button type="button" class="btn btn-success" id="addEventBtn">Add Event</button>
+            } *@
     <div class="container-fluid">
         <div class="calendar-header">
             <h3>TimeSlot </h3>
             <div class="d-flex align-items-center">
-                <div class="dropdown d-inline">
+               @*  <div class="dropdown d-inline">
                     <select id="eventSelect" class="form-control" onchange="handleSelectChange()">
                         <option value="" selected disabled>Type</option>
                         <option value="1" data-title="Food Pickup">Food Pickup</option>
                         <option value="2" data-title="Volunteer">Volunteer</option>
                         <option value="3" data-title="Appointment">Appointment</option>
                     </select>
-                </div>
+                </div> *@
                 <button type="button" class="btn btn-success" id="addEventBtn">Add Event</button>
             </div>
         </div>
 
-        <div class="row">
-            <div class="col">
-                <div id="calendar"></div>
-            </div>
-        </div>
 
-        <!-- Bootstrap Modal for Event Details -->
-        @* <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="eventModalLabel">Event Details</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button> 
-                    </div>
-                    <div class="modal-body">
-                        <form id="eventForm">
-                            <div class="form-group">
-                                <label for="eventTitle">Title:</label>
-                                <input type="text" class="form-control" id="eventTitle" name="Title" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="eventStart">Start Date and Time:</label>
-                                <input type="datetime-local" class="form-control" id="eventStart" name="StartDateTime" required>
-                            </div>
-                            <div class="form-group">
-                                <label for="eventEnd">End Date and Time:</label>
-                                <input type="datetime-local" class="form-control" id="eventEnd" name="EndDateTime" required>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" id="saveEventBtn">Save</button>
+            <div class="row">
+                <div class="col">
+                    <div id="calendar"></div>
+                </div>
+            </div>
+
+            <!-- Bootstrap Modal for Event Details -->
+            <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="eventModalLabel">Event Details</h5>
+                        </div>
+                        <div class="modal-body">
+                            <form id="eventForm" method="post" asp-controller="TimeSlot" asp-action="AddEvent">
+                                <div class="form-group">
+                                    <label for="eventTitle">Title:</label>
+                                    <input type="text" class="form-control" id="eventTitle" name="Title" required>
+                                    <span class="text-danger validation-message" id="titleError"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="eventStart">Start Date and Time:</label>
+                                    <input type="datetime-local" class="form-control" id="eventStart" name="StartDateTime" required>
+                                    <span class="text-danger validation-message" id="startError"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="eventEnd">End Date and Time:</label>
+                                    <input type="datetime-local" class="form-control" id="eventEnd" name="EndDateTime" required>
+                                    <span class="text-danger validation-message" id="endError"></span>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" id="saveEventBtn">Save</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div> *@
-        <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="eventModalLabel">Event Details</h5>
-                    </div>
-                    <div class="modal-body">
-                        <form id="eventForm">
-                            <div class="form-group">
-                                <label for="eventTitle">Title:</label>
-                                <input type="text" class="form-control" id="eventTitle" name="Title" required>
-                                <span class="text-danger validation-message" id="titleError"></span>
-                            </div>
-                            <div class="form-group">
-                                <label for="eventStart">Start Date and Time:</label>
-                                <input type="datetime-local" class="form-control" id="eventStart" name="StartDateTime" required>
-                                <span class="text-danger validation-message" id="startError"></span>
-                            </div>
-                            <div class="form-group">
-                                <label for="eventEnd">End Date and Time:</label>
-                                <input type="datetime-local" class="form-control" id="eventEnd" name="EndDateTime" required>
-                                <span class="text-danger validation-message" id="endError"></span>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" id="saveEventBtn">Save</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
- @*    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/moment.js/moment-with-locales.min.js"></script>
-    <script src="~/jquery.touchswipe/jquery.touchswipe.min.js"></script>
-   
-    <script src="~/js/jquery-calendar.min.js"></script> *@
+            <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+            <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+            <script src="~/js/moment.js/moment-with-locales.min.js"></script>
+
+            <script src="~/jquery.touchswipe/jquery.touchswipe.min.js"></script>
+
+            <link rel="stylesheet" href="~/css/jquery-calendar.min.css">
+
+            <script src="~/js/jquery-calendar.min.js"></script>
 
 
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/moment.js/moment-with-locales.min.js"></script>
-    <script src="~/jquery.touchswipe/jquery.touchswipe.min.js"></script>
-    <link rel="stylesheet" href="~/css/jquery-calendar.min.css">
-    <script src="~/js/jquery-calendar.min.js"></script>
+            <script>
+                $(document).ready(function () {
 
-    <script>
-        $(document).ready(function () {
-           
-            var events = @Html.Raw(Json.Serialize(Model.Events));          
+                    var events = @Html.Raw(Json.Serialize(Model.Events));
+                    var buttonHtml = '<button type="button" class="btn btn-success" id="addEventBtn">Add Event</button>';
+                    $('.nav-fixed .container').append(buttonHtml);
 
             $('#calendar').Calendar({
                 locale: 'en',
@@ -273,7 +268,7 @@
                     timeline: {
                         intervalMinutes: 30,
                         fromHour: 7, // Adjusted from 9 to 7
-                        toHour: 20
+                        toHour: 23
                     }
                 },
                 events: events,
@@ -286,8 +281,8 @@
                 weekday: {
                     timeline: {
                         fromHour: 7,
-                        toHour: 20,
-                        intervalMinutes: 60,
+                        toHour: 23,
+                        intervalMinutes: 30,
                         format: 'HH:mm',
                         heightPx: 50,
                         autoResize: true
@@ -327,11 +322,11 @@
                 
                 }
 
-            }).init();
+                    }).init();
 
-            $('#addEventBtn').on('click', function () {
-                $('#eventModal').modal('show');
-            });
+                    $('#addEventBtn').on('click', function () {
+                        $('#eventModal').modal('show');
+                    });
 
             $('#saveEventBtn').on('click', function () {
                 debugger;
@@ -346,99 +341,98 @@
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify(eventData),
-                    success: function (response) {
-                        // // location.reload();
-                        window.location.reload(); // Refreshes the page
-                         //alert('Event added successfully!');
+                    success: function (response) {        
+                        window.location.reload();                        
                         $('#eventModal').modal('hide');
                         
                     },
                     error: function (xhr, status, error) {
-                        alert('Error adding event: ' + error);
+                        window.location.reload();
+                        //alert('Error adding event: ' + error);
                     }
                 });
             });
 
-            $('#calendar').on('Calendar.event-click', function (event, instance, elem, evt) {
-                ;
-                // $('#calendar-modal').attr
-                var startTime = evt.start;
-                var endTime = evt.end;
-                var timeSlotName = evt.title;
-
-                // Convert Unix timestamps to ISO format
-                var startTimeISO = new Date(startTime * 1000).toISOString();
-                var endTimeISO = new Date(endTime * 1000).toISOString();
-
-                // Get time slot ID using the extracted details
-                $.ajax({
-                    url: 'GetTimeSlotId',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({
-                        StartTime: startTimeISO,
-                        EndTime: endTimeISO,
-                        TimeSlotName: timeSlotName
-                    }),
-                    success: function (response) {
+                    $('#calendar').on('Calendar.event-click', function (event, instance, elem, evt) {
                         ;
-                        if (response && response.timeSlotId) {
-                            // Redirect to EditTimeSlotUser with the time slot ID
-                            window.location.href = 'EditTimeSlotUser?id=' + response.timeSlotId;
-                           
-                        } else {
-                            alert('Time slot not found.');
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        alert('Error retrieving time slot ID: ' + error);
+                        // $('#calendar-modal').attr
+                        var startTime = evt.start;
+                        var endTime = evt.end;
+                        var timeSlotName = evt.title;
+
+                        // Convert Unix timestamps to ISO format
+                        var startTimeISO = new Date(startTime * 1000).toISOString();
+                        var endTimeISO = new Date(endTime * 1000).toISOString();
+
+                        // Get time slot ID using the extracted details
+                        $.ajax({
+                            url: 'GetTimeSlotId',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify({
+                                StartTime: startTimeISO,
+                                EndTime: endTimeISO,
+                                TimeSlotName: timeSlotName
+                            }),
+                            success: function (response) {
+                                ;
+                                if (response && response.timeSlotId) {
+                                    // Redirect to EditTimeSlotUser with the time slot ID
+                                    window.location.href = 'EditTimeSlotUser?id=' + response.timeSlotId;
+
+                                } else {
+                                    alert('Time slot not found.');
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                alert('Error retrieving time slot ID: ' + error);
+                            }
+                        });
+                    });
+
+
+                    function handleSelectChange() {
+                        var selectedOption = $('#eventSelect option:selected');
+                        var selectedEventId = selectedOption.val();
+                        var selectedEventTitle = selectedOption.data('title');
                     }
+
+                    $('#saveEventBtn').on('click', function (e) {
+                        e.preventDefault();
+
+                        // Clear previous validation messages
+                        $('.validation-message').text('');
+
+                        // Validation flags
+                        let isValid = true;
+
+                        // Validate Title
+                        const title = $('#eventTitle').val().trim();
+                        if (title === '') {
+                            $('#titleError').text('Title is required.');
+                            isValid = false;
+                        }
+
+                        // Validate Start Date and Time
+                        const startDateTime = $('#eventStart').val().trim();
+                        if (startDateTime === '') {
+                            $('#startError').text('Start date and time are required.');
+                            isValid = false;
+                        }
+
+                        // Validate End Date and Time
+                        const endDateTime = $('#eventEnd').val().trim();
+                        if (endDateTime === '') {
+                            $('#endError').text('End date and time are required.');
+                            isValid = false;
+                        }
+
+                        // If all fields are valid, submit the form
+                        if (isValid) {
+                            $('#eventForm').submit(); // Submit the form or call your saving logic here
+                        }
+                    });
                 });
-            });
-
-            
-            function handleSelectChange() {
-                var selectedOption = $('#eventSelect option:selected');
-                var selectedEventId = selectedOption.val();
-                var selectedEventTitle = selectedOption.data('title');
-            }
-
-            $('#saveEventBtn').on('click', function (e) {
-                e.preventDefault();
-
-                // Clear previous validation messages
-                $('.validation-message').text('');
-
-                // Validation flags
-                let isValid = true;
-
-                // Validate Title
-                const title = $('#eventTitle').val().trim();
-                if (title === '') {
-                    $('#titleError').text('Title is required.');
-                    isValid = false;
-                }
-
-                // Validate Start Date and Time
-                const startDateTime = $('#eventStart').val().trim();
-                if (startDateTime === '') {
-                    $('#startError').text('Start date and time are required.');
-                    isValid = false;
-                }
-
-                // Validate End Date and Time
-                const endDateTime = $('#eventEnd').val().trim();
-                if (endDateTime === '') {
-                    $('#endError').text('End date and time are required.');
-                    isValid = false;
-                }
-
-                // If all fields are valid, submit the form
-                if (isValid) {
-                    $('#eventForm').submit(); // Submit the form or call your saving logic here
-                }
-            });
-        });
     </script>
 </body>
 

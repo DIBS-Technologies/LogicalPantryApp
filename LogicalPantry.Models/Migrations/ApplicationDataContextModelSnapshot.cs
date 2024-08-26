@@ -51,11 +51,9 @@ namespace LogicalPantry.Models.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Logo")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PageName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PaypalId")
@@ -67,7 +65,6 @@ namespace LogicalPantry.Models.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Timezone")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

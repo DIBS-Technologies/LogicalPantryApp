@@ -11,8 +11,4 @@
     <ProjectReference Include="..\LogicalPantry.Models.Test\LogicalPantry.Models.Test.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="InfromationServiceTest\" />
-  </ItemGroup>
-
 </Project>

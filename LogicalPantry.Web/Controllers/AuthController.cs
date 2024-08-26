@@ -240,7 +240,13 @@ namespace LogicalPantry.Web.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             // Log the ending of the Index method execution.
             _logger.LogInformation($"Logout Method is call ended");
-            HttpContext.SignOutAsync();
+
+            Response.Cookies.Delete(".AspNetCore.Mvc.CookieTempDataProvider");
+            Response.Cookies.Delete(".AspNetCore.Mvc.CookieTempDataProvider");
+            Response.Cookies.Delete(".AspNetCore.Cookies");
+    
+            HttpContext.Session.Clear();
+
             //return RedirectToAction(ViewConstants.LOGINVIEW, ViewConstants.AUTH);
             return Redirect($"/{TenantName}");
         }
@@ -261,8 +267,8 @@ namespace LogicalPantry.Web.Controllers
                 {
                     return null;
                 }
-
-                var userExists = await _userServices.GetUserByEmailAsync(userEmail);
+                var tenantId = TenantId;
+                var userExists = await _userServices.GetUserByEmailAsync(userEmail, (int)tenantId);
 
                 if (userExists.Success)
                 {
@@ -281,7 +287,8 @@ namespace LogicalPantry.Web.Controllers
                         {
                             UserId = userExists.Data.Id,
                             Role = role.RoleName,
-                            Message = userExists.Message
+                            Message = userExists.Message,
+                            IsRegistered = userExists.Data.IsRegistered
                         };
                     }
 
@@ -299,6 +306,7 @@ namespace LogicalPantry.Web.Controllers
             public int UserId { get; set; }
             public string Role { get; set; }
             public string Message { get; set; }
+            public bool IsRegistered { get; set; }    
         }
 
        

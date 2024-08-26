@@ -20,6 +20,7 @@ using LogicalPantry.DTOs.TimeSlotDtos;
 using LogicalPantry.Models.Models;
 using Newtonsoft.Json;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using LogicalPantry.Services.RegistrationService;
 
 namespace LogicalPantry.Web.Controllers
 {
@@ -27,11 +28,14 @@ namespace LogicalPantry.Web.Controllers
     public class UserController : BaseController
     {
         IUserService _userService;
+        IRegistrationService _registrationService;
+
         private readonly ILogger _logger;
-        public UserController(IUserService userService, ILogger<UserController> logger)
+        public UserController(IUserService userService, ILogger<UserController> logger, IRegistrationService _registrationService)
         {
             _userService = userService;
             _logger = logger;
+            _registrationService = _registrationService;
         }
 
         public IActionResult Index()
@@ -47,17 +51,12 @@ namespace LogicalPantry.Web.Controllers
         public async Task<IActionResult> ManageUsers()
         {
             _logger.LogInformation("GetAllusers object call started.");
-            var tenantIdString = HttpContext.Session.GetString("TenantId");
-
-            if (!int.TryParse(tenantIdString, out int tenantId) || tenantId == 0)
-            {
-                return BadRequest("Invalid tenant ID");
-            }
+            var tenantId = TenantId;
             var PageName = HttpContext.Session.GetString("PageName");
 
             ViewBag.TenantId = tenantId;
             ViewBag.PageName = PageName;
-            var response = await _userService.GetAllRegisteredUsersAsync();
+            var response = await _userService.GetAllRegisteredUsersAsync((int)tenantId);
             _logger.LogInformation("GetAllusers object call ended.");
 
             return View(response.Data);
@@ -150,16 +149,14 @@ namespace LogicalPantry.Web.Controllers
         //}
 
         [HttpPost("UpdateUser")] //ThisExpressionSyntax is ForbidResult allow method
-        public async Task<IActionResult> UpdateUser(int userId, bool isAllow)
+        public async Task<IActionResult> UpdateUser([FromBody] UserDto user)
         {
-            // Log the starting of the Index method execution.
-            _logger.LogInformation("UpdateUser post method call started");
-            if (userId <= 0)
+            if (user != null)
             {
                 return BadRequest("Invalid user ID.");
             }
 
-            var userDto = new UserDto { Id = userId, IsAllow = isAllow };
+            var userDto = new UserDto { Id = user.Id, IsAllow = user.IsAllow };
 
             var response = await _userService.UpdateUserAsync(userDto);
 
@@ -271,6 +268,50 @@ namespace LogicalPantry.Web.Controllers
             {
                 return View("Index");
             }
+        }
+
+        [HttpGet("Register")]
+        public async Task<IActionResult> Register()
+        {
+            return View();
+        }
+
+        [HttpPost("Register")]
+        public async Task<IActionResult> Register(UserDto user)
+        {
+            _logger.LogInformation($"Register method call started");
+
+            var tenantId = HttpContext.Items["TenantId"]?.ToString();
+
+            user.TenantId = int.Parse(tenantId);
+
+            var response = await _registrationService.RegisterUser(user);
+
+
+            if (response != null && response.Success)
+            {
+                @TempData["MessageClass"] = "alert-success";
+                @TempData["SuccessMessageUser"] = "Registartion Successfull";
+            }
+            else
+            {
+                @TempData["MessageClass"] = "alert-danger";
+                @TempData["SuccessMessageUser"] = "Failed to Save User server error.";
+                return View("Index");
+
+            }
+            _logger.LogInformation($"Register method call ended");
+            //return RedirectToAction("UserCalendar", "TimeSlot", new { area = "" });
+            return Redirect($"/{TenantName}/TimeSlot/UserCalendar");
+        }
+        [HttpGet]
+        public object ValidateEmail(string emailId)
+        {
+            _logger.LogInformation($"ValidateEmail method call started");
+            var response = _registrationService.CheckEmailIsExist(emailId);
+            _logger.LogInformation($"ValidateEmail method call ended");
+
+            return response;
         }
 
 
