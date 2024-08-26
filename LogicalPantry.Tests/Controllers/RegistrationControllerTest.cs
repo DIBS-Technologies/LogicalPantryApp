@@ -11,6 +11,7 @@ using LogicalPantry.Services.Test.RegistrationService;
 using LogicalPantry.Web;
 using Newtonsoft.Json;
 using System.Text;
+using Microsoft.Extensions.Configuration;
 
 namespace LogicalPantry.Tests
 {
@@ -21,10 +22,19 @@ namespace LogicalPantry.Tests
         private HttpClient _client;
         private ApplicationDataContext _context;
         private IRegistrationTestService _registrationTestService;
+        private IConfiguration _configuration;
 
         [TestInitialize]
         public void Setup()
         {
+
+            //Setup configuration to load appsettings.json
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory()) //Ensure the correct path
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+
+            _configuration = builder.Build();
+
             _factory = new WebApplicationFactory<Startup>()
                 .WithWebHostBuilder(builder =>
                 {
@@ -38,8 +48,8 @@ namespace LogicalPantry.Tests
                             services.Remove(descriptor);
                         }
 
-                       
-                        var connectionString = "Server=Server1\\SQL19Dev,12181;Database=LogicalPantryDB;User ID=sa;Password=x3wXyCrs;MultipleActiveResultSets=true;TrustServerCertificate=True";
+
+                        var connectionString = _configuration.GetConnectionString("DefaultSQLConnection");
 
                         services.AddDbContext<ApplicationDataContext>(options =>
                             options.UseSqlServer(connectionString));
@@ -63,6 +73,7 @@ namespace LogicalPantry.Tests
                 });
            
             _client = _factory.CreateClient();
+            _client.BaseAddress = new Uri("https://localhost:7041");
         }
 
         [TestMethod]
@@ -70,7 +81,7 @@ namespace LogicalPantry.Tests
         {
             var userDto = new UserDto
             {
-                TenantId = 4,
+                TenantId = 5,
                 FullName = "Sample User",
                 Email = "swappnilfromdibs2@gmail.com",
                 PhoneNumber = "1234567890",
@@ -78,7 +89,10 @@ namespace LogicalPantry.Tests
             };
 
             var content = new StringContent(JsonConvert.SerializeObject(userDto), Encoding.UTF8, "application/json");
-            var response = await _client.PostAsync("/Registration/Register", content);
+            var response = await _client.PostAsync("/TenantB/Registration/Register", content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Response Status Code: {response.StatusCode}");
+            Console.WriteLine($"Response Content: {responseContent}");
 
             Assert.AreEqual(System.Net.HttpStatusCode.Redirect, response.StatusCode);
             var redirectUri = response.Headers.Location.ToString();

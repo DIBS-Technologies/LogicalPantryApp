@@ -27,7 +27,7 @@ namespace LogicalPantry.Web.Controllers
         }
 
         [HttpPost("Register")]
-        public async Task<IActionResult> Register(UserDto user) 
+        public async Task<IActionResult> Register([FromBody] UserDto user) 
         {
             _logger.LogInformation($"Register method call started");
             var response= await _registrationService.RegisterUser(user);

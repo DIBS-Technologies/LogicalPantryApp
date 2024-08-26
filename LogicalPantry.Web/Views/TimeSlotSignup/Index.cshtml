@@ -1,8 +1,6 @@
 ﻿@model LogicalPantry.DTOs.TimeSlotDtos.CalendarViewModel
-
 @{
-    var tenantName = ViewBag.TenantName as string;
-
+    //var tenantName = ViewBag.TenantName as string;
 }
 
 <!DOCTYPE html>
@@ -16,11 +14,6 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css">
     <link rel="stylesheet" href="~/css/jquery-calendar.min.css">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-
-
-
-
-
 
     <style>
         /* Custom styles for spacing and header */
@@ -89,11 +82,6 @@
             transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
         }
     </style>
-
-
-
-
-
 
   </head>
     <body>
@@ -212,7 +200,7 @@
             };
 
             $.ajax({
-            url: '@tenantName/TimeSlot/AddEvent',
+            url: 'TenantB/TimeSlot/AddEvent',
             type: 'POST',
             contentType: 'application/json',
             data: JSON.stringify(eventData),
@@ -247,7 +235,7 @@
 
                         if (userId) {
                             $.ajax({
-                                url: '@tenantName/TimeSlotSignup',
+                                url: 'TenantB/TimeSlotSignup',
                                 type: 'POST',
                                 contentType: 'application/json',
                                 data: JSON.stringify({

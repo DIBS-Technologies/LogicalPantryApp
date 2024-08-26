@@ -1,4 +1,5 @@
 ﻿using Autofac.Core;
+using Azure;
 using LogicalPantry.DTOs;
 using LogicalPantry.DTOs.TenantDtos;
 using LogicalPantry.DTOs.TimeSlotDtos;
@@ -6,11 +7,13 @@ using LogicalPantry.DTOs.TimeSlotSignupDtos;
 using LogicalPantry.DTOs.UserDtos;
 using LogicalPantry.Services.InformationService;
 using LogicalPantry.Services.Test.TimeSlotSignUpService;
+using LogicalPantry.Services.Test.UserServiceTest;
 using LogicalPantry.Services.TimeSlotServices;
 using LogicalPantry.Services.TimeSlotSignupService;
 using LogicalPantry.Services.UserServices;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using System;
@@ -21,6 +24,7 @@ using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
 using Tweetinvi.Core.DTO;
+using Tweetinvi.Models.DTO;
 
 namespace LogicalPantry.Tests.Controllers
 {
@@ -33,16 +37,28 @@ namespace LogicalPantry.Tests.Controllers
         private HttpClient _client;
         private ApplicationDataContext _context;
         private ITimeSlotSignUpTestService _timeSlotSignUpTestService;
+        private  ITimeSlotSignupService _timeSlotSignupService;
+        private  IConfiguration _configuration;
+
+        private IUserServiceTest _userServiceTest;
 
         [TestInitialize]
         public void Setup()
         {
+
+            //Set up configuration to load appsettings json 
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory()) //Ensure the correct path
+                .AddJsonFile("appsettings.json", optional:true, reloadOnChange:true);
+
+            _configuration = builder.Build();
+
             _factory = new WebApplicationFactory<Startup>()
                 .WithWebHostBuilder(builder =>
                 {
                     builder.ConfigureServices(services =>
                     {
-
+                        // Remove existing DbContext configuration
                         var descriptor = services.SingleOrDefault(
                             d => d.ServiceType == typeof(DbContextOptions<ApplicationDataContext>));
                         if (descriptor != null)
@@ -50,55 +66,65 @@ namespace LogicalPantry.Tests.Controllers
                             services.Remove(descriptor);
                         }
 
-
-                        var connectionString = "Server=Server1\\SQL19Dev,12181;Database=LogicalPantryDB;User ID=sa;Password=x3wXyCrs;MultipleActiveResultSets=true;TrustServerCertificate=True";
-
+                        // Configure in-memory database or real database as needed
+                        var connectionString = _configuration.GetConnectionString("DefaultSQLConnection");
                         services.AddDbContext<ApplicationDataContext>(options =>
                             options.UseSqlServer(connectionString));
 
-
+                        // Add services for testing
                         services.AddTransient<ITimeSlotSignUpTestService, TimeSlotSignUpTestService>();
+                        services.AddTransient<ITimeSlotSignupService, TimeSlotSignupService>();
+                        services.AddTransient<IUserServiceTest, UserServicesTest>();
 
+                        // Build service provider and initialize context
                         var serviceProvider = services.BuildServiceProvider();
-
-
                         using (var scope = serviceProvider.CreateScope())
                         {
                             var scopedServices = scope.ServiceProvider;
                             _context = scopedServices.GetRequiredService<ApplicationDataContext>();
                             _timeSlotSignUpTestService = scopedServices.GetRequiredService<ITimeSlotSignUpTestService>();
+                            //_timeSlotSignupService = scopedServices.GetRequiredService<ITimeSlotSignupService>();
 
-
+                            _userServiceTest = scopedServices.GetRequiredService<IUserServiceTest>();
+                            // Ensure the database is created
                             _context.Database.EnsureCreated();
                         }
                     });
                 });
 
+            // Create HttpClient with base address
             _client = _factory.CreateClient();
+            _client.BaseAddress = new Uri("https://localhost:7041");
         }
+
 
         [TestMethod]
         public async Task Index_ReturnsView()
         {
             // Act
-            var response = await _client.GetAsync("/TimeSlotSignup/Index");
-            //Assert
-            Assert.IsNotNull(response, "Response is null");
-            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode, "Status code is not OK (200)");
+            var response = await _client.GetAsync("TimeSlotSignup/Index");
+
+            // Assert
+            Assert.IsNotNull(response); // Verify that the response is not null
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode); // Verify that the response status code is 200 (OK)
 
             var content = await response.Content.ReadAsStringAsync();
-            Assert.IsNotNull(content, "Response content is null or empty");
+            Assert.IsNotNull(content); // Verify that the response content is not null
         }
+
 
         [TestMethod]
         public async Task GetUsersbyTimeSlot_With_ValidResponse()
         {
             // Arrange
-            string dateTimeString = "2024-08-09 10:34:09.0000000";
+            string dateTimeString = "2024-08-23 01:12:00.0000000"; // Use the exact format as stored in the database
             DateTime dateTime = DateTime.ParseExact(dateTimeString, "yyyy-MM-dd HH:mm:ss.fffffff", System.Globalization.CultureInfo.InvariantCulture);
 
             // Act
-            var response = await _client.GetAsync($"/TimeSlotSignup/GetUsersbyTimeSlot?timeSlot={dateTime}");
+            var response = await _client.GetAsync($"/TenantB/TimeSlotSignup/GetUsersbyTimeSlot?timeSlot={dateTimeString}");
+            var responseContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Response Status Code: {response.StatusCode}");
+            Console.WriteLine($"Response Content: {responseContent}");
 
             // Assert
             Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
@@ -113,57 +139,45 @@ namespace LogicalPantry.Tests.Controllers
             var userDtos = result.Data.ToList();
             Assert.AreEqual(1, userDtos.Count);
 
-
         }
 
+
+
         [TestMethod]
-        public async Task AddTimeSlotSignUps()
+        public async Task AddTimeSlotSignUps_SavesDataSuccessfully()
         {
             // Arrange
-            //create a new timeslotsignupDto object with test data
-            var timeSlotSignUpDto = new TimeSlotSignupDto
+            var timeSlotSignUpDtos = new TimeSlotSignupDto
             {
-
-                UserId = 20,
-                TimeSlotId = 20,
+               
+                TimeSlotId = 82,
+                UserId = 61,
                 Attended = true,
             };
 
+            var content = new StringContent(JsonConvert.SerializeObject(timeSlotSignUpDtos), Encoding.UTF8, "application/json");
+
             // Act
 
-            //convert the DTO to a JSON string and wrap it in a stringcontent object.
-
-            var content = new StringContent(JsonConvert.SerializeObject(timeSlotSignUpDto), Encoding.UTF8, "application/json");
-            //send the post request to the API endpoint with the json content
-            var response = await _client.PostAsync("/TimeSlotSignup/AddTimeSlotSignUps", content);
-
-
-            //Retrieve the timeslotsignups from test service to verify data was saved.
-            var timeslotInfo = await _timeSlotSignUpTestService.GetTimeSlot(timeSlotSignUpDto);
+            var response = await _client.PostAsync("/TenantB/TimeSlotSignup/AddTimeSlotSignUps", content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Response Status Code: {response.StatusCode}");
+            Console.WriteLine($"Response Content: {responseContent}");
 
             // Assert
-            //Ensure the response is successfull.
             response.EnsureSuccessStatusCode();
-            Assert.IsNotNull(response);
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
+
+            // Check if the data was saved correctly in the database
+            var timeslotInfo = await _timeSlotSignUpTestService.GetTimeSlot(timeSlotSignUpDtos);
             Assert.IsNotNull(timeslotInfo);
-            if (response.IsSuccessStatusCode)
-            {
-                //Read and deserilize the the response content to timeslotDto
-                var responseContent = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Status Code: {response.StatusCode}");
-                Console.WriteLine($"Response Content: {responseContent}");
-
-                var timeSlot = JsonConvert.DeserializeObject<TimeSlotDto>(responseContent);
-
-                Assert.AreEqual(timeSlot.Id, timeslotInfo.Id);
-                Assert.AreEqual(timeSlot.UserId, timeslotInfo.UserId);
-
-            }
-            else
-            {
-                // Handle the error, log it, or throw an exception
-                Console.WriteLine($"Error: {response.StatusCode}, {response.ReasonPhrase}");
-            }
+            Assert.AreEqual(timeSlotSignUpDtos.UserId, timeslotInfo.Data.UserId);
+            Assert.AreEqual(timeSlotSignUpDtos.TimeSlotId , timeslotInfo.Data.TimeSlotId);
+            
         }
+
+       
+
+
     }
 }

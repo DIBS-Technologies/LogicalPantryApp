@@ -100,7 +100,7 @@ namespace LogicalPantry.Web.Controllers
 
         // Handle form submission
         [HttpPost("AddTenant")]
-        public async Task<IActionResult> AddTenant(TenantDto tenantDto, IFormFile LogoFile)
+        public async Task<IActionResult> AddTenant( TenantDto tenantDto, IFormFile LogoFile)
         {
             // Log the starting of the Index method execution.
             _logger.LogInformation("AddTenant post method call started");
@@ -263,7 +263,7 @@ namespace LogicalPantry.Web.Controllers
                     return View();
                 }
 
-            
+
                 ViewBag.PageName = fileNameWithExtension;
                 ViewBag.TenantId = tenantId;
                 TempData["TenantId"] = tenantId;
@@ -273,14 +273,15 @@ namespace LogicalPantry.Web.Controllers
                 HttpContext.Session.SetString("PageName", fileNameWithExtension);
                 HttpContext.Session.SetString("TenantImage", tenanatResponse.Data?.Logo);
                 return View();
-            }
-            // Log the ended of the Index method execution.
-            _logger.LogInformation("Home method call ended");
+            }         
             else
             {
                 ViewBag.ErrorMessage = "Tenant Not Found.";
+                // Log the ended of the Index method execution.
+                _logger.LogInformation("Home method call ended");
                 return View("Error");
             }
+            
 
             
         }
@@ -307,7 +308,7 @@ namespace LogicalPantry.Web.Controllers
         {
             // Log the starting of the Index method execution.
             _logger.LogInformation("GetTenantIdByEmail method call started");
-            var response = await _informationService.GetTenantIdByEmail(userEmail, tenantname);
+            var response = await _informationService.GetTenantIdByEmail(userEmail /*tenantname*/);
             if (response.Success)
             {
                 return Ok(response.Data);

@@ -36,7 +36,7 @@ namespace LogicalPantry.Web.Controllers
         public IActionResult GoogleLogin()
         {
             // Log the beginning of the Index method execution.
-            _logger.LogInformation($"FacebookResponse Method is call started");
+            _logger.LogInformation($"GoogleLogin Method is call started");
 
             // Redirect to the tenant-specific login URL
             //return Redirect(tenantUrl);
@@ -50,7 +50,7 @@ namespace LogicalPantry.Web.Controllers
 
             };
             // Log the ending of the Index method execution.
-            _logger.LogInformation($"FacebookResponse Method is call ended");
+            _logger.LogInformation($"GoogleLogin Method is call ended");
             return Challenge(properties, GoogleDefaults.AuthenticationScheme);
         }
 

@@ -2,6 +2,7 @@
 using LogicalPantry.DTOs.TimeSlotDtos;
 using LogicalPantry.DTOs.TimeSlotSignupDtos;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,13 +14,23 @@ namespace LogicalPantry.Services.Test.TimeSlotSignUpService
     public class TimeSlotSignUpTestService : ITimeSlotSignUpTestService
     {
         private readonly ApplicationDataContext _context;
+        private readonly IConfiguration _configuration;
 
         public TimeSlotSignUpTestService(ApplicationDataContext context)
         {
             var builder = new DbContextOptionsBuilder<ApplicationDataContext>();
 
 
-            builder.UseSqlServer("Server=Server1\\SQL19Dev,12181;Database=LogicalPantryDB;User ID=sa;Password=x3wXyCrs;MultipleActiveResultSets=true;TrustServerCertificate=True");
+            //Set up configuration to load appsettings json 
+            var builderConnectionString = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory()) //Ensure the correct path
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+
+            _configuration = builderConnectionString.Build();
+
+            var connectionString = _configuration.GetConnectionString("DefaultSQLConnection");
+
+            builder.UseSqlServer(connectionString);
 
             // Initialize dataContext with the configured options
             _context = new ApplicationDataContext(builder.Options);
@@ -38,16 +49,17 @@ namespace LogicalPantry.Services.Test.TimeSlotSignUpService
             }
             try
             {
-                var timeslot = await _context.TimeSlotSignups.FirstOrDefaultAsync(u => u.UserId == timeSlotSignupDto.UserId);
+                var timeslot = await _context.TimeSlotSignups
+                    .FirstOrDefaultAsync(u => u.UserId == timeSlotSignupDto.UserId && u.TimeSlotId == timeSlotSignupDto.TimeSlotId);
+
 
                 if (timeslot != null)
                 {
                     response.Success = true;
                     response.Data = new TimeSlotSignupDto
                     {
-                        Id = timeslot.Id,
                         UserId = timeslot.UserId,
-                        TimeSlotId = timeslot.Id,
+                        TimeSlotId = timeslot.TimeSlotId,
                         Attended = timeslot.Attended,
                     };
                 }
@@ -66,9 +78,6 @@ namespace LogicalPantry.Services.Test.TimeSlotSignUpService
             return response;
         }
 
-        Task<TimeSlotSignupDto> ITimeSlotSignUpTestService.GetTimeSlot(TimeSlotSignupDto timeSlotSignupDto)
-        {
-            throw new NotImplementedException();
-        }
+       
     }
 }

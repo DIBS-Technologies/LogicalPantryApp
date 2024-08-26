@@ -1,4 +1,5 @@
-﻿using LogicalPantry.DTOs.TimeSlotDtos;
+﻿using LogicalPantry.DTOs;
+using LogicalPantry.DTOs.TimeSlotDtos;
 using LogicalPantry.DTOs.TimeSlotSignupDtos;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,6 @@ namespace LogicalPantry.Services.Test.TimeSlotSignUpService
 {
     public interface ITimeSlotSignUpTestService
     {
-        Task<TimeSlotSignupDto> GetTimeSlot(TimeSlotSignupDto timeSlotSignupDto);
+        Task<ServiceResponse<TimeSlotSignupDto>> GetTimeSlot(TimeSlotSignupDto timeSlotSignupDto);
     }
 }

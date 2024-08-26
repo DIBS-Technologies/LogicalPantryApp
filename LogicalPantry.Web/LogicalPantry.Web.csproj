@@ -37,6 +37,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LogicalPantry.DTOs\LogicalPantry.DTOs.csproj" />
+    <ProjectReference Include="..\LogicalPantry.Models.Test\LogicalPantry.Models.Test.csproj" />
     <ProjectReference Include="..\LogicalPantry.Models\LogicalPantry.Models.csproj" />
     <ProjectReference Include="..\LogicalPantry.Services\LogicalPantry.Services.csproj" />
   </ItemGroup>

@@ -11,6 +11,11 @@ using LogicalPantry.Services.Test.RegistrationService;
 using LogicalPantry.Web;
 using Newtonsoft.Json;
 using System.Text;
+using Microsoft.Extensions.Configuration;
+using System.Configuration;
+using LogicalPantry.DTOs.TimeSlotSignupDtos;
+using System.Net;
+using LogicalPantry.Services.Test.UserServiceTest;
 
 namespace LogicalPantry.Tests.Controllers
 {
@@ -20,11 +25,19 @@ namespace LogicalPantry.Tests.Controllers
         private WebApplicationFactory<Startup> _factory;
         private HttpClient _client;
         private ApplicationDataContext _context;
-        private IRegistrationTestService _registrationTestService;
+        private IUserServiceTest _userServiceTest;
+        private IConfiguration _configuration;
 
         [TestInitialize]
         public void Setup()
         {
+            // Setup configuration to load appsettings.json
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory()) //Ensure the correct path
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+
+            _configuration = builder.Build();
+
             _factory = new WebApplicationFactory<Startup>()
                 .WithWebHostBuilder(builder =>
                 {
@@ -39,7 +52,7 @@ namespace LogicalPantry.Tests.Controllers
                         }
 
 
-                        var connectionString = "Server=Server1\\SQL19Dev,12181;Database=LogicalPantryDB;User ID=sa;Password=x3wXyCrs;MultipleActiveResultSets=true;TrustServerCertificate=True";
+                        var connectionString = _configuration.GetConnectionString("DefaultSQLConnection");
 
                         services.AddDbContext<ApplicationDataContext>(options =>
                             options.UseSqlServer(connectionString));
@@ -54,7 +67,7 @@ namespace LogicalPantry.Tests.Controllers
                         {
                             var scopedServices = scope.ServiceProvider;
                             _context = scopedServices.GetRequiredService<ApplicationDataContext>();
-                            _registrationTestService = scopedServices.GetRequiredService<IRegistrationTestService>();
+                            _userServiceTest = scopedServices.GetRequiredService<IUserServiceTest>();
 
 
                             _context.Database.EnsureCreated();
@@ -66,6 +79,159 @@ namespace LogicalPantry.Tests.Controllers
         }
 
 
+        /// <summary>
+        ///Tests the <see cref="UpdateUser_when_ValidData"/> method to ensure it correctly update user by given user data.
+        /// </summary>
+        /// <returns>A <see cref="UserDto"/> representing the updated user information.</returns>
+
+        [TestMethod]
+        public async Task UpdateUser_when_ValidData()
+        {
+
+            // Arrange
+            var userId = 70;
+            var isAllow = true;
+
+            var userDto = new UserDto
+            {
+                Id = userId,
+                IsAllow = isAllow,
+            };
+
+            //Act
+            var response = await _client.PostAsync($"/TenantB/User/UpdateUser?userId={userId}&isAllow={isAllow}", null);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Response status code: {response.StatusCode}");
+            Console.WriteLine($"Response Content: {responseContent}");
+
+
+            //Assert
+            response.EnsureSuccessStatusCode();
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
+
+            //check if the data saved correctly in the database
+
+            var user = await _userServiceTest.CheckUserPostResponse(userDto);
+
+            Assert.IsNotNull(user);
+            Assert.AreEqual(userDto.Id, user.Data.Id);
+            Assert.AreEqual(userDto.IsAllow, user.Data.IsAllow);
+
+        }
+
+        /// <summary>
+        ///Tests the <see cref="UpdateUserBatch_when_ValidData"/> method to ensure it correctly update the List of the users.
+        /// </summary>
+        ///<returns>A <see cref="List<UserDto></UserDto>"/> representing the multiple updated user information.</returns>
+        [TestMethod]
+        public async Task UpdateUserBatch_when_ValidData()
+        {
+            //Arrage
+            var userDto = new List<UserDto>
+            {
+                new UserDto{Id = 61, TimeSlotId = 82, Attended = true},
+                new UserDto{Id = 67, TimeSlotId = 82, Attended =true},
+            };
+
+            var content = new StringContent(JsonConvert.SerializeObject(userDto), Encoding.UTF8, "application/json");
+
+            //Act
+
+            var response = await _client.PostAsync("/TenantB/User/UpdateUserBatch", content);
+
+            //Assert
+            Assert.IsNotNull(response);
+
+            var users = await _userServiceTest.CheckUpdateUserBatch(userDto);
+            Assert.IsNotNull(users);
+
+            foreach (var expected in userDto)
+            {
+                var actual = users.Data
+                    .FirstOrDefault(x => x.UserId == expected.Id && x.TimeSlotId == expected.TimeSlotId && x.Attended == expected.Attended);
+                Assert.IsNotNull(actual);
+
+                Assert.AreEqual(expected.TimeSlotId, actual.TimeSlotId);
+                Assert.AreEqual(expected.Attended, actual.Attended);
+
+            }
+        }
+
+        /// <summary>
+        ///Tests the <see cref="ManageUsers_GetAllRegisterUsers"/> method to ensure it correctly retrieves All the register users.
+        /// </summary>
+        /// <returns></returns>
+
+        [TestMethod]
+        public async Task ManageUsers_GetAllRegisterUsers()
+        {
+            //Arrange
+            var userCount = 3;
+
+            var tenantId = 5;
+
+            var session = _client.DefaultRequestHeaders;
+            session.Add("TenantId", tenantId.ToString());
+
+            //Act
+            var response = await _client.GetAsync("/TenantB/User/ManageUsers");
+            var responseContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine($"Response status code: {response.StatusCode}");
+            Console.WriteLine($"Response Content: {responseContent}");
+
+            //Assert
+            Assert.IsNotNull(response);
+            response.EnsureSuccessStatusCode();
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
+
+        }
+
+        /// <summary>
+        /// Tests the <see cref="GetUserIdByEmail"/> method to ensure it correctly retrieves the user ID for a given email address.
+        /// </summary>
+        /// <returns>A <see cref="Task"/> representing the asynchronous operation.</returns>
+
+        [TestMethod]
+        public async Task GetUserIdByEmail()
+        {
+            //Arrange
+            var userEmail = "swappnilfromdibs2@gmail.com";
+
+            var userDto = new UserDto
+            {
+                Email = userEmail,
+            };
+            var content = new StringContent(JsonConvert.SerializeObject(userDto), Encoding.UTF8, "application/json");
+
+            //Act
+            var response = await _client.PostAsync("/TenantB/User/GetUserIdByEmail", content);
+
+            //Assert
+            response.EnsureSuccessStatusCode();
+            Assert.IsNotNull(response);
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
+        }
+
+        /// <summary>
+        /// Tests the <see cref="DeleteUserById"/> method to ensure it correctly delete user form the database for a given id.
+        /// </summary>
+        /// <returns></returns>
+
+        [TestMethod]
+        public async Task DeleteUserById()
+        {
+            //Arrange
+            var userId = 71;
+            //Act
+            var response = await _client.DeleteAsync($"/TenantB/User/DeleteUser/{userId}");
+            //Assert
+            Assert.IsNotNull(response);
+            Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
+            var DeleteUser = await _userServiceTest.CheckUserDeleteResponse(userId);
+            Assert.IsNotNull(DeleteUser);
+            Assert.IsTrue(true);
+            Assert.AreEqual("User deleted Successfully", DeleteUser.Message);
+        }
 
     }
 }

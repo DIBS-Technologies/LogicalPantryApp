@@ -94,7 +94,7 @@ namespace LogicalPantry.Web.Controllers
             var response = await _userSercvice.GetUsersbyTimeSlotId(timeSlotId);
             if (response.Success && response.Data != null)
             {
-                // Log the ending of the Index method execution.
+                //Log the ending of the Index method execution.
                 _logger.LogInformation("EditTimeSlotUser method call started.");
                 @TempData["MessageClass"] = "alert-success";
                 @TempData["SuccessMessageBatch"] = "User Saved Successfully";

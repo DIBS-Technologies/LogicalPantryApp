@@ -12,6 +12,7 @@ using LogicalPantry.Services.TimeSlotServices;
 using LogicalPantry.Services.UserServices;
 using LogicalPantry.Services.InformationService;
 using LogicalPantry.Web;
+using Microsoft.Extensions.Configuration;
 
 namespace LogicalPantry.IntegrationTests
 {
@@ -24,10 +25,18 @@ namespace LogicalPantry.IntegrationTests
         private ITimeSlotService _timeSlotService;
         private IUserService _userService;
         private IInformationService _informationService;
+        private IConfiguration _configuration;
 
         [TestInitialize]
         public void Setup()
         {
+            //Setup configuration to load appsettings.json
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory()) //Ensure the correct path
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+
+            _configuration = builder.Build();
+
             _factory = new WebApplicationFactory<Startup>()
                 .WithWebHostBuilder(builder =>
                 {
@@ -41,8 +50,8 @@ namespace LogicalPantry.IntegrationTests
                             services.Remove(descriptor);
                         }
 
-                        
-                        var connectionString = "Server=localhost;Database=TestDatabase;Trusted_Connection=True;";
+
+                        var connectionString = _configuration.GetConnectionString("DefaultSQLConnection");
 
                         services.AddDbContext<ApplicationDataContext>(options =>
                             options.UseSqlServer(connectionString));
