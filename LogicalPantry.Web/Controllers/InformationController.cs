@@ -274,11 +274,11 @@ namespace LogicalPantry.Web.Controllers
                 HttpContext.Session.SetString("PageName", fileNameWithExtension);
                 HttpContext.Session.SetString("TenantImage", tenanatResponse.Data?.Logo);
                 return View();
-            }
-            // Log the ended of the Index method execution.
-            _logger.LogInformation("Home method call ended");
+            }           
             else
             {
+                // Log the ended of the Index method execution.
+                _logger.LogInformation("Home method call ended");
                 ViewBag.ErrorMessage = "Tenant Not Found.";
                 return View("Error");
             }
