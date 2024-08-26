@@ -34,6 +34,12 @@
             overflow: hidden; /* Prevent scrollbars */
         }
 
+        #pageName {
+            display: flex;
+            justify-content: start;
+            margin-left: 4%;
+        }
+
         #layoutSidenav {
             display: flex;
             flex-direction: column;
@@ -191,6 +197,19 @@
             padding-top: 0rem;
         }
 
+        .dropdown-menu {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            transform: translateY(10px);
+        }
+
+            .dropdown-menu.show {
+                display: block;
+                opacity: 1;
+                transform: translateY(0);
+            }
+
     </style>
 
 </head>
@@ -232,6 +251,19 @@
     @section Scripts {
         <script>
             $(document).ready(function () {
+
+                $('.dropdown-user').click(function () {
+                    var $dropdownMenu = $(this).next('.dropdown-menu');
+                    $dropdownMenu.toggleClass('show');
+                });
+
+                // Optional: Close the dropdown if clicking outside of it
+                $(document).click(function (e) {
+                    if (!$(e.target).closest('.dropdown-menu, #navbarDropdownUserImage').length) {
+                        $('.dropdown-menu').removeClass('show');
+                    }
+                });
+
                 var userEmail = '@User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value';
 
                 async function fetchImageUrl(tenantId) {

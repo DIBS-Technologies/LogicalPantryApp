@@ -175,7 +175,7 @@ namespace LogicalPantry.Web.Controllers
 
 
         [HttpPost("GetTimeSlotId")]
-        public async Task<IActionResult> GetTimeSlotId([FromBody] TimeSlotDto request)
+        public async Task<IActionResult> GetTimeSlotId([FromBody]TimeSlotDto request)
         {
             _logger.LogInformation("GetTimeSlotId method call started.");
             if (request == null)
@@ -218,6 +218,11 @@ namespace LogicalPantry.Web.Controllers
             var tenantName = HttpContext.Items["TenantName"] as string;
             _logger.LogInformation("Calendar page accessed");
             _logger.LogInformation("Calendar method call started.");
+            var PageName = HttpContext.Session.GetString("PageName");
+
+            //ViewBag.TenantId = tenantId;
+            ViewBag.PageName = PageName;
+
             ViewBag.TenantId = TenantId;
             //ViewBag.PageName = PageName;
 

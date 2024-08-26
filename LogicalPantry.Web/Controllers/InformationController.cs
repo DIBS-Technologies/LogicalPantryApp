@@ -127,7 +127,10 @@ namespace LogicalPantry.Web.Controllers
 
                 @TempData["MessageClass"] = "alert-success";
                 @TempData["SuccessMessageInfo"] = "Infromation Saved Successfully";
+                var PageName = HttpContext.Session.GetString("PageName");
 
+                //ViewBag.TenantId = tenantId;
+                ViewBag.PageName = PageName;
                 // Redirect to the GET method to display the updated data
                 return View(tenantDto);
                 //return RedirectToAction(nameof(AddTenant));
@@ -250,7 +253,7 @@ namespace LogicalPantry.Web.Controllers
                 if (!System.IO.File.Exists(filepath))
                 {
                     Console.WriteLine("File not found.");
-                    return View("");
+                    return View();
                 }
 
                 string htmlContent;

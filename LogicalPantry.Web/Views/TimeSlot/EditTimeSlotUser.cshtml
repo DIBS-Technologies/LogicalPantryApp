@@ -137,6 +137,10 @@
         .nav-fixed #layoutSidenav #layoutSidenav_nav .sidenav {
             padding-top: 0rem;
         }
+
+        #layoutSidenav {
+            margin-top: -7%;
+        }
     </style>
 </head>
 
@@ -153,12 +157,15 @@
                         @formattedDate
                     </div>
                     <div class="card-body">
-                        @if (!string.IsNullOrEmpty(TempData["ErrorMessageBatch"] as string))
-                        {
-                            <div id="errorMessageBatch" class="alert">
-                                @TempData["ErrorMessageBatch"]
-                            </div>
-                        }
+                        <div id="successMessageUser" class="alert alert-success" style="display:none;">
+                            User Updated Succesfully.
+                        </div>
+
+
+
+                        <div id="errorMessageUser" class="alert alert-danger" style="display:none;">
+                            Error occured while updating user.
+                        </div>
 
                         <table class="table table-bordered table-hover" id="userTable" cellspacing="0">
                             <thead>
@@ -209,12 +216,17 @@
 
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    @* <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> *@
     <script>
         $(document).ready(function () {
 
-            $(document).ready(function () {
-                $('header.page-header').remove(); // Removes the header with class 'page-header'
-            });
+            // $(document).ready(function () {
+            //     $('header.page-header').remove(); // Removes the header with class 'page-header'
+            // });
+
+            $('.page-header-title').text("Edit User TimeSlots");
             // Function to get query parameters from the URL
             function getQueryParameter(name) {
                 const urlParams = new URLSearchParams(window.location.search);
@@ -251,6 +263,7 @@
                     return;
                 }
 
+                debugger
                 // Add the timeSlotId to each user's data
                 var updatedUserStatuses = userStatuses.map(function (userStatus) {
                     return {
@@ -271,6 +284,7 @@
                     contentType: 'application/json; charset=utf-8',
                     dataType: 'json',
                     success: function (response) {
+                        debugger
                         if (response.success) {
                             $('#SuccessMessageBatch').text('Changes saved successfully.').fadeIn().delay(2000).fadeOut();
                             sessionStorage.removeItem('userStatuses');

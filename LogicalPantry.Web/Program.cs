@@ -46,7 +46,15 @@ builder.Services.AddAuthentication(options =>
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme; // Default authentication scheme
     options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme; // Default sign-in scheme
 })
-.AddCookie() // Add cookie authentication
+.AddCookie(options =>
+{
+    options.LoginPath = "/Auth/loginview";
+    options.LogoutPath = "/Auth/Logout";
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // Set appropriate expiry time
+    options.SlidingExpiration = true;
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Ensure it's set to Secure if using HTTPS
+}) // Add cookie authentication
 .AddOpenIdConnect(options =>
 {
     // Configure OpenID Connect authentication
@@ -86,6 +94,14 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
     options.AddPolicy("UserPolicy", policy => policy.RequireRole("User"));
+});
+
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(10); // changed from 30 to 90 minutes  on 19/10/23 swapnil
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
 });
 
 

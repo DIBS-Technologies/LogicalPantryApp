@@ -9,18 +9,19 @@
 
 <head>
     <link rel="stylesheet" href="https://cdn.datatables.net/v/bs5/jszip-3.10.1/dt-2.0.8/b-3.0.2/b-html5-3.0.2/r-3.0.2/sc-2.4.3/sp-2.3.1/sl-2.0.3/datatables.min.css" />
-   @*  <link rel="stylesheet" href="https://cdn.datatables.net/2.0.8/css/dataTables.dataTables.css"> *@
-   @*  <link rel="stylesheet" href="https://cdn.datatables.net/buttons/3.0.2/css/buttons.dataTables.css"> *@
-    @* <link rel="stylesheet" href="https://cdn.datatables.net/rowgroup/1.5.0/css/rowGroup.jqueryui.css"> *@
     <link href="~/css/site.css" rel="stylesheet" />
     <link href="~/css/Style.css" rel="stylesheet" />
     <link href="~/css/StyleSheet.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/2.1.4/js/dataTables.js"></script>
    
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
         }
 
         .page-header-content {
@@ -164,36 +165,40 @@
         .container-fluid {
             margin-left: 60px;
         }
+
+        .page-header > .container-fluid:first-of-type {
+            max-height: 6vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        .page-header{
+            padding-top: 1rem;
+        }
+
+            .page-header > .container-fluid:first-of-type {
+                max-height: 100vh;
+                /*   padding: 1rem; */
+                margin-bottom: -10px;
+            }
+
+            .page-header-content >.row {
+            margin-top: -10px;
+            }
+
+        #layoutSidenav_content{
+            margin-bottom : -5%;
+        }
+
+        #layoutSidenav {
+            margin-top: -2%;
+        }
+
+        
     </style>
 </head>
 
 <main>
-    @* <header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4">
-       
-        @* <div class="container">
-            <div class="page-header-content">
-                <div class="row align-items-center justify-content-between pt-3">
-                    <div class="col-auto mb-3">
-                        <h1 class="page-header-title">
-                            <div class="page-header-icon">@* <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-user"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg> </div>
-                            Users List
-                        </h1>
-                    </div>
-                </div>
-            </div>
-        </div> *@
-       @*  <div class="container">
-            <div class="page-header-content">
-                <div class="row align-items-center justify-content-between pt-3">
-                    <div class="col-auto mb-3">
-                        <h1 class="page-header-title">
-                            Users List
-                        </h1>
-                    </div>
-                </div>
-            </div>
-        </div> 
-    </header> *@
     <!-- Main page content-->
     <div class="container mt-n10">
         <div class="card mb-4">
@@ -259,10 +264,14 @@
 </main>
 
 @section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/2.1.4/js/dataTables.js"></script>
     <script src="https://cdn.datatables.net/2.1.4/js/dataTables.bootstrap5.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
 
     <script>
         $(document).ready(function () {

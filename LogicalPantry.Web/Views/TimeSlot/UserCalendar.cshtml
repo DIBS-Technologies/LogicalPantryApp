@@ -31,12 +31,28 @@
         .full-width-text {
             width: 100%;
             text-align: center;
-            background-color: #f8f9fa; /* Light background for contrast */
+            background-color: #f8f9fa;
             padding: 10px 0;
             font-size: 1rem;
-            color: #6c757d; /* Subtle color */
-            border-top: 1px solid #e9ecef; /* Light border */
-            margin-top: 10px; /* Space above the text */
+            color: #6c757d;
+            border-top: 1px solid #e9ecef;
+            margin-top: 10px;
+        }
+
+        .modal.fade {
+            background: none;
+            display: none !important;
+        }
+
+        .modal-backdrop {
+            opacity: 0 !important;
+            display: none !important;
+        }
+
+        .modal {
+            background: none;
+            overflow-y: visible;
+            overflow-x: visible;
         }
 
         .container-fluid {
@@ -47,17 +63,7 @@
             margin-top: 20px;
         }
 
-        /* .dropdown-menu {
-            max-height: 2.5rem;
-            overflow-y: auto;
-            white-space: nowrap;
-            width: 200px;
-        }
 
-        .dropdown-item {
-            white-space: nowrap;
-        }
- */
         .btn-success {
             margin-left: 0;
         }
@@ -76,25 +82,15 @@
                 flex-direction: column;
                 align-items: flex-start;
             }
-/* 
-            .dropdown-menu {
-                width: 100%;
-                max-height: 5rem;
-            }
-
-            .dropdown select {
-                width: 100%;
-            } */
         }
 
         .page-header-title {
-           
         }
 
-        .page-header-title{
+        .page-header-title {
             justify-content: center;
-            font-size : 50%;
-            font-weight :bold;
+            font-size: 50%;
+            font-weight: bold;
             font-family: 'Roboto', sans-serif;
         }
 
@@ -105,14 +101,26 @@
 
         .container-fluid {
             padding: 80px;
-
         }
 
         .page-header > .container:first-of-type {
             background: aliceblue;
         }
 
-     
+
+        .modal-c2 {
+            background-color: #c1c1c1;
+        }
+
+        .modal .fade2 {
+            background-color: #00000F;
+        }
+
+        .calendar-timeline {
+            padding-top: 41px;
+            margin-top: 60px;
+        }
+
 
         .nav-fixed #layoutSidenav #layoutSidenav_content {
             padding-left: 0;
@@ -122,7 +130,7 @@
         .page-header.page-header-light .page-header-subtitle#pickup {
             color: rgb(0 0 0);
         }
-       
+
 
 
         .container-fluid {
@@ -133,30 +141,29 @@
         .border-bottom {
             border-bottom: 1px solid #ffffff !important;
         }
-       
     </style>
 </head>
 <body>
     <header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4 .pgaeheader">
         <div class="container">
-        <div class="page-header-content">
-            <div class="row align-items-center justify-content-center pt-3">
-                <div class="col-12 text-center">
+            <div class="page-header-content">
+                <div class="row align-items-center justify-content-center pt-3">
+                    <div class="col-12 text-center">
                         <h3 class="page-header-subtitle mb-1 pickup" id="pickup">
-                        PickUp
-                    </h3>
-                </div>
-                <div class="col-12 text-center">
-                    <div class="page-header-subtitle">
-                        All Times Are In EST
+                            PickUp
+                        </h3>
+                    </div>
+                    <div class="col-12 text-center">
+                        <div class="page-header-subtitle">
+                            All Times Are In EST
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        </div>
     </header>
 
-    
+
 
     <div class="container-fluid">
         <div class="calendar-header">
@@ -172,30 +179,17 @@
             </div>
         </div>
 
-        <!-- Modal for displaying messages -->
-        @*<div class="modal fade2" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-c2">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="messageModalLabel">Message</h5>
-                    </div>
-                    <div class="modal-body" id="messageModalBody">
-                        <!-- Message will be inserted here -->
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>*@
+
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/moment.js/moment-with-locales.min.js"></script>
     <script src="~/jquery.touchswipe/jquery.touchswipe.min.js"></script>
     <script src="~/js/jquery-calendar.min.js"></script>
-  
+
     <script>
         $(document).ready(function () {
             var events = @Html.Raw(Json.Serialize(Model.Events));
@@ -205,76 +199,71 @@
                 var events = @Html.Raw(Json.Serialize(Model.Events));
 
 
-            $('#calendar').Calendar({
-                locale: 'en',
-                weekday: {
-                    timeline: {
-                        intervalMinutes: 30,
-                        fromHour: 7,
-                        toHour: 23
-                    }
-                },
-                events: events,
-                view: 'week',
-                defaultView: {
-                    largeScreen: 'week',
-                    smallScreen: 'day',
-                    smallScreenThreshold: 1000
-                },
-                weekday: {
-                    timeline: {
-                        fromHour: 7,
-                        toHour: 23,
-                        intervalMinutes: 30,
-                        format: 'HH:mm',
-                        heightPx: 50,
-                        autoResize: true
+                $('#calendar').Calendar({
+                    locale: 'en',
+                    weekday: {
+                        timeline: {
+                            intervalMinutes: 30,
+                            fromHour: 7,
+                            toHour: 23
+                        }
                     },
-                    dayline: {
-                        weekdays: [0, 1, 2, 3, 4, 5, 6],
-                        format: 'MM/DD',
+                    events: events,
+                    view: 'week',
+                    defaultView: {
+                        largeScreen: 'week',
+                        smallScreen: 'day',
+                        smallScreenThreshold: 1000
+                    },
+                    weekday: {
+                        timeline: {
+                            fromHour: 7,
+                            toHour: 23,
+                            intervalMinutes: 30,
+                            format: 'HH:mm',
+                            heightPx: 50,
+                            autoResize: true
+                        },
+                        dayline: {
+                            weekdays: [0, 1, 2, 3, 4, 5, 6],
+                            format: 'MM/DD',
+                            heightPx: 31,
+                            month: {
+                                format: 'MMMM YYYY',
+                                heightPx: 30,
+                                weekFormat: 'w'
+                            }
+                        }
+                    },
+                    month: {
+                        format: 'MMMM YYYY',
                         heightPx: 31,
-                        month: {
-                            format: 'MMMM YYYY',
-                            heightPx: 30,
-                            weekFormat: 'w'
+                        weekline: {
+                            format: 'w',
+                            heightPx: 80
+                        },
+                        dayheader: {
+                            weekdays: [0, 1, 2, 3, 4, 5, 6],
+                            format: 'dddd',
+                            heightPx: 30
+                        },
+                        day: {
+                            format: 'MM/DD'
+                        }
+                    },
+                    unixTimestamp: moment().format('X'),
+                    event: {
+                        hover: {
+                            delay: 500000
                         }
                     }
-                },
-                month: {
-                    format: 'MMMM YYYY',
-                    heightPx: 31,
-                    weekline: {
-                        format: 'w',
-                        heightPx: 80
-                    },
-                    dayheader: {
-                        weekdays: [0, 1, 2, 3, 4, 5, 6],
-                        format: 'dddd',
-                        heightPx: 30
-                    },
-                    day: {
-                        format: 'MM/DD'
-                    }
-                },
-                unixTimestamp: moment().format('X'),
-                event: {
-                    hover: {
-                        delay: 500000
-                    }
-                }
 
 
                 }).init();
 
 
-
-
-
                 // Handle calendar event click and prevent default behavior
                 $('#calendar').on('Calendar.event-click', function (event, instance, elem, evt) {
-
-
                     var startTime = evt.start;
                     var endTime = evt.end;
                     var timeSlotName = evt.title;
@@ -298,6 +287,7 @@
                                 // Get user email from the claims
                                 var userEmail = $('#Email').val();
 
+                                debugger
                                 // Retrieve user ID based on email
                                 $.ajax({
                                     url: '/@tenantName/User/GetUserIdByEmail',
@@ -349,70 +339,6 @@
 
 
             });
-
-
-
-            // // Function to show a message in a Bootstrap modal
-            // function showMessage(message, isError) {
-
-            //     var modalTitle = isError ? 'Error' : 'Success';
-            //     var modalClass = isError ? 'text-danger' : 'text-success';
-
-            //     $('#messageModalLabel').text(modalTitle);
-            //     $('#messageModalBody').text(message).removeClass('text-success text-danger').addClass(modalClass);
-            //     $('#messageModal').modal('show');
-
-
-            //    // $(".nav-fixed").addClass("backgr");
-
-
-
-
-            //     // Hide the modal with a fade-out effect after 1 second
-            //     setTimeout(function () {
-            //         $('#messageModal').fadeOut(1000, function () {
-            //             $('#messageModal').modal('hide'); // Hide the modal
-            //             $('#messageModal').css('display', 'none'); // Reset display property for future use
-            //             //$(".nav-fixed").removeClass("backgr");
-            //         });
-            //     }, 2000); // 1000 milliseconds = 1 second
-
-            // }
-
-
-            // function showMessage(message, isError) {
-            //     var modalTitle = isError ? 'Error' : 'Success';
-            //     var modalClass = isError ? 'text-danger' : 'text-success';
-
-            //     $('#messageModalLabel').text(modalTitle);
-            //     $('#messageModalBody').text(message).removeClass('text-success text-danger').addClass(modalClass);
-            //     $('#messageModal').modal({
-            //         backdrop: 'static', // Prevent closing the modal by clicking outside
-            //         keyboard: false     // Prevent closing the modal with the keyboard
-            //     });
-
-            //     // Show the modal
-            //     $('#messageModal').modal('show');
-
-            //     // Prevent horizontal scroll bar
-            //     $('body').css({
-            //         'overflow-y': 'auto',
-            //         'overflow-x': 'hidden'
-            //     });
-
-            //     // Hide the modal with a fade-out effect after 2 seconds
-            //     setTimeout(function () {
-            //         $('#messageModal').fadeOut(1000, function () {
-            //             $('#messageModal').modal('hide'); // Hide the modal
-            //             $('#messageModal').css('display', 'none'); // Reset display property for future use
-            //             // Restore the scroll behavior after the modal is hidden
-            //             $('body').css({
-            //                 'overflow-y': 'auto',
-            //                 'overflow-x': 'hidden'
-            //             });
-            //         });
-            //     }, 2000); // 2000 milliseconds = 2 seconds
-            // }
             function showMessage(message, isError) {
                 var modalTitle = isError ? 'Error' : 'Success';
                 var modalClass = isError ? 'error' : 'success';
@@ -447,7 +373,10 @@
 
         });
     </script>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
+
+
+
