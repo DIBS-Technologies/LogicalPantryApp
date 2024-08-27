@@ -662,7 +662,7 @@ namespace LogicalPantry.Services.UserServices
                             .Where(ur => ur.UserId == existingUser.Id)
                             .Select(ur => ur.RoleId)
                             .FirstOrDefault();
-
+                        //one join
                         if (existingUserRole == (int)UserRoleEnum.Admin)
                         {
                             response.Message = "User already exists with Admin role.";
@@ -701,7 +701,7 @@ namespace LogicalPantry.Services.UserServices
                         };
 
                         dataContext.Users.Add(adminUser);
-                        await dataContext.SaveChangesAsync(); // Save the new user
+                        await dataContext.SaveChangesAsync(); 
 
                         // Assign Admin role to the user
                         var adminRole = new UserRole
@@ -710,7 +710,7 @@ namespace LogicalPantry.Services.UserServices
                             RoleId = (int)UserRoleEnum.Admin
                         };
                         dataContext.UserRoles.Add(adminRole);
-                        await dataContext.SaveChangesAsync(); // Save the role
+                        await dataContext.SaveChangesAsync(); 
 
                         response.Data = new UserDto
                         {

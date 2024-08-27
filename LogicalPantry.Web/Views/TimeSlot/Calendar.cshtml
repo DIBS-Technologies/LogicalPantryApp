@@ -26,8 +26,8 @@
 
         .calendar-header {
             margin-bottom: 20px;
-            display: flex;
-            justify-content: end;
+           /*  display: flex;
+            justify-content: end; */
             align-items: center;
         }
 
@@ -162,7 +162,7 @@
         }
 
         .calendar-categories {
-            height: 0;
+            height: 20px;
         }
 
         .nav-fixed #layoutSidenav #layoutSidenav_nav .sidenav {
@@ -185,11 +185,13 @@
 
         .calendar-header {
             margin: 20px auto;
-            display: flex;
-            justify-content: end;
+           
+           
             align-items: center;
             width: 100%;
-            max-width: 1200px;
+           /*  max-width: 1200px; */
+            padding-left: 6rem;
+            padding-right: 5rem;
         }
 
         .container-fluid {
@@ -220,14 +222,21 @@
             bottom: 0;
             flex-shrink: 0; /* Prevent footer from shrinking */
         }
+
+        
+        .pt-2, .py-2 {
+            padding-top: 1rem !important;
+        }
     </style>
 </head>
 
 <body>
     <div class="container-fluid">
         <div class="calendar-header">
-           @*  <h3>TimeSlot </h3> *@
-            <div class="d-flex align-items-center">
+            @*  <h3>TimeSlot </h3> *@
+            <div class="d-flex align-items-center" style="
+                 display: flex;
+                 justify-content: end;">
                 @*  <div class="dropdown d-inline">
                 <select id="eventSelect" class="form-control" onchange="handleSelectChange()">
                 <option value="" selected disabled>Type</option>
@@ -238,7 +247,6 @@
                 </div> *@
                 <button type="button" class="btn btn-success" id="addEventBtn">Add Event</button>
             </div>
-        </div> *@
 
         <div class="row">
             <div class="col">
@@ -330,7 +338,7 @@
                 $(document).ready(function () {
 
                     var events = @Html.Raw(Json.Serialize(Model.Events));
-                    // var buttonHtml = '<button type="button" class="btn btn-success" id="addEventBtn">Add Event</button>';
+                     //var buttonHtml = '<button type="button" class="btn btn-success" id="addEventBtn">Add Event</button>';
                     // $('.nav-fixed .container').append(buttonHtml);
 
             $('#calendar').Calendar({
@@ -499,6 +507,7 @@
                         if (response && response.timeSlotId) {
                             // Redirect to EditTimeSlotUser with the time slot ID
                            window.location.href = 'EditTimeSlotUser?id=' + response.timeSlotId;
+                              
                             // var id = response.timeSlotId;
                             // $.ajax({
                             //     url: '/@tenantName/TimeSlot/EditTimeSlotUser',
@@ -571,6 +580,15 @@
             });
         });
     </script>
+
+
+    <style>
+            .calendar-timeline{             
+                padding-top: 31px;
+                margin-top: 70px;
+            
+            }
+    </style>
 </body>
 
 </html>

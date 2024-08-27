@@ -149,14 +149,11 @@ namespace LogicalPantry.Web.Controllers
         //}
 
         [HttpPost("UpdateUser")] //ThisExpressionSyntax is ForbidResult allow method
-        public async Task<IActionResult> UpdateUser([FromBody] UserDto user)
+        public async Task<IActionResult> UpdateUser(string userId, bool isAllow)
         {
-            if (user != null)
-            {
-                return BadRequest("Invalid user ID.");
-            }
+            
 
-            var userDto = new UserDto { Id = user.Id, IsAllow = user.IsAllow };
+            var userDto = new UserDto { Id = int.Parse(userId), IsAllow = isAllow };
 
             var response = await _userService.UpdateUserAsync(userDto);
 

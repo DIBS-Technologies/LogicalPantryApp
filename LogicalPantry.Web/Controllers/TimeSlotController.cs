@@ -145,6 +145,8 @@ namespace LogicalPantry.Web.Controllers
         [HttpGet("EditTimeSlotUser")]
         public async Task<IActionResult> EditTimeSlotUser(string Id)
         {
+            var PageName = HttpContext.Session.GetString("PageName");
+            ViewBag.PageName = PageName;
             // Log the starting of the Index method execution.
             _logger.LogInformation("EditTimeSlotUser Get method call started");
             if (string.IsNullOrEmpty(Id) || !int.TryParse(Id, out int timeSlotId))
@@ -315,10 +317,10 @@ namespace LogicalPantry.Web.Controllers
 
             ViewBag.TenantId = TenantId;
             //ViewBag.PageName = PageName;
-
+            var tenantId = TenantId;
             // Fetch events from the database
-            var events = await _timeSlotService.GetAllEventsAsync();
-
+            // var events = await _timeSlotService.GetAllEventsAsync();
+            var events = await _timeSlotService.GetAllEventsByTenantIdAsync(tenantId.Value);
             // Log the number of events fetched
             _logger.LogInformation($"Fetched {events.Count()} events from the database.");
 
@@ -365,10 +367,13 @@ namespace LogicalPantry.Web.Controllers
         {
             _logger.LogInformation("Calendar page accessed");
             // Helper method to get the start of the current week (Sunday)
-        
+            var PageName = HttpContext.Session.GetString("PageName");
+            ViewBag.PageName = PageName;
+            var tenantId = TenantId;
             // Fetch events from the database
-            var events = await _timeSlotService.GetAllEventsAsync();
+           // var events = await _timeSlotService.GetAllEventsAsync();
 
+            var events = await _timeSlotService.GetAllEventsByTenantIdAsync(tenantId.Value);
             // Log the number of events fetched
             _logger.LogInformation($"Fetched {events.Count()} events from the database.");
 

@@ -137,10 +137,10 @@
         .nav-fixed #layoutSidenav #layoutSidenav_nav .sidenav {
             padding-top: 0rem;
         }
-
+/* 
         #layoutSidenav {
             margin-top: -7%;
-        }
+        } */
     </style>
 </head>
 
@@ -222,9 +222,9 @@
     <script>
         $(document).ready(function () {
 
-            // $(document).ready(function () {
-            //     $('header.page-header').remove(); // Removes the header with class 'page-header'
-            // });
+            $(document).ready(function () {
+                $('header.page-header').remove(); // Removes the header with class 'page-header'
+            });
 
             $('.page-header-title').text("Edit User TimeSlots");
             // Function to get query parameters from the URL
@@ -284,13 +284,12 @@
                     contentType: 'application/json; charset=utf-8',
                     dataType: 'json',
                     success: function (response) {
-                        debugger
                         if (response.success) {
-                            $('#SuccessMessageBatch').text('Changes saved successfully.').fadeIn().delay(2000).fadeOut();
+                            $('#successMessageUser').fadeIn().delay(2000).fadeOut();
                             sessionStorage.removeItem('userStatuses');
                             toggleSaveButton();
                         } else {
-                            $('#errorMessageBatch').text('Error saving changes.').fadeIn().delay(2000).fadeOut();
+                            $('#errorMessageUser').text('Error saving changes.').fadeIn().delay(2000).fadeOut();
                         }
                     },
                     error: function () {

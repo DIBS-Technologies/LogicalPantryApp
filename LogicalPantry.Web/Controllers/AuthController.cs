@@ -84,11 +84,11 @@ namespace LogicalPantry.Web.Controllers
             }
             else if (userInfo != null && userInfo.Role == "User")
             {
-                if (userInfo.Message == "User registered successfully.")
+                if (userInfo.Message == "User registered as User successfully.")
                 {
 
                     // return RedirectToAction(ViewConstants.INDEX, ViewConstants.Registration, new { area = "" });
-                    return Redirect($"/{tenantName}/Registration/INDEX");
+                    return Redirect($"/{tenantName}/User/Register");
                 }
                 else
                 {
@@ -100,7 +100,7 @@ namespace LogicalPantry.Web.Controllers
             // Log the ending of the Index method execution.
             _logger.LogInformation($"GoogleResponse Method is call ended");
             //return RedirectToAction(ViewConstants.LOGINVIEW, ViewConstants.AUTH, new { area = "" });
-            return Redirect($"/{tenantName}/Registration/INDEX");
+            return Redirect($"/{tenantName}/User/Register");
 
         }
 
@@ -154,7 +154,7 @@ namespace LogicalPantry.Web.Controllers
                 {
 
                     // return RedirectToAction(ViewConstants.INDEX, ViewConstants.Registration, new { area = "" });
-                    return Redirect($"/{TenantName}/Registration/INDEX");
+                    return Redirect($"/{TenantName}/User/Register");
                 }
                 else
                 {
@@ -206,7 +206,7 @@ namespace LogicalPantry.Web.Controllers
                 {
 
                     // return RedirectToAction(ViewConstants.INDEX, ViewConstants.Registration, new { area = "" });
-                    return Redirect($"/{TenantName}/Registration/INDEX");
+                    return Redirect($"/{TenantName}/User/Register");
                 }
                 else
                 {

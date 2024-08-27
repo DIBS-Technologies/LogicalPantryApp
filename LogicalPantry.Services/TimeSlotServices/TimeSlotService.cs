@@ -122,6 +122,15 @@ namespace LogicalPantry.Services.TimeSlotServices
             return await _context.TimeSlots.ToListAsync();
         }
 
+        public async Task<IEnumerable<TimeSlot>> GetAllEventsByTenantIdAsync(int tenantId)
+        {
+            // Fetch events from the TimeSlot table that match the given tenantId
+            return await _context.TimeSlots
+                .Where(ts => ts.TenantId == tenantId)
+                .ToListAsync();
+        }
+
+
 
         public async Task<int?> GetTimeSlotIdAsync(DateTime startTime, DateTime endTime, string title)
         {

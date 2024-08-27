@@ -217,7 +217,7 @@
     <div id="layoutSidenav">
         <nav class="topnav navbar navbar-expand shadow navbar-light bg-white" id="sidenavAccordion">
             <div class="tenantImage">
-                <img id="logoImage" src="../images/logo.svg" style="max-width : 50px;padding-left: 10px; opacity:100%" />
+                <img id="logoImage"  style="max-width : 50px;padding-left: 10px; opacity:100%" />
             </div>
             <div class="page-name" id="pageName">
                 @(!string.IsNullOrEmpty(pagename) ? pagename.Replace(".html", " ") : "")
@@ -333,11 +333,22 @@
                 // AJAX call to update the sidebar dynamically based on tenant
                 var isAuthenticated = '@isAuthenticated'.toLowerCase() === 'true';
 
+                var isAdmin = '@isAdmin'.toLowerCase() === 'true';
+
+
                 // Hide the header if not authenticated
                 if (!isAuthenticated) {
                     $('header').hide();
                 }
+
+                if (isAuthenticated && isAdmin) {
+                    $('header').hide();
+                }
+
+               
             });
+
+
         </script>
     }
 </body>

@@ -1,5 +1,6 @@
 ﻿using LogicalPantry.DTOs.PayPalSettingDtos;
 using LogicalPantry.Models.Models;
+using LogicalPantry.Models.Test.ModelTest;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LogicalPantry.Web.Controllers
@@ -22,6 +23,8 @@ namespace LogicalPantry.Web.Controllers
             _logger.LogInformation($"PayPal method call started");
 
             ViewBag.TenantId = TenantId;
+            var PageName = HttpContext.Session.GetString("PageName");
+            ViewBag.PageName = PageName;
             _logger.LogInformation($"PayPal method call ended");
 
             return View();
