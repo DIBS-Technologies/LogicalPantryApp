@@ -23,8 +23,8 @@ namespace LogicalPantry.Web.Controllers
             _logger.LogInformation($"PayPal method call started");
 
             ViewBag.TenantId = TenantId;
-            var PageName = HttpContext.Session.GetString("PageName");
-            ViewBag.PageName = PageName;
+            var tenantDisplayname = HttpContext.Session.GetString("TenantDisplayname");
+            ViewBag.PageName = tenantDisplayname;
             _logger.LogInformation($"PayPal method call ended");
 
             return View();
