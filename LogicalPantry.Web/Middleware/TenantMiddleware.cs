@@ -287,7 +287,14 @@ public class TenantMiddleware
                     context.Items["TenantId"] = tenant.Data?.Id;
                     context.Items["TenantImage"] = tenant.Data?.Logo;
                     context.Items["TenantDisplayName"] = tenant.Data?.TenantDisplayName;
-                    context.Session.SetString("TenantDisplayName", tenant.Data?.TenantDisplayName);
+                    if (tenant.Data?.TenantDisplayName == null)
+                    {
+                        context.Session.SetString("TenantDisplayName", string.Empty); // Set the session value to an empty string if null
+                    }
+                    else
+                    {
+                        context.Session.SetString("TenantDisplayName", tenant.Data.TenantDisplayName); // Set the session value if not null
+                    }
                     var pageName = tenant.Data?.PageName;
                     var cachedTenantName = tenant.Data.TenantName;
                     _cache.Set(tenantNameFromUrl, (cachedTenantName, userEmail, pageName), TimeSpan.FromMinutes(10)); // Added expiration
@@ -306,7 +313,14 @@ public class TenantMiddleware
                 context.Items["UserEmail"] = cachedValues.UserEmail;
                 context.Items["TenantId"] = tenant.Data.Id;
                 context.Items["TenantDisplayName"] = tenant.Data?.TenantDisplayName;
-                context.Session.SetString("TenantDisplayName", tenant.Data?.TenantDisplayName);
+                if (tenant.Data?.TenantDisplayName == null)
+                {
+                    context.Session.SetString("TenantDisplayName", string.Empty); // Set the session value to an empty string if null
+                }
+                else
+                {
+                    context.Session.SetString("TenantDisplayName", tenant.Data.TenantDisplayName); // Set the session value if not null
+                }
                 var newPath = "/" + string.Join("/", segments.Skip(1));
                 context.Request.Path = newPath;
             }
@@ -328,7 +342,14 @@ public class TenantMiddleware
                 var tName = tenant.Data.TenantName;
                 context.Items["TenantImage"] = tenant.Data?.Logo;
                 context.Items["TenantDisplayName"] = tenant.Data?.TenantDisplayName;
-                context.Session.SetString("TenantDisplayName", tenant.Data?.TenantDisplayName);
+                if (tenant.Data?.TenantDisplayName == null)
+                {
+                    context.Session.SetString("TenantDisplayName", string.Empty); // Set the session value to an empty string if null
+                }
+                else
+                {
+                    context.Session.SetString("TenantDisplayName", tenant.Data.TenantDisplayName); // Set the session value if not null
+                }
                 var newPath = "/" + string.Join("/", segments.Skip(1));
                 context.Request.Path = newPath;
             }

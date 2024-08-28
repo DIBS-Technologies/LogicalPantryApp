@@ -643,161 +643,167 @@ namespace LogicalPantry.Services.UserServices
 
             try
             {
+                if(email != null)
+                {
+                    
+                
+                
                 // Check if the email is present in the Tenant table
                 var tenant = dataContext.Tenants
                     .Where(t => t.AdminEmail == email)
                     .FirstOrDefault();
 
-                if (tenant != null)
-                {
-                    // Email is present in the Tenant table, check if it's also present in the User table
-                    var existingUser = dataContext.Users
-                        .Where(u => u.Email == email)
-                        .FirstOrDefault();
-
-                    if (existingUser != null)
+                    if (tenant != null)
                     {
-                        // User is already added in the User table
-                        var existingUserRole = dataContext.UserRoles
-                            .Where(ur => ur.UserId == existingUser.Id)
-                            .Select(ur => ur.RoleId)
+                        // Email is present in the Tenant table, check if it's also present in the User table
+                        var existingUser = dataContext.Users
+                            .Where(u => u.Email == email)
                             .FirstOrDefault();
-                        //one join
-                        if (existingUserRole == (int)UserRoleEnum.Admin)
+
+                        if (existingUser != null)
                         {
-                            response.Message = "User already exists with Admin role.";
-                        }
-                        else if (existingUserRole == (int)UserRoleEnum.User)
-                        {
-                            response.Message = "User already exists with User role.";
+                            // User is already added in the User table
+                            var existingUserRole = dataContext.UserRoles
+                                .Where(ur => ur.UserId == existingUser.Id)
+                                .Select(ur => ur.RoleId)
+                                .FirstOrDefault();
+                            //one join
+                            if (existingUserRole == (int)UserRoleEnum.Admin)
+                            {
+                                response.Message = "User already exists with Admin role.";
+                            }
+                            else if (existingUserRole == (int)UserRoleEnum.User)
+                            {
+                                response.Message = "User already exists with User role.";
+                            }
+                            else
+                            {
+                                response.Message = "User already exists with an unknown role.";
+                            }
+
+                            response.Data = new UserDto
+                            {
+                                Id = existingUser.Id,
+                                FullName = existingUser.FullName,
+                                Email = existingUser.Email,
+                                PhoneNumber = existingUser.PhoneNumber,
+                                IsAllow = existingUser.IsAllow
+                            };
+                            response.Success = true;
                         }
                         else
                         {
-                            response.Message = "User already exists with an unknown role.";
-                        }
+                            // Email is in the Tenant table but not in the User table, add as Admin
+                            var adminUser = new User
+                            {
+                                TenantId = tenant.Id,
+                                FullName = string.Empty,
+                                Address = string.Empty,
+                                Email = email,
+                                PhoneNumber = string.Empty,
+                                IsAllow = false,
+                                IsRegistered = false
+                            };
 
-                        response.Data = new UserDto
-                        {
-                            Id = existingUser.Id,
-                            FullName = existingUser.FullName,
-                            Email = existingUser.Email,
-                            PhoneNumber = existingUser.PhoneNumber,
-                            IsAllow = existingUser.IsAllow
-                        };
-                        response.Success = true;
+                            dataContext.Users.Add(adminUser);
+                            await dataContext.SaveChangesAsync();
+
+                            // Assign Admin role to the user
+                            var adminRole = new UserRole
+                            {
+                                UserId = adminUser.Id,
+                                RoleId = (int)UserRoleEnum.Admin
+                            };
+                            dataContext.UserRoles.Add(adminRole);
+                            await dataContext.SaveChangesAsync();
+
+                            response.Data = new UserDto
+                            {
+                                Id = adminUser.Id,
+                                FullName = adminUser.FullName,
+                                Email = adminUser.Email,
+                                PhoneNumber = adminUser.PhoneNumber,
+                                IsAllow = adminUser.IsAllow
+                            };
+                            response.Success = true;
+                            response.Message = "User registered as Admin successfully.";
+                        }
                     }
                     else
                     {
-                        // Email is in the Tenant table but not in the User table, add as Admin
-                        var adminUser = new User
-                        {
-                            TenantId = tenant.Id,
-                            FullName = string.Empty,
-                            Address = string.Empty,
-                            Email = email,
-                            PhoneNumber = string.Empty,
-                            IsAllow = false,
-                            IsRegistered = false
-                        };
-
-                        dataContext.Users.Add(adminUser);
-                        await dataContext.SaveChangesAsync(); 
-
-                        // Assign Admin role to the user
-                        var adminRole = new UserRole
-                        {
-                            UserId = adminUser.Id,
-                            RoleId = (int)UserRoleEnum.Admin
-                        };
-                        dataContext.UserRoles.Add(adminRole);
-                        await dataContext.SaveChangesAsync(); 
-
-                        response.Data = new UserDto
-                        {
-                            Id = adminUser.Id,
-                            FullName = adminUser.FullName,
-                            Email = adminUser.Email,
-                            PhoneNumber = adminUser.PhoneNumber,
-                            IsAllow = adminUser.IsAllow
-                        };
-                        response.Success = true;
-                        response.Message = "User registered as Admin successfully.";
-                    }
-                }
-                else
-                {
-                    // Email is not present in the Tenant table, check the User table
-                    var user = dataContext.Users
-                        .Where(u => u.Email == email)
-                        .FirstOrDefault();
-
-                    if (user != null)
-                    {
-                        // User already exists in the User table
-                        var existingUserRole = dataContext.UserRoles
-                            .Where(ur => ur.UserId == user.Id)
-                            .Select(ur => ur.RoleId)
+                        // Email is not present in the Tenant table, check the User table
+                        var user = dataContext.Users
+                            .Where(u => u.Email == email)
                             .FirstOrDefault();
 
-                        if (existingUserRole == (int)UserRoleEnum.Admin)
+                        if (user != null)
                         {
-                            response.Message = "User already exists with Admin role.";
-                        }
-                        else if (existingUserRole == (int)UserRoleEnum.User)
-                        {
-                            response.Message = "User already exists with User role.";
+                            // User already exists in the User table
+                            var existingUserRole = dataContext.UserRoles
+                                .Where(ur => ur.UserId == user.Id)
+                                .Select(ur => ur.RoleId)
+                                .FirstOrDefault();
+
+                            if (existingUserRole == (int)UserRoleEnum.Admin)
+                            {
+                                response.Message = "User already exists with Admin role.";
+                            }
+                            else if (existingUserRole == (int)UserRoleEnum.User)
+                            {
+                                response.Message = "User already exists with User role.";
+                            }
+                            else
+                            {
+                                response.Message = "User already exists with an unknown role.";
+                            }
+
+                            response.Data = new UserDto
+                            {
+                                Id = user.Id,
+                                FullName = user.FullName,
+                                Email = user.Email,
+                                PhoneNumber = user.PhoneNumber,
+                                IsAllow = user.IsAllow
+                            };
+                            response.Success = true;
                         }
                         else
                         {
-                            response.Message = "User already exists with an unknown role.";
+                            // User does not exist, create the user with the User role
+                            var newUser = new User
+                            {
+                                TenantId = tenantId,
+                                FullName = string.Empty,
+                                Address = string.Empty,
+                                Email = email,
+                                PhoneNumber = string.Empty,
+                                IsAllow = false,
+                                IsRegistered = false
+                            };
+
+                            dataContext.Users.Add(newUser);
+                            await dataContext.SaveChangesAsync(); // Save the new user
+
+                            // Assign User role to the user
+                            var userRole = new UserRole
+                            {
+                                UserId = newUser.Id,
+                                RoleId = (int)UserRoleEnum.User
+                            };
+                            dataContext.UserRoles.Add(userRole);
+                            await dataContext.SaveChangesAsync(); // Save the role
+
+                            response.Data = new UserDto
+                            {
+                                Id = newUser.Id,
+                                FullName = newUser.FullName,
+                                Email = newUser.Email,
+                                PhoneNumber = newUser.PhoneNumber,
+                                IsAllow = newUser.IsAllow
+                            };
+                            response.Success = true;
+                            response.Message = "User registered as User successfully.";
                         }
-
-                        response.Data = new UserDto
-                        {
-                            Id = user.Id,
-                            FullName = user.FullName,
-                            Email = user.Email,
-                            PhoneNumber = user.PhoneNumber,
-                            IsAllow = user.IsAllow
-                        };
-                        response.Success = true;
-                    }
-                    else
-                    {
-                        // User does not exist, create the user with the User role
-                        var newUser = new User
-                        {
-                            TenantId = tenantId,
-                            FullName = string.Empty,
-                            Address = string.Empty,
-                            Email = email,
-                            PhoneNumber = string.Empty,
-                            IsAllow = false,
-                            IsRegistered = false
-                        };
-
-                        dataContext.Users.Add(newUser);
-                        await dataContext.SaveChangesAsync(); // Save the new user
-
-                        // Assign User role to the user
-                        var userRole = new UserRole
-                        {
-                            UserId = newUser.Id,
-                            RoleId = (int)UserRoleEnum.User
-                        };
-                        dataContext.UserRoles.Add(userRole);
-                        await dataContext.SaveChangesAsync(); // Save the role
-
-                        response.Data = new UserDto
-                        {
-                            Id = newUser.Id,
-                            FullName = newUser.FullName,
-                            Email = newUser.Email,
-                            PhoneNumber = newUser.PhoneNumber,
-                            IsAllow = newUser.IsAllow
-                        };
-                        response.Success = true;
-                        response.Message = "User registered as User successfully.";
                     }
                 }
             }
