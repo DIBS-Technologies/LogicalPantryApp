@@ -328,20 +328,26 @@ namespace LogicalPantry.Web.Controllers
         }
 
 
-        [HttpGet("GetUser")]
         public async Task<IActionResult> GetUser(string email)
         {
             _logger.LogInformation("Get Object call started");
             try
             {
-                var userExisist = await _userService.GetUserByEmailAsync(email, 0);
-
-                if (userExisist?.Data == null)
+                if (!string.IsNullOrEmpty(email))
                 {
-                    return NotFound("Tenant data not found");
+                    var userExisist = await _userService.GetUserByEmailAsync(email, 0);
+
+                    if (userExisist?.Data == null)
+                    {
+                        return NotFound("Tenant data not found");
+                    }
+                    _logger.LogInformation("Get Object call ended");
+                    return Ok(userExisist.Data.IsAllow);
                 }
-                _logger.LogInformation("Get Object call ended");
-                return Ok(userExisist.Data.IsAllow);
+                else
+                {
+                    return Ok(false);
+                }
             }
             catch (Exception ex)
             {
@@ -349,7 +355,6 @@ namespace LogicalPantry.Web.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
-
     }
 
 
