@@ -324,9 +324,11 @@
                 if (tenantId !== 'null') {
                     tenantId = tenantId.toString(); // Ensure tenantId is a string
                 }
-
+                debugger;
                 var handlerValue = $("#pag").val();
-                $("#urlFrameId").attr("src", "/TenantHomePage/" + handlerValue);
+                if (handlerValue != "") {
+                    $("#urlFrameId").attr("src", "/TenantHomePage/" + handlerValue);
+                }
 
                 $("#pageName").text(handlerValue ? handlerValue.replace('.html', ' ') : ' ');
 

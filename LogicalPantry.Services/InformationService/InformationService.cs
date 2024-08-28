@@ -58,6 +58,7 @@ namespace LogicalPantry.Services.InformationService
                         Id = t.Id,
                         PaypalId = t.PaypalId,
                         PageName = t.PageName,
+                        TenantDisplayName =t.TenantDisplayName,
                         Logo = t.Logo,
                         Timezone = t.Timezone,
                         TenantDisplayName = t.TenantDisplayName,
@@ -298,6 +299,7 @@ namespace LogicalPantry.Services.InformationService
                             Id = tenant.Id,
                             TenantName = tenant.TenantName,
                             AdminEmail = tenant.AdminEmail,
+                            TenantDisplayName = tenant.TenantDisplayName,
                             PaypalId = tenant.PaypalId,
                             PageName = tenant.PageName,
                             Logo = tenant.Logo,
@@ -373,6 +375,7 @@ namespace LogicalPantry.Services.InformationService
                     TenantName = tenant.TenantName,
                     // Add other properties as needed
                     PageName = tenant.PageName,
+                    TenantDisplayName = tenant.TenantDisplayName,
                 };
                 response.Success = true;
             }
@@ -389,6 +392,7 @@ namespace LogicalPantry.Services.InformationService
                             Id = tenant.Id,
                             TenantName = tenant.TenantName,
                             PageName = tenant.PageName,
+                            TenantDisplayName = tenant.TenantDisplayName,
                         };
                         response.Success = true;
                         return response;
@@ -408,6 +412,7 @@ namespace LogicalPantry.Services.InformationService
                             TenantName = tenant.TenantName,
                             // Add other properties as needed
                             PageName = tenant.PageName,
+                            TenantDisplayName = tenant.TenantDisplayName,
                         };
                         response.Success = true;
                         response.Message = "Tenant found";
