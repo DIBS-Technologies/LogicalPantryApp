@@ -18,12 +18,14 @@
         body {
             margin: 0;
             padding: 0;
+            overflow: hidden;
         }
 
         .container-fluid.header-container {
             max-height: 60px; /* Limit header height */
             overflow: hidden; /* Hide overflow */
             padding: 0; /* Remove padding */
+            overflo
         }
 
         .registration-container {
@@ -145,6 +147,61 @@
         #layoutSidenav_content {
             margin-bottom: -3%;
         }
+
+        .page-header-compact .page-header-content {
+            padding: 0;
+            padding-top: 10px;
+        }
+
+        .form-group {
+            padding-top: 1rem;
+        }
+
+        .card-header {
+            text-align: center;
+            font-weight: 500;
+            padding: 0; /* Remove padding */
+            margin: 0;
+            width: 100%; /* Ensure full width */
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+        }
+
+
+        .form-container {
+            padding: 0;
+        }
+
+        .card-header {
+            width: 100%;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            padding-left: 3%;
+        }
+
+
+        form {
+            padding: 3%;
+        }
+
+
+        .form-group {
+            padding-top: 0rem;
+        }
+
+
+        #layoutSidenav {
+            margin-top: -4%;
+        }
+
+        .pt-2, .py-2 {
+            padding-top: 1rem !important;
+        }
+
+        .page-header-title {
+            font-size: larger;
+        }
+
     </style>
 
     </style>
@@ -221,7 +278,10 @@
                 validateField(this);
             });
 
-            $('header.page-header').remove();
+            $('#successMessageUser').fadeIn().delay(2000).fadeOut();
+            $('#errorMessageUser').fadeIn().delay(2000).fadeOut();
+
+            // $('header.page-header').remove();
         });
 
         function validateField(field) {

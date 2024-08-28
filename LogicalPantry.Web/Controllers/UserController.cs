@@ -295,6 +295,15 @@ namespace LogicalPantry.Web.Controllers
             {
                 @TempData["MessageClass"] = "alert-success";
                 @TempData["SuccessMessageUser"] = "Registartion Successfull";
+
+                if (!response.Data)
+                {
+                    return Redirect($"/{TenantName}/TimeSlot/UserCalendar");
+                }
+                else
+                {
+                    return Redirect($"/{TenantName}/Donation/PayPal");
+                }
             }
             else
             {
@@ -305,8 +314,9 @@ namespace LogicalPantry.Web.Controllers
             }
             _logger.LogInformation($"Register method call ended");
             //return RedirectToAction("UserCalendar", "TimeSlot", new { area = "" });
-            return Redirect($"/{TenantName}/TimeSlot/UserCalendar");
         }
+
+
         [HttpGet]
         public object ValidateEmail(string emailId)
         {
@@ -317,6 +327,28 @@ namespace LogicalPantry.Web.Controllers
             return response;
         }
 
+
+        [HttpGet("GetUser")]
+        public async Task<IActionResult> GetUser(string email)
+        {
+            _logger.LogInformation("Get Object call started");
+            try
+            {
+                var userExisist = await _userService.GetUserByEmailAsync(email, 0);
+
+                if (userExisist?.Data == null)
+                {
+                    return NotFound("Tenant data not found");
+                }
+                _logger.LogInformation("Get Object call ended");
+                return Ok(userExisist.Data.IsAllow);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting tenant.");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
 
     }
 

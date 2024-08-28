@@ -33,7 +33,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
     @* <style>
         body {
             margin: 0;
@@ -522,7 +522,7 @@
         <div class="navbar-nav">
             @if (isAuthenticated && (!isAdmin || isUser))
             {
-                <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar" id="pickUp">Pickup</a>
+                <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar" id="pickUp" style="display:none;">Pickup</a>
             }
             <a class="nav-link" href="/@tenantName/Donation/PayPal">Donation</a>
             @if (isAuthenticated)
@@ -547,7 +547,7 @@
             }
             else
             {
-                <a class="nav-link" href="/@tenantName/Auth/loginView">Login</a>
+                <a class="nav-link" href="/@tenantName/Auth/loginView">Log In</a>
             }
         </div>
     </nav>
@@ -611,17 +611,26 @@
     console.log("pathe", path);
     
     // Determine the page header title based on the path
-    if (path.includes('Calendar')) {
-    pageHeaderTitle = 'TimeSlot';
-    } else if (path.includes('AddTenant')) {
-    pageHeaderTitle = 'Information';
-    } else if (path.includes('ManageUsers')) {
-    pageHeaderTitle = 'User Management';
-    } else if (path.includes('Registration')) {
-    pageHeaderTitle = 'User Registration';
-    } else if (path.includes('TimeSlotSignUp')) {
-    pageHeaderTitle = 'TimeSlotSignUp';
-    } 
+            if (path.includes('UserCalendar')) {
+                pageHeaderTitle = 'Pickup';
+            }
+            // Determine the page header title based on the path
+            if (path.includes('UserCalendar')) {
+                pageHeaderTitle = 'Pickup';
+            }
+            else if (path.includes('TimeSlot')) {
+                pageHeaderTitle = 'Time-Slot';
+            } else if (path.includes('AddTenant')) {
+                pageHeaderTitle = 'Information';
+            } else if (path.includes('ManageUsers')) {
+                pageHeaderTitle = 'User Management';
+            } else if (path.includes('Registration')) {
+                pageHeaderTitle = 'User Registration';
+            } else if (path.includes('TimeSlotSignUp')) {
+                pageHeaderTitle = 'TimeSlotSignUp';
+            } else if (path.includes('Register')) {
+                pageHeaderTitle = 'User Registration';
+            }
 
     // Set the page header title
     $('.page-header-title').text(pageHeaderTitle);
@@ -639,7 +648,31 @@
             });
 
 
-            var userEmail = '@User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value';
+                var userEmail = '@User.FindFirstValue(ClaimTypes.Email)';
+                fetchUserInfo(userEmail);
+
+                async function fetchUserInfo(userEmail) {
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            url: `/@tenantName/User/GetUser`,
+                            method: "GET",
+                            data: { email: userEmail },
+                            success: function (response) {
+                                if (response) {
+
+                                    $("#pickUp").show();
+
+                                } else {
+                                    $("#pickUp").hide();
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.error("Cannot find Image src", status, error);
+                                reject(new Error(`Cannot find Image src: ${status} ${error}`));
+                            }
+                        });
+                    });
+                }
 
             async function fetchImageUrl(tenantId) {
                 return new Promise((resolve, reject) => {

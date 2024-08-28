@@ -105,6 +105,8 @@ namespace LogicalPantry.Web.Controllers
             // Log the starting of the Index method execution.
             _logger.LogInformation("AddTenant post method call started");
             tenantDto.TenantName = TenantName;
+            var PageName = HttpContext.Session.GetString("PageName");
+            ViewBag.PageName = PageName;
             if (LogoFile != null && LogoFile.Length > 0)
             {
                 // Generate a unique file name to avoid conflicts
@@ -127,7 +129,7 @@ namespace LogicalPantry.Web.Controllers
 
                 @TempData["MessageClass"] = "alert-success";
                 @TempData["SuccessMessageInfo"] = "Infromation Saved Successfully";
-                var PageName = HttpContext.Session.GetString("PageName");
+                 PageName = HttpContext.Session.GetString("PageName");
 
                 //ViewBag.TenantId = tenantId;
                 ViewBag.PageName = PageName;
@@ -275,7 +277,8 @@ namespace LogicalPantry.Web.Controllers
 
                 HttpContext.Session.SetString("TenantId", tenantId.ToString());
                 HttpContext.Session.SetString("PageName", fileNameWithExtension);
-                HttpContext.Session.SetString("TenantImage", tenanatResponse.Data?.Logo);
+
+              //HttpContext.Session.SetString("TenantImage", tenanatResponse.Data?.Logo);
                 return View();
             }         
             else

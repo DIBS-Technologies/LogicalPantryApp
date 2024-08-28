@@ -369,6 +369,7 @@ namespace LogicalPantry.Services.InformationService
                     Id = tenant.Id,
                     TenantName = tenant.TenantName,
                     // Add other properties as needed
+                    PageName = tenant.PageName,
                 };
                 response.Success = true;
             }
@@ -384,7 +385,7 @@ namespace LogicalPantry.Services.InformationService
                         {
                             Id = tenant.Id,
                             TenantName = tenant.TenantName,
-                            // Add other properties as needed
+                            PageName = tenant.PageName,
                         };
                         response.Success = true;
                         return response;
@@ -403,6 +404,7 @@ namespace LogicalPantry.Services.InformationService
                             Id = tenant.Id,
                             TenantName = tenant.TenantName,
                             // Add other properties as needed
+                            PageName = tenant.PageName,
                         };
                         response.Success = true;
                         response.Message = "Tenant found";

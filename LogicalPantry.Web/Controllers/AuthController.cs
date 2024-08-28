@@ -80,7 +80,6 @@ namespace LogicalPantry.Web.Controllers
                 // Redirect based on user role
                 //  return RedirectToAction(ViewConstants.Calandar, ViewConstants.TimeSlot, new { area = "" });
                 return Redirect($"/{tenantName}/TimeSlot/Calendar");
-        
             }
             else if (userInfo != null && userInfo.Role == "User")
             {
@@ -90,10 +89,15 @@ namespace LogicalPantry.Web.Controllers
                     // return RedirectToAction(ViewConstants.INDEX, ViewConstants.Registration, new { area = "" });
                     return Redirect($"/{tenantName}/User/Register");
                 }
-                else
+                else if (userInfo.IsAllowed)
                 {
                     //return RedirectToAction(ViewConstants.UserCalandar, ViewConstants.TimeSlot, new { area = "" });
                     return Redirect($"/{tenantName}/TimeSlot/UserCalendar");
+                }
+                else
+                {
+                    ViewBag.Message = "User Is Not Allowed";
+                    return Redirect($"/{tenantName}/Donation/PayPal");
                 }
             }
 
@@ -158,6 +162,7 @@ namespace LogicalPantry.Web.Controllers
                 }
                 else
                 {
+                    
                     //return RedirectToAction(ViewConstants.UserCalandar, ViewConstants.TimeSlot, new { area = "" });
                     return Redirect($"/{TenantName}/TimeSlot/UserCalendar");
                 }
@@ -249,7 +254,6 @@ namespace LogicalPantry.Web.Controllers
             return Redirect($"/{TenantName}");
         }
 
-        // Check if user exists and update claims
         private async Task<UserInfo> CheckIfUserExists(AuthenticateResult result)
         {
             // Log the starting of the Index method execution.
@@ -266,18 +270,22 @@ namespace LogicalPantry.Web.Controllers
                     return null;
                 }
                 var tenantId = TenantId;
-                var userExists = await _userServices.GetUserByEmailAsync(userEmail,(int)tenantId);
+                var userExists = await _userServices.GetUserByEmailAsync(userEmail, (int)tenantId);
 
                 if (userExists.Success)
                 {
-                    
                     var role = await _userServices.GetUserRoleAsync(userExists.Data.Id);
 
                     if (role != null)
                     {
                         claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.RoleName.ToString()));
 
-                        HttpContext.Response.Headers.Add("TenantId", userExists.Data.TenantId.ToString());
+                        HttpContext.Response.Headers.Add("TenantId", userExists.Data?.TenantId.ToString());
+                        //HttpContext.Request.Headers.Cookie.Add("IsUserAllowed", userExists.Data?.IsAllow.ToString());
+
+                        HttpContext.Items["IsUserAllowed"] = userExists.Data?.IsAllow;
+
+
 
                         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, result.Principal);
 
@@ -286,12 +294,11 @@ namespace LogicalPantry.Web.Controllers
                             UserId = userExists.Data.Id,
                             Role = role.RoleName,
                             Message = userExists.Message,
-                            IsRegistered = userExists.Data.IsRegistered
+                            IsRegistered = userExists.Data.IsRegistered,
+                            IsAllowed = userExists.Data.IsAllow,
                         };
                     }
 
-
-                    
                 }
             }
             // Log the ending of the Index method execution.
@@ -304,7 +311,8 @@ namespace LogicalPantry.Web.Controllers
             public int UserId { get; set; }
             public string Role { get; set; }
             public string Message { get; set; }
-            public bool IsRegistered { get; set; }    
+            public bool IsRegistered { get; set; }   
+            public bool IsAllowed { get; set; }
         }
 
        

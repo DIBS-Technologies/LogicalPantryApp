@@ -28,38 +28,45 @@ public class ApplicationDataContext : DbContext
             .HasOne(u => u.Tenant)
             .WithMany(t => t.Users)
             .HasForeignKey(u => u.TenantId);
+            //.OnDelete(DeleteBehavior.Cascade);
 
         // UserRole relationships
         modelBuilder.Entity<UserRole>()
             .HasOne(ur => ur.User)
             .WithMany(u => u.UserRoles)
             .HasForeignKey(ur => ur.UserId);
+        //.OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<UserRole>()
             .HasOne(ur => ur.Role)
             .WithMany(r => r.UserRoles)
             .HasForeignKey(ur => ur.RoleId);
+            // .OnDelete(DeleteBehavior.Restrict);
 
         // TimeSlotSignup relationships
         modelBuilder.Entity<TimeSlotSignup>()
             .HasOne(ts => ts.TimeSlot)
             .WithMany(t => t.TimeSlotSignups)
             .HasForeignKey(ts => ts.TimeSlotId);
+        //.OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<TimeSlotSignup>()
             .HasOne(ts => ts.User)
             .WithMany(u => u.TimeSlotSignups)
             .HasForeignKey(ts => ts.UserId);
+            //.OnDelete(DeleteBehavior.Cascade);
 
         // TimeSlot relationships
         modelBuilder.Entity<TimeSlot>()
             .HasOne(ts => ts.User)
             .WithMany(u => u.TimeSlots)
             .HasForeignKey(ts => ts.UserId);
+           // .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<TimeSlot>()
             .HasOne(ts => ts.Tenant)
             .WithMany(t => t.TimeSlots)
             .HasForeignKey(ts => ts.TenantId);
+            //.OnDelete(DeleteBehavior.Cascade);
     }
 }
