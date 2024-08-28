@@ -88,10 +88,8 @@ namespace LogicalPantry.Web.Controllers
             //{
             //    return BadRequest("Invalid tenant ID");
             //}
-            var PageName = HttpContext.Session.GetString("PageName");
-
-            //ViewBag.TenantId = tenantId;
-            ViewBag.PageName = PageName;
+            var tenantDisplayname = HttpContext.Session.GetString("TenantDisplayname");//8/2824
+            ViewBag.PageName = tenantDisplayname;
             var response = await _informationService.GetTenantByNameAsync(tenantName);
             // Log the ending of the Index method execution.
             _logger.LogInformation("AddTenant Get method call ended");
@@ -105,8 +103,8 @@ namespace LogicalPantry.Web.Controllers
             // Log the starting of the Index method execution.
             _logger.LogInformation("AddTenant post method call started");
             tenantDto.TenantName = TenantName;
-            var PageName = HttpContext.Session.GetString("PageName");
-            ViewBag.PageName = PageName;
+            var tenantDisplayname = HttpContext.Session.GetString("TenantDisplayname");
+            ViewBag.PageName = tenantDisplayname;
             if (LogoFile != null && LogoFile.Length > 0)
             {
                 // Generate a unique file name to avoid conflicts
@@ -129,10 +127,8 @@ namespace LogicalPantry.Web.Controllers
 
                 @TempData["MessageClass"] = "alert-success";
                 @TempData["SuccessMessageInfo"] = "Infromation Saved Successfully";
-                 PageName = HttpContext.Session.GetString("PageName");
-
-                //ViewBag.TenantId = tenantId;
-                ViewBag.PageName = PageName;
+                 tenantDisplayname = HttpContext.Session.GetString("TenantDisplayname");
+                ViewBag.PageName = tenantDisplayname;
                 // Redirect to the GET method to display the updated data
                 return View(tenantDto);
                 //return RedirectToAction(nameof(AddTenant));
@@ -269,8 +265,8 @@ namespace LogicalPantry.Web.Controllers
                     return View();
                 }
 
-
-                ViewBag.PageName = fileNameWithExtension;
+                var tenantDisplayname = HttpContext.Session.GetString("TenantDisplayname");//8/2824
+                ViewBag.PageName = tenantDisplayname;
                 ViewBag.TenantId = tenantId;
                 TempData["TenantId"] = tenantId;
                 TempData["PageName"] = fileNameWithExtension;

@@ -117,6 +117,7 @@ namespace LogicalPantry.Services.InformationService
                 // Update the tenant information
                 tenant.PaypalId = tenantDto.PaypalId;
                 tenant.PageName = tenantDto.PageName;
+                tenant.TenantDisplayName = tenantDto.TenantDisplayName; 
                 if (tenantDto.Logo != null)
                 {
                     tenant.Logo = tenantDto.Logo;
@@ -335,6 +336,7 @@ namespace LogicalPantry.Services.InformationService
                     Id = tenant.Id,
                     TenantName = tenant.TenantName,
                      AdminEmail = tenant.AdminEmail,
+                     TenantDisplayName = tenant.TenantDisplayName,
                     PaypalId = tenant.PaypalId,
                     PageName = tenant.PageName,
                     Logo = tenant.Logo,
