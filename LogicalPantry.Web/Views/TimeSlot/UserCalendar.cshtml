@@ -536,15 +536,58 @@
 
 
             });
+            // function showMessage(message, isError) {
+            //     debugger;
+            //     var modalTitle = isError ? 'Error' : 'Success';
+            //     var modalClass = isError ? 'error' : 'success';
+            //     console.log(message);
+            //     //You have already signed up for this time slot.//if this message come the plese add here error modalclass 
+            //     //Successfully signed up for the time slot.  //if this message come the only show the sucess true
+            //     Swal.fire({
+            //         title: modalTitle,
+            //         text: message,
+            //         icon: modalClass,
+            //         showConfirmButton: true, // No need for a Close button
+            //         customClass: {
+            //             container: 'swal-container',
+            //             popup: 'swal-popup',
+            //             title: 'swal-title',
+            //             content: 'swal-content'
+            //         },
+            //         didClose: function () {
+            //             // Restore the scroll behavior after the modal is hidden
+            //             $('body').css({
+            //                 'overflow-y': 'auto',
+            //                 'overflow-x': 'hidden'
+            //             });
+            //         }
+            //     });
+
+            //     // Prevent horizontal scroll bar
+            //     $('body').css({
+            //         'overflow-y': 'auto',
+            //         'overflow-x': 'hidden'
+            //     });
+            // }
             function showMessage(message, isError) {
-                var modalTitle = isError ? 'Error' : 'Success';
-                var modalClass = isError ? 'error' : 'success';
+                var modalTitle = 'Success';
+                var modalClass = 'success';
+
+                if (message.includes('You have already signed up for this time slot.')) {
+                    modalTitle = 'Error';
+                    modalClass = 'error';
+                } else if (message.includes('Successfully signed up for the time slot.')) {
+                    modalTitle = 'Success';
+                    modalClass = 'success';
+                }
+
+                console.log(message);
 
                 Swal.fire({
                     title: modalTitle,
                     text: message,
                     icon: modalClass,
-                    showConfirmButton: true, // No need for a Close button
+                    showConfirmButton: true,
                     customClass: {
                         container: 'swal-container',
                         popup: 'swal-popup',
@@ -566,7 +609,6 @@
                     'overflow-x': 'hidden'
                 });
             }
-
         });
     </script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
