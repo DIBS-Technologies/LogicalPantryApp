@@ -59,7 +59,8 @@ namespace LogicalPantry.Services.InformationService
                         PaypalId = t.PaypalId,
                         PageName = t.PageName,
                         Logo = t.Logo,
-                        Timezone = t.Timezone
+                        Timezone = t.Timezone,
+                        TenantDisplayName = t.TenantDisplayName,
                         // Add any other fields you want to include in TenantDto
                     })
                     .FirstOrDefaultAsync();
