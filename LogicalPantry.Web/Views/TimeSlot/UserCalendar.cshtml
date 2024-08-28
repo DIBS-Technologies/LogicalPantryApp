@@ -509,10 +509,7 @@
                                                 }),
                                                 success: function (signupResponse) {
                                                     showMessage(signupResponse.message);
-                                                    // Delay redirection by 2 seconds
-                                                    // setTimeout(function () {
-                                                    // window.location.href = '/@tenantName/TimeSlot/UserCalendar';
-                                                    //}, 3000); // 2000 milliseconds = 2 seconds
+                                               
                                                 },
                                                 error: function (xhr, status, error) {
                                                     var response = xhr.responseJSON;
@@ -547,8 +544,7 @@
                     title: modalTitle,
                     text: message,
                     icon: modalClass,
-                    timer: 2000, // Auto-close after 2 seconds
-                    showConfirmButton: false, // No need for a Close button
+                    showConfirmButton: true, // No need for a Close button
                     customClass: {
                         container: 'swal-container',
                         popup: 'swal-popup',

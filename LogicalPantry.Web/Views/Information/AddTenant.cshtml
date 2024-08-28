@@ -247,12 +247,17 @@
                         <form method="post" id="createUser" action="/@tenantName/Information/AddTenant" enctype="multipart/form-data">
                             <div class="form-group">
                                 <label for="logo">Logo</label>
-                                <input type="file" name="LogoFile" class="form-control-file" id="logo" />
+                                <input type="file" name="LogoFile" class="form-control-file" id="logo" placeholder="Enter Logo" />
                                 <span class="text-danger" id="logo-error"></span>
                             </div>
                             <div class="form-group">
                                 <label for="PageName">Page Name <span class="mandatory">*</span></label>
-                                <input name="PageName" class="form-control" id="name" value="@Model.PageName" />
+                                <input name="PageName" class="form-control" id="name" value="@Model.PageName" placeholder="Enter Page Name" />
+                                <span class="text-danger" id="name-error"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="PageName">Tenant Display Name <span class="mandatory">*</span></label>
+                                <input name="PageName" class="form-control" id="name" placeholder="Enter Tenant Display Name" />
                                 <span class="text-danger" id="name-error"></span>
                             </div>
                             <div class="form-group">
@@ -260,6 +265,7 @@
                                 <input type="email" name="PaypalId" value="@Model.PaypalId" class="form-control" id="paypalId" />
                                 <span class="text-danger" id="paypalId-error"></span>
                             </div>
+                           
                             <div class="form-group">
                                 <label for="timeZone">Time Zone <span class="mandatory">*</span></label>
                                 <select name="Timezone" class="form-control" id="timeZone"></select>
