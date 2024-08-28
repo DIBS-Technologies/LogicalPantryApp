@@ -60,8 +60,7 @@ namespace LogicalPantry.Services.InformationService
                         PageName = t.PageName,
                         TenantDisplayName =t.TenantDisplayName,
                         Logo = t.Logo,
-                        Timezone = t.Timezone,
-                        TenantDisplayName = t.TenantDisplayName,
+                        Timezone = t.Timezone
                         // Add any other fields you want to include in TenantDto
                     })
                     .FirstOrDefaultAsync();

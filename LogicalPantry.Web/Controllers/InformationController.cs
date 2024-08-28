@@ -265,16 +265,17 @@ namespace LogicalPantry.Web.Controllers
                     return View();
                 }
 
-                var tenantDisplayname = HttpContext.Session.GetString("TenantDisplayname");//8/2824
-                ViewBag.PageName = tenantDisplayname;
-                ViewBag.TenantId = tenantId;
-                TempData["TenantId"] = tenantId;
-                TempData["PageName"] = fileNameWithExtension;
+                var TenantDisplayName = HttpContext.Session.GetString("TenantDisplayName");//8/2824
+              
 
                 HttpContext.Session.SetString("TenantId", tenantId.ToString());
-                HttpContext.Session.SetString("PageName", fileNameWithExtension);
+                HttpContext.Session.SetString("PageName", tenanatResponse.Data.TenantDisplayName);
 
-              //HttpContext.Session.SetString("TenantImage", tenanatResponse.Data?.Logo);
+                ViewBag.PageName = TenantDisplayName;
+                ViewBag.TenantId = tenantId;
+                TempData["TenantId"] = tenantId;
+                TempData["PageName"] = tenanatResponse.Data.TenantDisplayName;
+                //HttpContext.Session.SetString("TenantImage", tenanatResponse.Data?.Logo);
                 return View();
             }         
             else

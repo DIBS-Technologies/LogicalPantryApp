@@ -273,7 +273,7 @@ public class TenantMiddleware
                 var tenant = await informationService.GetTenantIdByEmail(userEmail, tenantNameFromUrl);
 
                 // Check if tenant and user email are cached
-                if (!_cache.TryGetValue(tenantNameFromUrl, out (string TenantName, string UserEmail) cachedValues))
+                if (!_cache.TryGetValue(tenantNameFromUrl, out (string TenantName, string UserEmail ) cachedValues))
                 {
                     
 
@@ -286,6 +286,7 @@ public class TenantMiddleware
                     }
                     context.Items["TenantId"] = tenant.Data?.Id;
                     context.Items["TenantImage"] = tenant.Data?.Logo;
+                    context.Items["TenantDisplayName"] = tenant.Data?.TenantDisplayName;
                     var pageName = tenant.Data?.PageName;
                     var cachedTenantName = tenant.Data.TenantName;
                     _cache.Set(tenantNameFromUrl, (cachedTenantName, userEmail, pageName), TimeSpan.FromMinutes(10)); // Added expiration
@@ -303,6 +304,7 @@ public class TenantMiddleware
                 context.Items["TenantName"] = cachedValues.TenantName;
                 context.Items["UserEmail"] = cachedValues.UserEmail;
                 context.Items["TenantId"] = tenant.Data.Id;
+                context.Items["TenantDisplayName"] = tenant.Data?.TenantDisplayName;
                 var newPath = "/" + string.Join("/", segments.Skip(1));
                 context.Request.Path = newPath;
             }
@@ -323,6 +325,7 @@ public class TenantMiddleware
                 context.Items["TenantId"] = tenant.Data?.Id;
                 var tName = tenant.Data.TenantName;
                 context.Items["TenantImage"] = tenant.Data?.Logo;
+                context.Items["TenantDisplayName"] = tenant.Data?.TenantDisplayName;
                 var newPath = "/" + string.Join("/", segments.Skip(1));
                 context.Request.Path = newPath;
             }
