@@ -52,10 +52,10 @@ namespace LogicalPantry.Web.Controllers
         {
             _logger.LogInformation("GetAllusers object call started.");
             var tenantId = TenantId;
-            var PageName = HttpContext.Session.GetString("PageName");
+            var TenantDisplayName = HttpContext.Session.GetString("TenantDisplayName");
 
             ViewBag.TenantId = tenantId;
-            ViewBag.PageName = PageName;
+            ViewBag.PageName = TenantDisplayName;
             var response = await _userService.GetAllRegisteredUsersAsync((int)tenantId);
             _logger.LogInformation("GetAllusers object call ended.");
 
@@ -271,10 +271,10 @@ namespace LogicalPantry.Web.Controllers
         public async Task<IActionResult> Register()
         {
 
-            var PageName = HttpContext.Session.GetString("PageName");
+            var TenantDisplayName = HttpContext.Session.GetString("TenantDisplayName");
 
             //ViewBag.TenantId = tenantId;
-            ViewBag.PageName = PageName;
+            ViewBag.PageName = TenantDisplayName;
 
             return View();
         }

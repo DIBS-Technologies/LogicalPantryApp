@@ -273,7 +273,7 @@ public class TenantMiddleware
                 var tenant = await informationService.GetTenantIdByEmail(userEmail, tenantNameFromUrl);
 
                 // Check if tenant and user email are cached
-                if (!_cache.TryGetValue(tenantNameFromUrl, out (string TenantName, string UserEmail, string pageName) cachedValues))
+                if (!_cache.TryGetValue(tenantNameFromUrl, out (string TenantName, string UserEmail) cachedValues))
                 {
                     
 
@@ -286,11 +286,10 @@ public class TenantMiddleware
                     }
                     context.Items["TenantId"] = tenant.Data?.Id;
                     context.Items["TenantImage"] = tenant.Data?.Logo;
-                    context.Items["PageName"] = tenant.Data?.PageName;
                     var pageName = tenant.Data?.PageName;
                     var cachedTenantName = tenant.Data.TenantName;
                     _cache.Set(tenantNameFromUrl, (cachedTenantName, userEmail, pageName), TimeSpan.FromMinutes(10)); // Added expiration
-                    cachedValues = (cachedTenantName, userEmail, pageName);
+                    cachedValues = (cachedTenantName, userEmail);
                 }
 
                 //if (tenantNameFromUrl != cachedValues.TenantName)
@@ -303,7 +302,6 @@ public class TenantMiddleware
 
                 context.Items["TenantName"] = cachedValues.TenantName;
                 context.Items["UserEmail"] = cachedValues.UserEmail;
-                context.Items["PageName"] = cachedValues.pageName;
                 context.Items["TenantId"] = tenant.Data.Id;
                 var newPath = "/" + string.Join("/", segments.Skip(1));
                 context.Request.Path = newPath;
@@ -324,7 +322,6 @@ public class TenantMiddleware
 
                 context.Items["TenantId"] = tenant.Data?.Id;
                 var tName = tenant.Data.TenantName;
-                context.Items["PageName"] = tenant.Data?.PageName;
                 context.Items["TenantImage"] = tenant.Data?.Logo;
                 var newPath = "/" + string.Join("/", segments.Skip(1));
                 context.Request.Path = newPath;
