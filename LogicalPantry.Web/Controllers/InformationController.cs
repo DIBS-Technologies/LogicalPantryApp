@@ -264,17 +264,26 @@ namespace LogicalPantry.Web.Controllers
                     Console.WriteLine($"IOException: {ex.Message}");
                     return View();
                 }
+                var homepageName = HttpContext.Session.GetString("HomePageName");
+                var TenantDisplayName = HttpContext.Session.GetString("TenantDisplayName");
+                //TenantDisplayName = TenantDisplayName ?? string.Empty;
+                if (TenantDisplayName != null) { 
+                    HttpContext.Session.SetString("TenantId", tenantId.ToString());
+                    HttpContext.Session.SetString("PageName", tenanatResponse.Data.TenantDisplayName);
+                    HttpContext.Session.SetString("HomePageName", tenanatResponse.Data.TenantDisplayName);
 
-                var TenantDisplayName = HttpContext.Session.GetString("TenantDisplayName");//8/2824
-              
-
+                    ViewBag.PageName = TenantDisplayName;               
+                    ViewBag.TenantId = tenantId;
+                    TempData["TenantId"] = tenantId;
+                    TempData["PageName"] = tenanatResponse.Data.TenantDisplayName;
+                }
+                if(tenanatResponse.Data?.PageName != null ||homepageName != null  )
+                {
+                    HttpContext.Session.SetString("HomePageName", tenanatResponse.Data?.PageName+fileExtension);
+                    ViewBag.homepageName = tenanatResponse.Data?.PageName;
+                }
                 HttpContext.Session.SetString("TenantId", tenantId.ToString());
-                HttpContext.Session.SetString("PageName", tenanatResponse.Data.TenantDisplayName);
-
-                ViewBag.PageName = TenantDisplayName;
                 ViewBag.TenantId = tenantId;
-                TempData["TenantId"] = tenantId;
-                TempData["PageName"] = tenanatResponse.Data.TenantDisplayName;
                 //HttpContext.Session.SetString("TenantImage", tenanatResponse.Data?.Logo);
                 return View();
             }         

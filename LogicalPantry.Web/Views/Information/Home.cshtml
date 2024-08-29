@@ -3,6 +3,7 @@
 @{
     var tenantName = ViewBag.TenantName as string;
     var pagename = ViewBag.PageName as string;
+    var homePageName = ViewBag.homepageName as string;
     var isUser = User.IsInRole("User");
     var tenantId = ViewBag.TenantId;
     var userClaim = User.Claims
@@ -238,13 +239,14 @@
                     <a class="nav-link" href="/@tenantName/Auth/LoginView">Log In</a>
                 }
                 <input id="pag" type="hidden" name="name" value="@pagename" />
+                <input id="HomePag" type="hidden" name="homePageName" value="@homePageName" />
                 <input type="hidden" value="@isUser" id="isUser" />
             </div>
         </nav>
         
         <div id="layoutSidenav_content">
             <main>
-                <iframe src="" id="urlFrameId"></iframe>
+                @* <iframe src="" id="urlFrameId"></iframe> *@
             </main>
         </div>
     </div>
@@ -325,12 +327,34 @@
                     tenantId = tenantId.toString(); // Ensure tenantId is a string
                 }
                 debugger;
-                var handlerValue = $("#pag").val();
-                if (handlerValue != "") {
-                    $("#urlFrameId").attr("src", "/TenantHomePage/" + handlerValue);
-                }
+                // var handlerValue = $("#HomePag").val();
+                // if (handlerValue != "") {
+                //     $("#urlFrameId").attr("src", "/TenantHomePage/" + handlerValue);
+                // }
+                // Get the value from the input element
 
-                $("#pageName").text(handlerValue ? handlerValue.replace('.html', ' ') : ' ');
+                var handlerValue = $("#HomePag").val();
+
+                // Construct the iframe element with the dynamic src
+
+                var iframe = $('<iframe>', {
+
+                    src: '~/TenantHomePage/' + handlerValue +'.html',
+
+                    id: 'urlFrameId'
+
+                });
+                // Append the iframe to the main container (you should replace '#mainContainer' with the actual ID of your main container)
+
+                $('#mainContainer').append(iframe);
+
+
+
+
+
+                var tenantDisplayName = $("#pag").val();
+                $("#pageName").text(tenantDisplayName);
+                //$("#pageName").text(tenantDisplayName ? tenantDisplayName.replace('.html', ' ') : ' ');
 
                 // AJAX call to update the sidebar dynamically based on tenant
                 var isAuthenticated = '@isAuthenticated'.toLowerCase() === 'true';

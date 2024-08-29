@@ -327,7 +327,7 @@ namespace LogicalPantry.Web.Controllers
             return response;
         }
 
-
+        [HttpGet("GetUser")]
         public async Task<IActionResult> GetUser(string email)
         {
             _logger.LogInformation("Get Object call started");

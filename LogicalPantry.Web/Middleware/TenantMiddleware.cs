@@ -253,8 +253,13 @@ public class TenantMiddleware
 
             if (segments.Length == 1)
             {
+
                 context.Request.Path = "";
                 context.Items["TenantName"] = tenantNameFromUrl;
+                await _next(context);
+                return;
+            }if(tenantNameFromUrl == "TenantHomePage")
+            {
                 await _next(context);
                 return;
             }
@@ -303,10 +308,11 @@ public class TenantMiddleware
 
                 //if (tenantNameFromUrl != cachedValues.TenantName)
                 if (!string.Equals(tenantNameFromUrl, cachedValues.TenantName, StringComparison.OrdinalIgnoreCase))
-                {
-                    context.Response.StatusCode = StatusCodes.Status403Forbidden;
-                    await context.Response.WriteAsync("Unauthorized: Tenant mismatch");
-                    return;
+                {                    
+                        context.Response.StatusCode = StatusCodes.Status403Forbidden;
+                        await context.Response.WriteAsync("Unauthorized: Tenant mismatch");
+                        return;                   
+                  
                 }
 
                 context.Items["TenantName"] = cachedValues.TenantName;
