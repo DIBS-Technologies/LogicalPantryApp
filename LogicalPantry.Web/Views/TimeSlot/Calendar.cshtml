@@ -442,12 +442,12 @@
                              var redirectUrl = '/@tenantName/TimeSlot/Calendar';
                              window.location.href = redirectUrl;
                         } else {
-                            alert('Error adding event.');
+                           // alert('Error adding event.');
                         }
                     },
                     error: function (xhr, status, error) {
                         console.error('Error adding event:', error);
-                        alert('Error adding event: ' + error);
+                       // alert('Error adding event: ' + error);
                     }
                 });
             });
@@ -545,7 +545,7 @@
                         }
                     },
                     error: function (xhr, status, error) {
-                        alert('Error retrieving time slot ID: ' + error);
+                        alert('Error retrieving time slot ');
                     }
                 });
             });
