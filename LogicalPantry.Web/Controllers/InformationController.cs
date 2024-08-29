@@ -139,7 +139,7 @@ namespace LogicalPantry.Web.Controllers
                 @TempData["ErrorMessageInfo"] = "Internal server error.";
                 ModelState.AddModelError("", response.Message);
             }
-
+          
             // Log the ending of the Index method execution.
             _logger.LogInformation("AddTenant post method call ended");
             return View(tenantDto);
@@ -266,11 +266,12 @@ namespace LogicalPantry.Web.Controllers
                 }
                 var homepageName = HttpContext.Session.GetString("HomePageName");
                 var TenantDisplayName = HttpContext.Session.GetString("TenantDisplayName");
-                //TenantDisplayName = TenantDisplayName ?? string.Empty;
+                TenantDisplayName = TenantDisplayName ?? string.Empty;
+
                 if (TenantDisplayName != null) { 
                     HttpContext.Session.SetString("TenantId", tenantId.ToString());
-                    HttpContext.Session.SetString("PageName", tenanatResponse.Data.TenantDisplayName);
-                    HttpContext.Session.SetString("HomePageName", tenanatResponse.Data.TenantDisplayName);
+                    HttpContext.Session.SetString("PageName", tenanatResponse.Data.TenantDisplayName??string.Empty);
+                    HttpContext.Session.SetString("HomePageName", tenanatResponse.Data.PageName);
 
                     ViewBag.PageName = TenantDisplayName;               
                     ViewBag.TenantId = tenantId;

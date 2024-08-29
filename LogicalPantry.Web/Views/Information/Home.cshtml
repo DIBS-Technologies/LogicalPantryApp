@@ -245,7 +245,7 @@
         </nav>
         
         <div id="layoutSidenav_content">
-            <main>
+            <main id="iframe">
                 @* <iframe src="" id="urlFrameId"></iframe> *@
             </main>
         </div>
@@ -333,20 +333,16 @@
                 // }
                 // Get the value from the input element
 
+                // Get the value from the input field
                 var handlerValue = $("#HomePag").val();
-
-                // Construct the iframe element with the dynamic src
-
                 var iframe = $('<iframe>', {
-
-                    src: '~/TenantHomePage/' + handlerValue +'.html',
-
+                    src: '/TenantHomePage/' + handlerValue + '.html', 
                     id: 'urlFrameId'
-
                 });
-                // Append the iframe to the main container (you should replace '#mainContainer' with the actual ID of your main container)
 
-                $('#mainContainer').append(iframe);
+                // Append the iframe to the desired element
+                $('#iframe').empty().append(iframe);
+                
 
 
 

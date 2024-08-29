@@ -258,11 +258,12 @@ public class TenantMiddleware
                 context.Items["TenantName"] = tenantNameFromUrl;
                 await _next(context);
                 return;
-            }if(tenantNameFromUrl == "TenantHomePage")
-            {
-                await _next(context);
-                return;
             }
+            //if(tenantNameFromUrl == "TenantHomePage")
+            //{
+            //    await _next(context);
+            //    return;
+            //}
 
             if (context.User.Identity.IsAuthenticated)
             {

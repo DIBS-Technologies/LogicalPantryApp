@@ -310,7 +310,8 @@
 
             $('.saveButton').on('click', function () {
                 if (validateForm()) {
-                    $(".saveButton").prop("disabled", false);
+                    $(".saveButton").prop("disabled", false); 
+                    window.location.reload();
                 }
             });
         });
