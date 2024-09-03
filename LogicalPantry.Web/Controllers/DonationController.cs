@@ -1,6 +1,7 @@
 ﻿using LogicalPantry.DTOs.PayPalSettingDtos;
 using LogicalPantry.Models.Models;
 using LogicalPantry.Models.Test.ModelTest;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LogicalPantry.Web.Controllers
@@ -17,6 +18,7 @@ namespace LogicalPantry.Web.Controllers
             _logger = logger;
         }
 
+       // [Authorize(Policy = "AdminPolicy")]
         [HttpGet("PayPal")]
         public IActionResult PayPal()
         {

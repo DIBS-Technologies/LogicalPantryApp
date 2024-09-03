@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My SSI Page</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Include header -->
+    <!--#include virtual="header.shtml" -->
+
+    <main>
+        <h1>Welcome to My Website</h1>
+        <p>This is a sample page using server-side includes.</p>
+
+        <!-- Include a server-side script -->
+        <!--#exec cgi="script.cgi" -->
+
+        <p>Here's a list of recent articles:</p>
+        <ul>
+            <!-- Include a file that generates a list of articles -->
+            <!--#include virtual="articles.shtml" -->
+        </ul>
+    </main>
+
+    <!-- Include footer -->
+    <!--#include virtual="footer.shtml" -->
+</body>
+</html>

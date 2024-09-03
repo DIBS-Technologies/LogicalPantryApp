@@ -158,7 +158,7 @@
                     </div>
                     <div class="card-body">
                         <div id="successMessageUser" class="alert alert-success" style="display:none;">
-                            User Updated Succesfully.
+                             Updated succesfully.
                         </div>
 
 
@@ -221,7 +221,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> *@
     <script>
         $(document).ready(function () {
-
+            debugger;
             $(document).ready(function () {
                 $('header.page-header').remove(); // Removes the header with class 'page-header'
             });
@@ -234,7 +234,7 @@
             }
 
             // Extract the timeSlotId from the URL
-            var timeSlotId = getQueryParameter('id');
+            var timeSlotId = '227';  //getQueryParameter('id');
             console.log('Time Slot ID:', timeSlotId);
 
             // Handle checkbox changes
@@ -298,6 +298,53 @@
                 })
             });
 
+
+
+            function getCurrentDateTime() {
+                var now = new Date();
+                var year = now.getFullYear();
+                var month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+                var day = String(now.getDate()).padStart(2, '0');
+                var hours = String(now.getHours()).padStart(2, '0');
+                var minutes = String(now.getMinutes()).padStart(2, '0');
+                return `${year}-${month}-${day}T${hours}:${minutes}`;
+            }
+
+            // Set the min attribute for both datetime-local inputs to current date and time
+            $('#eventStart').attr('min', getCurrentDateTime());
+            $('#eventEnd').attr('min', getCurrentDateTime());
+
+            // Function to validate date inputs
+            function validateDates() {
+                const startDate = new Date($('#eventStart').val());
+                const endDate = new Date($('#eventEnd').val());
+
+                let valid = true;
+
+                // Clear previous error messages
+                $('#startError').text('');
+                $('#endError').text('');
+
+                // Check if start date is before the minimum allowed date
+                if (startDate < new Date(getCurrentDateTime())) {
+                    $('#startError').text('Please select a future date.');
+                    valid = false;
+                }
+
+                // Check if end date is before the minimum allowed date
+                if (endDate < new Date(getCurrentDateTime())) {
+                    $('#endError').text('Please select a future date.');
+                    valid = false;
+                }
+
+                // Check if end date is before start date
+                if (endDate <= startDate) {
+                    $('#endError').text('End date and time must be after the start date and time.');
+                    valid = false;
+                }
+
+                return valid;
+            }
             // Function to toggle Save button based on sessionStorage data
             function toggleSaveButton() {
                 var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '[]');

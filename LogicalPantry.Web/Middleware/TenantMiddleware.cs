@@ -239,14 +239,7 @@ public class TenantMiddleware
             return;
         }
 
-        var segments = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
-        //if (path.Split('/', StringSplitOptions.RemoveEmptyEntries).Any(segment => segment.Equals("Auth", StringComparison.OrdinalIgnoreCase)))
-        //{
-        //    //var newPath = "/" + string.Join("/", segments.Skip(1));
-        //    //context.Request.Path = newPath;
-        //    await _next(context);
-        //    return;
-        //}
+        var segments = path.Split('/', StringSplitOptions.RemoveEmptyEntries);    
         if (segments.Length > 0)
         {
             var tenantNameFromUrl = segments[0];
@@ -259,11 +252,11 @@ public class TenantMiddleware
                 await _next(context);
                 return;
             }
-            //if(tenantNameFromUrl == "TenantHomePage")
-            //{
-            //    await _next(context);
-            //    return;
-            //}
+            if (tenantNameFromUrl == "TenantHomePage")
+            {
+                await _next(context);
+                return;
+            }
 
             if (context.User.Identity.IsAuthenticated)
             {

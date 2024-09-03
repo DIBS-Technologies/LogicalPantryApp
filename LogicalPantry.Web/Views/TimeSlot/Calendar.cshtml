@@ -114,17 +114,17 @@
         /* New CSS */
         .dropdown select {
             display: inline-block;
-            width: 200px; /* Adjust width as needed */
-            margin-right: 10px; /* Reduce gap between select and button */
+            width: 200px;
+            margin-right: 10px; 
         }
 
         .btn-success {
-            margin-left: 0; /* Remove extra margin if not needed */
+            margin-left: 0; 
         }
 
         .calendar-header .d-flex {
             align-items: center;
-            gap: 10px; /* Adjust gap between select and button */
+            gap: 10px;
         }
 
         /*
@@ -421,36 +421,37 @@
                 $('#eventModal').modal('show');
             });
 
-            $('#saveEventBtn').on('click', function () {
-                debugger;
-                var eventData = {
-                    timeSlotName: $('#eventTitle').val(),
-                    startTime: $('#eventStart').val(),
-                    endTime: $('#eventEnd').val()
-                };
+            //jayant
+            // $('#saveEventBtn').on('click', function () {
+            //     debugger;
+            //     var eventData = {
+            //         timeSlotName: $('#eventTitle').val(),
+            //         startTime: $('#eventStart').val(),
+            //         endTime: $('#eventEnd').val()
+            //     };
 
-                $.ajax({
-                    url: 'AddEvent', // Ensure the URL is correct
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(eventData),
-                    success: function (response) {
-                        if (response.success) {
+            //     $.ajax({
+            //         url: 'AddEvent', // Ensure the URL is correct
+            //         type: 'POST',
+            //         contentType: 'application/json',
+            //         data: JSON.stringify(eventData),
+            //         success: function (response) {
+            //             if (response.success) {
                    
-                            // alert('sucessfully  1');
-                            // Example URL based on response data
-                             var redirectUrl = '/@tenantName/TimeSlot/Calendar';
-                             window.location.href = redirectUrl;
-                        } else {
-                           // alert('Error adding event.');
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('Error adding event:', error);
-                       // alert('Error adding event: ' + error);
-                    }
-                });
-            });
+            //                 // alert('sucessfully  1');
+            //                 // Example URL based on response data
+            //                  var redirectUrl = '/@tenantName/TimeSlot/Calendar';
+            //                  window.location.href = redirectUrl;
+            //             } else {
+            //                 alert('Error adding event.');
+            //             }
+            //         },
+            //         error: function (xhr, status, error) {
+            //             console.error('Error adding event:', error);
+            //            // alert('Error adding event: ' + error);
+            //         }
+            //     });
+            // });
 
             // $('#saveEventBtn').on('click', function () {
             //     debugger;
@@ -516,34 +517,30 @@
                         EndTime: endTimeISO,
                         TimeSlotName: timeSlotName
                     }),
-                    success: function (response) {
-                   
-                        if (response && response.timeSlotId) {
-                            // Redirect to EditTimeSlotUser with the time slot ID
-                           window.location.href = 'EditTimeSlotUser?id=' + response.timeSlotId;
-                              
-                            // var id = response.timeSlotId;
-                            // $.ajax({
-                            //     url: '/@tenantName/TimeSlot/EditTimeSlotUser',
-                            //     type: 'POST',
-                            //     contentType: 'application/json',
-                            //     data: JSON.stringify({
-                            //         Id: id // Ensure this matches the property name in the model
-                            //     }),
-                          
-                            //     success: function (result) {
-                            //         // Handle the result, such as updating the view
-                            //         // This might involve updating part of the page with the returned data
-                            //     },
-                            //     error: function (xhr, status, error) {
-                            //         alert('Error during request: ' + error);
-                            //     }
-                            // });
+                    
+                        success: function (response) {
+                            if (response && response.timeSlotId) {
+                                // Call the EditTimeSlotUser method using an HTTP GET request
+                               window.location.href = 'EditTimeSlotUser?id=' + response.timeSlotId;
+                                // $.ajax({
+                                //     url:'/@tenantName/TimeSlot/EditTimeSlotUser`, 
+                                //     type: 'POST',
+                                //     data: { Id: response.timeSlotId }, // Pass the timeSlotId as a query parameter
+                                //     success: function (response) {
+                                //         // Handle the result, such as updating the view
+           
+                                //         console.log("EditTimeSlotUser response:", response);
+                                //         // You can update the page or perform any additional actions here
+                                //     },
+                                //     error: function (xhr, status, error) {
+                                //         alert('Error during GET request: ' + error);
+                                //     }
+                                // });
 
-                        } else {
-                            alert('Time slot not found.');
-                        }
-                    },
+                            } else {
+                                alert('Time slot not found.');
+                            }
+                        },
                     error: function (xhr, status, error) {
                         alert('Error retrieving time slot ');
                     }
@@ -556,8 +553,70 @@
                 var selectedEventId = selectedOption.val();
                 var selectedEventTitle = selectedOption.data('title');
             }
+                // $('#saveEventBtn').on('click', function (e) {
+                //     e.preventDefault();
+
+                //     // Clear previous validation messages
+                //     $('.validation-message').text('');
+
+                //     // Validation flags
+                //     let isValid = true;
+
+                //     // Get the current date (with time set to the start of the day)
+                //     const now = new Date();
+                //     now.setHours(0, 0, 0, 0); // Reset time to midnight
+
+                //     // Validate Title
+                //     const title = $('#eventTitle').val().trim();
+                //     if (title === '') {
+                //         $('#titleError').text('Title is required.');
+                //         isValid = false;
+                //     }
+
+                //     // Validate Start Date
+                //     const startDateStr = $('#eventStart').val().trim();
+                //     if (startDateStr === '') {
+                //         $('#startError').text('Start date is required.');
+                //         isValid = false;
+                //     } else {
+                //         // Convert startDateStr to Date object
+                //         const startDate = new Date(startDateStr);
+                //         if (startDate < now) {
+                //             $('#startError').text('Start date must be today or in the future.');
+                //             isValid = false;
+                //         }
+                //     }
+
+                //     // Validate End Date
+                //     const endDateStr = $('#eventEnd').val().trim();
+                //     if (endDateStr === '') {
+                //         $('#endError').text('End date is required.');
+                //         isValid = false;
+                //     } else {
+                //         // Convert endDateStr to Date object
+                //         const endDate = new Date(endDateStr);
+                //         if (endDate < now) {
+                //             $('#endError').text('End date must be today or in the future.');
+                //             isValid = false;
+                //         }
+
+                //         // Check if endDate is after startDate
+                //         if (new Date(startDateStr) >= endDate) {
+                //             $('#endError').text('End date must be after the start date.');
+                //             isValid = false;
+                //         }
+                //     }
+
+                //     // If all fields are valid, submit the form
+                //     if (isValid) {
+                //         $('#eventForm').submit(); // Submit the form or call your saving logic here
+                //     }
+                // });
+
+
 
             $('#saveEventBtn').on('click', function (e) {
+                debugger;
                  e.preventDefault();
 
                 // Clear previous validation messages
@@ -573,26 +632,71 @@
                     isValid = false;
                 }
 
-                // Validate Start Date and Time
-                const startDateTime = $('#eventStart').val().trim();
-                if (startDateTime === '') {
-                    $('#startError').text('Start date and time are required.');
-                    isValid = false;
-                }
+                    // Get today's date without time
+                    const now = new Date();
+                    now.setHours(0, 0, 0, 0); // Reset time to 00:00:00
 
-                // Validate End Date and Time
-                const endDateTime = $('#eventEnd').val().trim();
-                if (endDateTime === '') {
-                    $('#endError').text('End date and time are required.');
-                    isValid = false;
-                }
+                    // Validate Start Date (only the date, not the time)
+                    const startDateTime = new Date($('#eventStart').val().trim());
+                    startDateTime.setHours(0, 0, 0, 0); // Reset time to 00:00:00
 
-                // If all fields are valid, submit the form
-                // if (isValid) {
-                //     $('#eventForm').submit(); // Submit the form or call your saving logic here
-                // }
+
+                    if (isNaN(startDateTime)) {
+                        $('#startError').text('Start date is required.');
+                        isValid = false;
+                    } else if (startDateTime < now) {
+                        $('#startError').text('Please select a future date.');
+                        isValid = false;
+                    }
+
+                    // Validate End Date (only the date, not the time)
+                    const endDateTime = new Date($('#eventEnd').val().trim());
+                    endDateTime.setHours(0, 0, 0, 0); // Reset time to 00:00:00
+
+                    if (isNaN(endDateTime)) {
+                        $('#endError').text('End date is required.');
+                        isValid = false;
+                    } else if (endDateTime < now) {
+                        $('#endError').text('Please select a future date.');
+                        isValid = false;
+                    } else if (endDateTime < startDateTime) {
+                        $('#endError').text('End date must be after the start date.');
+                        isValid = false;
+                    }
+
+                //If all fields are valid, submit the form
+                if (isValid) {
+                        var eventData = {
+                            timeSlotName: $('#eventTitle').val(),
+                            startTime: $('#eventStart').val(),
+                            endTime: $('#eventEnd').val()
+                        };
+
+                        $.ajax({
+                            url: 'AddEvent', // Ensure the URL is correct
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(eventData),
+                            success: function (response) {
+                                if (response.success) {
+
+                                    // alert('sucessfully  1');
+                                    // Example URL based on response data
+                                    var redirectUrl = '/@tenantName/TimeSlot/Calendar';
+                                    window.location.href = redirectUrl;
+                                } else {
+                                    alert('Error adding event.');
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.error('Error adding event:', error);
+                                // alert('Error adding event: ' + error);
+                            }
+                        });
+                    $('#eventForm').submit(); // Submit the form or call your saving logic here
+                }
             });
-        });
+         });
     </script>
 
 

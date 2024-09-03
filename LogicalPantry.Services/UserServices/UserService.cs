@@ -139,28 +139,42 @@ namespace LogicalPantry.Services.UserServices
 
             return response;
         }
-
         public async Task<ServiceResponse<bool>> DeleteUserAsync(int id)
         {
             var response = new ServiceResponse<bool>();
 
             try
             {
-                var user = await dataContext.Users.FindAsync(id);
-
-                if (user == null)
+                using (var transaction = await dataContext.Database.BeginTransactionAsync())
                 {
-                    response.Success = false;
-                    response.Message = "User not found.";
-                    return response;
+                    var user = await dataContext.Users
+                        .Include(u => u.UserRoles)
+                        .Include(u => u.TimeSlotSignups)
+                        .Include(u => u.TimeSlots)
+                        .FirstOrDefaultAsync(u => u.Id == id);
+
+                    if (user == null)
+                    {
+                        response.Success = false;
+                        response.Message = "User not found.";
+                        return response;
+                    }
+
+                    // Remove related entities
+                    dataContext.UserRoles.RemoveRange(user.UserRoles);
+                    dataContext.TimeSlotSignups.RemoveRange(user.TimeSlotSignups);
+                    dataContext.TimeSlots.RemoveRange(user.TimeSlots);
+
+                    // Remove the user
+                    dataContext.Users.Remove(user);
+
+                    // Save changes and commit transaction
+                    await dataContext.SaveChangesAsync();
+                    await transaction.CommitAsync();
+
+                    response.Data = true;
+                    response.Success = true;
                 }
-
-                dataContext.Users.Remove(user);
-                /// Records delete for all tables 
-                await dataContext.SaveChangesAsync();
-
-                response.Data = true;
-                response.Success = true;
             }
             catch (Exception ex)
             {
@@ -170,6 +184,42 @@ namespace LogicalPantry.Services.UserServices
 
             return response;
         }
+
+        //public async Task<ServiceResponse<bool>> DeleteUserAsync(int id)
+        //{
+        //    var response = new ServiceResponse<bool>();
+
+        //    try
+        //    {
+        //        var user = await dataContext.Users.FindAsync(id);
+        //        var userroles = await dataContext.UserRoles.FindAsync(id);  
+        //        var timeslotsignup = await dataContext.TimeSlotSignups.FindAsync(id);  
+        //        var timeslot = await dataContext.TimeSlots.FindAsync(id);
+        //        if (user == null)
+        //        {
+        //            response.Success = false;
+        //            response.Message = "User not found.";
+        //            return response;
+        //        }
+
+        //        dataContext.UserRoles.Remove(userroles);
+        //        dataContext.TimeSlotSignups.Remove(timeslotsignup);
+        //        dataContext.TimeSlots.Remove(timeslot);
+        //        dataContext.Users.Remove(user);
+        //        /// Records delete for all tables 
+        //        await dataContext.SaveChangesAsync();
+
+        //        response.Data = true;
+        //        response.Success = true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response.Success = false;
+        //        response.Message = $"Error deleting user: {ex.Message}";
+        //    }
+
+        //    return response;
+        //}
 
         public async Task<ServiceResponse<UserDto>> UpdateUserAsync(UserDto userDto)
         {
@@ -474,7 +524,7 @@ namespace LogicalPantry.Services.UserServices
                 {
                     response.Data = users;
                     response.Success = true;
-                    response.Message = "Users retrieved successfully.";
+                    response.Message = "Changes retrieved successfully.";
                 }
             }
             catch (Exception ex)
@@ -878,29 +928,6 @@ namespace LogicalPantry.Services.UserServices
 
             try
             {
-                //// Retrieve users associated with the specified time slot
-                //var users = await dataContext.TimeSlots
-                //    .Where(ts => ts.Id == timeSlotId)
-                //    .Join(dataContext.Users,
-                //        ts => ts.UserId,
-                //        u => u.Id,
-                //        (ts, u) => new
-                //        {
-                //            User = u,
-                //            TimeSlot = ts
-                //        })
-                //    .Select(result => new UserDto
-                //    {
-                //        Id = result.User.Id,
-                //        FullName = result.User.FullName,
-                //        Email = result.User.Email,
-                //        PhoneNumber = result.User.PhoneNumber,
-                //        Attended = dataContext.TimeSlotSignups
-                //                    .Where(tsu => tsu.UserId == result.User.Id && tsu.TimeSlotId == timeSlotId)
-                //                    .Select(tsu => tsu.Attended)
-                //                    .FirstOrDefault() // Returns the value of `Attended` if found, or `false` if not found
-                //    })
-                //    .ToListAsync();
 
                 // Retrieve users associated with the specified time slot with role 'User'
                 var users = await dataContext.TimeSlotSignups

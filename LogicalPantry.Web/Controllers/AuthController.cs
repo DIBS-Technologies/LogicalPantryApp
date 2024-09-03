@@ -65,48 +65,100 @@ namespace LogicalPantry.Web.Controllers
         //}
 
 
+        //[HttpGet("GoogleResponse")]
+        //public async Task<IActionResult> GoogleResponse()
+        //{
+        //    var tenantName = TenantName;
+        //    // Log the beginning of the Index method execution.
+        //    _logger.LogInformation($"GoogleResponse Method is call started");
+
+        //    var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        //    var userInfo = await CheckIfUserExists(result);
+
+        //    if (userInfo != null && userInfo.Role == "Admin")
+        //    {
+        //        // Redirect based on user role
+        //        //  return RedirectToAction(ViewConstants.Calandar, ViewConstants.TimeSlot, new { area = "" });
+        //        return Redirect($"/{tenantName}/TimeSlot/Calendar");
+        //    }
+        //    else if (userInfo != null && userInfo.Role == "User")
+        //    {
+        //        if (userInfo.Message == "User registered as User successfully.")
+        //        {
+
+        //            // return RedirectToAction(ViewConstants.INDEX, ViewConstants.Registration, new { area = "" });
+        //            return Redirect($"/{tenantName}/User/Register");
+        //        }
+        //        else if (userInfo.IsAllowed)
+        //        {
+        //            //return RedirectToAction(ViewConstants.UserCalandar, ViewConstants.TimeSlot, new { area = "" });
+        //            return Redirect($"/{tenantName}/TimeSlot/UserCalendar");
+        //        }
+        //        else
+        //        {
+        //            ViewBag.Message = "User Is Not Allowed";
+        //            return Redirect($"/{tenantName}/Donation/PayPal");
+        //        }
+        //    }
+
+        //    // Log the ending of the Index method execution.
+        //    _logger.LogInformation($"GoogleResponse Method is call ended");
+        //    //return RedirectToAction(ViewConstants.LOGINVIEW, ViewConstants.AUTH, new { area = "" });
+        //    return Redirect($"/{tenantName}/User/Register");
+
+        //}
+
         [HttpGet("GoogleResponse")]
         public async Task<IActionResult> GoogleResponse()
         {
             var tenantName = TenantName;
-            // Log the beginning of the Index method execution.
-            _logger.LogInformation($"GoogleResponse Method is call started");
-
             var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            var userInfo = await CheckIfUserExists(result);
+            var claimsIdentity = (ClaimsIdentity)result.Principal.Identity;
 
-            if (userInfo != null && userInfo.Role == "Admin")
+            if (claimsIdentity != null)
             {
-                // Redirect based on user role
-                //  return RedirectToAction(ViewConstants.Calandar, ViewConstants.TimeSlot, new { area = "" });
-                return Redirect($"/{tenantName}/TimeSlot/Calendar");
+                var claimToRemove = claimsIdentity.FindFirst(ClaimTypes.Role);
+                if (claimToRemove != null)
+                {
+                    claimsIdentity.RemoveClaim(claimToRemove);
+                }
+
+                var userInfo = await CheckIfUserExists(result);
+                if (userInfo != null && userInfo.Role == "Admin")
+                {
+                    // Redirect based on user role
+                    //  return RedirectToAction(ViewConstants.Calandar, ViewConstants.TimeSlot, new { area = "" });
+                    return Redirect($"/{tenantName}/TimeSlot/Calendar");
+                }
+                else if (userInfo != null && userInfo.Role == "User")
+                {
+                    if (userInfo.Message == "User registered as User successfully.")
+                    {
+
+                        // return RedirectToAction(ViewConstants.INDEX, ViewConstants.Registration, new { area = "" });
+                        return Redirect($"/{tenantName}/User/Register");
+                    }
+                    else if (userInfo.IsAllowed)
+                    {
+                        //return RedirectToAction(ViewConstants.UserCalandar, ViewConstants.TimeSlot, new { area = "" });
+                        return Redirect($"/{tenantName}/TimeSlot/UserCalendar");
+                    }
+                    else
+                    {
+                        ViewBag.Message = "User Is Not Allowed";
+                        return Redirect($"/{tenantName}/Donation/PayPal");
+                    }
+                }
+
+                // Log the ending of the Index method execution.
+                _logger.LogInformation($"GoogleResponse Method is call ended");
+                //return RedirectToAction(ViewConstants.LOGINVIEW, ViewConstants.AUTH, new { area = "" });
+                return Redirect($"/{tenantName}/User/Register");
             }
-            else if (userInfo != null && userInfo.Role == "User")
-            {
-                if (userInfo.Message == "User registered as User successfully.")
-                {
-
-                    // return RedirectToAction(ViewConstants.INDEX, ViewConstants.Registration, new { area = "" });
-                    return Redirect($"/{tenantName}/User/Register");
-                }
-                else if (userInfo.IsAllowed)
-                {
-                    //return RedirectToAction(ViewConstants.UserCalandar, ViewConstants.TimeSlot, new { area = "" });
-                    return Redirect($"/{tenantName}/TimeSlot/UserCalendar");
-                }
-                else
-                {
-                    ViewBag.Message = "User Is Not Allowed";
-                    return Redirect($"/{tenantName}/Donation/PayPal");
-                }
-            }
-
-            // Log the ending of the Index method execution.
-            _logger.LogInformation($"GoogleResponse Method is call ended");
-            //return RedirectToAction(ViewConstants.LOGINVIEW, ViewConstants.AUTH, new { area = "" });
-            return Redirect($"/{tenantName}/User/Register");
-
+            return View();
         }
+
+
 
         // Facebook Authentication
         [HttpPost("FacebookLogin")]
@@ -278,6 +330,13 @@ namespace LogicalPantry.Web.Controllers
 
                     if (role != null)
                     {
+                        // Remove existing role claims if necessary
+                        var claimToRemove = claimsIdentity.FindFirst(ClaimTypes.Role);
+                        if (claimToRemove != null)
+                        {
+                            claimsIdentity.RemoveClaim(claimToRemove);
+                        }
+
                         claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.RoleName.ToString()));
 
                         HttpContext.Response.Headers.Add("TenantId", userExists.Data?.TenantId.ToString());
@@ -288,6 +347,11 @@ namespace LogicalPantry.Web.Controllers
 
 
                         await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, result.Principal);
+
+
+                   
+                        // Add new role claim
+                        claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.RoleName.ToString()));
 
                         return new UserInfo
                         {

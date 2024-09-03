@@ -54,6 +54,7 @@ builder.Services.AddAuthentication(options =>
     options.SlidingExpiration = true;
     options.Cookie.HttpOnly = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Ensure it's set to Secure if using HTTPS
+    options.AccessDeniedPath = "/Auth/AccessDenied"; // Path to access denied page  //8/30/24
 }) // Add cookie authentication
 .AddOpenIdConnect(options =>
 {
@@ -150,21 +151,6 @@ app.UseMiddleware<TenantMiddleware>();
 
 app.UseRouting(); // Enable routing
 
-
-//app.MapControllerRoute(
-//    name: "default",
-//    pattern: "{controller=Auth}/{action=loginView}/{id?}");
-
-
-//// Define a route pattern Equals includes the tenant in the URL
-//app.MapControllerRoute(
-//    name: "tenantRoute",
-//    pattern: "{tenant}/{controller=Information}/{action=Home}/{id?}",
-//    defaults: new { controller = "Information", action = "Home" });
-
-//app.MapControllerRoute(
-//    name: "tenantRoute",
-//    pattern: "{tenant?}/{controller=Information}/{action=Home}/{id?}");
 
 
 

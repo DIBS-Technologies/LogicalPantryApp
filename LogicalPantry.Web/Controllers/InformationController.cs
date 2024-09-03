@@ -163,55 +163,55 @@ namespace LogicalPantry.Web.Controllers
 
 
 
-        [HttpGet("Home")]
-        public async Task<IActionResult> Home(string PageName)
-        {
-            // Log the starting of the Index method execution.
-            _logger.LogInformation("Home method call started");
-            var tenanatResponse = await _informationService.GetTenantPageNameForUserAsync(PageName);
-            if (tenanatResponse.Success)
-            {
-                var pageName = tenanatResponse.Data.PageName;
+        //[HttpGet("Home")]
+        //public async Task<IActionResult> Home(string PageName)
+        //{
+        //    // Log the starting of the Index method execution.
+        //    _logger.LogInformation("Home method call started");
+        //    var tenanatResponse = await _informationService.GetTenantPageNameForUserAsync(PageName);
+        //    if (tenanatResponse.Success)
+        //    {
+        //        var pageName = tenanatResponse.Data.PageName;
 
-                var fileExtension = ".html";
-                if (!pageName.EndsWith(fileExtension, StringComparison.OrdinalIgnoreCase))
-                {
-                    pageName += fileExtension;
-                }
+        //        var fileExtension = ".html";
+        //        if (!pageName.EndsWith(fileExtension, StringComparison.OrdinalIgnoreCase))
+        //        {
+        //            pageName += fileExtension;
+        //        }
 
-                var tenantFolderPath = Path.Combine(_webHostEnvironment.WebRootPath, "TenantHomePage");
-                var filepath = Path.Combine(tenantFolderPath, pageName);
-                var fileNameWithExtension = Path.GetFileName(filepath);
+        //        var tenantFolderPath = Path.Combine(_webHostEnvironment.WebRootPath, "TenantHomePage");
+        //        var filepath = Path.Combine(tenantFolderPath, pageName);
+        //        var fileNameWithExtension = Path.GetFileName(filepath);
 
-                Console.WriteLine($"Page Name: {pageName}");
-                Console.WriteLine($"Tenant Folder Path: {tenantFolderPath}");
-                Console.WriteLine($"File Path: {filepath}");
+        //        Console.WriteLine($"Page Name: {pageName}");
+        //        Console.WriteLine($"Tenant Folder Path: {tenantFolderPath}");
+        //        Console.WriteLine($"File Path: {filepath}");
 
-                if (!System.IO.File.Exists(filepath))
-                {
-                    Console.WriteLine("File not found.");
-                    return NotFound("The requested page was not found.");
-                }
+        //        if (!System.IO.File.Exists(filepath))
+        //        {
+        //            Console.WriteLine("File not found.");
+        //            return NotFound("The requested page was not found.");
+        //        }
 
-                string htmlContent;
-                try
-                {
-                    htmlContent = await System.IO.File.ReadAllTextAsync(filepath);
-                }
-                catch (IOException ex)
-                {
-                    Console.WriteLine($"IOException: {ex.Message}");
-                    return StatusCode(500, "An error occurred while reading the file.");
-                }
+        //        string htmlContent;
+        //        try
+        //        {
+        //            htmlContent = await System.IO.File.ReadAllTextAsync(filepath);
+        //        }
+        //        catch (IOException ex)
+        //        {
+        //            Console.WriteLine($"IOException: {ex.Message}");
+        //            return StatusCode(500, "An error occurred while reading the file.");
+        //        }
 
-                TempData["PageName"] = fileNameWithExtension;
+        //        TempData["PageName"] = fileNameWithExtension;
 
-                return View();
-            }
-            // Log the ending of the Index method execution.
-            _logger.LogInformation("Home method call ended");
-            return NotFound(tenanatResponse.Message);
-        }
+        //        return View();
+        //    }
+        //    // Log the ending of the Index method execution.
+        //    _logger.LogInformation("Home method call ended");
+        //    return NotFound(tenanatResponse.Message);
+        //}
 
         [HttpGet("/{action?}")]
         public async Task<IActionResult> Home()
@@ -234,11 +234,11 @@ namespace LogicalPantry.Web.Controllers
                     return View();
                 }
 
-                var fileExtension = ".html";
-                if (!pageName.EndsWith(fileExtension, StringComparison.OrdinalIgnoreCase))
-                {
-                    pageName += fileExtension;
-                }
+                //var fileExtension = ".html";
+                //if (!pageName.EndsWith(fileExtension, StringComparison.OrdinalIgnoreCase))
+                //{
+                //    pageName += fileExtension;
+                //}
 
                 var tenantFolderPath = Path.Combine(_webHostEnvironment.WebRootPath, "TenantHomePage");
                 var filepath = Path.Combine(tenantFolderPath, pageName);
@@ -280,7 +280,7 @@ namespace LogicalPantry.Web.Controllers
                 }
                 if(tenanatResponse.Data?.PageName != null ||homepageName != null  )
                 {
-                    HttpContext.Session.SetString("HomePageName", tenanatResponse.Data?.PageName+fileExtension);
+                    HttpContext.Session.SetString("HomePageName", tenanatResponse.Data?.PageName);
                     ViewBag.homepageName = tenanatResponse.Data?.PageName;
                 }
                 HttpContext.Session.SetString("TenantId", tenantId.ToString());

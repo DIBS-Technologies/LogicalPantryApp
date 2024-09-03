@@ -160,7 +160,7 @@ namespace LogicalPantry.Web.Controllers
             if (response.Success)
             {
                 TempData["MessageClass"] = "alert-success";
-                TempData["SuccessMessageUser"] = "User Saved Successfully";
+                TempData["SuccessMessageUser"] = "Changes Saved Successfully";
                 // Log the ending of the Index method execution.
                 _logger.LogInformation("UpdateUser post method call ended");
                 return Ok(new { success = true });
@@ -191,7 +191,7 @@ namespace LogicalPantry.Web.Controllers
                 if (response.Success)
                 {
                     TempData["MessageClass"] = "alert-success";
-                    TempData["SuccessMessageUserBatch"] = "User Saved Successfully";
+                    TempData["SuccessMessageUserBatch"] = "Changes Saved Successfully";
                     _logger.LogInformation("UpdateUserBatch method call ended");
                     return Ok(new { success = true });
                 }
@@ -235,25 +235,26 @@ namespace LogicalPantry.Web.Controllers
 
         }
 
-        [HttpDelete("DeleteUser/{id}")]
-        public async Task<IActionResult> DeleteUser(string id)
+        [HttpPost("DeleteUser")]
+        public async Task<IActionResult> DeleteUser(string userId)
         {
             _logger.LogInformation("DeleteUser method call started");
             try
             {
                 
-                if (!int.TryParse(id, out int userId))
+                if (!int.TryParse(userId, out int user))
                 {
                     return BadRequest("Invalid user ID format.");
                 }
 
                 // Call the service to delete the user
-                var result = await _userService.DeleteUserAsync(userId);
+                var result = await _userService.DeleteUserAsync(user);
 
                 if (result.Success)
                 {
                     _logger.LogInformation("DeleteUser method call ended");
-                    return View("Index"); 
+                    //return View("Index"); 
+                    return Ok(result);
                 }
                 else
                 {

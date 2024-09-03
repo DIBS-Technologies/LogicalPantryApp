@@ -512,12 +512,12 @@
             <img id="logoImage" src="" style="padding-left: 10px; opacity:100%"  />
         </div>
         <div class="page-name" id="pageName">
-            @{
+          @*   @{
             string formattedPageName = !string.IsNullOrEmpty(pagename)
             ? char.ToUpper(pagename.Replace(".html", " ")[0]) + pagename.Replace(".html", " ").Substring(1)
             : "";
-            }
-            @formattedPageName
+            } *@
+            @pagename
         </div>
         <div class="navbar-nav">
             @if (isAuthenticated && (!isAdmin || isUser))
@@ -560,18 +560,20 @@
                     <div class="sidenav-menu">
                         <div class="nav accordion" id="accordionSidenav">
                             <div class="sidenav-menu-heading">Admin</div>
-                            <a class="nav-link" href="/@tenantName/TimeSlot/Calendar">
-                                <div class="nav-link-icon"><i data-feather="calendar"></i></div>
-                                Pickup Slots
+                            <a class="nav-link" href="/@tenantName/Information/AddTenant">
+                                <div class="nav-link-icon"><i data-feather="file"></i></div>
+                                Information
                             </a>
                             <a class="nav-link" href="/@tenantName/User/ManageUsers">
                                 <div class="nav-link-icon"><i data-feather="users"></i></div>
                                 User Management
                             </a>
-                            <a class="nav-link" href="/@tenantName/Information/AddTenant">
-                                <div class="nav-link-icon"><i data-feather="file"></i></div>
-                                Information
+                            <a class="nav-link" href="/@tenantName/TimeSlot/Calendar">
+                                <div class="nav-link-icon"><i data-feather="calendar"></i></div>
+                                Pickup Slots
                             </a>
+                        
+                         
                             
                            
                         </div>

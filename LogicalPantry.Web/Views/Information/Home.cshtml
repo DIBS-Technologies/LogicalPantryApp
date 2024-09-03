@@ -221,7 +221,7 @@
                 <img id="logoImage"  style="max-width : 50px;padding-left: 10px; opacity:100%" />
             </div>
             <div class="page-name" id="pageName">
-                @(!string.IsNullOrEmpty(pagename) ? pagename.Replace(".html", " ") : "")
+                @(!string.IsNullOrEmpty(pagename) ? pagename : "")
             </div>
 
             <div class="navbar-nav">
@@ -253,6 +253,11 @@
     @section Scripts {
         <script>
             $(document).ready(function () {
+                var isAdmin = '@isAdmin.ToString().ToLower()'; // Convert boolean to lowercase string
+                var isAuthenticated = '@isAuthenticated.ToString().ToLower()'; // Convert boolean to lowercase string
+                if (isAdmin === 'false' && isAuthenticated === 'true') {
+                    $('header.page-header').remove(); // Remove the header with class 'page-header'
+                }
 
                 $('.dropdown-user').click(function () {
                     var $dropdownMenu = $(this).next('.dropdown-menu');
@@ -327,25 +332,35 @@
                     tenantId = tenantId.toString(); // Ensure tenantId is a string
                 }
                 debugger;
+           
+               // 3/9/24
+                // // Get the value from the input field
                 // var handlerValue = $("#HomePag").val();
-                // if (handlerValue != "") {
-                //     $("#urlFrameId").attr("src", "/TenantHomePage/" + handlerValue);
-                // }
-                // Get the value from the input element
+                // var iframe = $('<iframe>', {
+                //     src: '/TenantHomePage/' + handlerValue, 
+                //     id: 'urlFrameId'
+                // });
 
-                // Get the value from the input field
-                var handlerValue = $("#HomePag").val();
+                // // Append the iframe to the desired element
+                // $('#iframe').empty().append(iframe);
+
+
+
+                var handlerValue = $("#HomePag").val(); // Retrieve the value from the input/select element
+                var basePath = '/TenantHomePage/'; // Base path for your pages
+
+                // Construct the full URL
+                var fullUrl = basePath + encodeURIComponent(handlerValue);
+
+                // Create an iframe element
                 var iframe = $('<iframe>', {
-                    src: '/TenantHomePage/' + handlerValue + '.html', 
-                    id: 'urlFrameId'
+                    src: fullUrl,
+                    id: 'urlFrameId',
+         
                 });
 
                 // Append the iframe to the desired element
                 $('#iframe').empty().append(iframe);
-                
-
-
-
 
 
                 var tenantDisplayName = $("#pag").val();

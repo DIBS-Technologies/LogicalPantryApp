@@ -210,6 +210,15 @@
             text-align: center;
             margin-left: @contentMarginLeft;
         }
+
+        /* Hide the PayPal button */
+        .paypal-button-row.paypal-button-number-1.paypal-button-layout-vertical.paypal-button-number-multiple.paypal-button-env-sandbox.paypal-button-color-black.paypal-button-text-color-white.paypal-logo-color-white.paypal-button-shape-rect {
+            display: none !important;
+        }
+
+        .paypal-button-number-1 {
+            display: none !important;
+        }
     </style>
 </head>
 <body>
@@ -257,9 +266,10 @@
         </div>
     </div>
     <script src="https://www.paypal.com/sdk/js?client-id=@Configuration["PayPal:ClientId"]&currency=USD"></script>
+
     <script>
 
-         let currentAmount = '10.00'; // Default amount
+        let currentAmount = '10.00'; // Default amount
 
         function setAmount(amount) {
             currentAmount = amount;
@@ -304,6 +314,7 @@
                     shape: 'rect',
                     label: 'donate'
                 },
+                displayOnly: ["vaultable"],
                 createOrder: function (data, actions) {
                     return actions.order.create({
                         purchase_units: [{
@@ -323,6 +334,56 @@
             }).render('#paypal-button-container');
         }
 
+        // function renderPayPalButton() {
+        //     const paypalButtonContainer = document.getElementById('paypal-button-container');
+
+        //     // Remove existing PayPal button if present
+        //     const existingButton = paypalButtonContainer.querySelector('iframe');
+        //     if (existingButton) {
+        //         paypalButtonContainer.innerHTML = '';
+        //     }
+
+        //     // Render the PayPal button
+        //     paypal.Buttons({
+        //         style: {
+        //             layout: 'vertical',
+        //             color: 'gold',
+        //             shape: 'rect',
+        //             label: 'donate'
+        //         },
+        //         createOrder: function (data, actions) {
+        //             return actions.order.create({
+        //                 purchase_units: [{
+        //                     amount: {
+        //                         value: currentAmount
+        //                     },
+        //                     description: 'Charitable Donation'
+        //                 }]
+        //             });
+        //         },
+        //         onApprove: function (data, actions) {
+        //             return actions.order.capture().then(function (details) {
+        //                 alert('Transaction completed by ' + details.payer.name.given_name);
+        //                 // Redirect to the success page or handle post-transaction logic here
+        //             });
+        //         },
+        //         onInit: function (data, actions) {
+        //             // Delay execution to ensure PayPal buttons are rendered
+        //             setTimeout(function () {
+        //                 // Hide all other buttons
+        //                 document.querySelectorAll('.paypal-button-container button').forEach(button => {
+        //                     button.style.display = 'none';
+        //                 });
+
+        //                 // Optionally, ensure only the PayPal button is visible
+        //                 const payPalButton = document.querySelector('.paypal-button-container button[data-funding-source="paypal"]');
+        //                 if (payPalButton) {
+        //                     payPalButton.style.display = 'block'; // Ensure only the PayPal button is displayed
+        //                 }
+        //             }, 1000); // Delay in milliseconds
+        //         }
+        //     }).render('#paypal-button-container');
+        // }
         // Initial rendering of the PayPal button
         renderPayPalButton();
 

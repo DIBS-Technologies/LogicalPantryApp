@@ -12,7 +12,7 @@ namespace LogicalPantry.Models.Models
         public string TenantName { get; set; }
         public string AdminEmail { get; set; }
         public string? TenantDisplayName { get; set; }
-        public string PaypalId { get; set; }
+        public string? PaypalId { get; set; }
         public string? PageName { get; set; }
         public string? Logo { get; set; }
         public string? Timezone { get; set; }

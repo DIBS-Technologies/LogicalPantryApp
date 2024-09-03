@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Tweetinvi.Core.Events;
 using LogicalPantry.Services.InformationService;
 using Azure.Core;
+using Azure;
 
 namespace LogicalPantry.Web.Controllers
 {
@@ -132,40 +133,61 @@ namespace LogicalPantry.Web.Controllers
         }
 
 
-
         //[HttpGet("EditTimeSlotUser")]
-        //public async Task<IActionResult> EditTimeSlotUser(string id)
+        //public async Task<IActionResult> EditTimeSlotUser(string Id)
         //{
+        //    var TenantDisplayName = HttpContext.Session.GetString("TenantDisplayName");
+        //    ViewBag.PageName = TenantDisplayName;
+        //    // Log the starting of the Index method execution.
+        //    _logger.LogInformation("EditTimeSlotUser Get method call started");
+        //    if (string.IsNullOrEmpty(Id) || !int.TryParse(Id, out int timeSlotId))
+        //    {
+        //        return BadRequest("Invalid time slot ID.");
+        //    }
+        //    //if (Id == 0)
+        //    //{
+        //    //    return BadRequest("Invalid time slot ID.");
+        //    //}
 
-        //    var response = await _userSercvice.GetUsersbyTimeSlotId(int.Parse(id));
-        //    var userDtos = new List<UserDto>(); 
-        //    return View(response.Data.ToList()); // Handle the error case appropriately
+        //    var response = await _userSercvice.GetUsersbyTimeSlotId(timeSlotId);
+        //    if (response.Success && response.Data != null)
+        //    {
+        //        //Log the ending of the Index method execution.
+        //        _logger.LogInformation("EditTimeSlotUser method call started.");
+        //        @TempData["MessageClass"] = "alert-success";
+        //        @TempData["SuccessMessageBatch"] = "User Saved Successfully";
+        //        return View(response.Data.ToList()); // Ensure that you handle the error case appropriately
+        //    }
+        //    else
+        //    {
+        //        return View(response.Data.ToList());
+        //        //return NotFound("Users not found for the specified time slot.");
+        //    }
+
         //}
 
         [HttpGet("EditTimeSlotUser")]
-        public async Task<IActionResult> EditTimeSlotUser(string Id)
+        public async Task<IActionResult> EditTimeSlotUser(int Id)
         {
             var TenantDisplayName = HttpContext.Session.GetString("TenantDisplayName");
             ViewBag.PageName = TenantDisplayName;
             // Log the starting of the Index method execution.
-            _logger.LogInformation("EditTimeSlotUser Get method call started");
-            if (string.IsNullOrEmpty(Id) || !int.TryParse(Id, out int timeSlotId))
+            _logger.LogInformation("EditTimeSlotUser Get method call started");        
+            if (Id == 0)
             {
-                return BadRequest("Invalid time slot ID.");
+                return BadRequest("Invalid time slot.");
             }
-            //if (Id == 0)
-            //{
-            //    return BadRequest("Invalid time slot ID.");
-            //}
 
-            var response = await _userSercvice.GetUsersbyTimeSlotId(timeSlotId);
+            var response = await _userSercvice.GetUsersbyTimeSlotId(Id);
             if (response.Success && response.Data != null)
             {
                 //Log the ending of the Index method execution.
                 _logger.LogInformation("EditTimeSlotUser method call started.");
                 @TempData["MessageClass"] = "alert-success";
-                @TempData["SuccessMessageBatch"] = "User Saved Successfully";
-                return View(response.Data.ToList()); // Ensure that you handle the error case appropriately
+                @TempData["SuccessMessageBatch"] = "Changes Saved Successfully";
+                //return View(response.Data.ToList()); 
+                //return RedirectToAction("EditTimeSlotUser", response.Data.ToList());
+                return View(response.Data.ToList());
             }
             else
             {
@@ -174,6 +196,11 @@ namespace LogicalPantry.Web.Controllers
             }
 
         }
+
+        
+
+
+
 
         //[HttpPost("EditTimeSlotUser")]
         //public async Task<IActionResult> EditTimeSlotUser([FromBody] TimeSlotDto request)
@@ -198,12 +225,12 @@ namespace LogicalPantry.Web.Controllers
         //        TempData["MessageClass"] = "alert-success";
         //        TempData["SuccessMessageBatch"] = "User Saved Successfully";
         //        return View(response.Data.ToList());
-        //       // return View();
+        //        // return View();
         //    }
         //    else
         //    {
         //        // Handle the case where users are not found.
-        //        return View(new List<UserDto>()); // Return an empty list to the view
+        //        return View(response.Data.ToList()); // Return an empty list to the view
         //    }
         //}
 
