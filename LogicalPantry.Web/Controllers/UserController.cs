@@ -21,6 +21,7 @@ using LogicalPantry.Models.Models;
 using Newtonsoft.Json;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using LogicalPantry.Services.RegistrationService;
+using Azure;
 
 namespace LogicalPantry.Web.Controllers
 {
@@ -46,6 +47,7 @@ namespace LogicalPantry.Web.Controllers
             return View();
         }
 
+        [Authorize(Roles = $"{UserRoleEnum.Admin}")]
         [HttpGet]
         [Route("ManageUsers")]
         public async Task<IActionResult> ManageUsers()
@@ -148,6 +150,7 @@ namespace LogicalPantry.Web.Controllers
         //    return Ok(new { success = false });
         //}
 
+        [Authorize(Roles = $"{UserRoleEnum.Admin}")]
         [HttpPost("UpdateUser")] //ThisExpressionSyntax is ForbidResult allow method
         public async Task<IActionResult> UpdateUser(string userId, bool isAllow)
         {
@@ -175,6 +178,7 @@ namespace LogicalPantry.Web.Controllers
             }
         }
 
+        [Authorize(Roles = $"{UserRoleEnum.Admin}")]
         [HttpPost("UpdateUserBatch")]
         public async Task<IActionResult> UpdateUserBatch([FromBody] List<UserDto> userStatuses)
         {
@@ -235,6 +239,7 @@ namespace LogicalPantry.Web.Controllers
 
         }
 
+        [Authorize(Roles = $"{UserRoleEnum.Admin}")]
         [HttpPost("DeleteUser")]
         public async Task<IActionResult> DeleteUser(string userId)
         {
@@ -280,6 +285,7 @@ namespace LogicalPantry.Web.Controllers
             return View();
         }
 
+        [Authorize(Roles = $"{UserRoleEnum.User}")]
         [HttpPost("Register")]
         public async Task<IActionResult> Register(UserDto user)
         {
@@ -316,6 +322,64 @@ namespace LogicalPantry.Web.Controllers
             _logger.LogInformation($"Register method call ended");
             //return RedirectToAction("UserCalendar", "TimeSlot", new { area = "" });
         }
+
+
+        //[Authorize(Roles = $"{UserRoleEnum.Admin},{UserRoleEnum.User}")]
+        [HttpGet("Profile")]
+        public async Task<IActionResult> Profile()
+        {
+            var email = UserEmail;
+            if (email != null)
+            {
+                var response = await _userService.GetUserDetailsByEmail(email); 
+                if (response != null && response.Success) 
+                 {
+                    return View("Profile", response.Data);
+                }
+            }
+            return View();
+        }
+
+       // [Authorize(Roles = $"{UserRoleEnum.Admin},{UserRoleEnum.User}")]
+        [HttpPost("Profile")]
+        public async Task<IActionResult> Profile(UserDto user)
+        {
+
+
+            _logger.LogInformation("Profile method call started");
+
+            var tenantId = HttpContext.Items["TenantId"]?.ToString();
+            if (string.IsNullOrEmpty(tenantId))
+            {
+                TempData["MessageClass"] = "alert-danger";
+                TempData["SuccessMessageUser"] = "Failed to retrieve Tenant ID.";
+                return View("Profile", user);
+            }
+
+            user.TenantId = int.Parse(tenantId);
+            var response = await _userService.ProfileRagistration(user);
+
+            if (response != null && response.Success)
+            {
+               
+
+                _logger.LogInformation("Profile method call ended successfully");
+                @TempData["MessageClass"] = "alert-success";
+                @TempData["SuccessMessageUser"] = "Profile save successful";
+                return View("Profile", response.Data);
+            }
+            else
+            {
+                @TempData["MessageClass"] = "alert-danger";
+                @TempData["SuccessMessageUser"] = "Failed to Save Profile server error.";
+                _logger.LogInformation("Profile method call ended with errors");
+                return View("Profile", user); // Return the view with the user data to preserve inputs
+            }
+        }
+
+
+
+
 
 
         [HttpGet]

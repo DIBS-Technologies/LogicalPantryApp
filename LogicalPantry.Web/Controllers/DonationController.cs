@@ -18,7 +18,7 @@ namespace LogicalPantry.Web.Controllers
             _logger = logger;
         }
 
-       // [Authorize(Policy = "AdminPolicy")]
+       //No need authorization public method
         [HttpGet("PayPal")]
         public IActionResult PayPal()
         {
@@ -32,6 +32,7 @@ namespace LogicalPantry.Web.Controllers
             return View();
         }
 
+       // [Authorize(Roles = "Admin,User")]
         [HttpPost]
         [Route("CompletePayment")]
         public async Task<IActionResult> CompletePayment([FromBody] PayPalPaymentDto paymentDto)

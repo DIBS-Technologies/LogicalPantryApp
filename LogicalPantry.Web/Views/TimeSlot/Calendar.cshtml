@@ -241,6 +241,13 @@
         .mb-3 {
             margin-top: 5% !important;
         }
+
+        /* .calendar-timeline
+        {
+            padding-top: 29px;
+           
+        } */
+       
     </style>
 </head>
 
@@ -521,10 +528,10 @@
                         success: function (response) {
                             if (response && response.timeSlotId) {
                                 // Call the EditTimeSlotUser method using an HTTP GET request
-                               window.location.href = 'EditTimeSlotUser?id=' + response.timeSlotId;
+                              window.location.href = 'EditTimeSlotUser?id=' + response.timeSlotId;
                                 // $.ajax({
-                                //     url:'/@tenantName/TimeSlot/EditTimeSlotUser`, 
-                                //     type: 'POST',
+                                //     url: '/@tenantName/TimeSlot/GetTimeSlotUser',
+                                //     type: 'GET',
                                 //     data: { Id: response.timeSlotId }, // Pass the timeSlotId as a query parameter
                                 //     success: function (response) {
                                 //         // Handle the result, such as updating the view
@@ -652,7 +659,10 @@
                     // Validate End Date (only the date, not the time)
                     const endDateTime = new Date($('#eventEnd').val().trim());
                     endDateTime.setHours(0, 0, 0, 0); // Reset time to 00:00:00
-
+                    if (startDateTime.getTime() !== endDateTime.getTime()) {
+                        $('#endError').text('Please add a single day entry only. the end date must be the same day.');
+                        isValid = false;
+                    }
                     if (isNaN(endDateTime)) {
                         $('#endError').text('End date is required.');
                         isValid = false;
@@ -663,9 +673,11 @@
                         $('#endError').text('End date must be after the start date.');
                         isValid = false;
                     }
-
+               
+                   
                 //If all fields are valid, submit the form
                 if (isValid) {
+                    debugger;
                         var eventData = {
                             timeSlotName: $('#eventTitle').val(),
                             startTime: $('#eventStart').val(),
@@ -690,7 +702,7 @@
                             },
                             error: function (xhr, status, error) {
                                 console.error('Error adding event:', error);
-                                // alert('Error adding event: ' + error);
+                                 alert('Error adding event: ' + error);
                             }
                         });
                     $('#eventForm').submit(); // Submit the form or call your saving logic here

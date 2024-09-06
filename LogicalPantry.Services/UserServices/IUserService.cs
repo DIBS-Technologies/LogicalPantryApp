@@ -31,5 +31,9 @@ namespace LogicalPantry.Services.UserServices
 
         Task<ServiceResponse<int>> GetUserIdByEmail(string email);
         Task<RoleDto> GetUserRoleAsync(int id);
+
+        Task<ServiceResponse<UserDto>> ProfileRagistration(UserDto userDto);
+
+        Task<ServiceResponse<UserDto>> GetUserDetailsByEmail(string email);
     }
 }

@@ -162,9 +162,11 @@
             display: none;
         }
 
-        .tenantImage {
+      /*   .tenantImage {
             max-width: 50px;
-        }
+        } */
+     
+
 
         #layoutSidenav_content {
             flex: 1;
@@ -211,6 +213,18 @@
                 transform: translateY(0);
             }
 
+        #pageName {
+            display: flex;
+            justify-content: start;
+            margin-left: 2%;
+        }
+
+        img {
+            vertical-align: middle;
+            border-style: none;
+            max-height: 40px;
+        }
+
     </style>
 
 </head>
@@ -218,16 +232,20 @@
     <div id="layoutSidenav">
         <nav class="topnav navbar navbar-expand shadow navbar-light bg-white" id="sidenavAccordion">
             <div class="tenantImage">
-                <img id="logoImage"  style="max-width : 50px;padding-left: 10px; opacity:100%" />
+            
+                <img id="logoImage" src="" style="padding-left: 10px; opacity:100%" />
             </div>
-            <div class="page-name" id="pageName">
-                @(!string.IsNullOrEmpty(pagename) ? pagename : "")
+            <div class="page-name" id="pageName">               
+              
             </div>
+
+     
 
             <div class="navbar-nav">
                 @if (isAuthenticated && (isAdmin || isUser))
                 {
-                    <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar" id="pickUp">Pickup</a>
+                     <a class="nav-link" href="/@tenantName/User/Profile" id="profile">Profile</a>
+                     <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar" id="pickUp">Pickup</a>
                 }
                 <a class="nav-link" href="/@tenantName/Donation/PayPal">Donation</a>
                 @if (isAuthenticated)
@@ -238,7 +256,7 @@
                 {
                     <a class="nav-link" href="/@tenantName/Auth/LoginView">Log In</a>
                 }
-                <input id="pag" type="hidden" name="name" value="@pagename" />
+               @*  <input id="pag" type="hidden" name="name" value="@pagename" /> *@
                 <input id="HomePag" type="hidden" name="homePageName" value="@homePageName" />
                 <input type="hidden" value="@isUser" id="isUser" />
             </div>
@@ -250,6 +268,8 @@
             </main>
         </div>
     </div>
+
+
     @section Scripts {
         <script>
             $(document).ready(function () {
@@ -273,15 +293,63 @@
 
                 var userEmail = '@User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value';
 
+                // async function fetchImageUrl(tenantId) {
+                //     return new Promise((resolve, reject) => {
+                //         $.ajax({
+                //             url: `/@tenantName/Information/Get`,
+                //             method: "GET",
+                //             data: { tenantid: tenantId },
+                //             success: function (response) {
+                //                 const imageUrl = response;
+
+                //                 if (imageUrl) {
+                //                     const tenantDiv = $('.tenantImage');
+
+                //                     if (tenantDiv.length > 0) {
+                //                         tenantDiv.find('#logoImage').remove();
+
+                //                         const img = $('<img>', {
+                //                             id: 'logoImage',
+                //                             src: imageUrl,
+                //                             style: ' padding-left: 10px; opacity: 100%;'
+                //                         });
+
+                //                         tenantDiv.append(img);
+
+                //                         resolve(imageUrl);
+                //                     } else {
+                //                         console.error("No element found with class 'tenantImage'");
+                //                         reject(new Error("No element found with class 'tenantImage'"));
+                //                     }
+                //                 } else {
+                //                     console.error("ImageUrl is missing in the response");
+                //                     reject(new Error("ImageUrl is missing in the response"));
+                //                 }
+                //             },
+                //             error: function (xhr, status, error) {
+                //                 console.error("Cannot find Image src", status, error);
+                //                 reject(new Error(`Cannot find Image src: ${status} ${error}`));
+                //             }
+                //         });
+                //     });
+                // }
+
+
                 async function fetchImageUrl(tenantId) {
                     return new Promise((resolve, reject) => {
                         $.ajax({
                             url: `/@tenantName/Information/Get`,
                             method: "GET",
-                            data: { tenantid: tenantId },
+                            data: { tenantId: tenantId },
                             success: function (response) {
-                                const imageUrl = response;
 
+                                console.log("Response:", response);
+
+                                const imageUrl = response.logo;
+                                var tenantDisplayName = response.tenantDisplayName;
+                                if (tenantDisplayName) {
+                                    $(".page-name").text(tenantDisplayName);
+                                }
                                 if (imageUrl) {
                                     const tenantDiv = $('.tenantImage');
 
@@ -291,7 +359,7 @@
                                         const img = $('<img>', {
                                             id: 'logoImage',
                                             src: imageUrl,
-                                            style: 'width: 95px; padding-left: 10px; opacity: 100%;'
+                                            style: ' padding-left: 10px; opacity: 100%;'
                                         });
 
                                         tenantDiv.append(img);
@@ -305,6 +373,7 @@
                                     console.error("ImageUrl is missing in the response");
                                     reject(new Error("ImageUrl is missing in the response"));
                                 }
+                                
                             },
                             error: function (xhr, status, error) {
                                 console.error("Cannot find Image src", status, error);
@@ -314,6 +383,8 @@
                     });
                 }
 
+
+
                 async function updateImage(tenantId) {
                     try {
                         await fetchImageUrl(tenantId);
@@ -322,7 +393,12 @@
                     }
                 }
 
-                updateImage(@tenantId);
+               var  tenantId = @tenantId;
+                updateImage(tenantId);
+
+                debugger;
+
+
 
                 var tenantId = @ViewBag.TenantId ?? 'null'; // Default to 'null' if ViewBag.TenantId is null
                 var pageName = '@ViewBag.PageName';
@@ -385,6 +461,35 @@
                
             });
 
+
+
+            // var userEmail = '@User.FindFirstValue(ClaimTypes.Email)';
+            // fetchUserInfo(userEmail);
+
+            // async function fetchUserInfo(userEmail) {
+            //     return new Promise((resolve, reject) => {
+            //         $.ajax({
+            //             url: `/@tenantName/User/GetUser`,
+            //             method: "GET",
+            //             data: { email: userEmail },
+            //             success: function (response) {
+            //                 console.log("Response:", response);
+
+            //                 if (response) {
+
+            //                     $("#pickUp").show();
+
+            //                 } else {
+            //                     $("#pickUp").hide();
+            //                 }
+            //             },
+            //             error: function (xhr, status, error) {
+            //                 console.error("Cannot find Image src", status, error);
+            //                 reject(new Error(`Cannot find Image src: ${status} ${error}`));
+            //             }
+            //         });
+            //     });
+            // }
 
         </script>
     }

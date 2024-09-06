@@ -32,6 +32,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Partner with Us</title>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -99,9 +101,14 @@
                 transition: background-color 0.3s;
             }
 
-                .donation-options button:hover {
-                    background-color: #002244; /* Darker navy blue on hover */
+                .donation-options button.selected {
+                    background-color: white;
+                    color: #003366;
+                    border: 2px solid #003366; /* White border for selected button */
                 }
+               /*  .donation-options button:hover {
+                    background-color: #002244; 
+                } */
 
         .custom-amount-container {
             display: none;
@@ -219,6 +226,9 @@
         .paypal-button-number-1 {
             display: none !important;
         }
+
+     
+
     </style>
 </head>
 <body>
@@ -266,15 +276,21 @@
         </div>
     </div>
     <script src="https://www.paypal.com/sdk/js?client-id=@Configuration["PayPal:ClientId"]&currency=USD"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
 
-        let currentAmount = '10.00'; // Default amount
+        let currentAmount = '5.00'; // Default amount
 
         function setAmount(amount) {
             currentAmount = amount;
             hideCustomAmountInput(); // Hide custom amount input
             renderPayPalButton(); // Re-render PayPal button with the selected amount
+
+            // Highlight the selected button
+            $('.donation-options button').removeClass('selected'); // Remove selected class from all buttons
+            $(`.donation-options button:contains('$${amount}')`).addClass('selected'); // Add selected class to the clicked button
         }
 
         function setCustomAmount() {
@@ -328,7 +344,15 @@
                 onApprove: function (data, actions) {
                     return actions.order.capture().then(function (details) {
                         alert('Transaction completed by ' + details.payer.name.given_name);
-                        // Redirect to the success page or handle post-transaction logic here
+                        Swal.fire({
+                            title: 'Payment Successful!',
+                            text: `Thank you for your donation, ${details.payer.name.given_name}!`,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            // Redirect or perform other actions if needed
+                            // window.location.href = '/success'; // Example redirect
+                        });
                     });
                 }
             }).render('#paypal-button-container');
@@ -389,13 +413,25 @@
 
 
 
+        // Initialize the default selection
         $(document).ready(function () {
+            setAmount('5.00'); // Ensure the $5.00 button is selected by default
             $('header.page-header').remove(); // Removes the header with class 'page-header'
         });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var paypalButtons = document.querySelectorAll('.paypal-button');
+            paypalButtons.forEach(function (button) {
+                button.style.display = 'none';
+            });
+        });
+
+      
+      
     </script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
-</html>
+</html> 

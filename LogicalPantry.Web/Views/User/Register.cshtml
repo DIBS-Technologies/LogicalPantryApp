@@ -235,8 +235,12 @@
 
                     <form method="post" id="register" action="/@tenantName/User/Register">
                         <div class="form-group">
+                            @{
+                                var userName = User.FindFirstValue(ClaimTypes.Name);
+                            }
                             <label for="FullName">Name<span class="mandatory">*</span></label>
-                            <input name="FullName" class="form-control" id="FullName" placeholder="Enter Name" />
+                            <input name="FullName" class="form-control" value="@userName" id="FullName" placeholder="Enter Name" />
+                            <input type="hidden" name="FullName" value="@userName" />
                             <span class="text-danger errorfont" id="FullName-error"></span>
                         </div>
                         <div class="form-group">
@@ -352,10 +356,16 @@
             return emailRegex.test(email);
         }
 
+        // function isValidPhone(phone) {
+        //     var phoneRegex = /^(?:\+1\s?)?(?:\(\d{3}\)|\d{3})[\s.-]?\d{3}[\s.-]?\d{4}$/;
+        //     return phoneRegex.test(phone);
+        // }
         function isValidPhone(phone) {
-            var phoneRegex = /^(?:\+1\s?)?(?:\(\d{3}\)|\d{3})[\s.-]?\d{3}[\s.-]?\d{4}$/;
+            var phoneRegex = /^(?:\+1\s?)?\(\d{3}\)\s\d{3}-\d{4}$/;
             return phoneRegex.test(phone);
         }
+
+
     </script>
 </body>
 </html>

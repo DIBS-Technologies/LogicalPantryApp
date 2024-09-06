@@ -295,7 +295,8 @@
             background-color: whitesmoke;
             border-bottom: 1px solid #ddd; /* border-bottom color to match your border color */
             margin-bottom: 2rem; /* Adjust as needed for spacing from the next element */
-            padding: 1rem 0; /* Vertical padding for top and bottom spacing */
+           /*  padding: 1rem 0;  */
+            padding: 0.5rem 0; 
         }
 
         /* Container styles for centering content */
@@ -345,27 +346,34 @@
             margin-right: 100px;
         }
 
+        #layoutSidenav_content
+        {
+            margin-right: 0px;
+            padding-right: 0px;
+        }
+
     </style>
 </head>
-<body>
-    <header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4 .pgaeheader">
-        <div class="container">
-            <div class="page-header-content">
-                <div class="row align-items-center justify-content-center pt-3">
-                    <div class="col-12 text-center">
-                        <h3 class="page-header-subtitle mb-1 pickup" id="pickup">
-                            Pickup
-                        </h3>
-                    </div>
-                    <div class="col-12 text-center">
-                         <div class="page-header-subtitle">
-                    @*         All Times Are In EST *@
-                        </div> 
+<header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4 .pgaeheader">
+    <div class="container">
+        <div class="page-header-content">
+            <div class="row align-items-center justify-content-center pt-3">
+                <div class="col-12 text-center">
+                    <h3 class="page-header-subtitle mb-1 pickup" id="pickup">
+                        Pickup
+                    </h3>
+                </div>
+                <div class="col-12 text-center">
+                    <div class="page-header-subtitle">
+                        @*         All Times Are In EST *@
                     </div>
                 </div>
             </div>
         </div>
-    </header>
+    </div>
+</header>
+<body>
+   
 
 
 
@@ -524,7 +532,7 @@
                                         }
                                     },
                                     error: function (xhr, status, error) {
-                                        showMessage('Error retrieving user ID: ' + error, true);
+                                        showMessage('Something went wrong. Please try again later.' + error, true);
                                     }
                                 });
                             } else {
@@ -532,7 +540,7 @@
                             }
                         },
                         error: function (xhr, status, error) {
-                            showMessage('Error retrieving time slot ID: ' + error, true);
+                            showMessage('Something went wrong. Please try again later.' + error, true);
                         }
                     });
                 });
@@ -577,11 +585,14 @@
                 var modalClass = 'success';
 
                 if (message.includes('You have already signed up for this time slot.')) {
-                    modalTitle = 'Error';
-                    modalClass = 'error';
+                    modalTitle = 'Warning';
+                    modalClass = 'warning'; // Change to warning for this specific message
                 } else if (message.includes('Successfully signed up for the time slot.')) {
                     modalTitle = 'Success';
                     modalClass = 'success';
+                } else if (isError) {
+                    modalTitle = 'Error';
+                    modalClass = 'error';
                 }
 
                 console.log(message);

@@ -8,6 +8,8 @@ using Tweetinvi.Core.Events;
 using LogicalPantry.Services.InformationService;
 using Azure.Core;
 using Azure;
+using Microsoft.AspNetCore.Authorization;
+using LogicalPantry.Web.Helper;
 
 namespace LogicalPantry.Web.Controllers
 {
@@ -21,7 +23,7 @@ namespace LogicalPantry.Web.Controllers
         private readonly IInformationService _informationService;
 
 
-        public TimeSlotController(ILogger<TimeSlotController> logger, ITimeSlotService timeSlotService,IUserService userService ,IInformationService informationService)
+        public TimeSlotController(ILogger<TimeSlotController> logger, ITimeSlotService timeSlotService, IUserService userService, IInformationService informationService)
         {
             _logger = logger;
             _timeSlotService = timeSlotService;
@@ -82,8 +84,7 @@ namespace LogicalPantry.Web.Controllers
         //    return Ok();
         //}
 
-
-
+        [Authorize(Roles = $"{UserRoleEnum.Admin}")]
         [HttpPost("AddEvent")]
         public async Task<IActionResult> AddEvent([FromBody] TimeSlotDto timeSlotDto)
         {
@@ -115,8 +116,8 @@ namespace LogicalPantry.Web.Controllers
                 {
                     // return Redirect($"/{tenantName}/TimeSlot/Calendar");
                     // Return a JSON response indicating success
-                     return Json(new { success = true });
-                   // return Ok(success);
+                    return Json(new { success = true });
+                    // return Ok(success);
                     //return View();
                 }
                 else
@@ -132,47 +133,14 @@ namespace LogicalPantry.Web.Controllers
             }
         }
 
-
-        //[HttpGet("EditTimeSlotUser")]
-        //public async Task<IActionResult> EditTimeSlotUser(string Id)
-        //{
-        //    var TenantDisplayName = HttpContext.Session.GetString("TenantDisplayName");
-        //    ViewBag.PageName = TenantDisplayName;
-        //    // Log the starting of the Index method execution.
-        //    _logger.LogInformation("EditTimeSlotUser Get method call started");
-        //    if (string.IsNullOrEmpty(Id) || !int.TryParse(Id, out int timeSlotId))
-        //    {
-        //        return BadRequest("Invalid time slot ID.");
-        //    }
-        //    //if (Id == 0)
-        //    //{
-        //    //    return BadRequest("Invalid time slot ID.");
-        //    //}
-
-        //    var response = await _userSercvice.GetUsersbyTimeSlotId(timeSlotId);
-        //    if (response.Success && response.Data != null)
-        //    {
-        //        //Log the ending of the Index method execution.
-        //        _logger.LogInformation("EditTimeSlotUser method call started.");
-        //        @TempData["MessageClass"] = "alert-success";
-        //        @TempData["SuccessMessageBatch"] = "User Saved Successfully";
-        //        return View(response.Data.ToList()); // Ensure that you handle the error case appropriately
-        //    }
-        //    else
-        //    {
-        //        return View(response.Data.ToList());
-        //        //return NotFound("Users not found for the specified time slot.");
-        //    }
-
-        //}
-
+        [Authorize(Roles = $"{UserRoleEnum.Admin}")]
         [HttpGet("EditTimeSlotUser")]
         public async Task<IActionResult> EditTimeSlotUser(int Id)
         {
             var TenantDisplayName = HttpContext.Session.GetString("TenantDisplayName");
             ViewBag.PageName = TenantDisplayName;
             // Log the starting of the Index method execution.
-            _logger.LogInformation("EditTimeSlotUser Get method call started");        
+            _logger.LogInformation("EditTimeSlotUser Get method call started");
             if (Id == 0)
             {
                 return BadRequest("Invalid time slot.");
@@ -186,8 +154,8 @@ namespace LogicalPantry.Web.Controllers
                 @TempData["MessageClass"] = "alert-success";
                 @TempData["SuccessMessageBatch"] = "Changes Saved Successfully";
                 //return View(response.Data.ToList()); 
-                //return RedirectToAction("EditTimeSlotUser", response.Data.ToList());
-                return View(response.Data.ToList());
+                //return Redirect(url);
+                 return View(response.Data.ToList());
             }
             else
             {
@@ -197,45 +165,43 @@ namespace LogicalPantry.Web.Controllers
 
         }
 
-        
+       
 
 
+            //[HttpPost("EditTimeSlotUser")]
+            //public async Task<IActionResult> EditTimeSlotUser([FromBody] TimeSlotDto request)
+            //{
+            //    // Log the starting of the EditTimeSlotUser method execution.
+            //    _logger.LogInformation("EditTimeSlotUser POST method call started");
+
+            //    //if (string.IsNullOrEmpty(Id) || !int.TryParse(Id, out int timeSlotId))
+            //    //{
+            //    //    return BadRequest("Invalid time slot ID.");
+            //    //}
+            //    if (request.Id <= 0)
+            //    {
+            //        return BadRequest("Invalid time slot ID.");
+            //    }
+
+            //    var response = await _userSercvice.GetUsersbyTimeSlotId(request.Id);
+            //    if (response.Success && response.Data != null)
+            //    {
+            //        // Log the ending of the EditTimeSlotUser method execution.
+            //        _logger.LogInformation("EditTimeSlotUser method executed successfully.");
+            //        TempData["MessageClass"] = "alert-success";
+            //        TempData["SuccessMessageBatch"] = "User Saved Successfully";
+            //        return View(response.Data.ToList());
+            //        // return View();
+            //    }
+            //    else
+            //    {
+            //        // Handle the case where users are not found.
+            //        return View(response.Data.ToList()); // Return an empty list to the view
+            //    }
+            //}
 
 
-        //[HttpPost("EditTimeSlotUser")]
-        //public async Task<IActionResult> EditTimeSlotUser([FromBody] TimeSlotDto request)
-        //{
-        //    // Log the starting of the EditTimeSlotUser method execution.
-        //    _logger.LogInformation("EditTimeSlotUser POST method call started");
-
-        //    //if (string.IsNullOrEmpty(Id) || !int.TryParse(Id, out int timeSlotId))
-        //    //{
-        //    //    return BadRequest("Invalid time slot ID.");
-        //    //}
-        //    if (request.Id <= 0)
-        //    {
-        //        return BadRequest("Invalid time slot ID.");
-        //    }
-
-        //    var response = await _userSercvice.GetUsersbyTimeSlotId(request.Id);
-        //    if (response.Success && response.Data != null)
-        //    {
-        //        // Log the ending of the EditTimeSlotUser method execution.
-        //        _logger.LogInformation("EditTimeSlotUser method executed successfully.");
-        //        TempData["MessageClass"] = "alert-success";
-        //        TempData["SuccessMessageBatch"] = "User Saved Successfully";
-        //        return View(response.Data.ToList());
-        //        // return View();
-        //    }
-        //    else
-        //    {
-        //        // Handle the case where users are not found.
-        //        return View(response.Data.ToList()); // Return an empty list to the view
-        //    }
-        //}
-
-
-        private long ToUnixTimestamp(DateTime dateTime)
+            private long ToUnixTimestamp(DateTime dateTime)
         {
             _logger.LogInformation("ToUnixTimestamp method call started.");
             _logger.LogInformation("ToUnixTimestamp method call ended.");
@@ -293,6 +259,7 @@ namespace LogicalPantry.Web.Controllers
         }
 
 
+        [Authorize(Roles = $"{UserRoleEnum.Admin},{UserRoleEnum.User}")]
         [HttpPost("GetTimeSlotId")]
         public async Task<IActionResult> GetTimeSlotId([FromBody]TimeSlotDto request)
         {
@@ -329,8 +296,7 @@ namespace LogicalPantry.Web.Controllers
                 return NotFound("Time slot not found.");
             }
         }
-
-
+        [Authorize(Roles = $"{UserRoleEnum.Admin}")]
         [HttpGet("Calendar")]
         public async Task<IActionResult> Calendar()
         {
@@ -389,6 +355,7 @@ namespace LogicalPantry.Web.Controllers
         }
 
 
+        [Authorize(Roles = $"{UserRoleEnum.User}")]         
         [HttpGet("UserCalendar")]
         public async Task<IActionResult> UserCalendar()
         {

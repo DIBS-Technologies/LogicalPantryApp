@@ -15,6 +15,8 @@ using LogicalPantry.Models.Models.Enums;
 using LogicalPantry.DTOs.Roledtos;
 using System.Data;
 using Microsoft.AspNetCore.Http;
+using System.Globalization;
+using Azure.Core;
 
 namespace LogicalPantry.Services.UserServices
 {
@@ -737,7 +739,16 @@ namespace LogicalPantry.Services.UserServices
                                 FullName = existingUser.FullName,
                                 Email = existingUser.Email,
                                 PhoneNumber = existingUser.PhoneNumber,
-                                IsAllow = existingUser.IsAllow
+                                IsAllow = existingUser.IsAllow,
+                                IsRegistered = false,
+                                ZipCode = existingUser.ZipCode,
+                                HouseholdSize = existingUser.HouseholdSize,
+                                DateOfBirth = existingUser.DateOfBirth,
+                                HasSchoolAgedChildren = existingUser.HasSchoolAgedChildren,
+                                IsMarried = existingUser.IsMarried,
+                                ProfilePictureUrl = existingUser.ProfilePictureUrl,
+                                EmploymentStatus = existingUser.EmploymentStatus,
+                                IsVeteran = existingUser.IsVeteran
                             };
                             response.Success = true;
                         }
@@ -1052,5 +1063,149 @@ namespace LogicalPantry.Services.UserServices
 
             return role;
         }
+
+
+
+        public async Task<ServiceResponse<UserDto>> ProfileRagistration(UserDto userDto)
+        {
+            var response = new ServiceResponse<UserDto>();
+
+            if (userDto == null)
+            {
+                response.Success = false;
+                response.Message = "User data is null.";
+                response.Data = null; // Indicating failure
+                return response;
+            }
+
+            try
+            {
+                // Check if the email already exists in the database
+                var existingUser = await dataContext.Users
+                    .FirstOrDefaultAsync(u => u.Email == userDto.Email);
+
+                if (existingUser != null)
+                {
+                    // Update the existing user
+                    existingUser.FullName = userDto.FullName;
+                    existingUser.Address = userDto.Address;
+                    existingUser.PhoneNumber = userDto.PhoneNumber;
+                    existingUser.IsAllow = false; // Default value or update based on your logic
+                    existingUser.IsRegistered = true; // Ensure the registration status remains false or set as needed
+                    existingUser.DateOfBirth = userDto.DateOfBirth;
+                    existingUser.ZipCode = userDto.ZipCode;
+                    existingUser.HouseholdSize = userDto.HouseholdSize;
+                    existingUser.HasSchoolAgedChildren = userDto.HasSchoolAgedChildren;
+                    existingUser.IsMarried = userDto.IsMarried;             
+                    existingUser.EmploymentStatus = userDto.EmploymentStatus;
+                    existingUser.IsVeteran = userDto.IsVeteran;
+                    if(userDto.ProfilePictureUrl != null )
+                    {
+                        existingUser.ProfilePictureUrl = userDto.ProfilePictureUrl;
+                    }
+                    // Update the user in the database
+                    dataContext.Users.Update(existingUser);
+                }
+                else
+                {
+                    // Create a new user entity
+                    var newUser = new User
+                    {
+                        TenantId = userDto.TenantId,
+                        FullName = userDto.FullName,
+                        Address = userDto.Address,
+                        Email = userDto.Email,
+                        PhoneNumber = userDto.PhoneNumber,
+                        IsAllow = false,
+                        IsRegistered = false,
+                        ZipCode = userDto.ZipCode,
+                        HouseholdSize = userDto.HouseholdSize,
+                        DateOfBirth = userDto.DateOfBirth,
+                        HasSchoolAgedChildren = userDto.HasSchoolAgedChildren,
+                        IsMarried = userDto.IsMarried,
+                        ProfilePictureUrl = userDto.ProfilePictureUrl,
+                        EmploymentStatus = userDto.EmploymentStatus,
+                        IsVeteran = userDto.IsVeteran
+                    };
+
+                    // Add the new user to the database
+                    await dataContext.Users.AddAsync(newUser);
+                    await dataContext.SaveChangesAsync();
+
+                    // Map updated/added user to DTO
+                    userDto.Id = newUser.Id;
+                }
+
+                // Save changes to the database if there are updates
+                if (existingUser != null)
+                {
+                    await dataContext.SaveChangesAsync();
+                }
+                
+                response.Data = userDto; // Pass the updated user DTO
+                response.Success = true;
+                response.Message = "User Profile updated successfully.";
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"Error registering user: {ex.Message}";
+                response.Data = null; // Indicating failure
+            }
+
+            return response;
+        }
+
+        public async Task<ServiceResponse<UserDto>> GetUserDetailsByEmail(string email)
+        {
+            var response = new ServiceResponse<UserDto>();
+            try
+            {
+                var user = await dataContext.Users
+                    .Where(u => u.Email == email)
+                    .FirstOrDefaultAsync();
+
+                if (user != null)
+                {
+                    // Map the User entity to UserDto
+                    var userDto = new UserDto
+                    {
+                        Id = user.Id,
+                        TenantId = user.TenantId,
+                        FullName = user.FullName,
+                        Email = user.Email,
+                        PhoneNumber = user.PhoneNumber,
+                        Address = user.Address,
+                        IsAllow = user.IsAllow,
+                        IsRegistered = user.IsRegistered,
+                        ZipCode = user.ZipCode,
+                        IsMarried = user.IsMarried,
+                        HouseholdSize = user.HouseholdSize,
+                        HasSchoolAgedChildren = user.HasSchoolAgedChildren,
+                        IsVeteran = user.IsVeteran,
+                        DateOfBirth = user.DateOfBirth,
+                        EmploymentStatus = user.EmploymentStatus,
+                        ProfilePictureUrl = user.ProfilePictureUrl,
+                    };
+
+                    response.Data = userDto;
+                    response.Success = true;
+                }
+                else
+                {
+                    response.Success = false;
+                    response.Message = "User not found.";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"Error retrieving user details: {ex.Message}";
+            }
+
+            return response;
+        }
+
+
     }
 }

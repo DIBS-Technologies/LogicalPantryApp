@@ -56,58 +56,6 @@ namespace LogicalPantry.Web.Controllers
         }
 
 
-        //[HttpGet("Logout")]
-        //public IActionResult Logout()
-        //{
-        //    HttpContext.SignOutAsync();
-
-        //    return RedirectToAction("Auth","loginview");
-        //}
-
-
-        //[HttpGet("GoogleResponse")]
-        //public async Task<IActionResult> GoogleResponse()
-        //{
-        //    var tenantName = TenantName;
-        //    // Log the beginning of the Index method execution.
-        //    _logger.LogInformation($"GoogleResponse Method is call started");
-
-        //    var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-        //    var userInfo = await CheckIfUserExists(result);
-
-        //    if (userInfo != null && userInfo.Role == "Admin")
-        //    {
-        //        // Redirect based on user role
-        //        //  return RedirectToAction(ViewConstants.Calandar, ViewConstants.TimeSlot, new { area = "" });
-        //        return Redirect($"/{tenantName}/TimeSlot/Calendar");
-        //    }
-        //    else if (userInfo != null && userInfo.Role == "User")
-        //    {
-        //        if (userInfo.Message == "User registered as User successfully.")
-        //        {
-
-        //            // return RedirectToAction(ViewConstants.INDEX, ViewConstants.Registration, new { area = "" });
-        //            return Redirect($"/{tenantName}/User/Register");
-        //        }
-        //        else if (userInfo.IsAllowed)
-        //        {
-        //            //return RedirectToAction(ViewConstants.UserCalandar, ViewConstants.TimeSlot, new { area = "" });
-        //            return Redirect($"/{tenantName}/TimeSlot/UserCalendar");
-        //        }
-        //        else
-        //        {
-        //            ViewBag.Message = "User Is Not Allowed";
-        //            return Redirect($"/{tenantName}/Donation/PayPal");
-        //        }
-        //    }
-
-        //    // Log the ending of the Index method execution.
-        //    _logger.LogInformation($"GoogleResponse Method is call ended");
-        //    //return RedirectToAction(ViewConstants.LOGINVIEW, ViewConstants.AUTH, new { area = "" });
-        //    return Redirect($"/{tenantName}/User/Register");
-
-        //}
-
         [HttpGet("GoogleResponse")]
         public async Task<IActionResult> GoogleResponse()
         {
@@ -182,6 +130,7 @@ namespace LogicalPantry.Web.Controllers
         {
             // Log the starting of the Index method execution.
             _logger.LogInformation($"FacebookResponse Method is call started");
+            var tenantName = TenantName;
             var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             var userInfo = await CheckIfUserExists(result);
 
@@ -201,29 +150,32 @@ namespace LogicalPantry.Web.Controllers
             {
                 // Redirect based on user role
                 //  return RedirectToAction(ViewConstants.Calandar, ViewConstants.TimeSlot, new { area = "" });
-                return Redirect($"/{TenantName}/TimeSlot/Calendar");
-
+                return Redirect($"/{tenantName}/TimeSlot/Calendar");
             }
             else if (userInfo != null && userInfo.Role == "User")
             {
-                if (userInfo.Message == "User registered successfully.")
+                if (userInfo.Message == "User registered as User successfully.")
                 {
 
                     // return RedirectToAction(ViewConstants.INDEX, ViewConstants.Registration, new { area = "" });
-                    return Redirect($"/{TenantName}/User/Register");
+                    return Redirect($"/{tenantName}/User/Register");
+                }
+                else if (userInfo.IsAllowed)
+                {
+                    //return RedirectToAction(ViewConstants.UserCalandar, ViewConstants.TimeSlot, new { area = "" });
+                    return Redirect($"/{tenantName}/TimeSlot/UserCalendar");
                 }
                 else
                 {
-                    
-                    //return RedirectToAction(ViewConstants.UserCalandar, ViewConstants.TimeSlot, new { area = "" });
-                    return Redirect($"/{TenantName}/TimeSlot/UserCalendar");
+                    ViewBag.Message = "User Is Not Allowed";
+                    return Redirect($"/{tenantName}/Donation/PayPal");
                 }
             }
-            // Log the ending of the Index method execution.
-            _logger.LogInformation($"FacebookResponse Method is call ended");
 
-            // return RedirectToAction(ViewConstants.AUTH, ViewConstants.LOGINVIEW, new { area = "" });
-            return Redirect($"/{TenantName}/AUTH/LOGINVIEW");
+            // Log the ending of the Index method execution.
+            _logger.LogInformation($"GoogleResponse Method is call ended");
+            //return RedirectToAction(ViewConstants.LOGINVIEW, ViewConstants.AUTH, new { area = "" });
+            return Redirect($"/{tenantName}/User/Register");
         }
 
         // Microsoft Authentication
@@ -247,6 +199,7 @@ namespace LogicalPantry.Web.Controllers
         {
             // Log the starting of the Index method execution.
             _logger.LogInformation($"MicrosoftResponse Method is call started");
+            var tenantName = TenantName;
             var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             var userInfo = await CheckIfUserExists(result);
 
@@ -254,28 +207,32 @@ namespace LogicalPantry.Web.Controllers
             {
                 // Redirect based on user role
                 //  return RedirectToAction(ViewConstants.Calandar, ViewConstants.TimeSlot, new { area = "" });
-                return Redirect($"/{TenantName}/TimeSlot/Calendar");
-
+                return Redirect($"/{tenantName}/TimeSlot/Calendar");
             }
             else if (userInfo != null && userInfo.Role == "User")
             {
-                if (userInfo.Message == "User registered successfully.")
+                if (userInfo.Message == "User registered as User successfully.")
                 {
 
                     // return RedirectToAction(ViewConstants.INDEX, ViewConstants.Registration, new { area = "" });
-                    return Redirect($"/{TenantName}/User/Register");
+                    return Redirect($"/{tenantName}/User/Register");
+                }
+                else if (userInfo.IsAllowed)
+                {
+                    //return RedirectToAction(ViewConstants.UserCalandar, ViewConstants.TimeSlot, new { area = "" });
+                    return Redirect($"/{tenantName}/TimeSlot/UserCalendar");
                 }
                 else
                 {
-                    //return RedirectToAction(ViewConstants.UserCalandar, ViewConstants.TimeSlot, new { area = "" });
-                    return Redirect($"/{TenantName}/TimeSlot/UserCalendar");
+                    ViewBag.Message = "User Is Not Allowed";
+                    return Redirect($"/{tenantName}/Donation/PayPal");
                 }
             }
 
             // Log the ending of the Index method execution.
-            _logger.LogInformation($"MicrosoftResponse Method is call ended");
-            // return RedirectToAction(ViewConstants.AUTH, ViewConstants.LOGINVIEW, new { area = "" });
-            return Redirect($"/{TenantName}/AUTH/LOGINVIEW");
+            _logger.LogInformation($"GoogleResponse Method is call ended");
+            //return RedirectToAction(ViewConstants.LOGINVIEW, ViewConstants.AUTH, new { area = "" });
+            return Redirect($"/{tenantName}/User/Register");
 
 
         }
@@ -289,7 +246,7 @@ namespace LogicalPantry.Web.Controllers
             return View();
         }
 
-        // Logout
+       
         [HttpGet]
         [Route("Logout")]
         public async Task<IActionResult> Logout()
