@@ -257,15 +257,7 @@
             @*  <h3>TimeSlot </h3> *@
             <div class="d-flex align-items-center" style="
                  display: flex;
-                 justify-content: end;">
-                @*  <div class="dropdown d-inline">
-                <select id="eventSelect" class="form-control" onchange="handleSelectChange()">
-                <option value="" selected disabled>Type</option>
-                <option value="1" data-title="Food Pickup">Food Pickup</option>
-                <option value="2" data-title="Volunteer">Volunteer</option>
-                <option value="3" data-title="Appointment">Appointment</option>
-                </select>
-                </div> *@
+                 justify-content: end;">            
                 <button type="button" class="btn btn-success" id="addEventBtn">Add Event</button>
             </div>
 
@@ -275,38 +267,7 @@
             </div>
         </div>
 
-        <!-- Bootstrap Modal for Event Details -->
-        @* <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-        <div class="modal-content">
-        <div class="modal-header">
-        <h5 class="modal-title" id="eventModalLabel">Event Details</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-        <span aria-hidden="true">&times;</span>
-        </button>
-        </div>
-        <div class="modal-body">
-        <form id="eventForm">
-        <div class="form-group">
-        <label for="eventTitle">Title:</label>
-        <input type="text" class="form-control" id="eventTitle" name="Title" required>
-        </div>
-        <div class="form-group">
-        <label for="eventStart">Start Date and Time:</label>
-        <input type="datetime-local" class="form-control" id="eventStart" name="StartDateTime" required>
-        </div>
-        <div class="form-group">
-        <label for="eventEnd">End Date and Time:</label>
-        <input type="datetime-local" class="form-control" id="eventEnd" name="EndDateTime" required>
-        </div>
-        </form>
-        </div>
-        <div class="modal-footer">
-        <button type="button" class="btn btn-primary" id="saveEventBtn">Save</button>
-        </div>
-        </div>
-        </div>
-        </div> *@
+    
         <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -317,7 +278,7 @@
                         <form id="eventForm" method="post">
                             <div class="form-group">
                                 <label for="eventTitle">Title:</label>
-                                <input type="text" class="form-control" id="eventTitle" name="Title" required>
+                                    <input type="text" class="form-control" id="eventTitle" name="Title" placeholder="Please add title" required>
                                 <span class="text-danger validation-message" id="titleError"></span>
                             </div>
                             <div class="form-group">
@@ -330,6 +291,21 @@
                                 <input type="datetime-local" class="form-control" id="eventEnd" name="EndDateTime" required>
                                 <span class="text-danger validation-message" id="endError"></span>
                             </div>
+                                 <div class="form-group">
+                                    <label for="eventType">Event Type:</label>
+                                    <select class="form-control" id="eventType" name="Type" required>
+                                        <option value="">Select Type</option>
+                                        <option value="Food Pickup">Food Pickup</option>
+                                        <option value="Volunteer">Volunteer</option>
+                                        <option value="Appointment">Appointment</option>
+                                    </select>
+                                    <span class="text-danger validation-message" id="typeError"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="eventMaxUsers">Maximum Number of Users:</label>
+                                    <input type="number" class="form-control" id="eventMaxUsers" name="MaxUsers" min="1" placeholder="Enter maximum number of users"  required>
+                                    <span class="text-danger validation-message" id="maxUsersError"></span>
+                                </div> 
                         </form>
                     </div>
                     <div class="modal-footer">
@@ -357,7 +333,7 @@
 
             <script>
                 $(document).ready(function () {
-
+                    debugger;
                     var events = @Html.Raw(Json.Serialize(Model.Events));
                      //var buttonHtml = '<button type="button" class="btn btn-success" id="addEventBtn">Add Event</button>';
                     // $('.nav-fixed .container').append(buttonHtml);
@@ -372,7 +348,7 @@
                     }
                 },
                 events: events,
-                view: 'week',
+                view: 'week',                    
                 defaultView: {
                     largeScreen: 'week',
                     smallScreen: 'day',
@@ -420,7 +396,13 @@
                         delay: 5000000
                     },
 
+                },
+               categories: {
+                enable: true,
+                hover: {
+                  delay: 500
                 }
+              }
 
             }).init();
 
@@ -628,7 +610,8 @@
 
                 // Clear previous validation messages
                 $('.validation-message').text('');
-
+                    var eventType = $("#eventType").val();
+                    var maxUsers = $("#eventMaxUsers").val();
                 // Validation flags
                 let isValid = true;
 
@@ -638,7 +621,20 @@
                     $('#titleError').text('Title is required.');
                     isValid = false;
                 }
+                    // Validate event type (dropdown must not be empty)
+                    if (eventType === "") {
+                        $("#typeError").text("Event type is required.");
+                        isValid = false;
+                    }
 
+                    // Validate max users (must be a positive number and not empty)
+                    if (maxUsers === "") {
+                        $("#maxUsersError").text("Maximum number of users is required.");
+                        isValid = false;
+                    } else if (maxUsers <= 0) {
+                        $("#maxUsersError").text("Maximum number of users must be a positive number.");
+                        isValid = false;
+                    }
                     // Get today's date without time
                     const now = new Date();
                     now.setHours(0, 0, 0, 0); // Reset time to 00:00:00
@@ -681,7 +677,10 @@
                         var eventData = {
                             timeSlotName: $('#eventTitle').val(),
                             startTime: $('#eventStart').val(),
-                            endTime: $('#eventEnd').val()
+                            endTime: $('#eventEnd').val(),
+                            eventType: $('#eventType').val(),
+                            maxNumberOfUsers: $("#eventMaxUsers").val(),
+                            
                         };
 
                         $.ajax({
@@ -697,15 +696,17 @@
                                     var redirectUrl = '/@tenantName/TimeSlot/Calendar';
                                     window.location.href = redirectUrl;
                                 } else {
-                                    alert('Error adding event.');
+                                    $("#maxUsersError").css("color", "red").text("Entry is overlapping, please add the correct event.");
+
                                 }
                             },
                             error: function (xhr, status, error) {
                                 console.error('Error adding event:', error);
-                                 alert('Error adding event: ' + error);
+                                $("#maxUsersError").css("color", "red").text("Entry is overlapping, please add the correct event.");
+
                             }
                         });
-                    $('#eventForm').submit(); // Submit the form or call your saving logic here
+                    //$('#eventForm').submit(); // Submit the form or call your saving logic here
                 }
             });
          });

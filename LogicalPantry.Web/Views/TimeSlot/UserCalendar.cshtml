@@ -468,7 +468,14 @@
                         hover: {
                             delay: 500000
                         }
+                    },
+                    categories: {
+                        enable: true,
+                        hover: {
+                            delay: 500
+                        }
                     }
+
 
 
                 }).init();
@@ -476,6 +483,7 @@
 
                 // Handle calendar event click and prevent default behavior
                 $('#calendar').on('Calendar.event-click', function (event, instance, elem, evt) {
+                    debugger;
                     var startTime = evt.start;
                     var endTime = evt.end;
                     var timeSlotName = evt.title;
@@ -495,7 +503,8 @@
                         }),
                         success: function (response) {
                             // $('#modal-content').css('display', 'None');
-                            if (response && response.timeSlotId) {
+                            if (response && response.timeSlotId ) {
+                                console.log("" + response.maxUsers);
                                 // Get user email from the claims
                                 var userEmail = $('#Email').val();
 
@@ -516,6 +525,7 @@
                                                 data: JSON.stringify({
                                                     TimeSlotId: response.timeSlotId,
                                                     UserId: userResponse.userId,
+                                                    MaxNumberOfUsers: response.maxUsers,
                                                     Attended: false
                                                 }),
                                                 success: function (signupResponse) {
@@ -585,6 +595,9 @@
                 var modalClass = 'success';
 
                 if (message.includes('You have already signed up for this time slot.')) {
+                    modalTitle = 'Warning';
+                    modalClass = 'warning'; // Change to warning for this specific message
+                } else if (message.includes('The signup limit of 100 users for this time slot has been reached.')) {
                     modalTitle = 'Warning';
                     modalClass = 'warning'; // Change to warning for this specific message
                 } else if (message.includes('Successfully signed up for the time slot.')) {

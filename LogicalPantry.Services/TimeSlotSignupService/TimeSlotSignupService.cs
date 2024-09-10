@@ -148,12 +148,23 @@ namespace LogicalPantry.Services.TimeSlotSignupService
                     return (true, "You have already signed up for this time slot.");
                 }
 
+                // Count the number of users signed up for this specific time slot
+                var signupCount = await dataContext.TimeSlotSignups
+                    .CountAsync(s => s.TimeSlotId == dto.TimeSlotId);
+
+                // Check if the signup limit of 100 users has been reached for this time slot
+                if (signupCount >= dto.MaxNumberOfUsers)
+                {
+                    return (false, $"The signup limit of {dto.MaxNumberOfUsers} users for this time slot has been reached.");
+                }
+
                 // Create a new TimeSlotSignup entity
                 var timeSlotSignup = new TimeSlotSignup
                 {
                     TimeSlotId = dto.TimeSlotId,
                     UserId = dto.UserId,
-                    Attended = dto.Attended
+                    Attended = dto.Attended,
+                    
                 };
 
                 // Add the new sign-up to the database

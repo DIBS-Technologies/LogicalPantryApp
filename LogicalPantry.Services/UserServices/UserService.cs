@@ -78,18 +78,44 @@ namespace LogicalPantry.Services.UserServices
 
             try
             {
+                var userRoleId = (int)UserRoleEnum.User; // Get the enum value for 'User'
+                //var users = await dataContext.Users
+                //    .Where(u => u.IsRegistered && u.TenantId == tenantId)
+                //    .Select(u => new UserDto
+                //    {
+                //        Id = u.Id,
+                //        FullName = u.FullName,
+                //        Email = u.Email,
+                //        PhoneNumber = u.PhoneNumber,
+                //        Address = u.Address,
+                //        IsAllow = u.IsAllow,
+                //        IsRegistered = u.IsRegistered
+                //    }).ToListAsync();
+
                 var users = await dataContext.Users
-                    .Where(u => u.IsRegistered && u.TenantId == tenantId)
-                    .Select(u => new UserDto
-                    {
-                        Id = u.Id,
-                        FullName = u.FullName,
-                        Email = u.Email,
-                        PhoneNumber = u.PhoneNumber,
-                        Address = u.Address,
-                        IsAllow = u.IsAllow,
-                        IsRegistered = u.IsRegistered
-                    }).ToListAsync();
+           .Join(
+               dataContext.UserRoles,
+               u => u.Id,
+               ur => ur.UserId,
+               (u, ur) => new { User = u, UserRole = ur }
+           )
+           .Join(
+               dataContext.Roles,
+               ur => ur.UserRole.RoleId,
+               r => r.Id,
+               (ur, r) => new { ur.User, Role = r }
+           )
+           .Where(x => x.User.IsRegistered && x.User.TenantId == tenantId &&  x.Role.Id == userRoleId)
+           .Select(x => new UserDto
+           {
+               Id = x.User.Id,
+               FullName = x.User.FullName,
+               Email = x.User.Email,
+               PhoneNumber = x.User.PhoneNumber,
+               Address = x.User.Address,
+               IsAllow = x.User.IsAllow,
+               IsRegistered = x.User.IsRegistered
+           }).ToListAsync();
 
                 response.Data = users;
                 response.Success = true;

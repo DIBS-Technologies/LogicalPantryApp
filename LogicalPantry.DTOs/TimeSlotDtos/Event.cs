@@ -13,6 +13,7 @@ namespace LogicalPantry.DTOs.TimeSlotDtos
         public long Start { get; set; }
         public long End { get; set; }
         public string Title { get; set; }
+        public string Category { get; set; }  
 
     }
 

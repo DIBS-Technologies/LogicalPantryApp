@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AspNetCoreRateLimit" Version="5.0.0" />
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="DotNetOpenAuth.AspNet" Version="4.3.4.13329" />
     <PackageReference Include="Facebook" Version="7.0.6" />
@@ -45,6 +46,7 @@
   <ItemGroup>
     <Folder Include="UnitTest\" />
     <Folder Include="wwwroot\Image\" />
+    <Folder Include="wwwroot\profile\" />
   </ItemGroup>
 
 </Project>

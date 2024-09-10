@@ -64,42 +64,7 @@ namespace LogicalPantry.Web.Controllers
             return View(response.Data);
         }
 
-        //public object GetUserbyId(int tenentId) 
-        //{
-        //    _logger.LogInformation("GetUserbyId object call Started.");
-
-        //    if (tenentId == 0)return null;
-        //    var response = _userService.GetUserByIdAsync(tenentId).Result;
-        //    _logger.LogInformation("GetUserbyId object call ended.");
-
-        //    return response;
-        //}
-        //[HttpGet]
-        //public object GetUsersbyTimeSlot(DateTime timeslot, int tenentId) 
-        //{
-        //    _logger.LogInformation("GetUsersbyTimeSlot object call Started.");
-        //    if (tenentId == 0 || timeslot == null) return null;
-        //    var response = _userService.GetUsersbyTimeSlot(timeslot,tenentId).Result;
-        //    _logger.LogInformation("GetUsersbyTimeSlot object call ended.");
-
-        //    return response;
-        //}
-        //[HttpPost]
-        //public object PutUserStatus(List<UserAttendedDto> userDto)
-        //{
-        //    _logger.LogInformation("PutUserStatus object call started.");
-
-        //    if (userDto != null)
-        //    {
-        //        var response = _userService.UpdateUserAllowStatusAsync(userDto).Result;
-        //        _logger.LogInformation("PutUserStatus object call ended.");
-        //        return response;
-
-        //    }
-        //    else { return null; }
-
-
-        //}
+       
 
         [HttpGet("session")]
         public IActionResult GetSessionData()
@@ -116,39 +81,7 @@ namespace LogicalPantry.Web.Controllers
             return Ok(new { UserEmail = userEmail, UserName = userName });
         }
 
-        //[Route("UpdateUser")]
-        //public async Task<IActionResult> UpdateUser([FromBody]  string updatedNotificationList)
-        //{
-        //    if (updatedNotificationList == null)
-        //    {
-        //        return BadRequest("Invalid data.");
-        //    }
-
-        //    var updatedNotificationListObject = JsonConvert.DeserializeObject<UserAllowStatusDto>(updatedNotificationList);
-
-        //    var userDto = new UserDto { Id = updatedNotificationListObject.Id, IsAllow = updatedNotificationListObject.IsAllow };
-
-
-        //    if (userDto != null)
-        //    {
-        //        var response = _userService.UpdateUserAsync(userDto).Result;
-
-        //        if (response != null)
-        //        {
-        //            @TempData["MessageClass"] = "alert-success";
-        //            @TempData["SuccessMessageUser"] = "User Saved Successfully";
-
-        //            return Ok(new { success = true });
-        //        }
-        //        else
-        //        {
-        //            @TempData["MessageClass"] = "alert-success";
-        //            @TempData["SuccessMessageUser"] = "Internal server error.";
-        //            return StatusCode(500, "Internal server error.");
-        //        }
-        //    }
-        //    return Ok(new { success = false });
-        //}
+       
 
         [Authorize(Roles = $"{UserRoleEnum.Admin}")]
         [HttpPost("UpdateUser")] //ThisExpressionSyntax is ForbidResult allow method
@@ -340,20 +273,61 @@ namespace LogicalPantry.Web.Controllers
             return View();
         }
 
-       // [Authorize(Roles = $"{UserRoleEnum.Admin},{UserRoleEnum.User}")]
+
+
         [HttpPost("Profile")]
-        public async Task<IActionResult> Profile(UserDto user)
+        public async Task<IActionResult> Profile(UserDto user, IFormFile ProfilePicture)
         {
-
-
             _logger.LogInformation("Profile method call started");
+
+            if (!ModelState.IsValid)
+            {
+                TempData["MessageClass1"] = "alert-danger";
+                TempData["SuccessMessageUser1"] = "Invalid data provided.";
+                return View("Profile", user);
+            }
 
             var tenantId = HttpContext.Items["TenantId"]?.ToString();
             if (string.IsNullOrEmpty(tenantId))
             {
-                TempData["MessageClass"] = "alert-danger";
-                TempData["SuccessMessageUser"] = "Failed to retrieve Tenant ID.";
+                TempData["MessageClass1"] = "alert-danger";
+                TempData["SuccessMessageUser1"] = "Failed to retrieve Tenant ID.";
                 return View("Profile", user);
+            }
+
+            // Handle profile picture upload
+            if (ProfilePicture != null && ProfilePicture.Length > 0)
+            {
+                // Validate file type
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".svg" };
+                var extension = Path.GetExtension(ProfilePicture.FileName)?.ToLower();
+
+                _logger.LogInformation($"Uploaded file extension: {extension}");
+                if (string.IsNullOrEmpty(extension) || !allowedExtensions.Contains(extension))
+                {
+                    TempData["MessageClass1"] = "alert-danger";
+                    TempData["SuccessMessageUser1"] = "Invalid file type. Please upload a JPG, JPEG, PNG, GIF, or SVG file.";
+                    _logger.LogInformation($"File type validation failed. Allowed extensions: {string.Join(", ", allowedExtensions)}");
+                    return View("Profile", user);
+                }
+
+                // Ensure the directory exists
+                var profileDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "profile");
+                if (!Directory.Exists(profileDir))
+                {
+                    Directory.CreateDirectory(profileDir);
+                }
+
+                // Generate unique file name and save the file
+                var fileName = Guid.NewGuid().ToString() + extension;
+                var filePath = Path.Combine(profileDir, fileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await ProfilePicture.CopyToAsync(stream);
+                }
+
+                // Assign the uploaded picture URL to the user DTO
+                user.ProfilePictureUrl = $"/profile/{fileName}";
             }
 
             user.TenantId = int.Parse(tenantId);
@@ -361,21 +335,65 @@ namespace LogicalPantry.Web.Controllers
 
             if (response != null && response.Success)
             {
-               
-
                 _logger.LogInformation("Profile method call ended successfully");
-                @TempData["MessageClass"] = "alert-success";
-                @TempData["SuccessMessageUser"] = "Profile save successful";
-                return View("Profile", response.Data);
+                TempData["MessageClass1"] = "alert-success";
+                TempData["SuccessMessageUser1"] = "Profile saved successfully.";
+
+                // Use Post/Redirect/Get to avoid duplicate submissions
+                // return RedirectToAction("Profile");
+               return Redirect($"/{TenantName}/User/Profile");
             }
             else
             {
-                @TempData["MessageClass"] = "alert-danger";
-                @TempData["SuccessMessageUser"] = "Failed to Save Profile server error.";
+                TempData["MessageClass1"] = "alert-danger";
+                TempData["SuccessMessageUser1"] = "Failed to save profile due to a server error.";
                 _logger.LogInformation("Profile method call ended with errors");
-                return View("Profile", user); // Return the view with the user data to preserve inputs
+                return Redirect($"/{TenantName}/User/Profile");
             }
         }
+
+
+
+
+
+
+
+        // [Authorize(Roles = $"{UserRoleEnum.Admin},{UserRoleEnum.User}")]
+        //[HttpPost("Profile")]
+        //public async Task<IActionResult> Profile(UserDto user)
+        //{
+
+
+        //     _logger.LogInformation("Profile method call started");
+
+        //    var tenantId = HttpContext.Items["TenantId"]?.ToString();
+        //    if (string.IsNullOrEmpty(tenantId))
+        //    {
+        //        TempData["MessageClass"] = "alert-danger";
+        //        TempData["SuccessMessageUser"] = "Failed to retrieve Tenant ID.";
+        //        return View("Profile", user);
+        //    }
+
+        //    user.TenantId = int.Parse(tenantId);
+        //    var response = await _userService.ProfileRagistration(user);
+
+        //    if (response != null && response.Success)
+        //    {
+
+
+        //        _logger.LogInformation("Profile method call ended successfully");
+        //        @TempData["MessageClass"] = "alert-success";
+        //        @TempData["SuccessMessageUser"] = "Profile save successful";
+        //        return View("Profile", response.Data);
+        //    }
+        //    else
+        //    {
+        //        @TempData["MessageClass"] = "alert-danger";
+        //        @TempData["SuccessMessageUser"] = "Failed to Save Profile server error.";
+        //        _logger.LogInformation("Profile method call ended with errors");
+        //        return View("Profile", user); // Return the view with the user data to preserve inputs
+        //    }
+        //}
 
 
 

@@ -201,7 +201,7 @@ namespace LogicalPantry.Web.Controllers
             //}
 
 
-            private long ToUnixTimestamp(DateTime dateTime)
+        private long ToUnixTimestamp(DateTime dateTime)
         {
             _logger.LogInformation("ToUnixTimestamp method call started.");
             _logger.LogInformation("ToUnixTimestamp method call ended.");
@@ -284,12 +284,27 @@ namespace LogicalPantry.Web.Controllers
                 return BadRequest("Invalid date format.");
             }
 
-            var timeSlotId = await _timeSlotService.GetTimeSlotIdAsync(startTime, endTime, request.TimeSlotName);
+            var timeSlotDetails = await _timeSlotService.GetTimeSlotDetailsAsync(startTime, endTime, request.TimeSlotName);
 
-            if (timeSlotId.HasValue)
+            //if (timeSlotId.HasValue)
+            //{
+            //    _logger.LogInformation("GetTimeSlotId method call ended.");
+            //    return Ok(new { timeSlotId = timeSlotId });
+            //}
+            //else
+            //{
+            //    return NotFound("Time slot not found.");
+            //}
+
+
+            if (timeSlotDetails != null)
             {
                 _logger.LogInformation("GetTimeSlotId method call ended.");
-                return Ok(new { timeSlotId = timeSlotId });
+                return Ok(new
+                {
+                    timeSlotId = timeSlotDetails.Id,
+                    maxUsers = timeSlotDetails.MaxNumberOfUsers
+                });
             }
             else
             {
@@ -320,7 +335,7 @@ namespace LogicalPantry.Web.Controllers
             //// Log details of each event
             foreach (var e in events)
             {
-                _logger.LogInformation($"Event: Start={e.StartTime}, End={e.EndTime}, Title={e.TimeSlotName}");
+                _logger.LogInformation($"Event: Start={e.StartTime}, End={e.EndTime}, Title={e.TimeSlotName}, Category={e.EventType}");
             }
 
             // Map to your event model
@@ -329,7 +344,9 @@ namespace LogicalPantry.Web.Controllers
                 Start = ToUnixTimestamp(e.StartTime),
                 End = ToUnixTimestamp(e.EndTime),
                 Title = e.TimeSlotName,
+                Category = e.EventType 
             }).ToList();
+
 
             // Log the number of events mapped
             _logger.LogInformation($"Mapped {calendarEvents.Count} events to calendar event model.");
@@ -383,6 +400,7 @@ namespace LogicalPantry.Web.Controllers
                 Start = ToUnixTimestamp(e.StartTime),
                 End = ToUnixTimestamp(e.EndTime),
                 Title = e.TimeSlotName,
+                Category = e.EventType
             }).ToList();
 
             // Log the number of events mapped

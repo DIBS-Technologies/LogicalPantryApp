@@ -13,6 +13,7 @@ using LogicalPantry.Services.RegistrationService;
 using Autofac.Core;
 using LogicalPantry.Services.InformationService;
 using LogicalPantry.Services.TimeSlotSignupService;
+using System.Threading.RateLimiting;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,6 +26,29 @@ builder.Services.AddMemoryCache();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+
+
+// Add rate limiter middleware
+builder.Services.AddRateLimiter(options =>
+{
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: context.User?.Identity?.Name ?? context.Request.Headers.Host.ToString(),
+            factory: partition => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 100,
+                Window = TimeSpan.FromMinutes(1),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 2
+            })
+    );
+    options.RejectionStatusCode = 429;
+});
+
+
+
+
 
 // Add Entity Framework Core DbContext with SQL Server
 builder.Services.AddDbContext<ApplicationDataContext>(options =>
@@ -150,6 +174,7 @@ app.UseMiddleware<TenantMiddleware>();
 app.UseRouting(); // Enable routing
 app.UseAuthorization(); // Enable authorization middleware
 
+app.UseRateLimiter(); // Only one instance of this
 
 
 app.MapControllerRoute(

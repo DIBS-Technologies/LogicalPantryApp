@@ -12,6 +12,8 @@
 
     bool isAdmin = userClaim.Contains("Admin");
     var isAuthenticated = User.Identity.IsAuthenticated;
+    var userEmail = User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value;
+    var userName = User.FindFirstValue(ClaimTypes.Name) ?? User.Claims.FirstOrDefault(c => c.Type == "name")?.Value;
 }
 
 <!DOCTYPE html>
@@ -25,14 +27,17 @@
     <link href="~/css/style.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>   
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+   
 
     <style>
         html, body {
             margin: 0;
             padding: 0;
             height: 100%;
-            overflow: hidden; /* Prevent scrollbars */
+            /* overflow: hidden; */ /* Prevent scrollbars */
         }
 
         #pageName {
@@ -248,13 +253,37 @@
                      <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar" id="pickUp">Pickup</a>
                 }
                 <a class="nav-link" href="/@tenantName/Donation/PayPal">Donation</a>
-                @if (isAuthenticated)
+               @*  @if (isAuthenticated)
                 {
                     <a class="nav-link" href="/@tenantName/Auth/Logout">Logout</a>
                 }
                 else
                 {
                     <a class="nav-link" href="/@tenantName/Auth/LoginView">Log In</a>
+                } *@
+                @if (isAuthenticated)
+                {
+                    <li class="nav-item dropdown no-caret dropdown-user me-3 me-lg-4">
+                        <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="~/assets/sass/freepik/profiles/person.svg" /></a>
+                        <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
+                            <h6 class="dropdown-header d-flex align-items-center">
+                                <img class="dropdown-user-img" src="~/assets/sass/freepik/profiles/profile-6.png" />
+                                <div class="dropdown-user-details">
+                                    <div class="dropdown-user-details-name">@userName</div>
+                                    <div class="dropdown-user-details-email">@userEmail</div>
+                                </div>
+                            </h6>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="/@tenantName/Auth/Logout">
+                                <div class="dropdown-item-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></div>
+                                Logout
+                            </a>
+                        </div>
+                    </li>
+                }
+                else
+                {
+                    <a class="nav-link" href="/@tenantName/Auth/loginView">Log In</a>
                 }
                @*  <input id="pag" type="hidden" name="name" value="@pagename" /> *@
                 <input id="HomePag" type="hidden" name="homePageName" value="@homePageName" />
@@ -270,6 +299,9 @@
     </div>
 
 
+    @* <script src="~/js/site.js" asp-append-version="true"></script> *@
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
     @section Scripts {
         <script>
             $(document).ready(function () {
@@ -490,6 +522,7 @@
             //         });
             //     });
             // }
+
 
         </script>
     }

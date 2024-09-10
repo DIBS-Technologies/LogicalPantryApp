@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AspNetCoreRateLimit" Version="5.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\LogicalPantry.DTOs\LogicalPantry.DTOs.csproj" />
     <ProjectReference Include="..\LogicalPantry.Models.Test\LogicalPantry.Models.Test.csproj" />
   </ItemGroup>

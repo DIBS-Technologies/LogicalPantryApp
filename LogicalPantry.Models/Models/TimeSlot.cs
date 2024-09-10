@@ -17,7 +17,8 @@ namespace LogicalPantry.Models.Models
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
 
-
+        public string EventType { get; set; } 
+        public int MaxNumberOfUsers { get; set; } 
 
         public ICollection<TimeSlotSignup> TimeSlotSignups { get; set; }
     }

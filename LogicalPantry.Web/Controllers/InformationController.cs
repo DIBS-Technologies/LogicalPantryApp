@@ -274,10 +274,11 @@ namespace LogicalPantry.Web.Controllers
             }         
             else
             {
-                ViewBag.ErrorMessage = "Tenant Not Found.";
+                ViewBag.ErrorMessage = "Page Not Found.";
                 // Log the ended of the Index method execution.
                 _logger.LogInformation("Home method call ended");
                 return View("Error");
+               // return View();
             }
             
 
