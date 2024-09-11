@@ -1,4 +1,4 @@
-﻿using LogicalPantry.DTOs.TenantDtos;
+﻿using LogicalPantry.DTOs.Test.TenantDtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;

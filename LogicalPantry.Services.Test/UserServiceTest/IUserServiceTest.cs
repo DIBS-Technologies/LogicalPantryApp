@@ -1,6 +1,8 @@
-﻿using LogicalPantry.DTOs;
+﻿
+using LogicalPantry.DTOs.Test;
+using LogicalPantry.DTOs.Test.UserDtos;
 using LogicalPantry.DTOs.TimeSlotSignupDtos;
-using LogicalPantry.DTOs.UserDtos;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,33 +13,10 @@ namespace LogicalPantry.Services.Test.UserServiceTest
 {
     public interface IUserServiceTest
     {
-        /// <summary>
-        ///  Check user data when user saved in database 
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
-        Task<ServiceResponse<UserDto>> CheckUserPostResponse(UserDto user);
-
-        /// <summary>
-        ///  Check user data when user updated
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
-        Task CheckUserPutResponse(UserDto user);
-
-        /// <summary>
-        ///  Check user deleted  
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
-        Task CheckUserDeleteResponse(UserDto user);
-
-
-        Task<UserDto> GetUserByIdAsync(int userId);
-        Task<bool> AddUserAsync(UserDto userDto);
-        Task<bool> DeleteUserAsync(int userId);
-        Task<ServiceResponse<bool>> CheckUserDeleteResponse(int userId);
-
         Task<ServiceResponse<List<TimeSlotSignupDto>>> CheckUpdateUserBatch(List<UserDto> userDto);
+        Task<ServiceResponse<bool>> CheckUserDeleteResponse(int userId);
+        Task<bool> DeleteUserAsync(int userId);
+        Task<ServiceResponse<UserDto>> CheckUserPostResponse(UserDto userDto);
+       
     }
 }

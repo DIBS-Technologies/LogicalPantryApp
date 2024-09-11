@@ -133,7 +133,7 @@ namespace LogicalPantry.Web.Controllers
         // Handle form submission
         [Authorize(Roles = $"{UserRoleEnum.Admin}")]
         [HttpPost("AddTenant")]
-        public async Task<IActionResult> AddTenant( TenantDto tenantDto, IFormFile LogoFile)
+        public async Task<IActionResult> AddTenant(TenantDto tenantDto, IFormFile LogoFile)
         {
             // Log the starting of the Index method execution.
             _logger.LogInformation("AddTenant post method call started");
@@ -180,6 +180,8 @@ namespace LogicalPantry.Web.Controllers
             return View(tenantDto);
         }
 
+
+        [HttpGet("RedirectTenant")]
         public async Task<IActionResult> RedirectTenant(int id)
         {
             // Log the starting of the Index method execution.
@@ -188,7 +190,9 @@ namespace LogicalPantry.Web.Controllers
             if (response.Result.Success)
             {
 
+               
                 return View(response.Result.Data);
+      
             }
             // Log the ending of the Index method execution.
             _logger.LogInformation("RedirectTenant  method call ended");

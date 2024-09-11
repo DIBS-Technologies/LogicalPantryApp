@@ -1,4 +1,4 @@
-﻿using LogicalPantry.DTOs.TenantDtos;
+﻿using LogicalPantry.DTOs.Test.TenantDtos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;

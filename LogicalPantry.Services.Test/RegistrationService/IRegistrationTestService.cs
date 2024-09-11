@@ -1,5 +1,6 @@
-﻿using LogicalPantry.DTOs;
-using LogicalPantry.DTOs.UserDtos;
+﻿
+using LogicalPantry.DTOs.Test;
+using LogicalPantry.DTOs.Test.UserDtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;

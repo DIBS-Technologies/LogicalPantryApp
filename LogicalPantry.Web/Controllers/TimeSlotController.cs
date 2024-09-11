@@ -103,6 +103,7 @@ namespace LogicalPantry.Web.Controllers
             }
 
             var userEmail = UserEmail;
+            
             var userResponse = await _userSercvice.GetUserIdByEmail(userEmail);
             if (userResponse.Success)
             {

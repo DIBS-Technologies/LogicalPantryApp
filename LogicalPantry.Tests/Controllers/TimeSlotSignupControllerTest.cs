@@ -1,16 +1,11 @@
 ﻿using Autofac.Core;
 using Azure;
-using LogicalPantry.DTOs;
-using LogicalPantry.DTOs.TenantDtos;
-using LogicalPantry.DTOs.TimeSlotDtos;
-using LogicalPantry.DTOs.TimeSlotSignupDtos;
-using LogicalPantry.DTOs.UserDtos;
-using LogicalPantry.Services.InformationService;
+using LogicalPantry.DTOs.Test;
+using LogicalPantry.DTOs.Test.TimeSlotSignupDtos;
+using LogicalPantry.DTOs.Test.UserDtos;
 using LogicalPantry.Services.Test.TimeSlotSignUpService;
 using LogicalPantry.Services.Test.UserServiceTest;
-using LogicalPantry.Services.TimeSlotServices;
 using LogicalPantry.Services.TimeSlotSignupService;
-using LogicalPantry.Services.UserServices;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -35,12 +30,11 @@ namespace LogicalPantry.Tests.Controllers
 
         private WebApplicationFactory<Startup> _factory;
         private HttpClient _client;
-        private ApplicationDataContext _context;
+        private TestApplicationDataContext _context;
         private ITimeSlotSignUpTestService _timeSlotSignUpTestService;
-        private  ITimeSlotSignupService _timeSlotSignupService;
+        private IUserServiceTest _userServiceTest;
         private  IConfiguration _configuration;
 
-        private IUserServiceTest _userServiceTest;
 
         [TestInitialize]
         public void Setup()
@@ -60,7 +54,7 @@ namespace LogicalPantry.Tests.Controllers
                     {
                         // Remove existing DbContext configuration
                         var descriptor = services.SingleOrDefault(
-                            d => d.ServiceType == typeof(DbContextOptions<ApplicationDataContext>));
+                            d => d.ServiceType == typeof(DbContextOptions<TestApplicationDataContext>));
                         if (descriptor != null)
                         {
                             services.Remove(descriptor);
@@ -68,7 +62,7 @@ namespace LogicalPantry.Tests.Controllers
 
                         // Configure in-memory database or real database as needed
                         var connectionString = _configuration.GetConnectionString("DefaultSQLConnection");
-                        services.AddDbContext<ApplicationDataContext>(options =>
+                        services.AddDbContext<TestApplicationDataContext>(options =>
                             options.UseSqlServer(connectionString));
 
                         // Add services for testing
@@ -81,11 +75,8 @@ namespace LogicalPantry.Tests.Controllers
                         using (var scope = serviceProvider.CreateScope())
                         {
                             var scopedServices = scope.ServiceProvider;
-                            _context = scopedServices.GetRequiredService<ApplicationDataContext>();
+                            _context = scopedServices.GetRequiredService<TestApplicationDataContext>();
                             _timeSlotSignUpTestService = scopedServices.GetRequiredService<ITimeSlotSignUpTestService>();
-                            //_timeSlotSignupService = scopedServices.GetRequiredService<ITimeSlotSignupService>();
-
-                            _userServiceTest = scopedServices.GetRequiredService<IUserServiceTest>();
                             // Ensure the database is created
                             _context.Database.EnsureCreated();
                         }
@@ -94,16 +85,17 @@ namespace LogicalPantry.Tests.Controllers
 
             // Create HttpClient with base address
             _client = _factory.CreateClient();
-            _client.BaseAddress = new Uri("https://localhost:7041");
         }
 
-
+        /// <summary>
+        /// Return Index view 
+        /// </summary>
         [TestMethod]
         public async Task Index_ReturnsView()
         {
             // Act
-            var response = await _client.GetAsync("TimeSlotSignup/Index");
-
+            var response = await _client.GetAsync("/LP/TimeSlotSignup/Index");
+            var responseContent = await response.Content.ReadAsStringAsync();
             // Assert
             Assert.IsNotNull(response); // Verify that the response is not null
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode); // Verify that the response status code is 200 (OK)
@@ -112,19 +104,20 @@ namespace LogicalPantry.Tests.Controllers
             Assert.IsNotNull(content); // Verify that the response content is not null
         }
 
-
+        /// <summary>
+        /// Get Users by Valid TimeSlot
+        /// </summary>
         [TestMethod]
         public async Task GetUsersbyTimeSlot_With_ValidResponse()
         {
             // Arrange
-            string dateTimeString = "2024-08-23 01:12:00.0000000"; // Use the exact format as stored in the database
+            string dateTimeString = "2024-08-25 07:33:00.0000000"; // Use the exact format as stored in the database
             DateTime dateTime = DateTime.ParseExact(dateTimeString, "yyyy-MM-dd HH:mm:ss.fffffff", System.Globalization.CultureInfo.InvariantCulture);
 
             // Act
-            var response = await _client.GetAsync($"/TenantB/TimeSlotSignup/GetUsersbyTimeSlot?timeSlot={dateTimeString}");
+            var response = await _client.GetAsync($"/LP/TimeSlotSignup/GetUsersbyTimeSlot?timeSlot={dateTimeString}");
             var responseContent = await response.Content.ReadAsStringAsync();
             Console.WriteLine($"Response Status Code: {response.StatusCode}");
-            Console.WriteLine($"Response Content: {responseContent}");
 
             // Assert
             Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
@@ -141,7 +134,10 @@ namespace LogicalPantry.Tests.Controllers
 
         }
 
-
+        /// <summary>
+        /// Add TimeSlotSignUp in the database when data is valid.
+        /// </summary>
+        /// <returns></returns>
 
         [TestMethod]
         public async Task AddTimeSlotSignUps_SavesDataSuccessfully()
@@ -150,7 +146,7 @@ namespace LogicalPantry.Tests.Controllers
             var timeSlotSignUpDtos = new TimeSlotSignupDto
             {
                
-                TimeSlotId = 82,
+                TimeSlotId = 190,
                 UserId = 61,
                 Attended = true,
             };
@@ -159,7 +155,7 @@ namespace LogicalPantry.Tests.Controllers
 
             // Act
 
-            var response = await _client.PostAsync("/TenantB/TimeSlotSignup/AddTimeSlotSignUps", content);
+            var response = await _client.PostAsync("/LP/TimeSlotSignup/AddTimeSlotSignUps", content);
             var responseContent = await response.Content.ReadAsStringAsync();
             Console.WriteLine($"Response Status Code: {response.StatusCode}");
             Console.WriteLine($"Response Content: {responseContent}");
@@ -175,8 +171,6 @@ namespace LogicalPantry.Tests.Controllers
             Assert.AreEqual(timeSlotSignUpDtos.TimeSlotId , timeslotInfo.Data.TimeSlotId);
             
         }
-
-       
 
 
     }

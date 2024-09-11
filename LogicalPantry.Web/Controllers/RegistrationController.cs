@@ -58,6 +58,7 @@ namespace LogicalPantry.Web.Controllers
                 return View("Index");
 
             }
+
             _logger.LogInformation($"Register method call ended");
             //return RedirectToAction("UserCalendar", "TimeSlot", new { area = "" });
             return Redirect($"/{TenantName}/TimeSlot/UserCalendar");

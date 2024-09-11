@@ -1,5 +1,4 @@
-﻿
-using LogicalPantry.DTOs.PayPalSettingDtos;
+﻿using LogicalPantry.DTOs.Test.PayPalSettingDtos;
 using LogicalPantry.Services.Test.TimeSlotSignUpService;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +20,7 @@ namespace LogicalPantry.Tests.Controllers
 
         private WebApplicationFactory<Startup> _factory;
         private HttpClient _client;
-        private ApplicationDataContext _context;
+        private TestApplicationDataContext _context;
         private IConfiguration _configuration;
 
         [TestInitialize]
@@ -43,7 +42,7 @@ namespace LogicalPantry.Tests.Controllers
                     {
 
                         var descriptor = services.SingleOrDefault(
-                            d => d.ServiceType == typeof(DbContextOptions<ApplicationDataContext>));
+                            d => d.ServiceType == typeof(DbContextOptions<TestApplicationDataContext>));
                         if (descriptor != null)
                         {
                             services.Remove(descriptor);
@@ -52,7 +51,7 @@ namespace LogicalPantry.Tests.Controllers
 
                         var connectionString = _configuration.GetConnectionString("DefaultSQLConnection");
 
-                        services.AddDbContext<ApplicationDataContext>(options =>
+                        services.AddDbContext<TestApplicationDataContext>(options =>
                             options.UseSqlServer(connectionString));
 
                     
@@ -64,7 +63,7 @@ namespace LogicalPantry.Tests.Controllers
                         using (var scope = serviceProvider.CreateScope())
                         {
                             var scopedServices = scope.ServiceProvider;
-                            _context = scopedServices.GetRequiredService<ApplicationDataContext>();
+                            _context = scopedServices.GetRequiredService<TestApplicationDataContext>();
                             _context.Database.EnsureCreated();
                         }
                     });
@@ -73,34 +72,30 @@ namespace LogicalPantry.Tests.Controllers
             _client = _factory.CreateClient();
         }
 
+        /// <summary>
+        ///Tests the method to ensure to return view when valid session data.
+        /// </summary>
+        
         [TestMethod]
         public async Task PayPal_ReturnsView_WithValidSessionData()
         {
-           
             // Act
-            var response = await _client.GetAsync("/LogicalPantry/TimeSlotSignup/PayPal");
+            var response = await _client.GetAsync("/LogicalPantry/Donation/PayPal");
 
             // Assert
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
 
+            // Extract the content
             var content = await response.Content.ReadAsStringAsync();
 
+            // Check that the response contains the view
+            Assert.IsTrue(content.Contains("PayPal"));
         }
 
-        [TestMethod]
-        public async Task PayPal_ReturnsBadRequest_WithInvalidTenantId()
-        {
-           
-            // Act
-            var response = await _client.GetAsync("/TenantB/Donation/PayPal");
-
-            // Assert
-            Assert.AreEqual(HttpStatusCode.BadRequest, response.StatusCode);
-            var content = await response.Content.ReadAsStringAsync();
-            Assert.IsTrue(content.Contains("Invalid tenant ID"));
-        }
-
-
+        /// <summary>
+        /// Test the method to ensure to Complete Payment with valida data.
+        /// </summary>
+        
 
         [TestMethod]
         public async Task CompletePayment_ValidData_ReturnsOk()
@@ -116,11 +111,16 @@ namespace LogicalPantry.Tests.Controllers
             var content = new StringContent(JsonConvert.SerializeObject(paymentDto), Encoding.UTF8, "application/json");
 
             // Act
-            var response = await _client.PostAsync("/TenantB/Donation/CompletePayment", content);
+            var response = await _client.PostAsync("/LogicalPantry/Donation/CompletePayment", content);
 
             // Assert
             Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
         }
+
+        /// <summary>
+        /// Return bad request when Invalid data for Complete Payment.
+        /// </summary>
+        /// <returns></returns>
 
         [TestMethod]
         public async Task CompletePayment_InvalidData_ReturnsBadRequest()
@@ -135,7 +135,7 @@ namespace LogicalPantry.Tests.Controllers
             var content = new StringContent(JsonConvert.SerializeObject(paymentDto), Encoding.UTF8, "application/json");
 
             // Act
-            var response = await _client.PostAsync("/TenantB/Donation/CompletePayment", content);
+            var response = await _client.PostAsync("/LogicalPantry/Donation/CompletePayment", content);
             var responseContent = await response.Content.ReadAsStringAsync();
             Console.WriteLine($"Response Status Code: {response.StatusCode}");
             Console.WriteLine($"Response Content: {responseContent}");

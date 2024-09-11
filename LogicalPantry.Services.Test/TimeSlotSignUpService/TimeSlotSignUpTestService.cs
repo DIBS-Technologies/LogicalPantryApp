@@ -1,6 +1,6 @@
-﻿using LogicalPantry.DTOs;
-using LogicalPantry.DTOs.TimeSlotDtos;
-using LogicalPantry.DTOs.TimeSlotSignupDtos;
+﻿
+using LogicalPantry.DTOs.Test;
+using LogicalPantry.DTOs.Test.TimeSlotSignupDtos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;

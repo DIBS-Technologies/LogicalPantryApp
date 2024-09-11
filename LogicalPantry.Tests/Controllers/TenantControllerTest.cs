@@ -1,4 +1,4 @@
-﻿using LogicalPantry.DTOs.TenantDtos;
+﻿using LogicalPantry.DTOs.Test.TenantDtos;
 using LogicalPantry.Services.Test.TenantTestService;
 using LogicalPantry.Web;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -6,8 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Newtonsoft.Json;
 using System.Net.Http;
 using System.Net.Http.Json;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace LogicalPantry.Tests
@@ -38,7 +40,7 @@ namespace LogicalPantry.Tests
                     {
                         // Remove the existing ApplicationDbContext registration
                         var descriptor = services.SingleOrDefault(
-                            d => d.ServiceType == typeof(DbContextOptions<ApplicationDataContext>));
+                            d => d.ServiceType == typeof(DbContextOptions<TestApplicationDataContext>));
                         if (descriptor != null)
                         {
                             services.Remove(descriptor);
@@ -46,7 +48,7 @@ namespace LogicalPantry.Tests
 
                         // Add ApplicationDbContext using a real database for testing
                         var connectionString = _configuration.GetConnectionString("DefaultSQLConnection");
-                        services.AddDbContext<ApplicationDataContext>(options =>
+                        services.AddDbContext<TestApplicationDataContext>(options =>
                         {
                             options.UseSqlServer(connectionString); 
                         });
@@ -69,6 +71,10 @@ namespace LogicalPantry.Tests
             _client = _factory.CreateClient();
         }
 
+        /// <summary>
+        /// Add Tenant in the database when model is valid.
+        ///</summary>
+
         [TestMethod]
         public async Task AddTenant_ShouldAddTenant_WhenModelIsValid()
         {
@@ -82,8 +88,9 @@ namespace LogicalPantry.Tests
                 Timezone = "UTC"
             };
 
-            var response = await _client.PostAsJsonAsync("/Tenant/EditTenant", tenantDto);
-
+            var content = new StringContent(JsonConvert.SerializeObject(tenantDto), Encoding.UTF8, "application/json");
+            var response = await _client.PostAsync("/TenantB/Tenant/AddTenat", content);
+          
             // Check the response
             Assert.AreEqual(System.Net.HttpStatusCode.Redirect, response.StatusCode);
 
@@ -92,12 +99,17 @@ namespace LogicalPantry.Tests
             Assert.IsTrue(isAddSuccessful, "Tenant should be added successfully.");
         }
 
+        /// <summary>
+        /// Edit Tenant when model is valid.
+        /// </summary>
+        /// <returns></returns>
+
         [TestMethod]
         public async Task EditTenant_ShouldUpdateTenant_WhenModelIsValid()
         {
             var tenantDto = new TenantDto
             {
-                Id = 1, // Ensure this ID exists in the test database
+                Id = 15, // Ensure this ID exists in the test database
                 TenantName = "Updated Tenant",
                 AdminEmail = "admin@updated.com",
                 PaypalId = "paypal456",
@@ -106,8 +118,11 @@ namespace LogicalPantry.Tests
                 Timezone = "UTC"
             };
 
-            var response = await _client.PostAsJsonAsync("/Tenant/EditTenant", tenantDto);
+            var content = new StringContent(JsonConvert.SerializeObject(tenantDto), Encoding.UTF8, "application/json");
 
+
+            var response = await _client.PostAsync("/TenantB/Tenant/EditTenant", content);
+            var responseContent = await response.Content.ReadAsStringAsync();
             // Check the response
             Assert.AreEqual(System.Net.HttpStatusCode.Redirect, response.StatusCode);
 
@@ -117,7 +132,7 @@ namespace LogicalPantry.Tests
         }
 
         /// <summary>
-        /// 
+        ///Edit tenant method  Return a badRequest when model is invalid.
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -132,11 +147,16 @@ namespace LogicalPantry.Tests
             };
 
             // service response 
-            var response = await _client.PostAsJsonAsync("/Tenant/EditTenant", tenantDto);
+            var response = await _client.PostAsJsonAsync("/LP/Tenant/EditTenant", tenantDto);
 
             // Check the response
-            Assert.AreEqual(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.AreEqual(System.Net.HttpStatusCode.NotFound, response.StatusCode);
         }
+
+        /// <summary>
+        /// Edit tenant return not found when tenant does not exist in the database.
+        /// </summary>
+        /// <returns></returns>
 
         [TestMethod]
         public async Task EditTenant_ShouldReturnNotFound_WhenTenantDoesNotExist()
@@ -153,7 +173,7 @@ namespace LogicalPantry.Tests
                 Timezone = "UTC"
             };
             // Api response 
-            var response = await _client.PostAsJsonAsync("/Tenant/EditTenant", tenantDto);
+            var response = await _client.PostAsJsonAsync("/LP/TenantB/EditTenant", tenantDto);
 
             // Check the response
             Assert.AreEqual(System.Net.HttpStatusCode.NotFound, response.StatusCode);

@@ -15,7 +15,6 @@ using LogicalPantry.Services.InformationService;
 using LogicalPantry.Services.TimeSlotSignupService;
 using System.Threading.RateLimiting;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 //Add Cashe to the browser
