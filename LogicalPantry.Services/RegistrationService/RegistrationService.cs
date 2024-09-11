@@ -28,6 +28,19 @@ namespace LogicalPantry.Services.RegistrationService
             this.dataContext = dataContext;
         }
 
+        /// <summary>
+        /// Checks whether a given email exists in the system.
+        /// </summary>
+        /// <param name="email">The email address to check for existence.</param>
+        /// <returns>
+        /// A <see cref="ServiceResponse{T}"/> containing a boolean indicating whether the email exists:
+        /// <c>true</c> if the email exists, otherwise <c>false</c>.
+        /// </returns>
+        /// <remarks>
+        /// This method checks if an email exists in the Users table, performs case-insensitive comparison,
+        /// and returns the appropriate response.
+        /// </remarks>
+        /// <exception cref="Exception">Thrown when an error occurs during the database query.</exception>
         public async Task<ServiceResponse<bool>> CheckEmailIsExist(string email)
         {
             var response = new ServiceResponse<bool>();
@@ -67,6 +80,20 @@ namespace LogicalPantry.Services.RegistrationService
         }
 
 
+        /// <summary>
+        /// Registers a new user or updates an existing user if their email is already in the system.
+        /// </summary>
+        /// <param name="userDto">A <see cref="UserDto"/> object containing the user data to register.</param>
+        /// <returns>
+        /// A <see cref="ServiceResponse{T}"/> containing a boolean indicating whether the user was successfully registered:
+        /// <c>true</c> if the registration was successful, otherwise <c>false</c>.
+        /// </returns>
+        /// <remarks>
+        /// If the user's email already exists in the database and the user is registered, the method returns a failure response.
+        /// If the email exists but the user is not registered, the existing user's details are updated. 
+        /// Otherwise, a new user is created and added to the database.
+        /// </remarks>
+        /// <exception cref="Exception">Thrown when an error occurs during the registration process.</exception>
         public async Task<ServiceResponse<bool>> RegisterUser(UserDto userDto)
         {
             var response = new ServiceResponse<bool>();
@@ -77,10 +104,7 @@ namespace LogicalPantry.Services.RegistrationService
                 response.Message = "User data is null.";
                 response.Data = false; // Indicating failure
                 return response;
-            }
-
-       
-
+            }      
             try
             {
                 // Check if the email already exists in the database

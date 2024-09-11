@@ -236,20 +236,7 @@ namespace LogicalPantry.Web.Controllers
 
         }
 
-        [HttpPost]
-        public async Task<IActionResult> DeleteEvent([FromBody] TimeSlotDto timeSlotDto)
-        {
-            _logger.LogInformation("DeleteEvent method call started.");
-
-            if (ModelState.IsValid)
-            {
-                await _timeSlotService.DeleteTimeSlotAsync(timeSlotDto.Id);
-                return Ok();
-            }
-            _logger.LogInformation("DeleteEvent method call ended.");
-
-            return BadRequest();
-        }
+        
 
         // Helper method to convert DateTimeOffset to Unix timestamp (seconds)
         private long ToUnixTimestamp(DateTimeOffset dateTime)
