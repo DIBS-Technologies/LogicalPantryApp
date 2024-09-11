@@ -21,7 +21,7 @@ namespace LogicalPantry.Web.Controllers
         {
             _logger.LogInformation($"PayPal method call started");
 
-            ViewBag.TenantId = TenantId;
+             ViewBag.TenantId = TenantId;
             _logger.LogInformation($"PayPal method call ended");
 
             return View();

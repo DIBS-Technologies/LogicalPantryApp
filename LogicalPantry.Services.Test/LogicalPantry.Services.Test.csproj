@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LogicalPantry.DTOs.Test\LogicalPantry.DTOs.Test.csproj" />
     <ProjectReference Include="..\LogicalPantry.DTOs\LogicalPantry.DTOs.csproj" />
     <ProjectReference Include="..\LogicalPantry.Models.Test\LogicalPantry.Models.Test.csproj" />
   </ItemGroup>

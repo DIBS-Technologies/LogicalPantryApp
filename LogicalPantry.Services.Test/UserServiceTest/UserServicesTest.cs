@@ -1,6 +1,6 @@
-﻿using LogicalPantry.DTOs;
+﻿using LogicalPantry.DTOs.Test;
+using LogicalPantry.DTOs.Test.UserDtos;
 using LogicalPantry.DTOs.TimeSlotSignupDtos;
-using LogicalPantry.DTOs.UserDtos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -14,12 +14,12 @@ namespace LogicalPantry.Services.Test.UserServiceTest
     public class UserServicesTest : IUserServiceTest
     {
 
-        private readonly ApplicationDataContext _context;
-        private readonly IConfiguration _configuration; 
+        private readonly TestApplicationDataContext _context;
+        private readonly IConfiguration _configuration;
 
-        public UserServicesTest(ApplicationDataContext context)
+        public UserServicesTest(TestApplicationDataContext context)
         {
-            var builder = new DbContextOptionsBuilder<ApplicationDataContext>();
+            var builder = new DbContextOptionsBuilder<TestApplicationDataContext>();
 
 
             //Set up configuration to load appsettings json 
@@ -34,8 +34,9 @@ namespace LogicalPantry.Services.Test.UserServiceTest
             builder.UseSqlServer(connectionString);
 
             // Initialize dataContext with the configured options
-            _context = new ApplicationDataContext(builder.Options);
+            _context = new TestApplicationDataContext(builder.Options);
         }
+
 
         /// <summary>
         /// Check the UpdateUserBatch Successfully
@@ -93,12 +94,6 @@ namespace LogicalPantry.Services.Test.UserServiceTest
         }
 
 
-
-
-
-
-
-
         public async Task<ServiceResponse<bool>> CheckUserDeleteResponse(int userId)
         {
             var response = new ServiceResponse<bool>();
@@ -120,9 +115,9 @@ namespace LogicalPantry.Services.Test.UserServiceTest
                     response.Message = "User not deleted";
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                response.Success =false;
+                response.Success = false;
                 response.Message = $"Error occured while delete user: {ex.Message}";
             }
 
@@ -131,17 +126,17 @@ namespace LogicalPantry.Services.Test.UserServiceTest
 
         public async Task<ServiceResponse<UserDto>> CheckUserPostResponse(UserDto userDto)
         {
-            var response = new ServiceResponse<UserDto>();  
+            var response = new ServiceResponse<UserDto>();
 
             try
             {
-                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id ==  userDto.Id && u.IsAllow ==userDto.IsAllow);
+                var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == userDto.Id && u.IsAllow == userDto.IsAllow);
 
-                if(user == null)
+                if (user == null)
                 {
                     response.Success = false;
                     response.Message = "User not found";
-                    
+
                 }
                 else
                 {
@@ -150,11 +145,11 @@ namespace LogicalPantry.Services.Test.UserServiceTest
                     response.Data = new UserDto
                     {
                         Id = userDto.Id,
-                        IsAllow =userDto.IsAllow,
+                        IsAllow = userDto.IsAllow,
                     };
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 response.Success = false;
                 response.Message = $"Error occured while Update user: {ex.Message}";
@@ -162,19 +157,21 @@ namespace LogicalPantry.Services.Test.UserServiceTest
 
             return response;
         }
+        public async Task<bool> DeleteUserAsync(int userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                return false;
 
-            public async Task<bool> DeleteUserAsync(int userId)
-            {
-                var user = await dataContext.Users.FindAsync(userId);
-                if (user == null)
-                    return false;
-
-                dataContext.Users.Remove(user);
-                await dataContext.SaveChangesAsync();
-                return true;
-            }
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+            return true;
         }
+
+
+      
     }
+}
 
 
 

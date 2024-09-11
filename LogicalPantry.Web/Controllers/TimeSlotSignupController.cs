@@ -1,5 +1,4 @@
 ﻿using Azure;
-using LogicalPantry.DTOs.TimeSlotDtos;
 using LogicalPantry.DTOs.TimeSlotSignupDtos;
 using LogicalPantry.DTOs.UserDtos;
 using LogicalPantry.Models.Models;

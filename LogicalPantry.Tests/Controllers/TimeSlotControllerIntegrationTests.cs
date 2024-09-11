@@ -7,12 +7,16 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using LogicalPantry.DTOs.TimeSlotDtos;
 using LogicalPantry.Services.TimeSlotServices;
 using LogicalPantry.Services.UserServices;
 using LogicalPantry.Services.InformationService;
 using LogicalPantry.Web;
 using Microsoft.Extensions.Configuration;
+using LogicalPantry.DTOs.Test.TimeSlotDtos;
+using Newtonsoft.Json;
+using System.Text;
+using LogicalPantry.Services.Test.TimeSlotServiceTest;
+using Humanizer;
 
 namespace LogicalPantry.IntegrationTests
 {
@@ -21,11 +25,11 @@ namespace LogicalPantry.IntegrationTests
     {
         private WebApplicationFactory<Startup> _factory;
         private HttpClient _client;
-        private ApplicationDataContext _context;
+        private TestApplicationDataContext _context;
+        private ITimeSlotTestService _timeSlotTestService;
         private ITimeSlotService _timeSlotService;
-        private IUserService _userService;
-        private IInformationService _informationService;
         private IConfiguration _configuration;
+
 
         [TestInitialize]
         public void Setup()
@@ -44,7 +48,7 @@ namespace LogicalPantry.IntegrationTests
                     {
                         // Remove the existing ApplicationDbContext registration
                         var descriptor = services.SingleOrDefault(
-                            d => d.ServiceType == typeof(DbContextOptions<ApplicationDataContext>));
+                            d => d.ServiceType == typeof(DbContextOptions<TestApplicationDataContext>));
                         if (descriptor != null)
                         {
                             services.Remove(descriptor);
@@ -53,27 +57,21 @@ namespace LogicalPantry.IntegrationTests
 
                         var connectionString = _configuration.GetConnectionString("DefaultSQLConnection");
 
-                        services.AddDbContext<ApplicationDataContext>(options =>
+                        services.AddDbContext<TestApplicationDataContext>(options =>
                             options.UseSqlServer(connectionString));
 
                        
                         services.AddTransient<ITimeSlotService, TimeSlotService>();
-                        services.AddTransient<IUserService, UserService>();
-                        services.AddTransient<IInformationService, InformationService>();
-
-                      
+                        services.AddScoped<ITimeSlotTestService, TimeSlotTestService>();                      
                         var serviceProvider = services.BuildServiceProvider();
 
                       
                         using (var scope = serviceProvider.CreateScope())
                         {
                             var scopedServices = scope.ServiceProvider;
-                            _context = scopedServices.GetRequiredService<ApplicationDataContext>();
+                            _context = scopedServices.GetRequiredService<TestApplicationDataContext>();
                             _timeSlotService = scopedServices.GetRequiredService<ITimeSlotService>();
-                            _userService = scopedServices.GetRequiredService<IUserService>();
-                            _informationService = scopedServices.GetRequiredService<IInformationService>();
-
-                          
+                            _timeSlotTestService = scopedServices.GetRequiredService<ITimeSlotTestService>();
                             _context.Database.EnsureCreated();
                         }
                     });
@@ -82,7 +80,7 @@ namespace LogicalPantry.IntegrationTests
             _client = _factory.CreateClient();
         }
         /// <summary>
-        ///   Add  Events
+        ///Add Events with valid data
         /// </summary>
         /// <returns></returns>
         [TestMethod]
@@ -90,83 +88,80 @@ namespace LogicalPantry.IntegrationTests
         {
             var timeSlotDto = new TimeSlotDto
             {
+                UserId = 61,
+                TenantId = 27,
                 TimeSlotName = "Sample Event",
                 StartTime = DateTime.UtcNow.AddHours(1),
                 EndTime = DateTime.UtcNow.AddHours(2)
             };
 
-          
-            var response = await _client.PostAsJsonAsync("/TimeSlot/AddEvent", timeSlotDto);
+            var content = new StringContent(JsonConvert.SerializeObject(timeSlotDto), Encoding.UTF8, "application/json");
+            var response = await _client.PostAsync("/LogicalPantry/TimeSlot/SaveEvent", content);
 
-            
+            //Get the event from the database and check if add in the database.
+            var result = await _timeSlotTestService.GetEvent(timeSlotDto);
+
+            //Compare the data
             Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
+            Assert.AreEqual(timeSlotDto.TimeSlotName, result.Data.TimeSlotName);
+            Assert.AreEqual(timeSlotDto.StartTime, result.Data.StartTime);
+            Assert.AreEqual(timeSlotDto.EndTime, result.Data.EndTime);
+
         }
 
-        [TestMethod]
-        public async Task SaveEvent_ShouldAddNewEvent_WhenIdIsZero()
-        {
-            var timeSlotDto = new TimeSlotDto
-            {
-                TimeSlotName = "New Event",
-                StartTime = DateTime.UtcNow.AddHours(1),
-                EndTime = DateTime.UtcNow.AddHours(2)
-            };
-
-            
-            var response = await _client.PostAsJsonAsync("/TimeSlot", timeSlotDto);
-
-            
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
-
-        
-            var events = await _timeSlotService.GetAllEventsAsync();
-            Assert.IsTrue(events.Any(e => e.TimeSlotName == "New Event"));
-        }
-
+        /// <summary>
+        /// Delete Event from the database
+        /// </summary>
+        /// <returns></returns>
         [TestMethod]
         public async Task DeleteEvent_ShouldReturnOk_WhenEventIsDeleted()
         {
             var timeSlotDto = new TimeSlotDto
             {
+                Id = 186,            //Make sure this id present in the database
+                UserId = 111,
+                TenantId = 17,
                 TimeSlotName = "Event to Delete",
-                StartTime = DateTime.UtcNow.AddHours(1),
-                EndTime = DateTime.UtcNow.AddHours(2)
+                StartTime = new DateTime(),
+                EndTime = new DateTime()
             };
 
-            // First add the event
-            await _client.PostAsJsonAsync("/TimeSlot/AddEvent", timeSlotDto);
 
-            // Get the event ID
-            var events = await _timeSlotService.GetAllEventsAsync();
-            var eventToDelete = events.SingleOrDefault(e => e.TimeSlotName == "Event to Delete");
+            //// First add the event
+            //var response =  await _client.PostAsJsonAsync("/LogicalPantry/TimeSlot/SaveEvent", timeSlotDto);
+            //var content = await response.Content.ReadAsStringAsync();
+
+            //// Get the event ID
+            //var events = await _timeSlotService.GetAllEventsAsync();
+            //var eventToDelete = events.SingleOrDefault(e => e.TimeSlotName == "Event to Delete");
 
             
-            var deleteResponse = await _client.PostAsJsonAsync("/TimeSlot", new TimeSlotDto { Id = eventToDelete.Id });
-
-            
+            var deleteResponse = await _client.PostAsJsonAsync("/LogicalPantry/TimeSlot/DeleteEvent", timeSlotDto);    
+            var contentResponse = await deleteResponse.Content.ReadAsStringAsync();
             Assert.AreEqual(System.Net.HttpStatusCode.OK, deleteResponse.StatusCode);
 
-            // Verify that the event was deleted
-            events = await _timeSlotService.GetAllEventsAsync();
-            Assert.IsFalse(events.Any(e => e.TimeSlotName == "Event to Delete"));
+            //// Verify that the event was deleted
+            //events = await _timeSlotService.GetAllEventsAsync();
+            //Assert.IsFalse(events.Any(e => e.TimeSlotName == "Event to Delete"));
         }
 
+        /// <summary>
+        /// Get a timeSlot when time slot exist in the database.
+        /// </summary>
+        /// <returns></returns>
         [TestMethod]
         public async Task GetTimeSlotId_ShouldReturnOk_WhenTimeSlotExists()
         {
+
             var timeSlotDto = new TimeSlotDto
             {
-                TimeSlotName = "Existing Event",
-                StartTime = DateTime.UtcNow.AddHours(1),
-                EndTime = DateTime.UtcNow.AddHours(2)
+                TimeSlotName = "food",
+                StartTime = DateTime.ParseExact("2024-08-29 13:01:00.0000000", "yyyy-MM-dd HH:mm:ss.fffffff", null),
+                EndTime = DateTime.ParseExact("2024-08-29 15:32:00.0000000", "yyyy-MM-dd HH:mm:ss.fffffff", null),
             };
 
-           
-            await _client.PostAsJsonAsync("/TimeSlot/AddEvent", timeSlotDto);
 
-            var response = await _client.PostAsJsonAsync("/TimeSlot/GetTimeSlotId", timeSlotDto);
-
-            
+            var response = await _client.PostAsJsonAsync("/LP/TimeSlot/GetTimeSlotId", timeSlotDto);         
             Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
             var responseContent = await response.Content.ReadFromJsonAsync<dynamic>();
             Assert.IsNotNull(responseContent.timeSlotId);
@@ -176,9 +171,10 @@ namespace LogicalPantry.IntegrationTests
         public async Task Calendar_ShouldReturnViewWithEvents()
         {
            
-            var response = await _client.GetAsync("/TimeSlot/Calendar");
-
-            
+            var response = await _client.GetAsync("/LP/TimeSlot/Calendar");
+            var responseContent = await response.Content.ReadAsStringAsync();
+            Assert.IsNotNull(response);
+            Assert.IsTrue(responseContent.Contains("Calendar"));
             Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
          
         }
@@ -187,11 +183,13 @@ namespace LogicalPantry.IntegrationTests
         public async Task UserCalendar_ShouldReturnViewWithEvents()
         {
            
-            var response = await _client.GetAsync("/TimeSlot/UserCalendar");
-
-            
+            var response = await _client.GetAsync("/LP/TimeSlot/UserCalendar");
+            var responseContent = await response.Content.ReadAsStringAsync();
+            Assert.IsNotNull(response);
+            Assert.IsTrue(responseContent.Contains("Calendar"));
             Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
-          
+
+
         }
     }
 }

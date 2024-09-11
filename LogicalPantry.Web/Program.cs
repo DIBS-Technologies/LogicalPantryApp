@@ -14,7 +14,6 @@ using Autofac.Core;
 using LogicalPantry.Services.InformationService;
 using LogicalPantry.Services.TimeSlotSignupService;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
 //Add Cashe to the browser

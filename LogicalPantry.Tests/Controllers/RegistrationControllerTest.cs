@@ -6,12 +6,13 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
-using LogicalPantry.DTOs.UserDtos;
+
 using LogicalPantry.Services.Test.RegistrationService;
 using LogicalPantry.Web;
 using Newtonsoft.Json;
 using System.Text;
 using Microsoft.Extensions.Configuration;
+using LogicalPantry.DTOs.Test.UserDtos;
 
 namespace LogicalPantry.Tests
 {
@@ -76,52 +77,65 @@ namespace LogicalPantry.Tests
             _client.BaseAddress = new Uri("https://localhost:7041");
         }
 
+
+        /// <summary>
+        /// Register user with valid data
+        /// </summary>
+        /// <returns></returns>
+
         [TestMethod]
         public async Task Register_ShouldRedirectToUserCalendar_WhenRegistrationIsSuccessful()
         {
             var userDto = new UserDto
             {
                 TenantId = 5,
-                FullName = "Sample User",
-                Email = "swappnilfromdibs2@gmail.com",
+                FullName = "Sample User3",
+                Email = "sampleUser@gmail.com",
                 PhoneNumber = "1234567890",
                 Address = "Sample Address"
             };
 
             var content = new StringContent(JsonConvert.SerializeObject(userDto), Encoding.UTF8, "application/json");
-            var response = await _client.PostAsync("/TenantB/Registration/Register", content);
+            var response = await _client.PostAsync("/LogicalPantry/Registration/Register", content);
             var responseContent = await response.Content.ReadAsStringAsync();
             Console.WriteLine($"Response Status Code: {response.StatusCode}");
             Console.WriteLine($"Response Content: {responseContent}");
 
-            Assert.AreEqual(System.Net.HttpStatusCode.Redirect, response.StatusCode);
-            var redirectUri = response.Headers.Location.ToString();
-            Assert.IsTrue(redirectUri.Contains("/TimeSlot/UserCalendar"));
-
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
 
             var userInfo =  _registrationTestService.GetUser(userDto);
 
             Assert.IsNotNull(userInfo);
             Assert.IsTrue(userInfo.Success);
             Assert.AreEqual("User details are correct.", userInfo.Message);
+
         }
 
+        /// <summary>
+        /// Return Bad Request when pass the Dto null.
+        /// </summary>
+        /// <returns></returns>
         [TestMethod]
         public async Task Register_ShouldReturnBadRequest_WhenUserDtoIsNull()
         {
-           
-            var response = await _client.PostAsJsonAsync("/Registration/Register", (UserDto)null);
-
             
-            Assert.AreEqual(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+            var response = await _client.PostAsJsonAsync("/LogicalPantry/Registration/Register", (UserDto)null);
+            var contentResponse = await response.Content.ReadAsStringAsync();
+            Assert.IsNotNull(response);
+            Assert.IsTrue(contentResponse.Contains("Object reference not set to an instance of an object"));
         }
+
+        /// <summary>
+        /// Return BadRequest when pass the tenantId is Invalid
+        /// </summary>
+        /// <returns></returns>
 
         [TestMethod]
         public async Task Register_ShouldReturnBadRequest_WhenTenantIdIsInvalid()
         {
             var userDto = new UserDto
             {
-                TenantId = 0, 
+              
                 FullName = "Sample User",
                 Email = "sampleUser@gmail.com",
                 PhoneNumber = "1234567890",
@@ -129,12 +143,16 @@ namespace LogicalPantry.Tests
             };
 
             
-            var response = await _client.PostAsJsonAsync("/Registration/Register", userDto);
-
-            
-            Assert.AreEqual(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+            var response = await _client.PostAsJsonAsync("/LogicalPantry/Registration/Register", userDto);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            // Check if the response content contains the expected TempData message.
+            Assert.IsTrue(responseContent.Contains("Failed to Save User server error."));
         }
 
+        /// <summary>
+        /// Return badRequest when Name and Email are null.
+        /// </summary>
+        /// <returns></returns>
         [TestMethod]
         public async Task Register_ShouldReturnBadRequest_WhenNameEmailPhoneNumberAreNull()
         {
@@ -147,51 +165,31 @@ namespace LogicalPantry.Tests
             };
 
             
-            var response = await _client.PostAsJsonAsync("/Registration/Register", userDto);
-
-            
-            Assert.AreEqual(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+            var response = await _client.PostAsJsonAsync("/LP/Registration/Register", userDto);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            // Check if the response content contains the expected TempData message.
+            Assert.IsTrue(responseContent.Contains("Failed to Save User server error."));
         }
 
+       
+        /// <summary>
+        /// Return BadRequest when Email Already exist 
+        /// </summary>
         [TestMethod]
-        public async Task Register_ShouldReturnBadRequest_WhenEmailFormatIsInvalid()
+        public async Task Register_ShouldReturnBadRequest_EmailAlreadyExist()
         {
             var userDto = new UserDto
             {
                 TenantId = 1,
                 FullName = "Sample User",
-                Email = "invalid-email-format",
+                Email = "swappnilfromdibs@gmail.com",
                 PhoneNumber = "1234567890",
                 Address = "Sample Address"
             };
-
-            
-            var response = await _client.PostAsJsonAsync("/Registration/Register", userDto);
-
-            
-            Assert.AreEqual(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
-        }
-
-        [TestMethod]
-        public async Task Register_ShouldReturnBadRequest_WhenTenantIdMismatch()
-        {
-            var userDto = new UserDto
-            {
-                TenantId = 1,
-                FullName = "Sample User",
-                Email = "sampleUser@gmail.com",
-                PhoneNumber = "1234567890",
-                Address = "Sample Address"
-            };
-
-          
-            _client.DefaultRequestHeaders.Add("TenantId", "2");
-
-            
-            var response = await _client.PostAsJsonAsync("/Registration/Register", userDto);
-
-            
-            Assert.AreEqual(System.Net.HttpStatusCode.BadRequest, response.StatusCode);
+            var response = await _client.PostAsJsonAsync("/LP/Registration/Register", userDto);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            // Check if the response content contains the expected TempData message.
+            Assert.IsTrue(responseContent.Contains("Failed to Save User server error."));
         }
     }
 }

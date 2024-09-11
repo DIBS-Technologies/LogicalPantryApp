@@ -1,5 +1,6 @@
-﻿using LogicalPantry.DTOs;
-using LogicalPantry.DTOs.UserDtos;
+﻿
+using LogicalPantry.DTOs.Test;
+using LogicalPantry.DTOs.Test.UserDtos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -17,7 +18,7 @@ namespace LogicalPantry.Services.Test.RegistrationService
     {
 
 
-        private readonly ApplicationDataContext dataContext; // Dependency injection for DataContext
+        private readonly TestApplicationDataContext dataContext; // Dependency injection for DataContext
         private IConfiguration _configuration;
 
 
@@ -25,7 +26,7 @@ namespace LogicalPantry.Services.Test.RegistrationService
         public RegistrationTestService()
         {
 
-            var builder = new DbContextOptionsBuilder<ApplicationDataContext>();
+            var builder = new DbContextOptionsBuilder<TestApplicationDataContext>();
 
             //Set up configuration to load appsettings json 
             var builder1 = new ConfigurationBuilder()
@@ -39,7 +40,7 @@ namespace LogicalPantry.Services.Test.RegistrationService
             builder.UseSqlServer(connectionString);
 
             // Initialize dataContext with the configured options
-            this.dataContext = new ApplicationDataContext(builder.Options);
+            this.dataContext = new TestApplicationDataContext(builder.Options);
         }
 
 

@@ -29,7 +29,8 @@ namespace LogicalPantry.Web.Controllers
 
        
         [HttpPost("AddEvent")]
-        public async Task<IActionResult> AddEvent([FromBody] TimeSlotDto timeSlotDto)
+        public async Task<IActionResult> AddEvent(TimeSlotDto timeSlotDto)
+        
         {
             _logger.LogInformation("AddEvent method call started.");        
             if (timeSlotDto == null)
@@ -45,6 +46,7 @@ namespace LogicalPantry.Web.Controllers
 
             }
             var userEmail = UserEmail;
+            
             var userResponse = await _userSercvice.GetUserIdByEmail(userEmail);
             if (userResponse.Success)
             {
@@ -58,7 +60,7 @@ namespace LogicalPantry.Web.Controllers
 
                 if (success)
                 {
-                    //return Ok(Response); // Return a success response
+                    //return Ok(success); // Return a success response
                     //return RedirectToAction("Calendar");
                     return View();
                 }
@@ -124,7 +126,7 @@ namespace LogicalPantry.Web.Controllers
 
         }
 
-        [HttpPost]
+        [HttpPost("SaveEvent")]
         public async Task<IActionResult> SaveEvent([FromBody]TimeSlotDto timeSlotDto)
         {
             _logger.LogInformation("SaveEvent method call started.");
@@ -150,7 +152,7 @@ namespace LogicalPantry.Web.Controllers
 
         }
 
-        [HttpPost]
+        [HttpPost("DeleteEvent")]
         public async Task<IActionResult> DeleteEvent([FromBody] TimeSlotDto timeSlotDto)
         {
             _logger.LogInformation("DeleteEvent method call started.");
