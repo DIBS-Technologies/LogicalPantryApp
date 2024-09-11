@@ -29,7 +29,7 @@ public class TenantMiddleware
         {
             context.Response.StatusCode = StatusCodes.Status400BadRequest;
             // await context.Response.WriteAsync("Tenant name is missing");
-            await context.Response.WriteAsync("Page Not Found");
+            await context.Response.WriteAsync("   Page Not Found");
             return;
         }
 
@@ -83,7 +83,7 @@ public class TenantMiddleware
                     {                      
                         context.Response.StatusCode = StatusCodes.Status404NotFound;
                         // await context.Response.WriteAsync("Tenant not found");
-                        await context.Response.WriteAsync("Page Not Found");
+                        await context.Response.WriteAsync("   Page Not Found");
                         return;
                     }
                     context.Items["TenantId"] = tenant.Data?.Id;
@@ -108,7 +108,7 @@ public class TenantMiddleware
                 {                    
                         context.Response.StatusCode = StatusCodes.Status403Forbidden;
                     //await context.Response.WriteAsync("Unauthorized: Tenant mismatch");
-                    await context.Response.WriteAsync("Page Not Found");
+                    await context.Response.WriteAsync("   Page Not Found");
                     return;                   
                   
                 }
@@ -139,7 +139,7 @@ public class TenantMiddleware
                 {
                     context.Response.StatusCode = StatusCodes.Status404NotFound;
                     //await context.Response.WriteAsync("Tenant not found");
-                    await context.Response.WriteAsync("Page Not Found");
+                    await context.Response.WriteAsync("   Page Not Found");
                     return;
                 }
 
