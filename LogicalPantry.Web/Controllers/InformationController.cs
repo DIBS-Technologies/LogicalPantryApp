@@ -232,22 +232,7 @@ namespace LogicalPantry.Web.Controllers
                 Console.WriteLine($"Tenant Folder Path: {tenantFolderPath}");
                 Console.WriteLine($"File Path: {filepath}");
 
-                if (!System.IO.File.Exists(filepath))
-                {
-                    Console.WriteLine("File not found.");
-                    return View();
-                }
-
-                string htmlContent;
-                try
-                {
-                    htmlContent = await System.IO.File.ReadAllTextAsync(filepath);
-                }
-                catch (IOException ex)
-                {
-                    Console.WriteLine($"IOException: {ex.Message}");
-                    return View();
-                }
+              
                 var homepageName = HttpContext.Session.GetString("HomePageName");
                 var TenantDisplayName = HttpContext.Session.GetString("TenantDisplayName");
                 TenantDisplayName = TenantDisplayName ?? string.Empty;
@@ -269,6 +254,25 @@ namespace LogicalPantry.Web.Controllers
                 }
                 HttpContext.Session.SetString("TenantId", tenantId.ToString());
                 ViewBag.TenantId = tenantId;
+
+                if (!System.IO.File.Exists(filepath))
+                {
+                    Console.WriteLine("File not found.");
+                     return View();
+                }
+
+                string htmlContent;
+                try
+                {
+                    htmlContent = await System.IO.File.ReadAllTextAsync(filepath);
+                }
+                catch (IOException ex)
+                {
+                    Console.WriteLine($"IOException: {ex.Message}");
+                    return View();
+                }
+
+
                 //HttpContext.Session.SetString("TenantImage", tenanatResponse.Data?.Logo);
                 return View();
             }         
