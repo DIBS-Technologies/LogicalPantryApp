@@ -137,6 +137,10 @@
         .nav-fixed #layoutSidenav #layoutSidenav_nav .sidenav {
             padding-top: 0rem;
         }
+/* 
+        #layoutSidenav {
+            margin-top: -7%;
+        } */
     </style>
 </head>
 
@@ -153,12 +157,15 @@
                         @formattedDate
                     </div>
                     <div class="card-body">
-                        @if (!string.IsNullOrEmpty(TempData["ErrorMessageBatch"] as string))
-                        {
-                            <div id="errorMessageBatch" class="alert">
-                                @TempData["ErrorMessageBatch"]
-                            </div>
-                        }
+                        <div id="successMessageUser" class="alert alert-success" style="display:none;">
+                             Updated succesfully.
+                        </div>
+
+
+
+                        <div id="errorMessageUser" class="alert alert-danger" style="display:none;">
+                            Error occured while updating user.
+                        </div>
 
                         <table class="table table-bordered table-hover" id="userTable" cellspacing="0">
                             <thead>
@@ -209,12 +216,17 @@
 
 @section Scripts {
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    @* <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> *@
     <script>
         $(document).ready(function () {
-
+            debugger;
             $(document).ready(function () {
                 $('header.page-header').remove(); // Removes the header with class 'page-header'
             });
+
+            $('.page-header-title').text("Edit User TimeSlots");
             // Function to get query parameters from the URL
             function getQueryParameter(name) {
                 const urlParams = new URLSearchParams(window.location.search);
@@ -251,6 +263,7 @@
                     return;
                 }
 
+                debugger
                 // Add the timeSlotId to each user's data
                 var updatedUserStatuses = userStatuses.map(function (userStatus) {
                     return {
@@ -272,11 +285,11 @@
                     dataType: 'json',
                     success: function (response) {
                         if (response.success) {
-                            $('#SuccessMessageBatch').text('Changes saved successfully.').fadeIn().delay(2000).fadeOut();
+                            $('#successMessageUser').fadeIn().delay(2000).fadeOut();
                             sessionStorage.removeItem('userStatuses');
                             toggleSaveButton();
                         } else {
-                            $('#errorMessageBatch').text('Error saving changes.').fadeIn().delay(2000).fadeOut();
+                            $('#errorMessageUser').text('Error saving changes.').fadeIn().delay(2000).fadeOut();
                         }
                     },
                     error: function () {
@@ -285,6 +298,53 @@
                 })
             });
 
+
+
+            function getCurrentDateTime() {
+                var now = new Date();
+                var year = now.getFullYear();
+                var month = String(now.getMonth() + 1).padStart(2, '0'); // Months are 0-based
+                var day = String(now.getDate()).padStart(2, '0');
+                var hours = String(now.getHours()).padStart(2, '0');
+                var minutes = String(now.getMinutes()).padStart(2, '0');
+                return `${year}-${month}-${day}T${hours}:${minutes}`;
+            }
+
+            // Set the min attribute for both datetime-local inputs to current date and time
+            $('#eventStart').attr('min', getCurrentDateTime());
+            $('#eventEnd').attr('min', getCurrentDateTime());
+
+            // Function to validate date inputs
+            function validateDates() {
+                const startDate = new Date($('#eventStart').val());
+                const endDate = new Date($('#eventEnd').val());
+
+                let valid = true;
+
+                // Clear previous error messages
+                $('#startError').text('');
+                $('#endError').text('');
+
+                // Check if start date is before the minimum allowed date
+                if (startDate < new Date(getCurrentDateTime())) {
+                    $('#startError').text('Please select a future date.');
+                    valid = false;
+                }
+
+                // Check if end date is before the minimum allowed date
+                if (endDate < new Date(getCurrentDateTime())) {
+                    $('#endError').text('Please select a future date.');
+                    valid = false;
+                }
+
+                // Check if end date is before start date
+                if (endDate <= startDate) {
+                    $('#endError').text('End date and time must be after the start date and time.');
+                    valid = false;
+                }
+
+                return valid;
+            }
             // Function to toggle Save button based on sessionStorage data
             function toggleSaveButton() {
                 var userStatuses = JSON.parse(sessionStorage.getItem('userStatuses') || '[]');

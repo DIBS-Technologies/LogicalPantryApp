@@ -57,7 +57,9 @@ namespace LogicalPantry.Models.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PaypalId")
-                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TenantDisplayName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("TenantName")
@@ -82,6 +84,13 @@ namespace LogicalPantry.Models.Migrations
 
                     b.Property<DateTime>("EndTime")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("EventType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("MaxNumberOfUsers")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
@@ -140,29 +149,49 @@ namespace LogicalPantry.Models.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("DateOfBirth")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Email")
-                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmploymentStatus")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FullName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool?>("HasSchoolAgedChildren")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("HouseholdSize")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsAllow")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("IsMarried")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsRegistered")
                         .HasColumnType("bit");
 
+                    b.Property<bool?>("IsVeteran")
+                        .HasColumnType("bit");
+
                     b.Property<string>("PhoneNumber")
-                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProfilePictureUrl")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("TenantId")
                         .HasColumnType("int");
+
+                    b.Property<string>("ZipCode")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -240,7 +269,7 @@ namespace LogicalPantry.Models.Migrations
                     b.HasOne("LogicalPantry.Models.Models.Role", "Role")
                         .WithMany("UserRoles")
                         .HasForeignKey("RoleId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("LogicalPantry.Models.Models.User", "User")

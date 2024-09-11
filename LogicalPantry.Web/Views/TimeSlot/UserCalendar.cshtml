@@ -19,9 +19,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.css">
 
     <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
+        
 
         .page-header-title {
             text-align: center;
@@ -31,12 +29,28 @@
         .full-width-text {
             width: 100%;
             text-align: center;
-            background-color: #f8f9fa; /* Light background for contrast */
+            background-color: #f8f9fa;
             padding: 10px 0;
             font-size: 1rem;
-            color: #6c757d; /* Subtle color */
-            border-top: 1px solid #e9ecef; /* Light border */
-            margin-top: 10px; /* Space above the text */
+            color: #6c757d;
+            border-top: 1px solid #e9ecef;
+            margin-top: 10px;
+        }
+
+        .modal.fade {
+            background: none;
+            display: none !important;
+        }
+
+        .modal-backdrop {
+            opacity: 0 !important;
+            display: none !important;
+        }
+
+        .modal {
+            background: none;
+            overflow-y: visible;
+            overflow-x: visible;
         }
 
         .container-fluid {
@@ -47,17 +61,7 @@
             margin-top: 20px;
         }
 
-        /* .dropdown-menu {
-            max-height: 2.5rem;
-            overflow-y: auto;
-            white-space: nowrap;
-            width: 200px;
-        }
 
-        .dropdown-item {
-            white-space: nowrap;
-        }
- */
         .btn-success {
             margin-left: 0;
         }
@@ -76,20 +80,9 @@
                 flex-direction: column;
                 align-items: flex-start;
             }
-/* 
-            .dropdown-menu {
-                width: 100%;
-                max-height: 5rem;
-            }
-
-            .dropdown select {
-                width: 100%;
-            } */
         }
 
-        .page-header-title {
-           
-        }
+      
 
         .page-header-title{
             justify-content: center;
@@ -105,13 +98,25 @@
 
         .container-fluid {
             padding: 80px;
-
         }
 
         .page-header > .container:first-of-type {
             background: aliceblue;
         }
 
+
+          .modal-c2 {
+            background-color: #c1c1c1;
+        }
+
+        .modal .fade2 {
+            background-color: #00000F;
+        }
+
+        .calendar-timeline {
+            padding-top: 41px;
+            margin-top: 60px;
+        }
      
 
         .nav-fixed #layoutSidenav #layoutSidenav_content {
@@ -122,7 +127,7 @@
         .page-header.page-header-light .page-header-subtitle#pickup {
             color: rgb(0 0 0);
         }
-       
+
 
 
         .container-fluid {
@@ -133,30 +138,244 @@
         .border-bottom {
             border-bottom: 1px solid #ffffff !important;
         }
-       
+
+        .page-header-title {
+            font-size: larger;
+        }
+
+        .page-header > .container-fluid:first-of-type {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 5px;
+        }
+
+        .mb-3 {
+            margin-top: 5% !important;
+        }
+
+        .page-header-title {
+            font-size: larger;
+        }
+
+        .mb-3 {
+        }
+
+        .container-fluid {
+            margin-bottom: -5px;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: whitesmoke;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: whitesmoke;
+        }
+
+        .page-header-title {
+            text-align: center;
+            font-size: 2rem;
+        }
+
+        .full-width-text {
+            width: 100%;
+            text-align: center;
+            background-color: #f8f9fa;
+            padding: 10px 0;
+            font-size: 1rem;
+            color: #6c757d;
+            border-top: 1px solid #e9ecef;
+            margin-top: 10px;
+        }
+
+        .modal.fade {
+            background: none;
+            display: none !important;
+        }
+
+        .modal-backdrop {
+            opacity: 0 !important;
+            display: none !important;
+        }
+
+        .modal {
+            background: none;
+            overflow-y: visible;
+            overflow-x: visible;
+        }
+
+        .container-fluid {
+            padding: 15px;
+        }
+
+        #calendar {
+            margin-top: 20px;
+        }
+
+
+        .btn-success {
+            margin-left: 0;
+        }
+
+        .calendar-header .d-flex {
+            align-items: center;
+            gap: 10px;
+        }
+
+        @@media (max-width: 768px) {
+            .page-header-title {
+                font-size: 1.5rem;
+            }
+
+            .calendar-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+
+
+        .page-header-title {
+            justify-content: center;
+            font-size: 50%;
+            font-weight: bold;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .page-header.page-header-light {
+            color: rgba(31, 45, 65, 0.5);
+        }
+
+
+        .container-fluid {
+            padding: 80px;
+        }
+
+        .page-header > .container:first-of-type {
+            background: aliceblue;
+        }
+
+
+        .modal-c2 {
+            background-color: #c1c1c1;
+        }
+
+        .modal .fade2 {
+            background-color: #00000F;
+        }
+
+        .calendar-timeline {
+            padding-top: 41px;
+            margin-top: 60px;
+        }
+
+
+        .nav-fixed #layoutSidenav #layoutSidenav_content {
+            padding-left: 0;
+            top: 3.625rem;
+        }
+
+        /*  .container-fluid {
+                padding: 5% 5%;
+                margin-top: -5%;
+            } */
+
+        .border-bottom {
+            border-bottom: 1px solid #ffffff !important;
+        }
+
+
+        .calendar .event-date, .calendar .event-name {
+            padding: 5px 0px 0px 10px;
+        }
+
+        /* General styles for the header */
+        .page-header {
+            background-color: whitesmoke;
+            border-bottom: 1px solid #ddd; /* border-bottom color to match your border color */
+            margin-bottom: 2rem; /* Adjust as needed for spacing from the next element */
+           /*  padding: 1rem 0;  */
+            padding: 0.5rem 0; 
+        }
+
+        /* Container styles for centering content */
+        .container {
+            background-color: white;
+            text-align: center;
+            padding: 1rem; /* Add padding inside the container */
+        }
+
+        /* Page header content styling */
+        .page-header-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%; /* Ensure content is centered vertically */
+        }
+
+        /* Page header title styling */
+        .page-header-title {
+            margin: 0; /* Remove default margin to prevent unwanted spacing */
+            font-size: 2rem; /* Adjust font size as needed */
+        }
+
+        .page-header-title {
+            font-size: larger;
+        }
+
+        .mb-3 {
+        }
+
+        .container-fluid {
+            margin-bottom: -5px;
+        }
+
+        #layoutSidenav {
+            margin-top: -2%;
+        }
+
+        .page-header > .container:first-of-type {
+            background: white;
+          
+        }
+
+        .page-header {
+            margin: 0 100px;
+            margin-left: 100px;
+            margin-right: 100px;
+        }
+
+        #layoutSidenav_content
+        {
+            margin-right: 0px;
+            padding-right: 0px;
+        }
+
     </style>
 </head>
-<body>
-    <header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4 .pgaeheader">
-        <div class="container">
+<header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4 .pgaeheader">
+    <div class="container">
         <div class="page-header-content">
             <div class="row align-items-center justify-content-center pt-3">
                 <div class="col-12 text-center">
-                        <h3 class="page-header-subtitle mb-1 pickup" id="pickup">
-                        PickUp
+                    <h3 class="page-header-subtitle mb-1 pickup" id="pickup">
+                        Pickup
                     </h3>
                 </div>
                 <div class="col-12 text-center">
                     <div class="page-header-subtitle">
-                        All Times Are In EST
+                        @*         All Times Are In EST *@
                     </div>
                 </div>
             </div>
         </div>
-        </div>
-    </header>
+    </div>
+</header>
+<body>
+   
 
-    
+
 
     <div class="container-fluid">
         <div class="calendar-header">
@@ -172,30 +391,17 @@
             </div>
         </div>
 
-        <!-- Modal for displaying messages -->
-        @*<div class="modal fade2" id="messageModal" tabindex="-1" aria-labelledby="messageModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-c2">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="messageModalLabel">Message</h5>
-                    </div>
-                    <div class="modal-body" id="messageModalBody">
-                        <!-- Message will be inserted here -->
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>*@
+
     </div>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/moment.js/moment-with-locales.min.js"></script>
     <script src="~/jquery.touchswipe/jquery.touchswipe.min.js"></script>
     <script src="~/js/jquery-calendar.min.js"></script>
-  
+
     <script>
         $(document).ready(function () {
             var events = @Html.Raw(Json.Serialize(Model.Events));
@@ -205,76 +411,79 @@
                 var events = @Html.Raw(Json.Serialize(Model.Events));
 
 
-            $('#calendar').Calendar({
-                locale: 'en',
-                weekday: {
-                    timeline: {
-                        intervalMinutes: 30,
-                        fromHour: 7,
-                        toHour: 23
-                    }
-                },
-                events: events,
-                view: 'week',
-                defaultView: {
-                    largeScreen: 'week',
-                    smallScreen: 'day',
-                    smallScreenThreshold: 1000
-                },
-                weekday: {
-                    timeline: {
-                        fromHour: 7,
-                        toHour: 23,
-                        intervalMinutes: 30,
-                        format: 'HH:mm',
-                        heightPx: 50,
-                        autoResize: true
+                $('#calendar').Calendar({
+                    locale: 'en',
+                    weekday: {
+                        timeline: {
+                            intervalMinutes: 30,
+                            fromHour: 7,
+                            toHour: 23
+                        }
                     },
-                    dayline: {
-                        weekdays: [0, 1, 2, 3, 4, 5, 6],
-                        format: 'MM/DD',
+                    events: events,
+                    view: 'week',
+                    defaultView: {
+                        largeScreen: 'week',
+                        smallScreen: 'day',
+                        smallScreenThreshold: 1000
+                    },
+                    weekday: {
+                        timeline: {
+                            fromHour: 7,
+                            toHour: 23,
+                            intervalMinutes: 30,
+                            format: 'HH:mm',
+                            heightPx: 50,
+                            autoResize: true
+                        },
+                        dayline: {
+                            weekdays: [0, 1, 2, 3, 4, 5, 6],
+                            format: 'MM/DD',
+                            heightPx: 31,
+                            month: {
+                                format: 'MMMM YYYY',
+                                heightPx: 30,
+                                weekFormat: 'w'
+                            }
+                        }
+                    },
+                    month: {
+                        format: 'MMMM YYYY',
                         heightPx: 31,
-                        month: {
-                            format: 'MMMM YYYY',
-                            heightPx: 30,
-                            weekFormat: 'w'
+                        weekline: {
+                            format: 'w',
+                            heightPx: 80
+                        },
+                        dayheader: {
+                            weekdays: [0, 1, 2, 3, 4, 5, 6],
+                            format: 'dddd',
+                            heightPx: 30
+                        },
+                        day: {
+                            format: 'MM/DD'
+                        }
+                    },
+                    unixTimestamp: moment().format('X'),
+                    event: {
+                        hover: {
+                            delay: 500000
+                        }
+                    },
+                    categories: {
+                        enable: true,
+                        hover: {
+                            delay: 500
                         }
                     }
-                },
-                month: {
-                    format: 'MMMM YYYY',
-                    heightPx: 31,
-                    weekline: {
-                        format: 'w',
-                        heightPx: 80
-                    },
-                    dayheader: {
-                        weekdays: [0, 1, 2, 3, 4, 5, 6],
-                        format: 'dddd',
-                        heightPx: 30
-                    },
-                    day: {
-                        format: 'MM/DD'
-                    }
-                },
-                unixTimestamp: moment().format('X'),
-                event: {
-                    hover: {
-                        delay: 500000
-                    }
-                }
+
 
 
                 }).init();
 
 
-
-
-
                 // Handle calendar event click and prevent default behavior
                 $('#calendar').on('Calendar.event-click', function (event, instance, elem, evt) {
-
-
+                    debugger;
                     var startTime = evt.start;
                     var endTime = evt.end;
                     var timeSlotName = evt.title;
@@ -294,7 +503,8 @@
                         }),
                         success: function (response) {
                             // $('#modal-content').css('display', 'None');
-                            if (response && response.timeSlotId) {
+                            if (response && response.timeSlotId ) {
+                                console.log("" + response.maxUsers);
                                 // Get user email from the claims
                                 var userEmail = $('#Email').val();
 
@@ -315,14 +525,12 @@
                                                 data: JSON.stringify({
                                                     TimeSlotId: response.timeSlotId,
                                                     UserId: userResponse.userId,
+                                                    MaxNumberOfUsers: response.maxUsers,
                                                     Attended: false
                                                 }),
                                                 success: function (signupResponse) {
                                                     showMessage(signupResponse.message);
-                                                    // Delay redirection by 2 seconds
-                                                    // setTimeout(function () {
-                                                    // window.location.href = '/@tenantName/TimeSlot/UserCalendar';
-                                                    //}, 3000); // 2000 milliseconds = 2 seconds
+                                               
                                                 },
                                                 error: function (xhr, status, error) {
                                                     var response = xhr.responseJSON;
@@ -334,7 +542,7 @@
                                         }
                                     },
                                     error: function (xhr, status, error) {
-                                        showMessage('Error retrieving user ID: ' + error, true);
+                                        showMessage('Something went wrong. Please try again later.' + error, true);
                                     }
                                 });
                             } else {
@@ -342,87 +550,71 @@
                             }
                         },
                         error: function (xhr, status, error) {
-                            showMessage('Error retrieving time slot ID: ' + error, true);
+                            showMessage('Something went wrong. Please try again later.' + error, true);
                         }
                     });
                 });
 
 
             });
-
-
-
-            // // Function to show a message in a Bootstrap modal
             // function showMessage(message, isError) {
-
+            //     debugger;
             //     var modalTitle = isError ? 'Error' : 'Success';
-            //     var modalClass = isError ? 'text-danger' : 'text-success';
-
-            //     $('#messageModalLabel').text(modalTitle);
-            //     $('#messageModalBody').text(message).removeClass('text-success text-danger').addClass(modalClass);
-            //     $('#messageModal').modal('show');
-
-
-            //    // $(".nav-fixed").addClass("backgr");
-
-
-
-
-            //     // Hide the modal with a fade-out effect after 1 second
-            //     setTimeout(function () {
-            //         $('#messageModal').fadeOut(1000, function () {
-            //             $('#messageModal').modal('hide'); // Hide the modal
-            //             $('#messageModal').css('display', 'none'); // Reset display property for future use
-            //             //$(".nav-fixed").removeClass("backgr");
-            //         });
-            //     }, 2000); // 1000 milliseconds = 1 second
-
-            // }
-
-
-            // function showMessage(message, isError) {
-            //     var modalTitle = isError ? 'Error' : 'Success';
-            //     var modalClass = isError ? 'text-danger' : 'text-success';
-
-            //     $('#messageModalLabel').text(modalTitle);
-            //     $('#messageModalBody').text(message).removeClass('text-success text-danger').addClass(modalClass);
-            //     $('#messageModal').modal({
-            //         backdrop: 'static', // Prevent closing the modal by clicking outside
-            //         keyboard: false     // Prevent closing the modal with the keyboard
+            //     var modalClass = isError ? 'error' : 'success';
+            //     console.log(message);
+            //     //You have already signed up for this time slot.//if this message come the plese add here error modalclass 
+            //     //Successfully signed up for the time slot.  //if this message come the only show the sucess true
+            //     Swal.fire({
+            //         title: modalTitle,
+            //         text: message,
+            //         icon: modalClass,
+            //         showConfirmButton: true, // No need for a Close button
+            //         customClass: {
+            //             container: 'swal-container',
+            //             popup: 'swal-popup',
+            //             title: 'swal-title',
+            //             content: 'swal-content'
+            //         },
+            //         didClose: function () {
+            //             // Restore the scroll behavior after the modal is hidden
+            //             $('body').css({
+            //                 'overflow-y': 'auto',
+            //                 'overflow-x': 'hidden'
+            //             });
+            //         }
             //     });
-
-            //     // Show the modal
-            //     $('#messageModal').modal('show');
 
             //     // Prevent horizontal scroll bar
             //     $('body').css({
             //         'overflow-y': 'auto',
             //         'overflow-x': 'hidden'
             //     });
-
-            //     // Hide the modal with a fade-out effect after 2 seconds
-            //     setTimeout(function () {
-            //         $('#messageModal').fadeOut(1000, function () {
-            //             $('#messageModal').modal('hide'); // Hide the modal
-            //             $('#messageModal').css('display', 'none'); // Reset display property for future use
-            //             // Restore the scroll behavior after the modal is hidden
-            //             $('body').css({
-            //                 'overflow-y': 'auto',
-            //                 'overflow-x': 'hidden'
-            //             });
-            //         });
-            //     }, 2000); // 2000 milliseconds = 2 seconds
             // }
             function showMessage(message, isError) {
-                var modalTitle = isError ? 'Error' : 'Success';
-                var modalClass = isError ? 'error' : 'success';
+                var modalTitle = 'Success';
+                var modalClass = 'success';
+
+                if (message.includes('You have already signed up for this time slot.')) {
+                    modalTitle = 'Warning';
+                    modalClass = 'warning'; // Change to warning for this specific message
+                } else if (message.includes('The signup limit of 100 users for this time slot has been reached.')) {
+                    modalTitle = 'Warning';
+                    modalClass = 'warning'; // Change to warning for this specific message
+                } else if (message.includes('Successfully signed up for the time slot.')) {
+                    modalTitle = 'Success';
+                    modalClass = 'success';
+                } else if (isError) {
+                    modalTitle = 'Error';
+                    modalClass = 'error';
+                }
+
+                console.log(message);
 
                 Swal.fire({
                     title: modalTitle,
                     text: message,
                     icon: modalClass,
-                    timer: 2000, // Auto-close after 2 seconds
-                    showConfirmButton: false, // No need for a Close button
+                    showConfirmButton: true,
                     customClass: {
                         container: 'swal-container',
                         popup: 'swal-popup',
@@ -444,10 +636,12 @@
                     'overflow-x': 'hidden'
                 });
             }
-
         });
     </script>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+
+
+
+

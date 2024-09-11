@@ -14,6 +14,8 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    
     <style>
         body {
             background-image: url('../../images/pngtree-hands-donate-hearts-charity-give-picture-image_8403059.png');
@@ -122,7 +124,8 @@
         }
 
         body {
-            background-image: url('../../images/logo.jpg');
+            //background-image: url('images\pngtree-hands-donate-hearts-charity-give-picture-image_8403059.png');
+            background-image: url('../../images/pngtree-hands-donate-hearts-charity-give-picture-image_8403059.png');
             // ../../images/12065298_4869878.jpg;
             //logo.jpg background-repeat: no-repeat;
             background-size: cover;
@@ -180,7 +183,36 @@
             margin-bottom: 10px;
         }
 
+        #welcomeText {
+            border-bottom: 1px solid white;
+        }
 
+        #signInText{
+           margin-bottom: 0;
+        }
+
+        button {
+            padding: 15px;
+        }
+
+        .btn {
+            padding: 15px;
+        }
+
+        .card {
+            max-width: 500px;
+            min-width: 550px;
+            border: 1px solid rgba(0, 0, 0, .125);
+            border-radius: .25rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-height: 450px;
+        }
+
+        form {
+        padding-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -190,8 +222,8 @@
     <div class="container">
         <div class="card">
             <div class="card-body">
-                <h4 class="text-center">Sign in</h4>
-                <p class="text-center">Welcome Back Again !!!</p>
+                <h4 class="text-center" id="signInText">Sign in</h4>
+                <p class="text-center" id="welcomeText">Welcome Back Again !!!</p>
                 <form method="post" action="/@tenantName/Auth/GoogleLogin">
                     <button type="submit" class="btn btn-danger btn-block">
                         <i class="fab fa-google"></i> Login With Google

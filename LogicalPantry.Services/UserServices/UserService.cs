@@ -15,6 +15,8 @@ using LogicalPantry.Models.Models.Enums;
 using LogicalPantry.DTOs.Roledtos;
 using System.Data;
 using Microsoft.AspNetCore.Http;
+using System.Globalization;
+using Azure.Core;
 
 namespace LogicalPantry.Services.UserServices
 {
@@ -76,18 +78,44 @@ namespace LogicalPantry.Services.UserServices
 
             try
             {
+                var userRoleId = (int)UserRoleEnum.User; // Get the enum value for 'User'
+                //var users = await dataContext.Users
+                //    .Where(u => u.IsRegistered && u.TenantId == tenantId)
+                //    .Select(u => new UserDto
+                //    {
+                //        Id = u.Id,
+                //        FullName = u.FullName,
+                //        Email = u.Email,
+                //        PhoneNumber = u.PhoneNumber,
+                //        Address = u.Address,
+                //        IsAllow = u.IsAllow,
+                //        IsRegistered = u.IsRegistered
+                //    }).ToListAsync();
+
                 var users = await dataContext.Users
-                    .Where(u => u.IsRegistered && u.TenantId == tenantId)
-                    .Select(u => new UserDto
-                    {
-                        Id = u.Id,
-                        FullName = u.FullName,
-                        Email = u.Email,
-                        PhoneNumber = u.PhoneNumber,
-                        Address = u.Address,
-                        IsAllow = u.IsAllow,
-                        IsRegistered = u.IsRegistered
-                    }).ToListAsync();
+           .Join(
+               dataContext.UserRoles,
+               u => u.Id,
+               ur => ur.UserId,
+               (u, ur) => new { User = u, UserRole = ur }
+           )
+           .Join(
+               dataContext.Roles,
+               ur => ur.UserRole.RoleId,
+               r => r.Id,
+               (ur, r) => new { ur.User, Role = r }
+           )
+           .Where(x => x.User.IsRegistered && x.User.TenantId == tenantId &&  x.Role.Id == userRoleId)
+           .Select(x => new UserDto
+           {
+               Id = x.User.Id,
+               FullName = x.User.FullName,
+               Email = x.User.Email,
+               PhoneNumber = x.User.PhoneNumber,
+               Address = x.User.Address,
+               IsAllow = x.User.IsAllow,
+               IsRegistered = x.User.IsRegistered
+           }).ToListAsync();
 
                 response.Data = users;
                 response.Success = true;
@@ -139,28 +167,42 @@ namespace LogicalPantry.Services.UserServices
 
             return response;
         }
-
         public async Task<ServiceResponse<bool>> DeleteUserAsync(int id)
         {
             var response = new ServiceResponse<bool>();
 
             try
             {
-                var user = await dataContext.Users.FindAsync(id);
-
-                if (user == null)
+                using (var transaction = await dataContext.Database.BeginTransactionAsync())
                 {
-                    response.Success = false;
-                    response.Message = "User not found.";
-                    return response;
+                    var user = await dataContext.Users
+                        .Include(u => u.UserRoles)
+                        .Include(u => u.TimeSlotSignups)
+                        .Include(u => u.TimeSlots)
+                        .FirstOrDefaultAsync(u => u.Id == id);
+
+                    if (user == null)
+                    {
+                        response.Success = false;
+                        response.Message = "User not found.";
+                        return response;
+                    }
+
+                    // Remove related entities
+                    dataContext.UserRoles.RemoveRange(user.UserRoles);
+                    dataContext.TimeSlotSignups.RemoveRange(user.TimeSlotSignups);
+                    dataContext.TimeSlots.RemoveRange(user.TimeSlots);
+
+                    // Remove the user
+                    dataContext.Users.Remove(user);
+
+                    // Save changes and commit transaction
+                    await dataContext.SaveChangesAsync();
+                    await transaction.CommitAsync();
+
+                    response.Data = true;
+                    response.Success = true;
                 }
-
-                dataContext.Users.Remove(user);
-                /// Records delete for all tables 
-                await dataContext.SaveChangesAsync();
-
-                response.Data = true;
-                response.Success = true;
             }
             catch (Exception ex)
             {
@@ -170,6 +212,42 @@ namespace LogicalPantry.Services.UserServices
 
             return response;
         }
+
+        //public async Task<ServiceResponse<bool>> DeleteUserAsync(int id)
+        //{
+        //    var response = new ServiceResponse<bool>();
+
+        //    try
+        //    {
+        //        var user = await dataContext.Users.FindAsync(id);
+        //        var userroles = await dataContext.UserRoles.FindAsync(id);  
+        //        var timeslotsignup = await dataContext.TimeSlotSignups.FindAsync(id);  
+        //        var timeslot = await dataContext.TimeSlots.FindAsync(id);
+        //        if (user == null)
+        //        {
+        //            response.Success = false;
+        //            response.Message = "User not found.";
+        //            return response;
+        //        }
+
+        //        dataContext.UserRoles.Remove(userroles);
+        //        dataContext.TimeSlotSignups.Remove(timeslotsignup);
+        //        dataContext.TimeSlots.Remove(timeslot);
+        //        dataContext.Users.Remove(user);
+        //        /// Records delete for all tables 
+        //        await dataContext.SaveChangesAsync();
+
+        //        response.Data = true;
+        //        response.Success = true;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        response.Success = false;
+        //        response.Message = $"Error deleting user: {ex.Message}";
+        //    }
+
+        //    return response;
+        //}
 
         public async Task<ServiceResponse<UserDto>> UpdateUserAsync(UserDto userDto)
         {
@@ -474,7 +552,7 @@ namespace LogicalPantry.Services.UserServices
                 {
                     response.Data = users;
                     response.Success = true;
-                    response.Message = "Users retrieved successfully.";
+                    response.Message = "Changes retrieved successfully.";
                 }
             }
             catch (Exception ex)
@@ -643,161 +721,176 @@ namespace LogicalPantry.Services.UserServices
 
             try
             {
+                if(email != null)
+                {
+                    
+                
+                
                 // Check if the email is present in the Tenant table
                 var tenant = dataContext.Tenants
                     .Where(t => t.AdminEmail == email)
                     .FirstOrDefault();
 
-                if (tenant != null)
-                {
-                    // Email is present in the Tenant table, check if it's also present in the User table
-                    var existingUser = dataContext.Users
-                        .Where(u => u.Email == email)
-                        .FirstOrDefault();
-
-                    if (existingUser != null)
+                    if (tenant != null)
                     {
-                        // User is already added in the User table
-                        var existingUserRole = dataContext.UserRoles
-                            .Where(ur => ur.UserId == existingUser.Id)
-                            .Select(ur => ur.RoleId)
+                        // Email is present in the Tenant table, check if it's also present in the User table
+                        var existingUser = dataContext.Users
+                            .Where(u => u.Email == email)
                             .FirstOrDefault();
 
-                        if (existingUserRole == (int)UserRoleEnum.Admin)
+                        if (existingUser != null)
                         {
-                            response.Message = "User already exists with Admin role.";
-                        }
-                        else if (existingUserRole == (int)UserRoleEnum.User)
-                        {
-                            response.Message = "User already exists with User role.";
+                            // User is already added in the User table
+                            var existingUserRole = dataContext.UserRoles
+                                .Where(ur => ur.UserId == existingUser.Id)
+                                .Select(ur => ur.RoleId)
+                                .FirstOrDefault();
+                            //one join
+                            if (existingUserRole == (int)UserRoleEnum.Admin)
+                            {
+                                response.Message = "User already exists with Admin role.";
+                            }
+                            else if (existingUserRole == (int)UserRoleEnum.User)
+                            {
+                                response.Message = "User already exists with User role.";
+                            }
+                            else
+                            {
+                                response.Message = "User already exists with an unknown role.";
+                            }
+
+                            response.Data = new UserDto
+                            {
+                                Id = existingUser.Id,
+                                FullName = existingUser.FullName,
+                                Email = existingUser.Email,
+                                PhoneNumber = existingUser.PhoneNumber,
+                                IsAllow = existingUser.IsAllow,
+                                IsRegistered = false,
+                                ZipCode = existingUser.ZipCode,
+                                HouseholdSize = existingUser.HouseholdSize,
+                                DateOfBirth = existingUser.DateOfBirth,
+                                HasSchoolAgedChildren = existingUser.HasSchoolAgedChildren,
+                                IsMarried = existingUser.IsMarried,
+                                ProfilePictureUrl = existingUser.ProfilePictureUrl,
+                                EmploymentStatus = existingUser.EmploymentStatus,
+                                IsVeteran = existingUser.IsVeteran
+                            };
+                            response.Success = true;
                         }
                         else
                         {
-                            response.Message = "User already exists with an unknown role.";
-                        }
+                            // Email is in the Tenant table but not in the User table, add as Admin
+                            var adminUser = new User
+                            {
+                                TenantId = tenant.Id,
+                                FullName = string.Empty,
+                                Address = string.Empty,
+                                Email = email,
+                                PhoneNumber = string.Empty,
+                                IsAllow = false,
+                                IsRegistered = false
+                            };
 
-                        response.Data = new UserDto
-                        {
-                            Id = existingUser.Id,
-                            FullName = existingUser.FullName,
-                            Email = existingUser.Email,
-                            PhoneNumber = existingUser.PhoneNumber,
-                            IsAllow = existingUser.IsAllow
-                        };
-                        response.Success = true;
+                            dataContext.Users.Add(adminUser);
+                            await dataContext.SaveChangesAsync();
+
+                            // Assign Admin role to the user
+                            var adminRole = new UserRole
+                            {
+                                UserId = adminUser.Id,
+                                RoleId = (int)UserRoleEnum.Admin
+                            };
+                            dataContext.UserRoles.Add(adminRole);
+                            await dataContext.SaveChangesAsync();
+
+                            response.Data = new UserDto
+                            {
+                                Id = adminUser.Id,
+                                FullName = adminUser.FullName,
+                                Email = adminUser.Email,
+                                PhoneNumber = adminUser.PhoneNumber,
+                                IsAllow = adminUser.IsAllow
+                            };
+                            response.Success = true;
+                            response.Message = "User registered as Admin successfully.";
+                        }
                     }
                     else
                     {
-                        // Email is in the Tenant table but not in the User table, add as Admin
-                        var adminUser = new User
-                        {
-                            TenantId = tenant.Id,
-                            FullName = string.Empty,
-                            Address = string.Empty,
-                            Email = email,
-                            PhoneNumber = string.Empty,
-                            IsAllow = false,
-                            IsRegistered = false
-                        };
-
-                        dataContext.Users.Add(adminUser);
-                        await dataContext.SaveChangesAsync(); // Save the new user
-
-                        // Assign Admin role to the user
-                        var adminRole = new UserRole
-                        {
-                            UserId = adminUser.Id,
-                            RoleId = (int)UserRoleEnum.Admin
-                        };
-                        dataContext.UserRoles.Add(adminRole);
-                        await dataContext.SaveChangesAsync(); // Save the role
-
-                        response.Data = new UserDto
-                        {
-                            Id = adminUser.Id,
-                            FullName = adminUser.FullName,
-                            Email = adminUser.Email,
-                            PhoneNumber = adminUser.PhoneNumber,
-                            IsAllow = adminUser.IsAllow
-                        };
-                        response.Success = true;
-                        response.Message = "User registered as Admin successfully.";
-                    }
-                }
-                else
-                {
-                    // Email is not present in the Tenant table, check the User table
-                    var user = dataContext.Users
-                        .Where(u => u.Email == email)
-                        .FirstOrDefault();
-
-                    if (user != null)
-                    {
-                        // User already exists in the User table
-                        var existingUserRole = dataContext.UserRoles
-                            .Where(ur => ur.UserId == user.Id)
-                            .Select(ur => ur.RoleId)
+                        // Email is not present in the Tenant table, check the User table
+                        var user = dataContext.Users
+                            .Where(u => u.Email == email)
                             .FirstOrDefault();
 
-                        if (existingUserRole == (int)UserRoleEnum.Admin)
+                        if (user != null)
                         {
-                            response.Message = "User already exists with Admin role.";
-                        }
-                        else if (existingUserRole == (int)UserRoleEnum.User)
-                        {
-                            response.Message = "User already exists with User role.";
+                            // User already exists in the User table
+                            var existingUserRole = dataContext.UserRoles
+                                .Where(ur => ur.UserId == user.Id)
+                                .Select(ur => ur.RoleId)
+                                .FirstOrDefault();
+
+                            if (existingUserRole == (int)UserRoleEnum.Admin)
+                            {
+                                response.Message = "User already exists with Admin role.";
+                            }
+                            else if (existingUserRole == (int)UserRoleEnum.User)
+                            {
+                                response.Message = "User already exists with User role.";
+                            }
+                            else
+                            {
+                                response.Message = "User already exists with an unknown role.";
+                            }
+
+                            response.Data = new UserDto
+                            {
+                                Id = user.Id,
+                                FullName = user.FullName,
+                                Email = user.Email,
+                                PhoneNumber = user.PhoneNumber,
+                                IsAllow = user.IsAllow
+                            };
+                            response.Success = true;
                         }
                         else
                         {
-                            response.Message = "User already exists with an unknown role.";
+                            // User does not exist, create the user with the User role
+                            var newUser = new User
+                            {
+                                TenantId = tenantId,
+                                FullName = string.Empty,
+                                Address = string.Empty,
+                                Email = email,
+                                PhoneNumber = string.Empty,
+                                IsAllow = false,
+                                IsRegistered = false
+                            };
+
+                            dataContext.Users.Add(newUser);
+                            await dataContext.SaveChangesAsync(); // Save the new user
+
+                            // Assign User role to the user
+                            var userRole = new UserRole
+                            {
+                                UserId = newUser.Id,
+                                RoleId = (int)UserRoleEnum.User
+                            };
+                            dataContext.UserRoles.Add(userRole);
+                            await dataContext.SaveChangesAsync(); // Save the role
+
+                            response.Data = new UserDto
+                            {
+                                Id = newUser.Id,
+                                FullName = newUser.FullName,
+                                Email = newUser.Email,
+                                PhoneNumber = newUser.PhoneNumber,
+                                IsAllow = newUser.IsAllow
+                            };
+                            response.Success = true;
+                            response.Message = "User registered as User successfully.";
                         }
-
-                        response.Data = new UserDto
-                        {
-                            Id = user.Id,
-                            FullName = user.FullName,
-                            Email = user.Email,
-                            PhoneNumber = user.PhoneNumber,
-                            IsAllow = user.IsAllow
-                        };
-                        response.Success = true;
-                    }
-                    else
-                    {
-                        // User does not exist, create the user with the User role
-                        var newUser = new User
-                        {
-                            TenantId = tenantId,
-                            FullName = string.Empty,
-                            Address = string.Empty,
-                            Email = email,
-                            PhoneNumber = string.Empty,
-                            IsAllow = false,
-                            IsRegistered = false
-                        };
-
-                        dataContext.Users.Add(newUser);
-                        await dataContext.SaveChangesAsync(); // Save the new user
-
-                        // Assign User role to the user
-                        var userRole = new UserRole
-                        {
-                            UserId = newUser.Id,
-                            RoleId = (int)UserRoleEnum.User
-                        };
-                        dataContext.UserRoles.Add(userRole);
-                        await dataContext.SaveChangesAsync(); // Save the role
-
-                        response.Data = new UserDto
-                        {
-                            Id = newUser.Id,
-                            FullName = newUser.FullName,
-                            Email = newUser.Email,
-                            PhoneNumber = newUser.PhoneNumber,
-                            IsAllow = newUser.IsAllow
-                        };
-                        response.Success = true;
-                        response.Message = "User registered as User successfully.";
                     }
                 }
             }
@@ -872,51 +965,43 @@ namespace LogicalPantry.Services.UserServices
 
             try
             {
-                //// Retrieve users associated with the specified time slot
-                var users = await dataContext.TimeSlots
-                    .Where(ts => ts.Id == timeSlotId)
+
+                // Retrieve users associated with the specified time slot with role 'User'
+                var users = await dataContext.TimeSlotSignups
+                    .Where(tsu => tsu.TimeSlotId == timeSlotId) // Filter by TimeSlotId
                     .Join(dataContext.Users,
-                        ts => ts.UserId,
+                        tsu => tsu.UserId,
                         u => u.Id,
-                        (ts, u) => new
+                        (tsu, u) => new { tsu, User = u })
+                    .Join(dataContext.UserRoles,
+                        combined => combined.User.Id,
+                        ur => ur.UserId,
+                        (combined, ur) => new { combined.User, combined.tsu, UserRole = ur })
+                    .Join(dataContext.Roles,
+                        combined => combined.UserRole.RoleId,
+                        r => r.Id,
+                        (combined, r) => new
                         {
-                            User = u,
-                            TimeSlot = ts
+                            User = combined.User,
+                            Attended = combined.tsu.Attended, // Include Attended field from TimeSlotSignups
+                            RoleName = r.RoleName // Include RoleName for filtering
                         })
+                    .Where(result => result.RoleName == "User") // Filter by RoleName
                     .Select(result => new UserDto
                     {
                         Id = result.User.Id,
                         FullName = result.User.FullName,
                         Email = result.User.Email,
                         PhoneNumber = result.User.PhoneNumber,
-                        Attended = dataContext.TimeSlotSignups
-                                    .Where(tsu => tsu.UserId == result.User.Id && tsu.TimeSlotId == timeSlotId)
-                                    .Select(tsu => tsu.Attended)
-                                    .FirstOrDefault() // Returns the value of `Attended` if found, or `false` if not found
+                        Address = result.User.Address,
+                        IsAllow = result.User.IsAllow,
+                        IsRegistered = result.User.IsRegistered,
+                        Attended = result.Attended // Include Attended field
                     })
                     .ToListAsync();
 
 
-                // Retrieve users associated with the specified time slot
-                //var users = await dataContext.TimeSlots
-                //    .Where(ts => ts.Id == timeSlotId)
-                //    .Join(dataContext.Users,
-                //        ts => ts.UserId,
-                //        u => u.Id,
-                //        (ts, u) => new { User = u, TimeSlot = ts })
-                //    .GroupJoin(dataContext.TimeSlotSignups.Where(tsu => tsu.TimeSlotId == timeSlotId),
-                //        result => result.User.Id,
-                //        tsu => tsu.UserId,
-                //        (result, tsuGroup) => new { result.User, result.TimeSlot, TimeSlotSignups = tsuGroup.FirstOrDefault() })
-                //    .Select(joinedResult => new UserDto
-                //    {
-                //        Id = joinedResult.User.Id,
-                //        FullName = joinedResult.User.FullName,
-                //        Email = joinedResult.User.Email,
-                //        PhoneNumber = joinedResult.User.PhoneNumber,
-                //       // Attended = joinedResult.TimeSlotSignups != null ? joinedResult.TimeSlotSignups.Attended : (bool?)null
-                //    })
-                //    .ToListAsync();
+
 
 
                 if (!users.Any())
@@ -1004,5 +1089,149 @@ namespace LogicalPantry.Services.UserServices
 
             return role;
         }
+
+
+
+        public async Task<ServiceResponse<UserDto>> ProfileRagistration(UserDto userDto)
+        {
+            var response = new ServiceResponse<UserDto>();
+
+            if (userDto == null)
+            {
+                response.Success = false;
+                response.Message = "User data is null.";
+                response.Data = null; // Indicating failure
+                return response;
+            }
+
+            try
+            {
+                // Check if the email already exists in the database
+                var existingUser = await dataContext.Users
+                    .FirstOrDefaultAsync(u => u.Email == userDto.Email);
+
+                if (existingUser != null)
+                {
+                    // Update the existing user
+                    existingUser.FullName = userDto.FullName;
+                    existingUser.Address = userDto.Address;
+                    existingUser.PhoneNumber = userDto.PhoneNumber;
+                    existingUser.IsAllow = false; // Default value or update based on your logic
+                    existingUser.IsRegistered = true; // Ensure the registration status remains false or set as needed
+                    existingUser.DateOfBirth = userDto.DateOfBirth;
+                    existingUser.ZipCode = userDto.ZipCode;
+                    existingUser.HouseholdSize = userDto.HouseholdSize;
+                    existingUser.HasSchoolAgedChildren = userDto.HasSchoolAgedChildren;
+                    existingUser.IsMarried = userDto.IsMarried;             
+                    existingUser.EmploymentStatus = userDto.EmploymentStatus;
+                    existingUser.IsVeteran = userDto.IsVeteran;
+                    if(userDto.ProfilePictureUrl != null )
+                    {
+                        existingUser.ProfilePictureUrl = userDto.ProfilePictureUrl;
+                    }
+                    // Update the user in the database
+                    dataContext.Users.Update(existingUser);
+                }
+                else
+                {
+                    // Create a new user entity
+                    var newUser = new User
+                    {
+                        TenantId = userDto.TenantId,
+                        FullName = userDto.FullName,
+                        Address = userDto.Address,
+                        Email = userDto.Email,
+                        PhoneNumber = userDto.PhoneNumber,
+                        IsAllow = false,
+                        IsRegistered = false,
+                        ZipCode = userDto.ZipCode,
+                        HouseholdSize = userDto.HouseholdSize,
+                        DateOfBirth = userDto.DateOfBirth,
+                        HasSchoolAgedChildren = userDto.HasSchoolAgedChildren,
+                        IsMarried = userDto.IsMarried,
+                        ProfilePictureUrl = userDto.ProfilePictureUrl,
+                        EmploymentStatus = userDto.EmploymentStatus,
+                        IsVeteran = userDto.IsVeteran
+                    };
+
+                    // Add the new user to the database
+                    await dataContext.Users.AddAsync(newUser);
+                    await dataContext.SaveChangesAsync();
+
+                    // Map updated/added user to DTO
+                    userDto.Id = newUser.Id;
+                }
+
+                // Save changes to the database if there are updates
+                if (existingUser != null)
+                {
+                    await dataContext.SaveChangesAsync();
+                }
+                
+                response.Data = userDto; // Pass the updated user DTO
+                response.Success = true;
+                response.Message = "User Profile updated successfully.";
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"Error registering user: {ex.Message}";
+                response.Data = null; // Indicating failure
+            }
+
+            return response;
+        }
+
+        public async Task<ServiceResponse<UserDto>> GetUserDetailsByEmail(string email)
+        {
+            var response = new ServiceResponse<UserDto>();
+            try
+            {
+                var user = await dataContext.Users
+                    .Where(u => u.Email == email)
+                    .FirstOrDefaultAsync();
+
+                if (user != null)
+                {
+                    // Map the User entity to UserDto
+                    var userDto = new UserDto
+                    {
+                        Id = user.Id,
+                        TenantId = user.TenantId,
+                        FullName = user.FullName,
+                        Email = user.Email,
+                        PhoneNumber = user.PhoneNumber,
+                        Address = user.Address,
+                        IsAllow = user.IsAllow,
+                        IsRegistered = user.IsRegistered,
+                        ZipCode = user.ZipCode,
+                        IsMarried = user.IsMarried,
+                        HouseholdSize = user.HouseholdSize,
+                        HasSchoolAgedChildren = user.HasSchoolAgedChildren,
+                        IsVeteran = user.IsVeteran,
+                        DateOfBirth = user.DateOfBirth,
+                        EmploymentStatus = user.EmploymentStatus,
+                        ProfilePictureUrl = user.ProfilePictureUrl,
+                    };
+
+                    response.Data = userDto;
+                    response.Success = true;
+                }
+                else
+                {
+                    response.Success = false;
+                    response.Message = "User not found.";
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Message = $"Error retrieving user details: {ex.Message}";
+            }
+
+            return response;
+        }
+
+
     }
 }

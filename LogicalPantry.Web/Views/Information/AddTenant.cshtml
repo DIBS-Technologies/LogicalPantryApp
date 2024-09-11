@@ -13,11 +13,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="~/css/Style.css">
     <link rel="stylesheet" href="~/css/StyleSheet.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
     <style>
+        html body {
+            overflow: hidden;
+        }
+
         .card {
             width: 100%;
-            max-width: 800px; 
+            max-width: 800px;
             margin: auto;
+        }
+
+        #layoutSidenav {
+            margin-top: -3%;
         }
 
 
@@ -25,24 +35,24 @@
             max-width: 90%;
             margin: 10px auto;
         }
+
         .card-header {
             text-align: center;
             font-weight: 500;
-          
         }
 
         .form-group {
             margin-bottom: 1rem;
         }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-        }
+            .form-group label {
+                display: block;
+                margin-bottom: 0.5rem;
+            }
 
-        .form-group .form-control {
-            width: 100%;
-        }
+            .form-group .form-control {
+                width: 100%;
+            }
 
         .saveButton, .btn-custom {
             background-color: #1A2A52;
@@ -66,9 +76,9 @@
             padding: 0.5rem 1rem;
         }
 
-        .btn-custom svg {
-            margin-right: 0.5rem;
-        }
+            .btn-custom svg {
+                margin-right: 0.5rem;
+            }
 
         #saveButtonDiv {
             display: flex;
@@ -77,21 +87,21 @@
 
         .form-control-file {
             width: 100%;
-            max-width: 200px; 
+            max-width: 400px;
         }
 
         .form-group.row {
             margin-bottom: 1rem;
         }
 
-        .form-group.row .col-form-label {
-            margin-bottom: 0;
-            text-align: right;
-        }
+            .form-group.row .col-form-label {
+                margin-bottom: 0;
+                text-align: right;
+            }
 
-        .form-group.row .col-sm-10 {
-            padding-left: 0;
-        }
+            .form-group.row .col-sm-10 {
+                padding-left: 0;
+            }
 
         .form-group input, .form-group select {
             width: 100%;
@@ -115,16 +125,17 @@
             padding: 1.5%;
         }
 
-        .page-header-content{
+        .page-header-content {
             display: flex;
-            justify-content : center;
+            justify-content: center;
         }
 
 
 
-        .page-header > .container:first-of-type {
-           max-height : 100vh;
-            padding: 2rem;
+        .page-header > .container-fluid:first-of-type {
+            max-height: 100vh;
+            /*   padding: 1rem; */
+            margin-bottom: -10px;
         }
 
         .page-header-compact .page-header-content .page-header-title {
@@ -132,8 +143,8 @@
         }
 
 
-        #tenantInfoContainer{
-            padding-top : 0;
+        #tenantInfoContainer {
+            padding-top: 0;
         }
 
         #tenantInfoContainer {
@@ -144,24 +155,71 @@
         .container-fluid {
             margin-left: 60px;
         }
+
+        footer {
+            background-color: #eff3f9;
+            color: #6c757d;
+            text-align: center;
+            padding: 1rem;
+            width: 100%;
+            position: relative;
+            bottom: 0;
+            flex-shrink: 0;
+        }
+
+        #layoutSidenav_content {
+            margin-bottom: -4%;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 0.5rem;
+            }
+
+            .form-group .form-control,
+            .form-group .form-control-file {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+
+        .page-header-content {
+            margin-left: 18%;
+        }
+
+
+        .page-header-compact .page-header-content {
+            padding: 0;
+            padding-top: 10px;
+        }
+
+        .page-header-content {
+            margin-left: 18%;
+        }
+
+
+        .page-header-compact .page-header-content {
+            padding: 0;
+            padding-top: 10px;
+        }
+
+        .page-header > .container-fluid:first-of-type {
+            max-height: 100vh;
+            /* padding: 1rem; */
+            margin-bottom: 5px;
+        }
+
+        .mb-3 {
+            margin-top: 2%;
+        }
+
     </style>
 </head>
-@* <header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4">
-
-    <div class="container">
-        <div class="page-header-content">
-            <div class="row align-items-center justify-content-between pt-3">
-                <div class="col-auto mb-3">
-                    <h1 class="page-header-title">
-                        Tenant Information
-                    </h1>
-                </div>
-            </div>
-        </div>
-    </div>
-</header> *@
 <body>
-   
+
 
     <div class="container mt-4" id="tenantInfoContainer">
         <div class="row">
@@ -186,41 +244,36 @@
                         }
 
                         <form method="post" id="createUser" action="/@tenantName/Information/AddTenant" enctype="multipart/form-data">
-                            <div class="form-group row align-items-center">
-                                <label for="logo" class="col-sm-2 col-form-label">Logo</label>
-                                <div class="col-sm-10">
-                                    <input type="file" name="LogoFile" class="form-control-file" id="logo" />
-                                    <span class="text-danger" id="logo-error"></span>
-                                </div>
+                            <div class="form-group">
+                                <label for="logo">Logo</label>
+                                <input type="file" name="LogoFile" class="form-control-file" id="logo" placeholder="Enter Logo" />
+                                <small class="form-text text-muted">Image files .jpg, .png, .bmp are allowed.</small>
+                                <small class="form-text text-muted">Keep the image dimension 45 X 45 px for best viewing experience.</small>
+                                <span class="text-danger" id="logo-error"></span>
                             </div>
-                            <div class="form-group row">
-                                <label for="PageName" class="col-sm-2 col-form-label">Page Name<span class="mandatory">*</span></label>
-                                <div class="col-sm-10">
-                                    <input name="PageName" class="form-control" id="name" value="@Model.PageName" />
-                                    <span class="text-danger" id="name-error"></span>
-                                </div>
+                            <div class="form-group">
+                                <label for="PageName">Page Name <span class="mandatory"></span></label>
+                                <input name="PageName" class="form-control" id="name" value="@Model.PageName" placeholder="Enter Page Name With Extension" />
+                                <span class="text-danger" id="name-error"></span>
                             </div>
-                            <div class="form-group row">
-                                <label for="paypalId" class="col-sm-2 col-form-label">Paypal ID<span class="mandatory">*</span></label>
-                                <div class="col-sm-10">
-                                    <input type="email" name="PaypalId" value="@Model.PaypalId" class="form-control" id="paypalId" />
-                                    <span class="text-danger" id="paypalId-error"></span>
-                                </div>
+                            <div class="form-group">
+                                <label for="TenantDisplayName">Tenant Display Name <span class="mandatory"></span></label>
+                                <input name="TenantDisplayName" class="form-control" id="TenantDisplayName" value="@Model.TenantDisplayName" placeholder="Enter Tenant Display Name" />
+                                <span class="text-danger" id="name-error"></span>
                             </div>
-                            <div class="form-group row">
-                                <label for="timeZone" class="col-sm-2 col-form-label">Time Zone<span class="mandatory">*</span></label>
-                                <div class="col-sm-10">
-                                    <select name="Timezone" class="form-control" id="timeZone"></select>
-                                    <span class="text-danger" id="timeZone-error"></span>
-                                </div>
+                            <div class="form-group">
+                                <label for="paypalId">Paypal ID <span class="mandatory"></span></label>
+                                <input type="email" name="PaypalId" value="@Model.PaypalId" class="form-control" id="paypalId" placeholder="Enter Paypal Email" />
+                                <span class="text-danger" id="paypalId-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="timeZone">Time Zone <span class="mandatory"></span></label>
+                                <select name="Timezone" class="form-control" id="timeZone"></select>
+                                <span class="text-danger" id="timeZone-error"></span>
                             </div>
                             <div id="saveButtonDiv">
                                 <button class="btn-custom saveButton" type="submit" onclick="return validateForm();">
-                                    @* <svg xmlns="" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-save">
-                                        <path d="M3 17v4a1 1 0 0 0 1 1h16a1 1 0 0 0 1-1v-4"></path>
-                                        <path d="M12 3v12"></path>
-                                        <path d="M5 7l7-4l7 4"></path>
-                                    </svg> *@
                                     Save
                                 </button>
                             </div>
@@ -230,14 +283,20 @@
             </div>
         </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.34/moment-timezone-with-data.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
     <script src="~/js/timezones.full.js"></script>
-    <script src="~/js/timezones.full.min.js"></script>
-    <script src="~/js/timezones.js"></script>
-    <script src="~/js/timezones.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+    <!-- Include Moment Timezone -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.40/moment-timezone-with-data.min.js"></script>
+
     <script>
         $(document).ready(function () {
+            debugger;
+            $('#successMessageUser').fadeIn().delay(2000).fadeOut();
+            $('#errorMessageUser').fadeIn().delay(2000).fadeOut();
 
             var pageClass = $('body').attr('class');
 
@@ -248,92 +307,183 @@
             populateTimeZones();
             $('#name').on('blur change keyup', validateName);
             $('#paypalId').on('blur change keyup', validatePaypalId);
-            $('#timeZone').on('blur change', validateTimeZone);
-            $('#logo').on('change', validateLogo);
+            //$('#timeZone').on('blur change', validateTimeZone);
+            // $('#logo').on('change', validateLogo);
 
             $('.saveButton').on('click', function () {
                 if (validateForm()) {
                     $(".saveButton").prop("disabled", false);
+
                 }
             });
         });
 
+        // //i want to show here only us base time zones only //next serch bar in drop down
+        // function populateTimeZones() {
+        //     var timezones = moment.tz.names();
+        //     var $timeZoneSelect = $('#timeZone');
+        //     $.each(timezones, function (index, timezone) {
+        //         $timeZoneSelect.append($('<option>', { value: timezone, text: timezone }));
+        //     });
+        //     $timeZoneSelect.val('@Model.Timezone');
+        // }
+
+        // function populateTimeZones() {
+
+        //     //var timezones = moment.tz.zonesForCountry('Us');
+        //     var timezones = moment.tz.names();
+        //     var usTimezones = timezones.filter(function (timezone) {
+        //         return timezone.startsWith('US/');
+        //     });
+
+        //     var $timeZoneSelect = $('#timeZone');
+        //     $.each(usTimezones, function (index, timezone) {
+        //         $timeZoneSelect.append($('<option>', { value: timezone, text: timezone }));
+        //     });
+        //     $timeZoneSelect.val('@Model.Timezone');
+        //     $('#timeZone').timezones({
+        //     guessUserTimezone:true,
+        //     defaultRegion:1024
+        //     });
+
+        // }
+
+        // function populateTimeZones() {
+        //     // Get all U.S. time zones
+        //     var usTimezones = moment.tz.zonesForCountry('US');
+
+        //     // Populate the dropdown
+        //     var $timeZoneSelect = $('#timeZone');
+        //     $timeZoneSelect.empty(); // Clear existing options
+
+        //     $.each(usTimezones, function (index, timezone) {
+        //         // Get the current offset for this time zone
+        //         var offset = moment.tz(timezone).format('Z'); // Get the offset in +HH:mm format
+        //         var gmtOffset = offset.replace(':', ''); // Remove the colon for GMT format
+        //         var displayText = ' (GMT' + gmtOffset + ')' + timezone;
+
+        //         // Add each time zone to the dropdown
+        //         $timeZoneSelect.append($('<option>', { value: timezone, text: displayText }));
+        //     });
+
+        //     // Set the selected value if needed
+        //     $timeZoneSelect.val('@Model.Timezone'); 
+
+           
+        // }
+
+       
+
+
         function populateTimeZones() {
-            var timezones = moment.tz.names();
+            debugger;
             var $timeZoneSelect = $('#timeZone');
-            $.each(timezones, function (index, timezone) {
-                $timeZoneSelect.append($('<option>', { value: timezone, text: timezone }));
+            $timeZoneSelect.empty(); // Clear existing options
+           // $timeZoneSelect.append($('<option>', { value: 'NULL', text: '-- Select --' }));
+            var usTimezones = [
+                { value: "NULL", text: "-- Select --" },
+                { value: "(GMT-0500) Eastern Time (US & Canada)", text: "(GMT-0500) Eastern Time (US & Canada)" },
+                { value: "(GMT-0600) Central Time (US & Canada)", text: "(GMT-0600) Central Time (US & Canada)" },
+                { value: "(GMT-0700) Mountain Time (US & Canada)", text: "(GMT-0700) Mountain Time (US & Canada)" },
+                { value: "(GMT-0700) Arizona", text: "(GMT-0700) Arizona" },
+                { value: "(GMT-0800) Pacific Time (US & Canada)", text: "(GMT-0800) Pacific Time (US & Canada)" },
+                { value: "(GMT-0900) Alaska", text: "(GMT-0900) Alaska" },
+                { value: "(GMT-1000) Hawaii-Aleutian", text: "(GMT-1000) Hawaii-Aleutian" },
+                { value: "(GMT-1000) Hawaii", text: "(GMT-1000) Hawaii" },
+                { value: "(GMT-0500) Indiana (East)", text: "(GMT-0500) Indiana (East)" }
+            ];
+
+            // Populate the dropdown with the hard-coded time zones
+            $.each(usTimezones, function (index, timezone) {
+                $timeZoneSelect.append($('<option>', { value: timezone.value, text: timezone.text }));
             });
-            $timeZoneSelect.val('@Model.Timezone'); 
+
+            var savedTimezone = '@Html.Raw(Model.Timezone)';
+           // var savedTimezone = '@Model.Timezone'.trim();
+            console.log("Saved Timezone:", savedTimezone);
+
+            // Check if the saved timezone is empty
+            if (savedTimezone === '' || !usTimezones.some(tz => tz.value === savedTimezone)) {
+                // Set to default value
+                $timeZoneSelect.val('NULL').change();
+            } else {
+                // Set the selected value to the saved timezone
+                $timeZoneSelect.val(savedTimezone).change();
+            }
+
+            // Check if the option was set
+            var selectedOption = $timeZoneSelect.find('option:selected').text();
+            console.log("Selected Option:", selectedOption);
         }
 
-        function validateLogo() {
-            var logoFile = $("#logo").val();
-            if (!logoFile) {
-                $("#logo-error").text("Logo is required.").show();
-                return false;
-            } else {
-                $("#logo-error").text("").hide();
-                return true;
-            }
-        }
 
-        function validateName() {
-            var name = $("#name").val();
-            if (name.trim() === "") {
-                $("#name-error").text("Name is required.").show();
-                return false;
-            } else {
-                $("#name-error").text("").hide();
-                return true;
-            }
-        }
 
-        function validatePaypalId() {
-            var paypalId = $("#paypalId").val();
-            if (paypalId.trim() === "") {
-                $("#paypalId-error").text("Paypal ID is required.").show();
-                return false;
-            } else if (!isValidEmail(paypalId)) {
-                $("#paypalId-error").text("Invalid Paypal ID format.").show();
-                return false;
-            } else {
-                $("#paypalId-error").text("").hide();
-                return true;
-            }
-        }
 
-        function validateTimeZone() {
-            var timeZone = $("#timeZone").val();
-            if (!timeZone || timeZone.trim() === "") {
-                $("#timeZone-error").text("Time Zone is required.").show();
-                return false;
-            } else {
-                $("#timeZone-error").text("").hide();
-                return true;
-            }
-        }
+        // function validateLogo() {
+        //     var logoFile = $("#logo").val();
+        //     if (!logoFile) {
+        //         $("#logo-error").text("Logo is required.").show();
+        //         return false;
+        //     } else {
+        //         $("#logo-error").text("").hide();
+        //         return true;
+        //     }
+        // }
+
+        // function validateName() {
+        //     var name = $("#name").val();
+        //     if (name.trim() === "") {
+        //         $("#name-error").text("Name is required.").show();
+        //         return false;
+        //     } else {
+        //         $("#name-error").text("").hide();
+        //         return true;
+        //     }
+        // }
+
+        // function validatePaypalId() {
+        //     var paypalId = $("#paypalId").val();
+        //     if (paypalId.trim() === "") {
+        //         $("#paypalId-error").text("Paypal ID is required.").show();
+        //         return false;
+        //     } else if (!isValidEmail(paypalId)) {
+        //         $("#paypalId-error").text("Invalid Paypal ID format.").show();
+        //         return false;
+        //     } else {
+        //         $("#paypalId-error").text("").hide();
+        //         return true;
+        //     }
+        // }
+
+        // function validateTimeZone() {
+        //     var timeZone = $("#timeZone").val();
+        //     if (!timeZone || timeZone.trim() === "") {
+        //         $("#timeZone-error").text("Time Zone is required.").show();
+        //         return false;
+        //     } else {
+        //         $("#timeZone-error").text("").hide();
+        //         return true;
+        //     }
+        // }
 
         function validateForm() {
             var isValid = true;
-            isValid = validateLogo() && isValid;
-            isValid = validateName() && isValid;
-            isValid = validatePaypalId() && isValid;
-            isValid = validateTimeZone() && isValid;
+            // isValid = validateLogo() && isValid;
+           // isValid = validateName() && isValid;
+           // isValid = validatePaypalId() && isValid;
+           // isValid = validateTimeZone() && isValid;
             $(".saveButton").prop("disabled", !isValid);
             return isValid;
         }
-
-
 
         function isValidEmail(email) {
             var emailRegex = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
             return emailRegex.test(email);
         }
     </script>
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
     <script src="https://cdn.jsdelivr.net/npm/@@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="~/js/scripts.js"></script>
+    @*  <script src="~/js/scripts.js"></script> *@
 </body>
 </html>

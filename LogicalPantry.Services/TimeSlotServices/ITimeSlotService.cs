@@ -23,8 +23,12 @@ namespace LogicalPantry.Services.TimeSlotServices
 
         Task<IEnumerable<TimeSlot>> GetAllEventsAsync();
 
-        Task<int?> GetTimeSlotIdAsync(DateTime startTime, DateTime endTime, string title);
+        //Task<int?> GetTimeSlotIdAsync(DateTime startTime, DateTime endTime, string title);
 
-       
+        Task<IEnumerable<TimeSlot>> GetAllEventsByTenantIdAsync(int tenantId);
+
+        Task<TimeSlotDto> GetTimeSlotDetailsAsync(DateTime? startTime, DateTime? endTime, string title);
+
+
     }
 }

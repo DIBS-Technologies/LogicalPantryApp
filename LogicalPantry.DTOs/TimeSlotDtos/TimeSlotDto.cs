@@ -14,5 +14,8 @@ namespace LogicalPantry.DTOs.TimeSlotDtos
         public string TimeSlotName { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
+
+        public string EventType { get; set; }
+        public int MaxNumberOfUsers { get; set; }
     }
 }

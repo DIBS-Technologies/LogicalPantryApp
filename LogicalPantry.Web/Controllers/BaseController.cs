@@ -12,6 +12,9 @@ namespace LogicalPantry.Web.Controllers
 
         protected int? TenantId => HttpContext.Items["TenantId"] as int?;
 
+        protected string PageName => HttpContext.Items["PageName"] as string;
+        protected string TenantDisplayName => HttpContext.Items["TenantDisplayName"] as string;
+
         // Method to set ViewBag properties before action execution
         public override void OnActionExecuting(ActionExecutingContext filterContext)
         {
@@ -19,7 +22,8 @@ namespace LogicalPantry.Web.Controllers
             ViewBag.TenantName = TenantName;
             ViewBag.UserEmail = UserEmail;
             ViewBag.TenantId = TenantId;
-
+            ViewBag.PageName = PageName;
+            ViewBag.TenantDisplayName = TenantDisplayName;
             // Call base method
             base.OnActionExecuting(filterContext);
         }

@@ -2,6 +2,8 @@
 using LogicalPantry.Services.InformationService;
 using LogicalPantry.Services.RegistrationService;
 using LogicalPantry.Services.UserServices;
+using LogicalPantry.Web.Helper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Internal;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -21,6 +23,7 @@ namespace LogicalPantry.Web.Controllers
             _informationService = informationService;
         }
 
+        [Authorize(Roles = $"{UserRoleEnum.User}")]
         [HttpGet("Index")]
         public IActionResult Index()
         {
@@ -29,7 +32,7 @@ namespace LogicalPantry.Web.Controllers
             return View();
         }
 
-        
+        [Authorize(Roles = $"{UserRoleEnum.User}")]
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] UserDto user) 
         {
@@ -60,6 +63,8 @@ namespace LogicalPantry.Web.Controllers
             //return RedirectToAction("UserCalendar", "TimeSlot", new { area = "" });
             return Redirect($"/{TenantName}/TimeSlot/UserCalendar");
         }
+
+ 
         [HttpGet]
         public object ValidateEmail(string emailId) 
         {

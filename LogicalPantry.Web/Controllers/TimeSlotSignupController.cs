@@ -5,6 +5,8 @@ using LogicalPantry.Models.Models;
 using LogicalPantry.Services.TimeSlotServices;
 using LogicalPantry.Services.TimeSlotSignupService;
 using LogicalPantry.Services.UserServices;
+using LogicalPantry.Web.Helper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Tweetinvi.Core.Extensions;
@@ -25,7 +27,8 @@ namespace LogicalPantry.Web.Controllers
             _timeSlotService = timeSlotService;
             _timeSlotSignupService = timeSlotSignupService;
         }
- 
+
+        [Authorize(Roles = $"{UserRoleEnum.Admin},{UserRoleEnum.User}")]
         [Route("Index")]
         public IActionResult Index()
         {
@@ -35,6 +38,8 @@ namespace LogicalPantry.Web.Controllers
              return View();
         }
 
+
+        [Authorize(Roles = $"{UserRoleEnum.Admin},{UserRoleEnum.User}")]
         [HttpGet("GetUsersbyTimeSlot")]
         public object GetUsersbyTimeSlot(DateTime timeSlot)
         {
@@ -49,7 +54,7 @@ namespace LogicalPantry.Web.Controllers
             return response;
         }
 
-
+        [Authorize(Roles = $"{UserRoleEnum.User}")]
         [HttpPost("AddTimeSlotSignUps")]
         public async Task<IActionResult> AddTimeSlotSignUps([FromBody] TimeSlotSignupDto dto)
         {

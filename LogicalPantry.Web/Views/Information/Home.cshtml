@@ -3,6 +3,7 @@
 @{
     var tenantName = ViewBag.TenantName as string;
     var pagename = ViewBag.PageName as string;
+    var homePageName = ViewBag.homepageName as string;
     var isUser = User.IsInRole("User");
     var tenantId = ViewBag.TenantId;
     var userClaim = User.Claims
@@ -11,6 +12,8 @@
 
     bool isAdmin = userClaim.Contains("Admin");
     var isAuthenticated = User.Identity.IsAuthenticated;
+    var userEmail = User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value;
+    var userName = User.FindFirstValue(ClaimTypes.Name) ?? User.Claims.FirstOrDefault(c => c.Type == "name")?.Value;
 }
 
 <!DOCTYPE html>
@@ -24,14 +27,23 @@
     <link href="~/css/style.css" rel="stylesheet" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>   
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+   
 
     <style>
         html, body {
             margin: 0;
             padding: 0;
             height: 100%;
-            overflow: hidden; /* Prevent scrollbars */
+            /* overflow: hidden; */ /* Prevent scrollbars */
+        }
+
+        #pageName {
+            display: flex;
+            justify-content: start;
+            margin-left: 4%;
         }
 
         #layoutSidenav {
@@ -155,9 +167,11 @@
             display: none;
         }
 
-        .tenantImage {
+      /*   .tenantImage {
             max-width: 50px;
-        }
+        } */
+     
+
 
         #layoutSidenav_content {
             flex: 1;
@@ -191,6 +205,31 @@
             padding-top: 0rem;
         }
 
+        .dropdown-menu {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            transform: translateY(10px);
+        }
+
+            .dropdown-menu.show {
+                display: block;
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+        #pageName {
+            display: flex;
+            justify-content: start;
+            margin-left: 2%;
+        }
+
+        img {
+            vertical-align: middle;
+            border-style: none;
+            max-height: 40px;
+        }
+
     </style>
 
 </head>
@@ -198,51 +237,151 @@
     <div id="layoutSidenav">
         <nav class="topnav navbar navbar-expand shadow navbar-light bg-white" id="sidenavAccordion">
             <div class="tenantImage">
-                <img id="logoImage" src="../images/logo.svg" style="max-width : 50px;padding-left: 10px; opacity:100%" />
+            
+                <img id="logoImage" src="" style="padding-left: 10px; opacity:100%" />
             </div>
-            <div class="page-name" id="pageName">
-                @(!string.IsNullOrEmpty(pagename) ? pagename.Replace(".html", " ") : "")
+            <div class="page-name" id="pageName">               
+              
             </div>
+
+     
 
             <div class="navbar-nav">
                 @if (isAuthenticated && (isAdmin || isUser))
                 {
-                    <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar" id="pickUp">Pickup</a>
+                     <a class="nav-link" href="/@tenantName/User/Profile" id="profile">Profile</a>
+                     <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar" id="pickUp">Pickup</a>
                 }
                 <a class="nav-link" href="/@tenantName/Donation/PayPal">Donation</a>
-                @if (isAuthenticated)
+               @*  @if (isAuthenticated)
                 {
                     <a class="nav-link" href="/@tenantName/Auth/Logout">Logout</a>
                 }
                 else
                 {
-                    <a class="nav-link" href="/@tenantName/Auth/LoginView">LogIn</a>
+                    <a class="nav-link" href="/@tenantName/Auth/LoginView">Log In</a>
+                } *@
+                @if (isAuthenticated)
+                {
+                    <li class="nav-item dropdown no-caret dropdown-user me-3 me-lg-4">
+                        <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="~/assets/sass/freepik/profiles/person.svg" /></a>
+                        <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
+                            <h6 class="dropdown-header d-flex align-items-center">
+                                <img class="dropdown-user-img" src="~/assets/sass/freepik/profiles/profile-6.png" />
+                                <div class="dropdown-user-details">
+                                    <div class="dropdown-user-details-name">@userName</div>
+                                    <div class="dropdown-user-details-email">@userEmail</div>
+                                </div>
+                            </h6>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="/@tenantName/Auth/Logout">
+                                <div class="dropdown-item-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></div>
+                                Logout
+                            </a>
+                        </div>
+                    </li>
                 }
-                <input id="pag" type="hidden" name="name" value="@pagename" />
+                else
+                {
+                    <a class="nav-link" href="/@tenantName/Auth/loginView">Log In</a>
+                }
+               @*  <input id="pag" type="hidden" name="name" value="@pagename" /> *@
+                <input id="HomePag" type="hidden" name="homePageName" value="@homePageName" />
                 <input type="hidden" value="@isUser" id="isUser" />
             </div>
         </nav>
         
         <div id="layoutSidenav_content">
-            <main>
-                <iframe src="" id="urlFrameId"></iframe>
+            <main id="iframe">
+                @* <iframe src="" id="urlFrameId"></iframe> *@
             </main>
         </div>
     </div>
+
+
+    @* <script src="~/js/site.js" asp-append-version="true"></script> *@
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
     @section Scripts {
         <script>
             $(document).ready(function () {
+                var isAdmin = '@isAdmin.ToString().ToLower()'; // Convert boolean to lowercase string
+                var isAuthenticated = '@isAuthenticated.ToString().ToLower()'; // Convert boolean to lowercase string
+                if (isAdmin === 'false' && isAuthenticated === 'true') {
+                    $('header.page-header').remove(); // Remove the header with class 'page-header'
+                }
+
+                $('.dropdown-user').click(function () {
+                    var $dropdownMenu = $(this).next('.dropdown-menu');
+                    $dropdownMenu.toggleClass('show');
+                });
+
+                // Optional: Close the dropdown if clicking outside of it
+                $(document).click(function (e) {
+                    if (!$(e.target).closest('.dropdown-menu, #navbarDropdownUserImage').length) {
+                        $('.dropdown-menu').removeClass('show');
+                    }
+                });
+
                 var userEmail = '@User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value';
+
+                // async function fetchImageUrl(tenantId) {
+                //     return new Promise((resolve, reject) => {
+                //         $.ajax({
+                //             url: `/@tenantName/Information/Get`,
+                //             method: "GET",
+                //             data: { tenantid: tenantId },
+                //             success: function (response) {
+                //                 const imageUrl = response;
+
+                //                 if (imageUrl) {
+                //                     const tenantDiv = $('.tenantImage');
+
+                //                     if (tenantDiv.length > 0) {
+                //                         tenantDiv.find('#logoImage').remove();
+
+                //                         const img = $('<img>', {
+                //                             id: 'logoImage',
+                //                             src: imageUrl,
+                //                             style: ' padding-left: 10px; opacity: 100%;'
+                //                         });
+
+                //                         tenantDiv.append(img);
+
+                //                         resolve(imageUrl);
+                //                     } else {
+                //                         console.error("No element found with class 'tenantImage'");
+                //                         reject(new Error("No element found with class 'tenantImage'"));
+                //                     }
+                //                 } else {
+                //                     console.error("ImageUrl is missing in the response");
+                //                     reject(new Error("ImageUrl is missing in the response"));
+                //                 }
+                //             },
+                //             error: function (xhr, status, error) {
+                //                 console.error("Cannot find Image src", status, error);
+                //                 reject(new Error(`Cannot find Image src: ${status} ${error}`));
+                //             }
+                //         });
+                //     });
+                // }
+
 
                 async function fetchImageUrl(tenantId) {
                     return new Promise((resolve, reject) => {
                         $.ajax({
                             url: `/@tenantName/Information/Get`,
                             method: "GET",
-                            data: { tenantid: tenantId },
+                            data: { tenantId: tenantId },
                             success: function (response) {
-                                const imageUrl = response;
 
+                                console.log("Response:", response);
+
+                                const imageUrl = response.logo;
+                                var tenantDisplayName = response.tenantDisplayName;
+                                if (tenantDisplayName) {
+                                    $(".page-name").text(tenantDisplayName);
+                                }
                                 if (imageUrl) {
                                     const tenantDiv = $('.tenantImage');
 
@@ -252,7 +391,7 @@
                                         const img = $('<img>', {
                                             id: 'logoImage',
                                             src: imageUrl,
-                                            style: 'width: 95px; padding-left: 10px; opacity: 100%;'
+                                            style: ' padding-left: 10px; opacity: 100%;'
                                         });
 
                                         tenantDiv.append(img);
@@ -266,6 +405,7 @@
                                     console.error("ImageUrl is missing in the response");
                                     reject(new Error("ImageUrl is missing in the response"));
                                 }
+                                
                             },
                             error: function (xhr, status, error) {
                                 console.error("Cannot find Image src", status, error);
@@ -275,6 +415,8 @@
                     });
                 }
 
+
+
                 async function updateImage(tenantId) {
                     try {
                         await fetchImageUrl(tenantId);
@@ -283,7 +425,12 @@
                     }
                 }
 
-                updateImage(@tenantId);
+               var  tenantId = @tenantId;
+                updateImage(tenantId);
+
+                debugger;
+
+
 
                 var tenantId = @ViewBag.TenantId ?? 'null'; // Default to 'null' if ViewBag.TenantId is null
                 var pageName = '@ViewBag.PageName';
@@ -292,20 +439,91 @@
                 if (tenantId !== 'null') {
                     tenantId = tenantId.toString(); // Ensure tenantId is a string
                 }
+                debugger;
+           
+               // 3/9/24
+                // // Get the value from the input field
+                // var handlerValue = $("#HomePag").val();
+                // var iframe = $('<iframe>', {
+                //     src: '/TenantHomePage/' + handlerValue, 
+                //     id: 'urlFrameId'
+                // });
 
-                var handlerValue = $("#pag").val();
-                $("#urlFrameId").attr("src", "/TenantHomePage/" + handlerValue);
+                // // Append the iframe to the desired element
+                // $('#iframe').empty().append(iframe);
 
-                $("#pageName").text(handlerValue ? handlerValue.replace('.html', ' ') : ' ');
+
+
+                var handlerValue = $("#HomePag").val(); // Retrieve the value from the input/select element
+                var basePath = '/TenantHomePage/'; // Base path for your pages
+
+                // Construct the full URL
+                var fullUrl = basePath + encodeURIComponent(handlerValue);
+
+                // Create an iframe element
+                var iframe = $('<iframe>', {
+                    src: fullUrl,
+                    id: 'urlFrameId',
+         
+                });
+
+                // Append the iframe to the desired element
+                $('#iframe').empty().append(iframe);
+
+
+                var tenantDisplayName = $("#pag").val();
+                $("#pageName").text(tenantDisplayName);
+                //$("#pageName").text(tenantDisplayName ? tenantDisplayName.replace('.html', ' ') : ' ');
 
                 // AJAX call to update the sidebar dynamically based on tenant
                 var isAuthenticated = '@isAuthenticated'.toLowerCase() === 'true';
+
+                var isAdmin = '@isAdmin'.toLowerCase() === 'true';
+
 
                 // Hide the header if not authenticated
                 if (!isAuthenticated) {
                     $('header').hide();
                 }
+
+                if (isAuthenticated && isAdmin) {
+                    $('header').hide();
+                }
+
+               
             });
+
+
+
+            // var userEmail = '@User.FindFirstValue(ClaimTypes.Email)';
+            // fetchUserInfo(userEmail);
+
+            // async function fetchUserInfo(userEmail) {
+            //     return new Promise((resolve, reject) => {
+            //         $.ajax({
+            //             url: `/@tenantName/User/GetUser`,
+            //             method: "GET",
+            //             data: { email: userEmail },
+            //             success: function (response) {
+            //                 console.log("Response:", response);
+
+            //                 if (response) {
+
+            //                     $("#pickUp").show();
+
+            //                 } else {
+            //                     $("#pickUp").hide();
+            //                 }
+            //             },
+            //             error: function (xhr, status, error) {
+            //                 console.error("Cannot find Image src", status, error);
+            //                 reject(new Error(`Cannot find Image src: ${status} ${error}`));
+            //             }
+            //         });
+            //     });
+            // }
+
+
         </script>
     }
 </body>

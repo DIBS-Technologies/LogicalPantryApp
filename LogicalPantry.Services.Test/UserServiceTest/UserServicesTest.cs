@@ -37,6 +37,10 @@ namespace LogicalPantry.Services.Test.UserServiceTest
             _context = new TestApplicationDataContext(builder.Options);
         }
 
+        public Task<bool> AddUserAsync(UserDto userDto)
+        {
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         /// Check the UpdateUserBatch Successfully
@@ -124,6 +128,11 @@ namespace LogicalPantry.Services.Test.UserServiceTest
             return response;
         }
 
+        public Task CheckUserDeleteResponse(UserDto user)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<ServiceResponse<UserDto>> CheckUserPostResponse(UserDto userDto)
         {
             var response = new ServiceResponse<UserDto>();
@@ -157,21 +166,19 @@ namespace LogicalPantry.Services.Test.UserServiceTest
 
             return response;
         }
-        public async Task<bool> DeleteUserAsync(int userId)
-        {
-            var user = await _context.Users.FindAsync(userId);
-            if (user == null)
-                return false;
 
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
-            return true;
+            public async Task<bool> DeleteUserAsync(int userId)
+            {
+                var user = await dataContext.Users.FindAsync(userId);
+                if (user == null)
+                    return false;
+
+                dataContext.Users.Remove(user);
+                await dataContext.SaveChangesAsync();
+                return true;
+            }
         }
-
-
-      
     }
-}
 
 
 

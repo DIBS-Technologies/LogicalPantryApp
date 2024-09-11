@@ -83,23 +83,23 @@ namespace LogicalPantry.Web.Controllers
                 }
 
                 var response = await _infotenantService.PostTenant(tenantDto);
-                    if (response.Success)
-                    {
-                        // Redirect to the GET method to display the updated data
-                        return RedirectToAction(nameof(EditTenant), new { id = tenantDto.Id });
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", response.Message);
-                    }
-                    _logger.LogInformation($"EditTenant post method call ended");
-
+                if (response.Success)
+                {
+                    // Redirect to the GET method to display the updated data
+                    return RedirectToAction(nameof(EditTenant), new { id = tenantDto.Id });
                 }
+                else
+                {
+                    ModelState.AddModelError("", response.Message);
+                }
+                _logger.LogInformation($"EditTenant post method call ended");
 
-                return View(tenantDto);
             }
+
+            return View(tenantDto);
         }
-     }
-    
+    }
+}
+
 
 

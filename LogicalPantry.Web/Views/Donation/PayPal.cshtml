@@ -1,4 +1,6 @@
 ﻿@using System.Security.Claims
+@using Microsoft.Extensions.Configuration
+@inject IConfiguration Configuration
 
 @{
     // Retrieve necessary data from ViewBag and User Claims
@@ -7,7 +9,7 @@
     var pagename = ViewBag.PageName as string;
     var isUser = User.IsInRole("User");
 
-   
+
     var userClaim = User.Claims
                         .Where(c => c.Type == ClaimTypes.Role)
                         .Select(c => c.Value).ToList();
@@ -18,7 +20,7 @@
     var userEmail = User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value;
     var userName = User.FindFirstValue(ClaimTypes.Name) ?? User.Claims.FirstOrDefault(c => c.Type == "name")?.Value;
 
-   
+
     string paddingLeft = !isAuthenticated && isUser ? "15rem" : "1rem";
 
     string contentMarginLeft = isAuthenticated && isAdmin ? "250px" : "none";
@@ -30,6 +32,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Partner with Us</title>
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -43,8 +47,8 @@
         .hero-image {
             position: relative;
             width: 100%;
-            height: 50vh; 
-            background-image: url('https://plus.unsplash.com/premium_photo-1682092585257-58d1c813d9b4?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D'); 
+            height: 50vh;
+            background-image: url('https://plus.unsplash.com/premium_photo-1682092585257-58d1c813d9b4?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
             background-size: cover;
             background-position: center;
         }
@@ -65,21 +69,78 @@
             padding: 20px;
         }
 
-        .hero-overlay h1 {
-            font-size: 2rem; 
-            margin-bottom: 20px;
-            text-transform: uppercase;
+            .hero-overlay h1 {
+                font-size: 2rem;
+                margin-bottom: 20px;
+                text-transform: uppercase;
+            }
+
+        .donation-container {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        .hero-overlay .donate-btn {
-            background-color: #ff6b6b;
-            color: white;
-            padding: 15px 30px;
-            font-size: 1rem;
-            border: none;
-            cursor: pointer;
-            border-radius: 5px;
-            text-decoration: none;
+        .donation-options {
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+            .donation-options button {
+                background-color: #003366; /* Light navy blue color */
+                color: white;
+                border: none;
+                padding: 6px 12px;
+                font-size: 0.8rem;
+                border-radius: 5px;
+                cursor: pointer;
+                margin: 3px;
+                transition: background-color 0.3s;
+            }
+
+                .donation-options button.selected {
+                    background-color: white;
+                    color: #003366;
+                    border: 2px solid #003366; /* White border for selected button */
+                }
+               /*  .donation-options button:hover {
+                    background-color: #002244; 
+                } */
+
+        .custom-amount-container {
+            display: none;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+            .custom-amount-container input {
+                padding: 6px;
+                border-radius: 5px;
+                border: 1px solid #ccc;
+                font-size: 0.8rem;
+                margin-right: 5px;
+            }
+
+            .custom-amount-container button {
+                background-color: #003366;
+                color: white;
+                border: none;
+                padding: 6px 12px;
+                font-size: 0.8rem;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+
+                .custom-amount-container button:hover {
+                    background-color: #002244;
+                }
+
+        .paypal-button-container {
+            margin-top: 20px;
         }
 
         .content {
@@ -91,10 +152,10 @@
             margin-bottom: 30px;
         }
 
-        .content p {
-            margin-bottom: 20px;
-            line-height: 1.6;
-        }
+            .content p {
+                margin-bottom: 20px;
+                line-height: 1.6;
+            }
 
         .bold {
             font-weight: bold;
@@ -124,7 +185,7 @@
 
         @@media (max-width: 480px) {
             .hero-image {
-                height: 40vh; 
+                height: 40vh;
             }
 
             .hero-overlay h1 {
@@ -138,7 +199,7 @@
 
             .content {
                 padding: 10px;
-                font-size: 0.9rem; 
+                font-size: 0.9rem;
             }
         }
 
@@ -154,9 +215,19 @@
             max-width: 90%;
             margin: 0 auto;
             text-align: center;
-            margin-left: @contentMarginLeft; 
+            margin-left: @contentMarginLeft;
         }
 
+        /* Hide the PayPal button */
+        .paypal-button-row.paypal-button-number-1.paypal-button-layout-vertical.paypal-button-number-multiple.paypal-button-env-sandbox.paypal-button-color-black.paypal-button-text-color-white.paypal-logo-color-white.paypal-button-shape-rect {
+            display: none !important;
+        }
+
+        .paypal-button-number-1 {
+            display: none !important;
+        }
+
+     
 
     </style>
 </head>
@@ -166,11 +237,27 @@
     <div class="hero-image">
         <div class="hero-overlay">
             <h1>Please Partner with Us and Help Change Lives</h1>
-            <a href="#" class="donate-btn">Donate and Change the World</a>
+            <div class="donation-container">
+                <!-- Donation Amount Options -->
+                <div class="donation-options">
+                    @foreach (var amount in new List<decimal> { 5.00m, 10.00m, 20.00m, 50.00m, 100.00m })
+                    {
+                        <button onclick="setAmount('@amount')">$@amount</button>
+                    }
+                    <button onclick="toggleCustomAmount()">Other</button>
+                </div>
+                <div id="custom-amount-container" class="custom-amount-container">
+                    <input type="number" id="custom-amount" placeholder="Enter amount" min="0.01" step="0.01">
+                    <button onclick="setCustomAmount()">Set Amount</button>
+                </div>
+                <!-- Container for PayPal Button -->
+                <div id="paypal-button-container" class="paypal-button-container"></div>
+            </div>
         </div>
     </div>
 
- 
+
+
     <div class="layoutSidenav_content">
         <div class="content">
             <p id="mainTag" class="bold">
@@ -188,15 +275,163 @@
             </p>
         </div>
     </div>
+    <script src="https://www.paypal.com/sdk/js?client-id=@Configuration["PayPal:ClientId"]&currency=USD"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+ @*    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> *@
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
+
+        let currentAmount = '5.00'; // Default amount
+
+        function setAmount(amount) {
+            currentAmount = amount;
+            hideCustomAmountInput(); // Hide custom amount input
+            renderPayPalButton(); // Re-render PayPal button with the selected amount
+
+            // Highlight the selected button
+            $('.donation-options button').removeClass('selected'); // Remove selected class from all buttons
+            $(`.donation-options button:contains('$${amount}')`).addClass('selected'); // Add selected class to the clicked button
+        }
+
+        function setCustomAmount() {
+            const customAmount = document.getElementById('custom-amount').value;
+            if (customAmount) {
+                currentAmount = customAmount;
+                hideCustomAmountInput(); // Hide custom amount input
+                renderPayPalButton(); // Re-render PayPal button with the custom amount
+            }
+        }
+
+        function toggleCustomAmount() {
+            const container = document.getElementById('custom-amount-container');
+            if (container.style.display === 'none' || container.style.display === '') {
+                container.style.display = 'block';
+            } else {
+                container.style.display = 'none';
+            }
+        }
+
+        function hideCustomAmountInput() {
+            document.getElementById('custom-amount-container').style.display = 'none';
+        }
+
+        function renderPayPalButton() {
+            // Remove existing PayPal button if present
+            const existingButton = document.getElementById('paypal-button-container').querySelector('iframe');
+            if (existingButton) {
+                document.getElementById('paypal-button-container').innerHTML = '';
+            }
+
+            // Render the PayPal button
+            paypal.Buttons({
+                style: {
+                    layout: 'vertical',
+                    color: 'gold',
+                    shape: 'rect',
+                    label: 'donate'
+                },
+                displayOnly: ["vaultable"],
+                createOrder: function (data, actions) {
+                    return actions.order.create({
+                        purchase_units: [{
+                            amount: {
+                                value: currentAmount
+                            },
+                            description: 'Charitable Donation'
+                        }]
+                    });
+                },
+                onApprove: function (data, actions) {
+                    return actions.order.capture().then(function (details) {
+                        alert('Transaction completed by ' + details.payer.name.given_name);
+                        Swal.fire({
+                            title: 'Payment Successful!',
+                            text: `Thank you for your donation, ${details.payer.name.given_name}!`,
+                            icon: 'success',
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            // Redirect or perform other actions if needed
+                            // window.location.href = '/success'; // Example redirect
+                        });
+                    });
+                }
+            }).render('#paypal-button-container');
+        }
+
+        // function renderPayPalButton() {
+        //     const paypalButtonContainer = document.getElementById('paypal-button-container');
+
+        //     // Remove existing PayPal button if present
+        //     const existingButton = paypalButtonContainer.querySelector('iframe');
+        //     if (existingButton) {
+        //         paypalButtonContainer.innerHTML = '';
+        //     }
+
+        //     // Render the PayPal button
+        //     paypal.Buttons({
+        //         style: {
+        //             layout: 'vertical',
+        //             color: 'gold',
+        //             shape: 'rect',
+        //             label: 'donate'
+        //         },
+        //         createOrder: function (data, actions) {
+        //             return actions.order.create({
+        //                 purchase_units: [{
+        //                     amount: {
+        //                         value: currentAmount
+        //                     },
+        //                     description: 'Charitable Donation'
+        //                 }]
+        //             });
+        //         },
+        //         onApprove: function (data, actions) {
+        //             return actions.order.capture().then(function (details) {
+        //                 alert('Transaction completed by ' + details.payer.name.given_name);
+        //                 // Redirect to the success page or handle post-transaction logic here
+        //             });
+        //         },
+        //         onInit: function (data, actions) {
+        //             // Delay execution to ensure PayPal buttons are rendered
+        //             setTimeout(function () {
+        //                 // Hide all other buttons
+        //                 document.querySelectorAll('.paypal-button-container button').forEach(button => {
+        //                     button.style.display = 'none';
+        //                 });
+
+        //                 // Optionally, ensure only the PayPal button is visible
+        //                 const payPalButton = document.querySelector('.paypal-button-container button[data-funding-source="paypal"]');
+        //                 if (payPalButton) {
+        //                     payPalButton.style.display = 'block'; // Ensure only the PayPal button is displayed
+        //                 }
+        //             }, 1000); // Delay in milliseconds
+        //         }
+        //     }).render('#paypal-button-container');
+        // }
+        // Initial rendering of the PayPal button
+        renderPayPalButton();
+
+
+
+        // Initialize the default selection
         $(document).ready(function () {
+            setAmount('5.00'); // Ensure the $5.00 button is selected by default
             $('header.page-header').remove(); // Removes the header with class 'page-header'
         });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            var paypalButtons = document.querySelectorAll('.paypal-button');
+            paypalButtons.forEach(function (button) {
+                button.style.display = 'none';
+            });
+        });
+
+      
+      
     </script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
-</html>
-
-
+</html> 

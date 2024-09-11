@@ -1,5 +1,7 @@
 ﻿using LogicalPantry.DTOs.PayPalSettingDtos;
 using LogicalPantry.Models.Models;
+using LogicalPantry.Models.Test.ModelTest;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LogicalPantry.Web.Controllers
@@ -16,17 +18,21 @@ namespace LogicalPantry.Web.Controllers
             _logger = logger;
         }
 
+       //No need authorization public method
         [HttpGet("PayPal")]
         public IActionResult PayPal()
         {
             _logger.LogInformation($"PayPal method call started");
 
-             ViewBag.TenantId = TenantId;
+            ViewBag.TenantId = TenantId;
+            var TenantDisplayName = HttpContext.Session.GetString("TenantDisplayName");
+            ViewBag.PageName = TenantDisplayName;
             _logger.LogInformation($"PayPal method call ended");
 
             return View();
         }
 
+       // [Authorize(Roles = "Admin,User")]
         [HttpPost]
         [Route("CompletePayment")]
         public async Task<IActionResult> CompletePayment([FromBody] PayPalPaymentDto paymentDto)

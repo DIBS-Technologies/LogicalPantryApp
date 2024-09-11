@@ -6,6 +6,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using LogicalPantry.DTOs.UserDtos;
+
 using LogicalPantry.Web;
 using Newtonsoft.Json;
 using System.Text;
@@ -238,7 +240,50 @@ namespace LogicalPantry.Tests
             Assert.AreEqual("User deleted Successfully", DeleteUser.Message);
         }
 
-        
-       
+        // Test method for adding a user.
+        [TestMethod]
+        public async Task AddUser_ShouldReturnSuccess_WhenAdditionIsValid()
+        {
+            //  Define a new user to add.
+            var newUser = new UserDto
+            {
+                FullName = "New User",
+                Email = "newuser@example.com",
+                PhoneNumber = "3333333333"
+            };
+
+            // Send a POST request to add the new user.
+            var response = await _client.PostAsJsonAsync("/User/AddUser", newUser);
+
+            // Verify the response status code is OK (200).
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
+
+            // Retrieve the added user from the database to confirm
+            var addedUser = await _userServiceTest.GetUserByIdAsync(newUser.Id);
+            Assert.IsNotNull(addedUser);
+
+            // added data matches what was sent in the request.
+            Assert.AreEqual(newUser.FullName, addedUser.FullName);
+            Assert.AreEqual(newUser.Email, addedUser.Email);
+            Assert.AreEqual(newUser.PhoneNumber, addedUser.PhoneNumber);
+        }
+
+        // Test method for deleting a user.
+        [TestMethod]
+        public async Task DeleteUser_ShouldReturnSuccess_WhenDeletionIsValid()
+        {
+            //  Define a user to deleted.
+            var userId = 1;
+
+            // Send a DELETE request to remove the user.
+            var response = await _client.DeleteAsync($"/User/DeleteUser/{userId}");
+
+            //  Verify the response status code is OK (200).
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
+
+            // Confirm the user was removed from the database.
+            var deletedUser = await _userServiceTest.GetUserByIdAsync(userId);
+            Assert.IsNull(deletedUser);
+        }
     }
 }

@@ -21,6 +21,7 @@ using LogicalPantry.Models.Models;
 using Newtonsoft.Json;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using LogicalPantry.Services.RegistrationService;
+using Azure;
 
 namespace LogicalPantry.Web.Controllers
 {
@@ -31,11 +32,11 @@ namespace LogicalPantry.Web.Controllers
         IRegistrationService _registrationService;
 
         private readonly ILogger _logger;
-        public UserController(IUserService userService, ILogger<UserController> logger, IRegistrationService _registrationService)
+        public UserController(IUserService userService, ILogger<UserController> logger, IRegistrationService registrationService)
         {
             _userService = userService;
             _logger = logger;
-            _registrationService = _registrationService;
+            _registrationService = registrationService;
         }
 
         public IActionResult Index()
@@ -46,58 +47,24 @@ namespace LogicalPantry.Web.Controllers
             return View();
         }
 
+        [Authorize(Roles = $"{UserRoleEnum.Admin}")]
         [HttpGet]
         [Route("ManageUsers")]
         public async Task<IActionResult> ManageUsers()
         {
             _logger.LogInformation("GetAllusers object call started.");
             var tenantId = TenantId;
-            var PageName = HttpContext.Session.GetString("PageName");
+            var TenantDisplayName = HttpContext.Session.GetString("TenantDisplayName");
 
             ViewBag.TenantId = tenantId;
-            ViewBag.PageName = PageName;
+            ViewBag.PageName = TenantDisplayName;
             var response = await _userService.GetAllRegisteredUsersAsync((int)tenantId);
             _logger.LogInformation("GetAllusers object call ended.");
 
             return View(response.Data);
         }
 
-        //public object GetUserbyId(int tenentId) 
-        //{
-        //    _logger.LogInformation("GetUserbyId object call Started.");
-
-        //    if (tenentId == 0)return null;
-        //    var response = _userService.GetUserByIdAsync(tenentId).Result;
-        //    _logger.LogInformation("GetUserbyId object call ended.");
-
-        //    return response;
-        //}
-        //[HttpGet]
-        //public object GetUsersbyTimeSlot(DateTime timeslot, int tenentId) 
-        //{
-        //    _logger.LogInformation("GetUsersbyTimeSlot object call Started.");
-        //    if (tenentId == 0 || timeslot == null) return null;
-        //    var response = _userService.GetUsersbyTimeSlot(timeslot,tenentId).Result;
-        //    _logger.LogInformation("GetUsersbyTimeSlot object call ended.");
-
-        //    return response;
-        //}
-        //[HttpPost]
-        //public object PutUserStatus(List<UserAttendedDto> userDto)
-        //{
-        //    _logger.LogInformation("PutUserStatus object call started.");
-
-        //    if (userDto != null)
-        //    {
-        //        var response = _userService.UpdateUserAllowStatusAsync(userDto).Result;
-        //        _logger.LogInformation("PutUserStatus object call ended.");
-        //        return response;
-
-        //    }
-        //    else { return null; }
-
-
-        //}
+       
 
         [HttpGet("session")]
         public IActionResult GetSessionData()
@@ -114,56 +81,22 @@ namespace LogicalPantry.Web.Controllers
             return Ok(new { UserEmail = userEmail, UserName = userName });
         }
 
-        //[Route("UpdateUser")]
-        //public async Task<IActionResult> UpdateUser([FromBody]  string updatedNotificationList)
-        //{
-        //    if (updatedNotificationList == null)
-        //    {
-        //        return BadRequest("Invalid data.");
-        //    }
+       
 
-        //    var updatedNotificationListObject = JsonConvert.DeserializeObject<UserAllowStatusDto>(updatedNotificationList);
-
-        //    var userDto = new UserDto { Id = updatedNotificationListObject.Id, IsAllow = updatedNotificationListObject.IsAllow };
-
-
-        //    if (userDto != null)
-        //    {
-        //        var response = _userService.UpdateUserAsync(userDto).Result;
-
-        //        if (response != null)
-        //        {
-        //            @TempData["MessageClass"] = "alert-success";
-        //            @TempData["SuccessMessageUser"] = "User Saved Successfully";
-
-        //            return Ok(new { success = true });
-        //        }
-        //        else
-        //        {
-        //            @TempData["MessageClass"] = "alert-success";
-        //            @TempData["SuccessMessageUser"] = "Internal server error.";
-        //            return StatusCode(500, "Internal server error.");
-        //        }
-        //    }
-        //    return Ok(new { success = false });
-        //}
-
+        [Authorize(Roles = $"{UserRoleEnum.Admin}")]
         [HttpPost("UpdateUser")] //ThisExpressionSyntax is ForbidResult allow method
-        public async Task<IActionResult> UpdateUser([FromBody] UserDto user)
+        public async Task<IActionResult> UpdateUser(string userId, bool isAllow)
         {
-            if (user == null)
-            {
-                return BadRequest("Invalid user ID.");
-            }
+            
 
-            var userDto = new UserDto { Id = user.Id, IsAllow = user.IsAllow };
+            var userDto = new UserDto { Id = int.Parse(userId), IsAllow = isAllow };
 
             var response = await _userService.UpdateUserAsync(userDto);
 
             if (response.Success)
             {
                 TempData["MessageClass"] = "alert-success";
-                TempData["SuccessMessageUser"] = "User Saved Successfully";
+                TempData["SuccessMessageUser"] = "Changes Saved Successfully";
                 // Log the ending of the Index method execution.
                 _logger.LogInformation("UpdateUser post method call ended");
                 return Ok(new { success = true });
@@ -178,6 +111,7 @@ namespace LogicalPantry.Web.Controllers
             }
         }
 
+        [Authorize(Roles = $"{UserRoleEnum.Admin}")]
         [HttpPost("UpdateUserBatch")]
         public async Task<IActionResult> UpdateUserBatch([FromBody] List<UserDto> userStatuses)
         {
@@ -194,7 +128,7 @@ namespace LogicalPantry.Web.Controllers
                 if (response.Success)
                 {
                     TempData["MessageClass"] = "alert-success";
-                    TempData["SuccessMessageUserBatch"] = "User Saved Successfully";
+                    TempData["SuccessMessageUserBatch"] = "Changes Saved Successfully";
                     _logger.LogInformation("UpdateUserBatch method call ended");
                     return Ok(new { success = true });
                 }
@@ -216,7 +150,7 @@ namespace LogicalPantry.Web.Controllers
         }
 
         [HttpPost("GetUserIdByEmail")]
-        public async Task<IActionResult> GetUserIdByEmail([FromBody] UserDto dto)
+        public async Task<IActionResult> GetUserIdByEmail([FromBody]UserDto dto)
         {
             _logger.LogInformation("GetUserIdByEmail method call Started");
             if (dto == null || string.IsNullOrEmpty(dto.Email))
@@ -238,25 +172,27 @@ namespace LogicalPantry.Web.Controllers
 
         }
 
-        [HttpDelete("DeleteUser/{id}")]
-        public async Task<IActionResult> DeleteUser(string id)
+        [Authorize(Roles = $"{UserRoleEnum.Admin}")]
+        [HttpPost("DeleteUser")]
+        public async Task<IActionResult> DeleteUser(string userId)
         {
             _logger.LogInformation("DeleteUser method call started");
             try
             {
                 
-                if (!int.TryParse(id, out int userId))
+                if (!int.TryParse(userId, out int user))
                 {
                     return BadRequest("Invalid user ID format.");
                 }
 
                 // Call the service to delete the user
-                var result = await _userService.DeleteUserAsync(userId);
+                var result = await _userService.DeleteUserAsync(user);
 
                 if (result.Success)
                 {
                     _logger.LogInformation("DeleteUser method call ended");
-                    return View("Index"); 
+                    //return View("Index"); 
+                    return Ok(result);
                 }
                 else
                 {
@@ -273,9 +209,16 @@ namespace LogicalPantry.Web.Controllers
         [HttpGet("Register")]
         public async Task<IActionResult> Register()
         {
+
+            var TenantDisplayName = HttpContext.Session.GetString("TenantDisplayName");
+
+            //ViewBag.TenantId = tenantId;
+            ViewBag.PageName = TenantDisplayName;
+
             return View();
         }
 
+        [Authorize(Roles = $"{UserRoleEnum.User}")]
         [HttpPost("Register")]
         public async Task<IActionResult> Register(UserDto user)
         {
@@ -292,18 +235,171 @@ namespace LogicalPantry.Web.Controllers
             {
                 @TempData["MessageClass"] = "alert-success";
                 @TempData["SuccessMessageUser"] = "Registartion Successfull";
+
+                if (!response.Data)
+                {
+                    return Redirect($"/{TenantName}/TimeSlot/UserCalendar");
+                }
+                else
+                {
+                    return Redirect($"/{TenantName}/Donation/PayPal");
+                }
             }
             else
             {
                 @TempData["MessageClass"] = "alert-danger";
                 @TempData["SuccessMessageUser"] = "Failed to Save User server error.";
-                return View("Index");
+                return Redirect($"/{TenantName}/TimeSlot/UserCalendar");
 
             }
             _logger.LogInformation($"Register method call ended");
             //return RedirectToAction("UserCalendar", "TimeSlot", new { area = "" });
-            return Redirect($"/{TenantName}/TimeSlot/UserCalendar");
         }
+
+
+        //[Authorize(Roles = $"{UserRoleEnum.Admin},{UserRoleEnum.User}")]
+        [HttpGet("Profile")]
+        public async Task<IActionResult> Profile()
+        {
+            var email = UserEmail;
+            if (email != null)
+            {
+                var response = await _userService.GetUserDetailsByEmail(email); 
+                if (response != null && response.Success) 
+                 {
+                    return View("Profile", response.Data);
+                }
+            }
+            return View();
+        }
+
+
+
+        [HttpPost("Profile")]
+        public async Task<IActionResult> Profile(UserDto user, IFormFile ProfilePicture)
+        {
+            _logger.LogInformation("Profile method call started");
+
+            if (!ModelState.IsValid)
+            {
+                TempData["MessageClass1"] = "alert-danger";
+                TempData["SuccessMessageUser1"] = "Invalid data provided.";
+                return View("Profile", user);
+            }
+
+            var tenantId = HttpContext.Items["TenantId"]?.ToString();
+            if (string.IsNullOrEmpty(tenantId))
+            {
+                TempData["MessageClass1"] = "alert-danger";
+                TempData["SuccessMessageUser1"] = "Failed to retrieve Tenant ID.";
+                return View("Profile", user);
+            }
+
+            // Handle profile picture upload
+            if (ProfilePicture != null && ProfilePicture.Length > 0)
+            {
+                // Validate file type
+                var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif", ".svg" };
+                var extension = Path.GetExtension(ProfilePicture.FileName)?.ToLower();
+
+                _logger.LogInformation($"Uploaded file extension: {extension}");
+                if (string.IsNullOrEmpty(extension) || !allowedExtensions.Contains(extension))
+                {
+                    TempData["MessageClass1"] = "alert-danger";
+                    TempData["SuccessMessageUser1"] = "Invalid file type. Please upload a JPG, JPEG, PNG, GIF, or SVG file.";
+                    _logger.LogInformation($"File type validation failed. Allowed extensions: {string.Join(", ", allowedExtensions)}");
+                    return View("Profile", user);
+                }
+
+                // Ensure the directory exists
+                var profileDir = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "profile");
+                if (!Directory.Exists(profileDir))
+                {
+                    Directory.CreateDirectory(profileDir);
+                }
+
+                // Generate unique file name and save the file
+                var fileName = Guid.NewGuid().ToString() + extension;
+                var filePath = Path.Combine(profileDir, fileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await ProfilePicture.CopyToAsync(stream);
+                }
+
+                // Assign the uploaded picture URL to the user DTO
+                user.ProfilePictureUrl = $"/profile/{fileName}";
+            }
+
+            user.TenantId = int.Parse(tenantId);
+            var response = await _userService.ProfileRagistration(user);
+
+            if (response != null && response.Success)
+            {
+                _logger.LogInformation("Profile method call ended successfully");
+                TempData["MessageClass1"] = "alert-success";
+                TempData["SuccessMessageUser1"] = "Profile saved successfully.";
+
+                // Use Post/Redirect/Get to avoid duplicate submissions
+                // return RedirectToAction("Profile");
+               return Redirect($"/{TenantName}/User/Profile");
+            }
+            else
+            {
+                TempData["MessageClass1"] = "alert-danger";
+                TempData["SuccessMessageUser1"] = "Failed to save profile due to a server error.";
+                _logger.LogInformation("Profile method call ended with errors");
+                return Redirect($"/{TenantName}/User/Profile");
+            }
+        }
+
+
+
+
+
+
+
+        // [Authorize(Roles = $"{UserRoleEnum.Admin},{UserRoleEnum.User}")]
+        //[HttpPost("Profile")]
+        //public async Task<IActionResult> Profile(UserDto user)
+        //{
+
+
+        //     _logger.LogInformation("Profile method call started");
+
+        //    var tenantId = HttpContext.Items["TenantId"]?.ToString();
+        //    if (string.IsNullOrEmpty(tenantId))
+        //    {
+        //        TempData["MessageClass"] = "alert-danger";
+        //        TempData["SuccessMessageUser"] = "Failed to retrieve Tenant ID.";
+        //        return View("Profile", user);
+        //    }
+
+        //    user.TenantId = int.Parse(tenantId);
+        //    var response = await _userService.ProfileRagistration(user);
+
+        //    if (response != null && response.Success)
+        //    {
+
+
+        //        _logger.LogInformation("Profile method call ended successfully");
+        //        @TempData["MessageClass"] = "alert-success";
+        //        @TempData["SuccessMessageUser"] = "Profile save successful";
+        //        return View("Profile", response.Data);
+        //    }
+        //    else
+        //    {
+        //        @TempData["MessageClass"] = "alert-danger";
+        //        @TempData["SuccessMessageUser"] = "Failed to Save Profile server error.";
+        //        _logger.LogInformation("Profile method call ended with errors");
+        //        return View("Profile", user); // Return the view with the user data to preserve inputs
+        //    }
+        //}
+
+
+
+
+
+
         [HttpGet]
         public object ValidateEmail(string emailId)
         {
@@ -314,7 +410,34 @@ namespace LogicalPantry.Web.Controllers
             return response;
         }
 
+        [HttpGet("GetUser")]
+        public async Task<IActionResult> GetUser(string email)
+        {
+            _logger.LogInformation("Get Object call started");
+            try
+            {
+                if (!string.IsNullOrEmpty(email))
+                {
+                    var userExisist = await _userService.GetUserByEmailAsync(email, 0);
 
+                    if (userExisist?.Data == null)
+                    {
+                        return NotFound("Tenant data not found");
+                    }
+                    _logger.LogInformation("Get Object call ended");
+                    return Ok(userExisist.Data.IsAllow);
+                }
+                else
+                {
+                    return Ok(false);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while getting tenant.");
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
     }
 
 

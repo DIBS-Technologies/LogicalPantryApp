@@ -1,239 +1,406 @@
-﻿@model LogicalPantry.Models.Models.Tenant
-
-
+﻿@using System.Security.Claims
 
 @{
-    ViewData["Title"] = "Add Tenant";
+    var tenantName = ViewBag.TenantName as string;
 }
 
-<style>
-    .dataTables_wrapper .dataTables_scrollHeadInner table.dataTable thead th {
-        text-align: left !important; /* Align all headers to the left */
-    }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Tenant Information</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/css/Style.css">
+    <link rel="stylesheet" href="~/css/StyleSheet.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-    .text-center {
-        text-align: center; /* Align text in specific columns to the center */
-    }
-
-    .text-left {
-        text-align: left !important;
-    }
-
-    h5 {
-        color: white;
-    }
-
-    .mt-n5, .my-n5 {
-        margin-top: 2rem !important;
-    }
-
-    @@media (min-width: 1500px) {
-        .container-xxl, .container-xl, .container-lg, .container-md, .container-sm, .container {
-            max-width: 1200px;
+    <style>
+        html body {
+            overflow: hidden;
         }
-    }
 
-    #saveButtonDiv {
-        display: flex;
-        justify-content: end;
-    }
-
-    .card-header {
-        justify-content: center;
-        color: black;
-    }
-
-    .card .card-header {
-        font-weight: 500;
-        font-size: 22px;
-    }
-
-    .saveButton {
-        background-color: #1A2A52;
-        color: white;
-        border-radius: 5px;
-        border: none;
-        font-size: 1rem;
-        padding: 0.5rem 2rem 0.5rem 2rem;
-        margin-top: 1rem;
-    }
-
-    .card {
-        width: 100%;
-        max-width: 600px;
-        margin: auto;
-    }
-
-    @@media (max-width: 767px) {
         .card {
-            margin: 1rem;
+            width: 100%;
+            max-width: 800px;
+            margin: auto;
         }
-    }
-</style>
 
-<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-<script src="path/to/timezones.full.js"></script>
+        #layoutSidenav {
+            margin-top: -3%;
+        }
 
-<div class="container mt-n10" style="margin-top: 3rem !important;">
-    <div class="row">
-        <div class="col-lg-9">
-            <div id="default">
+
+        .container-fluid {
+            max-width: 90%;
+            margin: 10px auto;
+        }
+
+        .card-header {
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 0.5rem;
+            }
+
+            .form-group .form-control {
+                width: 100%;
+            }
+
+        .saveButton, .btn-custom {
+            background-color: #1A2A52;
+            color: white;
+            border-radius: 5px;
+            border: none;
+            font-size: 1rem;
+            padding: 0.5rem 1rem;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .saveButton {
+            margin-top: 1rem;
+        }
+
+        .btn-custom {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+        }
+
+            .btn-custom svg {
+                margin-right: 0.5rem;
+            }
+
+        #saveButtonDiv {
+            display: flex;
+            justify-content: end;
+        }
+
+        .form-control-file {
+            width: 100%;
+            max-width: 200px;
+        }
+
+        .form-group.row {
+            margin-bottom: 1rem;
+        }
+
+            .form-group.row .col-form-label {
+                margin-bottom: 0;
+                text-align: right;
+            }
+
+            .form-group.row .col-sm-10 {
+                padding-left: 0;
+            }
+
+        .form-group input, .form-group select {
+            width: 100%;
+        }
+
+        @@media (max-width: 768px) {
+            .form-group {
+                margin-left: 0;
+            }
+        }
+
+        .nav-fixed #layoutSidenav #layoutSidenav_nav .sidenav {
+            padding-top: 0rem;
+        }
+
+        .container {
+            padding: 2rem;
+        }
+
+        .card-header {
+            padding: 1.5%;
+        }
+
+        .page-header-content {
+            display: flex;
+            justify-content: center;
+        }
+
+
+
+        .page-header > .container-fluid:first-of-type {
+            max-height: 100vh;
+            /*   padding: 1rem; */
+            margin-bottom: -10px;
+        }
+
+        .page-header-compact .page-header-content .page-header-title {
+            font-size: 1.5rem;
+        }
+
+
+        #tenantInfoContainer {
+            padding-top: 0;
+        }
+
+        #tenantInfoContainer {
+            margin-top: -3%;
+            padding-top: 0px;
+        }
+
+        .container-fluid {
+            margin-left: 60px;
+        }
+
+        footer {
+            background-color: #eff3f9;
+            color: #6c757d;
+            text-align: center;
+            padding: 1rem;
+            width: 100%;
+            position: relative;
+            bottom: 0;
+            flex-shrink: 0;
+        }
+
+        #layoutSidenav_content {
+            margin-bottom: -4%;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 0.5rem;
+            }
+
+            .form-group .form-control,
+            .form-group .form-control-file {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+
+        .page-header-content {
+            margin-left: 18%;
+        }
+
+
+        .page-header-compact .page-header-content {
+            padding: 0;
+            padding-top: 10px;
+        }
+
+        .page-header-content {
+            margin-left: 18%;
+        }
+
+
+        .page-header-compact .page-header-content {
+            padding: 0;
+            padding-top: 10px;
+        }
+
+        .page-header > .container-fluid:first-of-type {
+            max-height: 100vh;
+            /* padding: 1rem; */
+            margin-bottom: 5px;
+        }
+
+        .mb-3 {
+            margin-top: 2%;
+        }
+
+    </style>
+</head>
+<body>
+
+
+    <div class="container mt-4" id="tenantInfoContainer">
+        <div class="row">
+            <div class="col-lg-12">
                 <div class="card mb-4">
                     <div class="card-header">
-                        Add User
+                        Edit Tenant Information
                     </div>
                     <div class="card-body">
-                        <div class="sbp-preview">
-                            <div class="sbp-preview-content">
-                                <form method="post" id="createUser" action="/Tenant/EditTenant" enctype="multipart/form-data">
-                                    <div class="form-group">
-                                        <label for="logo">Logo<span class="mandatory">*</span></label>
-                                        <input type="file" name="Logo" class="form-control" id="logo" placeholder="Select logo" />
-                                        <span class="text-danger errorfont" id="logo-error"></span>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="name">Name<span class="mandatory">*</span></label>
-                                        <input name="name" class="form-control" id="name" placeholder="Name" />
-                                        <span class="text-danger errorfont" id="name-error"></span>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="email">Email<span class="mandatory">*</span></label>
-                                        <input type="email" name="email" class="form-control" id="email" placeholder="Enter Email" />
-                                        <span class="text-danger errorfont" id="email-error"></span>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="phoneNumber">Phone Number<span class="mandatory">*</span></label>
-                                        <input name="phoneNumber" class="form-control" id="phoneNumber" placeholder="Enter Phone Number" />
-                                        <span class="text-danger errorfont" id="phone-error"></span>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="timeZone">Time Zone<span class="mandatory">*</span></label>
-                                        <select name="timeZone" class="form-control" id="timeZone"></select>
-                                        <span class="text-danger errorfont" id="timeZone-error"></span>
-                                    </div>
-
-                                    <div id="saveButtonDiv">
-                                        <button class="saveButton" style="align-content: flex-end" type="submit" onclick="return validateForm();">Register</button>
-                                    </div>
-
-                                </form>
+                        @if (!string.IsNullOrEmpty(TempData["SuccessMessageInfo"] as string))
+                        {
+                            <div id="successMessageUser" class="alert @TempData["MessageClass"]">
+                                @TempData["SuccessMessageInfo"]
                             </div>
-                        </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(TempData["ErrorMessageInfo"] as string))
+                        {
+                            <div id="errorMessageUser" class="alert @TempData["MessageClass"]">
+                                @TempData["ErrorMessageInfo"]
+                            </div>
+                        }
+
+                        <form method="post" id="createUser" action="/@tenantName/Information/AddTenant" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label for="logo">Logo</label>
+                                <input type="file" name="LogoFile" class="form-control-file" id="logo" placeholder="Enter Logo" />
+                                <span class="text-danger" id="logo-error"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="PageName">Page Name <span class="mandatory">*</span></label>
+                                <input name="PageName" class="form-control" id="name" value="@Model.PageName" placeholder="Enter Page Name" />
+                                <span class="text-danger" id="name-error"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="TenantDisplayName">Tenant Display Name <span class="mandatory">*</span></label>
+                                <input name="TenantDisplayName" value="@Model.TenantDisplayName" class="form-control" id="TenantDisplayName" placeholder="Enter Tenant Display Name" />
+                                <span class="text-danger" id="TenantDisplayName-error"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="paypalId">Paypal ID <span class="mandatory">*</span></label>
+                                <input type="email" name="PaypalId" value="@Model.PaypalId" class="form-control" id="paypalId" />
+                                <span class="text-danger" id="paypalId-error"></span>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="timeZone">Time Zone <span class="mandatory">*</span></label>
+                                <select name="Timezone" class="form-control" id="timeZone"></select>
+                                <span class="text-danger" id="timeZone-error"></span>
+                            </div>
+                            <div id="saveButtonDiv">
+                                <button class="btn-custom saveButton" type="submit" onclick="return validateForm();">
+                                    Save
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
 
-@section Scripts
-{
-    <partial name="_ValidationScriptsPartial" />
-    <script src="path/to/timezones.full.js"></script>
-}
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script src="~/js/timezones.full.js"></script>
+    <script src="~/js/timezones.full.min.js"></script>
+    <script src="~/js/timezones.js"></script>
+    <script src="~/js/timezones.min.js"></script>
+    <script>
+        $(document).ready(function () {
 
-<script>
-    $(document).ready(function () {
-        $('#timeZone').timezones();
+            $('#successMessageUser').fadeIn().delay(2000).fadeOut();
+            $('#errorMessageUser').fadeIn().delay(2000).fadeOut();
 
-        $('#logo, #name, #email, #phoneNumber, #timeZone').on('blur change keyup', function() {
-            validateForm();
-        });
+            var pageClass = $('body').attr('class');
 
-        $('#phoneNumber').on('change keyup blur', function () {
-            var phnNo = $(this).val();
-            if (phnNo.length < 10) {
-                validateForm();
-                return;
+            if (pageClass === 'nav-fixed') {
+                $('.page-header-title').text('Tenant Information');
+                $('.page-header-title').addClass('custom-style');
             }
+            populateTimeZones();
+            $('#name').on('blur change keyup', validateName);
+            $('#paypalId').on('blur change keyup', validatePaypalId);
+            $('#timeZone').on('blur change', validateTimeZone);
+            $('#TenantDisplayName').on('blur change', validateTenantDisplay);
+            // $('#logo').on('change', validateLogo);
 
-            $.ajax({
-                url: '/User/VerifyPhoneNoAdd',
-                type: 'GET',
-                data: { phoneNumber: phnNo },
-                success: function (response) {
-                    if (response === false) {
-                        $('#phone-error').text('Phone Number Already Exists').show();
-                        $(".saveButton").prop("disabled", true);
-                    } else {
-                        $('#phone-error').text('');
-                        $(".saveButton").prop("disabled", false);
-                        validateForm();
-                    }
-                },
-                error: function () {
-                    console.error("An error occurred while verifying the phone number.");
+            $('.saveButton').on('click', function () {
+                if (validateForm()) {
+                    $(".saveButton").prop("disabled", false); 
+                    window.location.reload();
                 }
             });
         });
-    });
 
-    function validateForm() {
-        var isValid = true;
-
-        var logo = $("#logo").val();
-        if (logo.trim() === "") {
-            $("#logo-error").text("Logo is required.").show();
-            isValid = false;
-        } else {
-            $("#logo-error").text("").hide();
+        function populateTimeZones() {
+            var timezones = moment.tz.names();
+            var $timeZoneSelect = $('#timeZone');
+            $.each(timezones, function (index, timezone) {
+                $timeZoneSelect.append($('<option>', { value: timezone, text: timezone }));
+            });
+            $timeZoneSelect.val('@Model.Timezone');
         }
 
-        var name = $("#name").val();
-        if (name.trim() === "") {
-            $("#name-error").text("Name is required.").show();
-            isValid = false;
-        } else {
-            $("#name-error").text("").hide();
+        function validateLogo() {
+            var logoFile = $("#logo").val();
+            if (!logoFile) {
+                $("#logo-error").text("Logo is required.").show();
+                return false;
+            } else {
+                $("#logo-error").text("").hide();
+                return true;
+            }
         }
 
-        var email = $("#email").val();
-        if (email.trim() === "") {
-            $("#email-error").text("Email is required.").show();
-            isValid = false;
-        } else if (!isValidEmail(email)) {
-            $("#email-error").text("Invalid Email format.").show();
-            isValid = false;
-        } else {
-            $("#email-error").text("").hide();
+        function validateName() {
+            var name = $("#name").val();
+            if (name.trim() === "") {
+                $("#name-error").text("Name is required.").show();
+                return false;
+            } else {
+                $("#name-error").text("").hide();
+                return true;
+            }
         }
 
-        var phoneNumber = $("#phoneNumber").val();
-        if (phoneNumber.trim() === "") {
-            $("#phone-error").text("Phone Number is required.").show();
-            isValid = false;
-        } else if (!isValidPhoneNumber(phoneNumber)) {
-            $("#phone-error").text("Invalid Phone Number format.").show();
-            isValid = false;
-        } else {
-            $("#phone-error").text("").hide();
+        function validateTenantDisplay() {
+            var name = $("#TenantDisplayName").val();
+            if (name.trim() === "") {
+                $("#TenantDisplayName-error").text("Tenant display name is required.").show();
+                return false;
+            } else {
+                $("#TenantDisplayName-error").text("").hide();
+                return true;
+            }
         }
 
-        var timeZone = $("#timeZone").val();
-        if (timeZone.trim() === "") {
-            $("#timeZone-error").text("Time Zone is required.").show();
-            isValid = false;
-        } else {
-            $("#timeZone-error").text("").hide();
+        function validatePaypalId() {
+            var paypalId = $("#paypalId").val();
+            if (paypalId.trim() === "") {
+                $("#paypalId-error").text("Paypal ID is required.").show();
+                return false;
+            } else if (!isValidEmail(paypalId)) {
+                $("#paypalId-error").text("Invalid Paypal ID format.").show();
+                return false;
+            } else {
+                $("#paypalId-error").text("").hide();
+                return true;
+            }
         }
 
-        if (!isValid) {
-            $(".saveButton").prop("disabled", true);
-        } else {
-            $(".saveButton").prop("disabled", false);
+        function validateTimeZone() {
+            var timeZone = $("#timeZone").val();
+            if (!timeZone || timeZone.trim() === "") {
+                $("#timeZone-error").text("Time Zone is required.").show();
+                return false;
+            } else {
+                $("#timeZone-error").text("").hide();
+                return true;
+            }
         }
 
-        return isValid;
-    }
+        function validateForm() {
+            var isValid = true;
+            // isValid = validateLogo() && isValid;
+            isValid = validateName() && isValid;
+            isValid = validatePaypalId() && isValid;
+            isValid = validateTimeZone() && isValid;
+            $(".saveButton").prop("disabled", !isValid);
+            return isValid;
+        }
 
-    function isValidEmail(email) {
-        var emailRegex = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
-        return emailRegex.test(email);
-    }
+        function isValidEmail(email) {
+            var emailRegex = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+            return emailRegex.test(email);
+        }
+    </script>
 
-    function isValidPhoneNumber(phoneNumber) {
-        var phoneRegex = /^\d{10}$/;
-        return phoneRegex.test(phoneNumber);
-    }
-</script>
+    <script src="https://cdn.jsdelivr.net/npm/@@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    @*  <script src="~/js/scripts.js"></script> *@
+</body>
+</html>

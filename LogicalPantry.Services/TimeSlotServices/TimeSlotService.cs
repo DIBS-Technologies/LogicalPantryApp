@@ -75,7 +75,9 @@ namespace LogicalPantry.Services.TimeSlotServices
                     StartTime = timeSlotDto.StartTime,
                     EndTime = timeSlotDto.EndTime,
                     UserId = timeSlotDto.UserId,
-                    TenantId = timeSlotDto.TenantId
+                    TenantId = timeSlotDto.TenantId,
+                    EventType = timeSlotDto.EventType,
+                    MaxNumberOfUsers = timeSlotDto.MaxNumberOfUsers,    
                 };
 
                 _context.TimeSlots.Add(timeSlot);
@@ -122,14 +124,44 @@ namespace LogicalPantry.Services.TimeSlotServices
             return await _context.TimeSlots.ToListAsync();
         }
 
-
-        public async Task<int?> GetTimeSlotIdAsync(DateTime startTime, DateTime endTime, string title)
+        public async Task<IEnumerable<TimeSlot>> GetAllEventsByTenantIdAsync(int tenantId)
         {
+            // Fetch events from the TimeSlot table that match the given tenantId
+            return await _context.TimeSlots
+                .Where(ts => ts.TenantId == tenantId)
+                .ToListAsync();
+        }
+
+
+
+        //public async Task<int?> GetTimeSlotIdAsync(DateTime startTime, DateTime endTime, string title)
+        //{
+        //    var timeSlot = await _context.TimeSlots
+        //        .Where(ts => ts.StartTime == startTime && ts.EndTime == endTime && ts.TimeSlotName == title)
+        //        .FirstOrDefaultAsync();
+
+
+        //    return timeSlot?.Id;
+        //}
+
+        public async Task<TimeSlotDto> GetTimeSlotDetailsAsync(DateTime? startTime, DateTime? endTime, string title)
+        {
+            // Check if any parameter is null or empty
+            if (!startTime.HasValue || !endTime.HasValue || string.IsNullOrWhiteSpace(title))
+            {           
+                return null; // Or handle the error according to your needs
+            }
+
             var timeSlot = await _context.TimeSlots
-                .Where(ts => ts.StartTime == startTime && ts.EndTime == endTime && ts.TimeSlotName == title)
+                .Where(ts => ts.StartTime == startTime.Value && ts.EndTime == endTime.Value && ts.TimeSlotName == title)
+                .Select(ts => new TimeSlotDto
+                {
+                    Id = ts.Id,
+                    MaxNumberOfUsers = ts.MaxNumberOfUsers // Assuming you have a MaxUsers property in TimeSlot
+                })
                 .FirstOrDefaultAsync();
 
-            return timeSlot?.Id;
+            return timeSlot;
         }
 
 

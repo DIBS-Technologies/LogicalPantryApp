@@ -11,6 +11,8 @@ namespace LogicalPantry.DTOs.TimeSlotSignupDtos
         public int Id { get; set; }
         public int TimeSlotId { get; set; }
         public int UserId { get; set; }
+        public string EventType { get; set; }
+        public int MaxNumberOfUsers { get; set; }
         public bool Attended { get; set; }
 
 

@@ -13,6 +13,7 @@ using LogicalPantry.Services.RegistrationService;
 using Autofac.Core;
 using LogicalPantry.Services.InformationService;
 using LogicalPantry.Services.TimeSlotSignupService;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,29 @@ builder.Services.AddMemoryCache();
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+
+
+// Add rate limiter middleware
+builder.Services.AddRateLimiter(options =>
+{
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: context.User?.Identity?.Name ?? context.Request.Headers.Host.ToString(),
+            factory: partition => new FixedWindowRateLimiterOptions
+            {
+                PermitLimit = 100,
+                Window = TimeSpan.FromMinutes(1),
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                QueueLimit = 2
+            })
+    );
+    options.RejectionStatusCode = 429;
+});
+
+
+
+
 
 // Add Entity Framework Core DbContext with SQL Server
 builder.Services.AddDbContext<ApplicationDataContext>(options =>
@@ -45,7 +69,16 @@ builder.Services.AddAuthentication(options =>
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme; // Default authentication scheme
     options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme; // Default sign-in scheme
 })
-.AddCookie() // Add cookie authentication
+.AddCookie(options =>
+{
+    options.LoginPath = "/Auth/loginview";
+    options.LogoutPath = "/Auth/Logout";
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // Set appropriate expiry time
+    options.SlidingExpiration = true;
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Ensure it's set to Secure if using HTTPS
+    options.AccessDeniedPath = "/Auth/AccessDenied"; // Path to access denied page  //8/30/24
+}) // Add cookie authentication
 .AddOpenIdConnect(options =>
 {
     // Configure OpenID Connect authentication
@@ -86,6 +119,8 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
     options.AddPolicy("UserPolicy", policy => policy.RequireRole("User"));
 });
+
+
 // Add scoped services for dependency injection
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
@@ -129,8 +164,6 @@ else
 
 app.UseHttpsRedirection(); // Redirect HTTP requests to HTTPS
 app.UseAuthentication(); // Enable authentication middleware
-app.UseAuthorization(); // Enable authorization middleware
-
 // Add the Tenant Middleware
 
 app.UseStaticFiles(); // Serve static files from wwwroot folder
@@ -138,23 +171,9 @@ app.UseSession(); // Enable session middleware
 app.UseMiddleware<TenantMiddleware>();
 
 app.UseRouting(); // Enable routing
+app.UseAuthorization(); // Enable authorization middleware
 
-
-//app.MapControllerRoute(
-//    name: "default",
-//    pattern: "{controller=Auth}/{action=loginView}/{id?}");
-
-
-//// Define a route pattern Equals includes the tenant in the URL
-//app.MapControllerRoute(
-//    name: "tenantRoute",
-//    pattern: "{tenant}/{controller=Information}/{action=Home}/{id?}",
-//    defaults: new { controller = "Information", action = "Home" });
-
-//app.MapControllerRoute(
-//    name: "tenantRoute",
-//    pattern: "{tenant?}/{controller=Information}/{action=Home}/{id?}");
-
+app.UseRateLimiter(); // Only one instance of this
 
 
 app.MapControllerRoute(
