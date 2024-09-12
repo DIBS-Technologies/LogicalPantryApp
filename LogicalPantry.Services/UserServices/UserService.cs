@@ -736,7 +736,7 @@ namespace LogicalPantry.Services.UserServices
                     existingUser.FullName = userDto.FullName;
                     existingUser.Address = userDto.Address;
                     existingUser.PhoneNumber = userDto.PhoneNumber;
-                    existingUser.IsAllow = false; // Default value or update based on your logic
+                   // existingUser.IsAllow = false; 
                     existingUser.IsRegistered = true; // Ensure the registration status remains false or set as needed
                     existingUser.DateOfBirth = userDto.DateOfBirth;
                     existingUser.ZipCode = userDto.ZipCode;
@@ -762,7 +762,7 @@ namespace LogicalPantry.Services.UserServices
                         Address = userDto.Address,
                         Email = userDto.Email,
                         PhoneNumber = userDto.PhoneNumber,
-                        IsAllow = false,
+                        //IsAllow = false,
                         IsRegistered = false,
                         ZipCode = userDto.ZipCode,
                         HouseholdSize = userDto.HouseholdSize,

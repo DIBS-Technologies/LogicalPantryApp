@@ -205,11 +205,7 @@ namespace LogicalPantry.Web.Controllers
                 var tenantId = tenanatResponse.Data.Id;
                 if (pageName == null)
                 {
-                    //return NotFound("The requested page name was not found.");
-                    var TenantDisplayName1 = HttpContext.Session.GetString("TenantDisplayName");
-                    TenantDisplayName1 = TenantDisplayName1 ?? string.Empty;
-
-                    ViewBag.PageName = TenantDisplayName1;
+                    ViewBag.TenantId = tenantId;
                     return View();
                 }
 
@@ -271,8 +267,9 @@ namespace LogicalPantry.Web.Controllers
                 ViewBag.ErrorMessage = "   Page Not Found.";
                 // Log the ended of the Index method execution.
                 _logger.LogInformation("Home method call ended");
-                return View("Error");
-               // return View();
+                // return View("Error");
+                //return View();
+                return NotFound(tenanatResponse.Message);
             }                      
         }
 
