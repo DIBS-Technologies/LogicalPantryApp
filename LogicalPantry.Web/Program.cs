@@ -20,9 +20,6 @@ var builder = WebApplication.CreateBuilder(args);
 //Add Cashe to the browser
 builder.Services.AddMemoryCache();
 
-//Add output cache
-
-
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
@@ -36,9 +33,14 @@ builder.Services.AddRateLimiter(options =>
             partitionKey: context.User?.Identity?.Name ?? context.Request.Headers.Host.ToString(),
             factory: partition => new FixedWindowRateLimiterOptions
             {
-                PermitLimit = 100,
+                //Specifies the maximum number of permits that can be granted within the defined time window.
+                //PermitLimit = 100,
+                PermitLimit = 500,
+                /// Defines the duration of the time window during which the permit limit is enforced.
                 Window = TimeSpan.FromMinutes(1),
+                /// Determines the order in which requests in the queue are processed.
                 QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                /// Specifies the maximum number of requests that can be queued for processing.
                 QueueLimit = 2
             })
     );
@@ -168,7 +170,7 @@ app.UseAuthentication(); // Enable authentication middleware
 
 app.UseStaticFiles(); // Serve static files from wwwroot folder
 app.UseSession(); // Enable session middleware
-app.UseMiddleware<TenantMiddleware>();
+app.UseMiddleware<TenantMiddleware>(); //coustom middleware
 
 app.UseRouting(); // Enable routing
 app.UseAuthorization(); // Enable authorization middleware

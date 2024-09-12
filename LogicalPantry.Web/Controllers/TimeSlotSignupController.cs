@@ -28,6 +28,11 @@ namespace LogicalPantry.Web.Controllers
             _timeSlotSignupService = timeSlotSignupService;
         }
 
+
+        /// <summary>
+        /// Displays the index page for time slot sign-ups.
+        /// </summary>
+        /// <returns>Returns the view for the index page.</returns>
         [Authorize(Roles = $"{UserRoleEnum.Admin},{UserRoleEnum.User}")]
         [Route("Index")]
         public IActionResult Index()
@@ -38,7 +43,11 @@ namespace LogicalPantry.Web.Controllers
              return View();
         }
 
-
+        /// <summary>
+        /// Retrieves users who have signed up for a specific time slot.
+        /// </summary>
+        /// <param name="timeSlot">The date and time of the time slot.</param>
+        /// <returns>Returns a list of users who signed up for the specified time slot.</returns>
         [Authorize(Roles = $"{UserRoleEnum.Admin},{UserRoleEnum.User}")]
         [HttpGet("GetUsersbyTimeSlot")]
         public object GetUsersbyTimeSlot(DateTime timeSlot)
@@ -54,6 +63,11 @@ namespace LogicalPantry.Web.Controllers
             return response;
         }
 
+        /// <summary>
+        /// Adds a new time slot sign-up for a user.
+        /// </summary>
+        /// <param name="dto">The details of the time slot sign-up.</param>
+        /// <returns>Returns a response indicating the success or failure of the sign-up operation.</returns>
         [Authorize(Roles = $"{UserRoleEnum.User}")]
         [HttpPost("AddTimeSlotSignUps")]
         public async Task<IActionResult> AddTimeSlotSignUps([FromBody] TimeSlotSignupDto dto)

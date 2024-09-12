@@ -37,6 +37,10 @@ namespace LogicalPantry.Web.Controllers
             _registrationService = registrationService;
         }
 
+        /// <summary>
+        /// Displays the default index page for the UserController.
+        /// </summary>
+        /// <returns>Returns the view for the index page.</returns>
         public IActionResult Index()
         {
             _logger.LogInformation("Index method call started.");
@@ -45,6 +49,11 @@ namespace LogicalPantry.Web.Controllers
             return View();
         }
 
+
+        /// <summary>
+        /// Manages users by displaying all registered users for a specific tenant.
+        /// </summary>
+        /// <returns>Returns the view with a list of all registered users.</returns>
         [Authorize(Roles = $"{UserRoleEnum.Admin}")]
         [HttpGet]
         [Route("ManageUsers")]
@@ -62,8 +71,11 @@ namespace LogicalPantry.Web.Controllers
             return View(response.Data);
         }
 
-       
 
+        /// <summary>
+        /// Retrieves session data such as user email and username.
+        /// </summary>
+        /// <returns>Returns user email and username if found, otherwise returns NotFound.</returns>
         [HttpGet("session")]
         public IActionResult GetSessionData()
         {
@@ -79,8 +91,13 @@ namespace LogicalPantry.Web.Controllers
             return Ok(new { UserEmail = userEmail, UserName = userName });
         }
 
-       
 
+        /// <summary>
+        /// Updates user information based on user ID and allowance status.
+        /// </summary>
+        /// <param name="userId">The ID of the user to update.</param>
+        /// <param name="isAllow">The allowance status to set for the user.</param>
+        /// <returns>Returns Ok if the update is successful, otherwise returns StatusCode 500 for internal server error.</returns>
         [Authorize(Roles = $"{UserRoleEnum.Admin}")]
         [HttpPost("UpdateUser")] //ThisExpressionSyntax is ForbidResult allow method
         public async Task<IActionResult> UpdateUser(string userId, bool isAllow)
@@ -109,6 +126,11 @@ namespace LogicalPantry.Web.Controllers
             }
         }
 
+        /// <summary>
+        /// Updates multiple users' attendance statuses in batch.
+        /// </summary>
+        /// <param name="userStatuses">A list of UserDto objects containing user IDs and their updated statuses.</param>
+        /// <returns>Returns Ok if the update is successful; otherwise, returns StatusCode 500 for internal server error.</returns>
         [Authorize(Roles = $"{UserRoleEnum.Admin}")]
         [HttpPost("UpdateUserBatch")]
         public async Task<IActionResult> UpdateUserBatch([FromBody] List<UserDto> userStatuses)
@@ -121,6 +143,7 @@ namespace LogicalPantry.Web.Controllers
 
             try
             {
+                //get response from service for users
                 var response = await _userService.UpdateUserAttendanceStatusAsync(userStatuses);
 
                 if (response.Success)
@@ -147,6 +170,12 @@ namespace LogicalPantry.Web.Controllers
 
         }
 
+
+        /// <summary>
+        /// Retrieves the user ID based on the provided email address.
+        /// </summary>
+        /// <param name="dto">UserDto object containing the email address.</param>
+        /// <returns>Returns Ok with the user ID if found; otherwise, returns BadRequest for invalid email or StatusCode 500 for internal server error.</returns>
         [HttpPost("GetUserIdByEmail")]
         public async Task<IActionResult> GetUserIdByEmail([FromBody]UserDto dto)
         {
@@ -170,6 +199,13 @@ namespace LogicalPantry.Web.Controllers
 
         }
 
+
+
+        /// <summary>
+        /// Deletes a user based on the provided user ID.
+        /// </summary>
+        /// <param name="userId">User ID to be deleted.</param>
+        /// <returns>Returns Ok if the user is successfully deleted; otherwise, returns BadRequest for invalid ID format or StatusCode 500 for internal server error.</returns>
         [Authorize(Roles = $"{UserRoleEnum.Admin}")]
         [HttpPost("DeleteUser")]
         public async Task<IActionResult> DeleteUser(string userId)
@@ -204,6 +240,11 @@ namespace LogicalPantry.Web.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Displays the registration page.
+        /// </summary>
+        /// <returns>Returns the view for the registration page.</returns>
         [HttpGet("Register")]
         public async Task<IActionResult> Register()
         {
@@ -216,6 +257,24 @@ namespace LogicalPantry.Web.Controllers
             return View();
         }
 
+
+        /// <summary>
+        /// Handles user registration by processing the provided <see cref="UserDto"/>.
+        /// Redirects users based on the result of the registration process.
+        /// </summary>
+        /// <param name="user">The user data transfer object containing user registration details.</param>
+        /// <returns>
+        /// An <see cref="IActionResult"/> that redirects to either the PayPal donation page or the User Calendar page, 
+        /// depending on the registration result. Displays appropriate success or error messages using TempData.
+        /// </returns>
+        /// <remarks>
+        /// The method uses the <see cref="HttpContext.Items"/> to get the tenant ID. It then uses this ID to set the tenant 
+        /// information on the <paramref name="user"/> object before calling the <see cref="IRegistrationService"/> to 
+        /// register the user. Based on the registration outcome, it redirects to the appropriate page and sets TempData 
+        /// messages for user feedback.
+        /// </remarks>
+        /// <exception cref="ArgumentException">Thrown when the tenant ID cannot be parsed from the context.</exception>
+        /// <exception cref="Exception">Thrown for unexpected errors during the registration process.</exception>
         [Authorize(Roles = $"{UserRoleEnum.User}")]
         [HttpPost("Register")]
         public async Task<IActionResult> Register(UserDto user)
@@ -254,8 +313,18 @@ namespace LogicalPantry.Web.Controllers
             //return RedirectToAction("UserCalendar", "TimeSlot", new { area = "" });
         }
 
-
-        //[Authorize(Roles = $"{UserRoleEnum.Admin},{UserRoleEnum.User}")]
+        /// <summary>
+        /// Displays the user's profile page with their details fetched by email.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="IActionResult"/> that renders the profile view with user details if found; otherwise, renders the profile view with no data.
+        /// </returns>
+        /// <remarks>
+        /// The method retrieves the user's email from the authenticated user and fetches their details from the user service. 
+        /// If the details are successfully retrieved, they are passed to the view. Otherwise, an empty profile view is returned.
+        /// </remarks>
+        /// <exception cref="Exception">Thrown for unexpected errors while fetching user details.</exception>
+        [Authorize(Roles = $"{UserRoleEnum.Admin},{UserRoleEnum.User}")]
         [HttpGet("Profile")]
         public async Task<IActionResult> Profile()
         {
@@ -272,7 +341,21 @@ namespace LogicalPantry.Web.Controllers
         }
 
 
-
+        /// <summary>
+        /// Handles the profile update and profile picture upload for the user.
+        /// </summary>
+        /// <param name="user">The <see cref="UserDto"/> containing updated user details.</param>
+        /// <param name="ProfilePicture">The profile picture file to upload.</param>
+        /// <returns>
+        /// An <see cref="IActionResult"/> that redirects to the profile page upon successful update or displays an error message if the update fails.
+        /// </returns>
+        /// <remarks>
+        /// The method validates the user input and profile picture. If valid, it uploads the picture and updates the user's profile. 
+        /// It then redirects to the profile page with a success or error message based on the result of the update operation.
+        /// </remarks>
+        /// <exception cref="ArgumentException">Thrown when the tenant ID cannot be parsed from the context.</exception>
+        /// <exception cref="Exception">Thrown for unexpected errors during profile update or file upload.</exception>
+        [Authorize(Roles = $"{UserRoleEnum.Admin},{UserRoleEnum.User}")]
         [HttpPost("Profile")]
         public async Task<IActionResult> Profile(UserDto user, IFormFile ProfilePicture)
         {
@@ -352,52 +435,18 @@ namespace LogicalPantry.Web.Controllers
 
 
 
-
-
-
-
-        // [Authorize(Roles = $"{UserRoleEnum.Admin},{UserRoleEnum.User}")]
-        //[HttpPost("Profile")]
-        //public async Task<IActionResult> Profile(UserDto user)
-        //{
-
-
-        //     _logger.LogInformation("Profile method call started");
-
-        //    var tenantId = HttpContext.Items["TenantId"]?.ToString();
-        //    if (string.IsNullOrEmpty(tenantId))
-        //    {
-        //        TempData["MessageClass"] = "alert-danger";
-        //        TempData["SuccessMessageUser"] = "Failed to retrieve Tenant ID.";
-        //        return View("Profile", user);
-        //    }
-
-        //    user.TenantId = int.Parse(tenantId);
-        //    var response = await _userService.ProfileRagistration(user);
-
-        //    if (response != null && response.Success)
-        //    {
-
-
-        //        _logger.LogInformation("Profile method call ended successfully");
-        //        @TempData["MessageClass"] = "alert-success";
-        //        @TempData["SuccessMessageUser"] = "Profile save successful";
-        //        return View("Profile", response.Data);
-        //    }
-        //    else
-        //    {
-        //        @TempData["MessageClass"] = "alert-danger";
-        //        @TempData["SuccessMessageUser"] = "Failed to Save Profile server error.";
-        //        _logger.LogInformation("Profile method call ended with errors");
-        //        return View("Profile", user); // Return the view with the user data to preserve inputs
-        //    }
-        //}
-
-
-
-
-
-
+        /// <summary>
+        /// Validates if the provided email ID exists by checking it through the registration service.
+        /// </summary>
+        /// <param name="emailId">The email address to validate.</param>
+        /// <returns>
+        /// An <see cref="object"/> representing the result of the email existence check.
+        /// </returns>
+        /// <remarks>
+        /// This method calls the registration service to check whether the provided email address is already registered.
+        /// It logs the start and end of the method execution for debugging purposes.
+        /// </remarks>
+        /// <exception cref="Exception">Thrown for unexpected errors while checking email existence.</exception>
         [HttpGet]
         public object ValidateEmail(string emailId)
         {
@@ -408,6 +457,20 @@ namespace LogicalPantry.Web.Controllers
             return response;
         }
 
+
+        /// <summary>
+        /// Retrieves user details based on the provided email address.
+        /// </summary>
+        /// <param name="email">The email address of the user to retrieve.</param>
+        /// <returns>
+        /// An <see cref="IActionResult"/> that returns an <see cref="OkObjectResult"/> with the user's allowance status if found,
+        /// a <see cref="NotFoundResult"/> if the user data is not found, or a <see cref="StatusCodeResult"/> for internal server errors.
+        /// </returns>
+        /// <remarks>
+        /// This method attempts to fetch user details based on the provided email. If the email is found, it returns whether the user is allowed.
+        /// If the email is not found, it returns a 404 Not Found response. In case of exceptions, it returns a 500 Internal Server Error response.
+        /// </remarks>
+        /// <exception cref="Exception">Thrown for unexpected errors while retrieving user details.</exception>
         [HttpGet("GetUser")]
         public async Task<IActionResult> GetUser(string email)
         {

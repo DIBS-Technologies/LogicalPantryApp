@@ -370,10 +370,7 @@ namespace LogicalPantry.Services.UserServices
             try
             {
                 if(email != null)
-                {
-                    
-                
-                
+                {                              
                 // Check if the email is present in the Tenant table
                 var tenant = dataContext.Tenants
                     .Where(t => t.AdminEmail == email)

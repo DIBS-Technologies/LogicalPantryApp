@@ -236,14 +236,24 @@
 <body class="@(isAdmin ? "nav-fixed" : "")">
     <div id="layoutSidenav">
         <nav class="topnav navbar navbar-expand shadow navbar-light bg-white" id="sidenavAccordion">
-            <div class="tenantImage">
+            @* <div class="tenantImage">
             
                 <img id="logoImage" src="" style="padding-left: 10px; opacity:100%" />
             </div>
             <div class="page-name" id="pageName">               
               
+            </div> *@
+            <div class="tenantImage">
+                <img id="logoImage" src="" style="padding-left: 10px; opacity:100%" />
             </div>
-
+            <div class="page-name" id="pageName">
+                @*   @{
+                string formattedPageName = !string.IsNullOrEmpty(pagename)
+                ? char.ToUpper(pagename.Replace(".html", " ")[0]) + pagename.Replace(".html", " ").Substring(1)
+                : "";
+                } *@
+                @*    @pagename *@
+            </div>
      
 
             <div class="navbar-nav">

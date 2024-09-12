@@ -13,6 +13,9 @@ using LogicalPantry.Web.Helper;
 
 namespace LogicalPantry.Web.Controllers
 {
+    /// <summary>
+    /// Handles time slot management actions for events within the application.
+    /// </summary>
     [Route("TimeSlot")]
     public class TimeSlotController : BaseController
     {
@@ -22,7 +25,13 @@ namespace LogicalPantry.Web.Controllers
         private readonly IUserService _userSercvice;
         private readonly IInformationService _informationService;
 
-
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TimeSlotController"/> class.
+        /// </summary>
+        /// <param name="logger">Logger for logging controller actions.</param>
+        /// <param name="timeSlotService">Service for handling time slot operations.</param>
+        /// <param name="userService">Service for handling user operations.</param>
+        /// <param name="informationService">Service for retrieving tenant information.</param>
         public TimeSlotController(ILogger<TimeSlotController> logger, ITimeSlotService timeSlotService, IUserService userService, IInformationService informationService)
         {
             _logger = logger;
@@ -31,59 +40,11 @@ namespace LogicalPantry.Web.Controllers
             _informationService = informationService;
         }
 
-
-        //[HttpPost("AddEvent")]
-        //public async Task<IActionResult> AddEvent([FromBody] TimeSlotDto timeSlotDto)
-        //{
-        //    _logger.LogInformation("AddEvent method call started.");
-        //    if (timeSlotDto == null)
-        //    {
-        //        return BadRequest("Event data is null.");
-        //    }
-
-        //    var tenantName = TenantName;
-        //    var tenanatResponse = await _informationService.GetTenantPageNameForUserAsync(tenantName);
-        //    if (tenanatResponse.Success)
-        //    {
-        //        timeSlotDto.TenantId = tenanatResponse.Data.Id;
-
-        //    }
-        //    var userEmail = UserEmail;
-        //    var userResponse = await _userSercvice.GetUserIdByEmail(userEmail);
-        //    if (userResponse.Success)
-        //    {
-        //        timeSlotDto.UserId = userResponse.Data;
-        //    }
-
-
-        //    if (ModelState.IsValid)
-        //    {
-        //        var success = await _timeSlotService.AddTimeSlotAsync(timeSlotDto);
-
-
-        //        if (success)
-        //        {
-        //            // Return a JSON response indicating success
-        //            return Ok(new { success = true, message = "Event added successfully." });
-        //        }
-        //        else
-        //        {
-        //            // Return a server error response
-        //            return StatusCode(500, "An error occurred while saving the time slot. Please try again.");
-        //        }
-
-        //    }
-        //    else
-        //    {
-
-
-        //        _logger.LogInformation("AddEvent method call ended.");
-        //        return BadRequest(ModelState); // Return a bad request response with validation errors
-        //    }
-
-        //    return Ok();
-        //}
-
+        /// <summary>
+        /// Adds a new time slot event for the specified tenant.
+        /// </summary>
+        /// <param name="timeSlotDto">The time slot event data to be added.</param>
+        /// <returns>A JSON response indicating the success or failure of the operation.</returns>
         [Authorize(Roles = $"{UserRoleEnum.Admin}")]
         [HttpPost("AddEvent")]
         public async Task<IActionResult> AddEvent([FromBody] TimeSlotDto timeSlotDto)
@@ -134,6 +95,12 @@ namespace LogicalPantry.Web.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Edits the users associated with a specific time slot based on the time slot ID.
+        /// </summary>
+        /// <param name="Id">The ID of the time slot to retrieve users for.</param>
+        /// <returns>Returns a view with a list of users associated with the time slot.</returns>
         [Authorize(Roles = $"{UserRoleEnum.Admin}")]
         [HttpGet("EditTimeSlotUser")]
         public async Task<IActionResult> EditTimeSlotUser(int Id)
@@ -164,44 +131,7 @@ namespace LogicalPantry.Web.Controllers
                 //return NotFound("Users not found for the specified time slot.");
             }
 
-        }
-
-       
-
-
-            //[HttpPost("EditTimeSlotUser")]
-            //public async Task<IActionResult> EditTimeSlotUser([FromBody] TimeSlotDto request)
-            //{
-            //    // Log the starting of the EditTimeSlotUser method execution.
-            //    _logger.LogInformation("EditTimeSlotUser POST method call started");
-
-            //    //if (string.IsNullOrEmpty(Id) || !int.TryParse(Id, out int timeSlotId))
-            //    //{
-            //    //    return BadRequest("Invalid time slot ID.");
-            //    //}
-            //    if (request.Id <= 0)
-            //    {
-            //        return BadRequest("Invalid time slot ID.");
-            //    }
-
-            //    var response = await _userSercvice.GetUsersbyTimeSlotId(request.Id);
-            //    if (response.Success && response.Data != null)
-            //    {
-            //        // Log the ending of the EditTimeSlotUser method execution.
-            //        _logger.LogInformation("EditTimeSlotUser method executed successfully.");
-            //        TempData["MessageClass"] = "alert-success";
-            //        TempData["SuccessMessageBatch"] = "User Saved Successfully";
-            //        return View(response.Data.ToList());
-            //        // return View();
-            //    }
-            //    else
-            //    {
-            //        // Handle the case where users are not found.
-            //        return View(response.Data.ToList()); // Return an empty list to the view
-            //    }
-            //}
-
-
+        }                 
         private long ToUnixTimestamp(DateTime dateTime)
         {
             _logger.LogInformation("ToUnixTimestamp method call started.");
@@ -210,34 +140,38 @@ namespace LogicalPantry.Web.Controllers
 
         }
 
-        [HttpPost]
-        public async Task<IActionResult> SaveEvent([FromBody]TimeSlotDto timeSlotDto)
-        {
-            _logger.LogInformation("SaveEvent method call started.");
+        //[HttpPost]
+        //public async Task<IActionResult> SaveEvent([FromBody]TimeSlotDto timeSlotDto)
+        //{
+        //    _logger.LogInformation("SaveEvent method call started.");
 
-            if (ModelState.IsValid)
-            {
-                if (timeSlotDto.Id == 0)
-                {
-                    // Add new event
-                    await _timeSlotService.AddTimeSlotAsync(timeSlotDto);
-                }
-                else
-                {
-                    // Update existing event
-                    await _timeSlotService.UpdateTimeSlotAsync(timeSlotDto);
-                }
-                return Ok();
-            }
+        //    if (ModelState.IsValid)
+        //    {
+        //        if (timeSlotDto.Id == 0)
+        //        {
+        //            // Add new event
+        //            await _timeSlotService.AddTimeSlotAsync(timeSlotDto);
+        //        }
+        //        else
+        //        {
+        //            // Update existing event
+        //            await _timeSlotService.UpdateTimeSlotAsync(timeSlotDto);
+        //        }
+        //        return Ok();
+        //    }
 
-            _logger.LogInformation("SaveEvent method call ended.");
+        //    _logger.LogInformation("SaveEvent method call ended.");
 
-            return BadRequest();
+        //    return BadRequest();
 
-        }
+        //}
 
-        
 
+        /// <summary>
+        /// Converts a DateTimeOffset to a Unix timestamp in seconds.
+        /// </summary>
+        /// <param name="dateTime">The DateTimeOffset to convert.</param>
+        /// <returns>Returns the Unix timestamp as a long.</returns>
         // Helper method to convert DateTimeOffset to Unix timestamp (seconds)
         private long ToUnixTimestamp(DateTimeOffset dateTime)
         {
@@ -246,7 +180,11 @@ namespace LogicalPantry.Web.Controllers
             return dateTime.ToUnixTimeSeconds();
         }
 
-
+        /// <summary>
+        /// Retrieves the ID of a time slot based on the provided time range and time slot name.
+        /// </summary>
+        /// <param name="request">The request object containing time slot details such as StartTime, EndTime, and TimeSlotName.</param>
+        /// <returns>Returns the time slot ID and the maximum number of users for the time slot if found, or an error message if not.</returns>
         [Authorize(Roles = $"{UserRoleEnum.Admin},{UserRoleEnum.User}")]
         [HttpPost("GetTimeSlotId")]
         public async Task<IActionResult> GetTimeSlotId([FromBody]TimeSlotDto request)
@@ -274,16 +212,6 @@ namespace LogicalPantry.Web.Controllers
 
             var timeSlotDetails = await _timeSlotService.GetTimeSlotDetailsAsync(startTime, endTime, request.TimeSlotName);
 
-            //if (timeSlotId.HasValue)
-            //{
-            //    _logger.LogInformation("GetTimeSlotId method call ended.");
-            //    return Ok(new { timeSlotId = timeSlotId });
-            //}
-            //else
-            //{
-            //    return NotFound("Time slot not found.");
-            //}
-
 
             if (timeSlotDetails != null)
             {
@@ -299,6 +227,12 @@ namespace LogicalPantry.Web.Controllers
                 return NotFound("Time slot not found.");
             }
         }
+
+
+        /// <summary>
+        /// Displays the calendar page for administrators, including all events for the current tenant.
+        /// </summary>
+        /// <returns>Returns a view containing the calendar with events for the tenant.</returns>
         [Authorize(Roles = $"{UserRoleEnum.Admin}")]
         [HttpGet("Calendar")]
         public async Task<IActionResult> Calendar()
@@ -347,19 +281,11 @@ namespace LogicalPantry.Web.Controllers
             return View(model);
         }
 
-        private DateTimeOffset GetStartOfWeek(DateTimeOffset dateTime)
-        {
-            _logger.LogInformation("GetStartOfWeek method call started.");
 
-            int diff = (int)dateTime.DayOfWeek - (int)DayOfWeek.Sunday;
-
-            _logger.LogInformation("GetStartOfWeek method call ended.");
-
-            return dateTime.AddDays(-diff).Date;
-
-        }
-
-
+        /// <summary>
+        /// Displays the user-specific calendar page, including all events for the current tenant.
+        /// </summary>
+        /// <returns>Returns a view containing the user calendar with events for the tenant.</returns>
         [Authorize(Roles = $"{UserRoleEnum.User}")]         
         [HttpGet("UserCalendar")]
         public async Task<IActionResult> UserCalendar()

@@ -30,7 +30,10 @@ namespace LogicalPantry.Web.Controllers
             _memoryCache = memoryCache;
         }
 
-
+        /// <summary>
+        /// Displays the default view for the controller.
+        /// </summary>
+        /// <returns>The view for the Index page.</returns>
         public IActionResult Index()
         {
             _logger.LogInformation($"Index method call started");
@@ -38,7 +41,11 @@ namespace LogicalPantry.Web.Controllers
             return View();
         }
 
-       //No need to authorization public method 
+        /// <summary>
+        /// Retrieves tenant information based on the specified tenant ID.
+        /// </summary>
+        /// <param name="tenantId">The ID of the tenant to retrieve information for.</param>
+        /// <returns>An <see cref="IActionResult"/> containing the tenant information or an error status.</returns>
         [HttpGet("Get")]
         public async Task<IActionResult> Get(int tenantId)
         {
@@ -72,7 +79,10 @@ namespace LogicalPantry.Web.Controllers
 
 
 
-
+        /// <summary>
+        /// Displays the AddTenant view for adding or updating a tenant.
+        /// </summary>
+        /// <returns>An <see cref="IActionResult"/> that renders the AddTenant view with tenant data.</returns>
         [Authorize(Roles = $"{UserRoleEnum.Admin}")]
         [HttpGet]
         [Route("AddTenant")]
@@ -90,7 +100,12 @@ namespace LogicalPantry.Web.Controllers
             return View(response.Data);
         }
 
-        // Handle form submission
+        /// <summary>
+        /// Handles the form submission for adding or updating a tenant, including saving the tenant logo.
+        /// </summary>
+        /// <param name="tenantDto">The tenant data to be added or updated.</param>
+        /// <param name="LogoFile">The logo file to be uploaded and saved.</param>
+        /// <returns>An <see cref="IActionResult"/> that renders the AddTenant view with the tenant data or redirects to display the updated data.</returns>
         [Authorize(Roles = $"{UserRoleEnum.Admin}")]
         [HttpPost("AddTenant")]
         public async Task<IActionResult> AddTenant(TenantDto tenantDto, IFormFile LogoFile)
@@ -140,7 +155,13 @@ namespace LogicalPantry.Web.Controllers
             return View(tenantDto);
         }
 
-
+        /// <summary>
+        /// Redirects to the tenant's view based on the provided tenant ID.
+        /// </summary>
+        /// <param name="id">The ID of the tenant to retrieve and redirect to.</param>
+        /// <returns>
+        /// An <see cref="IActionResult"/> that renders the tenant view if found; otherwise, returns a NotFound result with an error message.
+        /// </returns>
         [HttpGet("RedirectTenant")]
         public async Task<IActionResult> RedirectTenant(int id)
         {
@@ -160,7 +181,13 @@ namespace LogicalPantry.Web.Controllers
         }
 
 
-
+        /// <summary>
+        /// Loads and renders the home page for the current tenant based on the tenant's page configuration.
+        /// </summary>
+        /// <returns>
+        /// An <see cref="IActionResult"/> that renders the tenant's home page if the page name is found and the file exists; 
+        /// otherwise, returns an error page or a default view if the tenant or page is not found.
+        /// </returns>
         [HttpGet("/{action?}")]
         public async Task<IActionResult> Home()
         {
@@ -179,15 +206,14 @@ namespace LogicalPantry.Web.Controllers
                 if (pageName == null)
                 {
                     //return NotFound("The requested page name was not found.");
+                    var TenantDisplayName1 = HttpContext.Session.GetString("TenantDisplayName");
+                    TenantDisplayName1 = TenantDisplayName1 ?? string.Empty;
+
+                    ViewBag.PageName = TenantDisplayName1;
                     return View();
                 }
 
-                //var fileExtension = ".html";
-                //if (!pageName.EndsWith(fileExtension, StringComparison.OrdinalIgnoreCase))
-                //{
-                //    pageName += fileExtension;
-                //}
-
+                // Handle tenant-specific session data.
                 var tenantFolderPath = Path.Combine(_webHostEnvironment.WebRootPath, "TenantHomePage");
                 var filepath = Path.Combine(tenantFolderPath, pageName);
                 var fileNameWithExtension = Path.GetFileName(filepath);
@@ -224,7 +250,7 @@ namespace LogicalPantry.Web.Controllers
                     Console.WriteLine("File not found.");
                      return View();
                 }
-
+                // Attempt to read the content of the HTML file.
                 string htmlContent;
                 try
                 {
@@ -247,12 +273,19 @@ namespace LogicalPantry.Web.Controllers
                 _logger.LogInformation("Home method call ended");
                 return View("Error");
                // return View();
-            }
-            
-
-            
+            }                      
         }
 
+
+
+        /// <summary>
+        /// Retrieves tenant information based on the provided tenant name.
+        /// </summary>
+        /// <param name="tenantName">The name of the tenant to search for.</param>
+        /// <returns>
+        /// An <see cref="IActionResult"/> containing tenant data if the tenant is found; 
+        /// otherwise, returns a 404 Not Found status with an appropriate message.
+        /// </returns>
         [HttpGet("GetTenant")]
         public async Task<IActionResult> GetTenantIdByName(string tenantName)
         {
@@ -269,11 +302,22 @@ namespace LogicalPantry.Web.Controllers
         }
 
 
+        /// <summary>
+        /// Retrieves tenant information based on the provided user email and tenant name.
+        /// </summary>
+        /// <param name="userEmail">The email of the user associated with the tenant.</param>
+        /// <param name="tenantname">The name of the tenant.</param>
+        /// <returns>
+        /// An <see cref="IActionResult"/> containing tenant data if found;
+        /// otherwise, returns a 404 Not Found status with an appropriate message.
+        /// </returns>
         [HttpGet("GetTenantByUserEmail")]
         public async Task<IActionResult> GetTenantIdByEmail(string userEmail, string tenantname)
         {
             // Log the starting of the Index method execution.
             _logger.LogInformation("GetTenantIdByEmail method call started");
+
+            // Fetch tenant data based on user email and tenant name.
             var response = await _informationService.GetTenantIdByEmail(userEmail,tenantname);
             if (response.Success)
             {
