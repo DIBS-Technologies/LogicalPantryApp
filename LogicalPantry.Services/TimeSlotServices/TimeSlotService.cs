@@ -21,8 +21,13 @@ namespace LogicalPantry.Services.TimeSlotServices
             _context = context;
         }
 
+        /// <summary>
+        /// Retrieves a list of all time slots.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation. The task result contains a list of <see cref="TimeSlotDto"/>.</returns>
         public async Task<List<TimeSlotDto>> GetTimeSlotsAsync()
         {
+            //getting all time slots
             return await _context.TimeSlots.Select(ts => new TimeSlotDto
             {
                 Id = ts.Id,
@@ -34,24 +39,12 @@ namespace LogicalPantry.Services.TimeSlotServices
             }).ToListAsync();
         }
 
-        public async Task AddTimeSlot1Async(TimeSlotDto timeSlotDto)
-        {
-            var timeSlot = new TimeSlot
-            {
-                UserId = timeSlotDto.UserId,
-                TenantId = timeSlotDto.TenantId,
-                TimeSlotName = timeSlotDto.TimeSlotName,
-                StartTime = timeSlotDto.StartTime,
-                EndTime = timeSlotDto.EndTime
-            };
 
-            _context.TimeSlots.Add(timeSlot);
-            await _context.SaveChangesAsync();
-        }
-
-
-
-
+        /// <summary>
+        /// Adds a new time slot to the database.
+        /// </summary>
+        /// <param name="timeSlotDto">The data transfer object containing the time slot information to add.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains a boolean indicating the success of the operation.</returns>
         public async Task<bool> AddTimeSlotAsync(TimeSlotDto timeSlotDto)
         {
             try
@@ -63,6 +56,7 @@ namespace LogicalPantry.Services.TimeSlotServices
                                 && ts.StartTime.Date == timeSlotDto.StartTime.Date
                                 && (ts.StartTime < timeSlotDto.EndTime && ts.EndTime > timeSlotDto.StartTime))
                     .FirstOrDefaultAsync();
+
 
                 if (overlappingTimeSlot != null)
                 {
@@ -80,6 +74,7 @@ namespace LogicalPantry.Services.TimeSlotServices
                     MaxNumberOfUsers = timeSlotDto.MaxNumberOfUsers,    
                 };
 
+                //add time slot here
                 _context.TimeSlots.Add(timeSlot);
                 await _context.SaveChangesAsync();
 
@@ -95,7 +90,11 @@ namespace LogicalPantry.Services.TimeSlotServices
             }
         }
 
-
+        /// <summary>
+        /// Updates an existing time slot with the provided data.
+        /// </summary>
+        /// <param name="timeSlotDto">The data transfer object containing the updated time slot information.</param>
+        /// <returns>A task that represents the asynchronous operation.</returns>
         public async Task UpdateTimeSlotAsync(TimeSlotDto timeSlotDto)
         {
             var timeSlot = await _context.TimeSlots.FindAsync(timeSlotDto.Id);
@@ -108,22 +107,21 @@ namespace LogicalPantry.Services.TimeSlotServices
             }
         }
 
-        public async Task DeleteTimeSlotAsync(long id)
-        {
-            var timeSlot = await _context.TimeSlots.FindAsync(id);
-            if (timeSlot != null)
-            {
-                _context.TimeSlots.Remove(timeSlot);
-                await _context.SaveChangesAsync();
-            }
-        }
-
+        /// <summary>
+        /// Retrieves all events from the time slots table.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation. The task result contains an enumeration of <see cref="TimeSlot"/>.</returns>
         public async Task<IEnumerable<TimeSlot>> GetAllEventsAsync()
         {
             // Fetch events from the TimeSlot table
             return await _context.TimeSlots.ToListAsync();
         }
 
+        /// <summary>
+        /// Retrieves all events for a specific tenant by tenant ID.
+        /// </summary>
+        /// <param name="tenantId">The ID of the tenant for which to retrieve events.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains an enumeration of <see cref="TimeSlot"/>.</returns>
         public async Task<IEnumerable<TimeSlot>> GetAllEventsByTenantIdAsync(int tenantId)
         {
             // Fetch events from the TimeSlot table that match the given tenantId
@@ -132,18 +130,13 @@ namespace LogicalPantry.Services.TimeSlotServices
                 .ToListAsync();
         }
 
-
-
-        //public async Task<int?> GetTimeSlotIdAsync(DateTime startTime, DateTime endTime, string title)
-        //{
-        //    var timeSlot = await _context.TimeSlots
-        //        .Where(ts => ts.StartTime == startTime && ts.EndTime == endTime && ts.TimeSlotName == title)
-        //        .FirstOrDefaultAsync();
-
-
-        //    return timeSlot?.Id;
-        //}
-
+        /// <summary>
+        /// Retrieves detailed information for a time slot based on the provided start and end times and title.
+        /// </summary>
+        /// <param name="startTime">The start time of the time slot (nullable).</param>
+        /// <param name="endTime">The end time of the time slot (nullable).</param>
+        /// <param name="title">The title of the time slot.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains a <see cref="TimeSlotDto"/> with the time slot details, or <c>null</c> if not found.</returns>
         public async Task<TimeSlotDto> GetTimeSlotDetailsAsync(DateTime? startTime, DateTime? endTime, string title)
         {
             // Check if any parameter is null or empty
@@ -163,8 +156,6 @@ namespace LogicalPantry.Services.TimeSlotServices
 
             return timeSlot;
         }
-
-
 
     }
 

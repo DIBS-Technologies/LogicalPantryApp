@@ -26,11 +26,23 @@ namespace LogicalPantry.Services.TimeSlotSignupService
             this.dataContext = dataContext;
         }
 
+
+        /// <summary>
+        /// Retrieves a list of users who have signed up for a specific time slot.
+        /// </summary>
+        /// <param name="timeslot">The date and time of the time slot for which to retrieve the list of users.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains a <see cref="ServiceResponse{IEnumerable{UserDto}}"/> with the following properties:
+        /// </returns>
+        /// <remarks>
+        /// The method performs a left join between time slots, users, and time slot sign-ups to get the relevant user information for the specified time slot.
+        /// If a user is not found in the time slot sign-ups, the <see cref="UserDto.Attended"/> property is set to false by default.
+        /// </remarks>
         public async Task<ServiceResponse<IEnumerable<UserDto>>> GetUserbyTimeSlot(DateTime timeslot)
         {
             var response = new ServiceResponse<IEnumerable<UserDto>>();
             try
             {
+                // Query to get users signed up for the specified time slot
                 var userDtos = await (from ts in dataContext.TimeSlots
                                       join u in dataContext.Users on ts.UserId equals u.Id
                                       join t in dataContext.TimeSlotSignups
@@ -45,12 +57,14 @@ namespace LogicalPantry.Services.TimeSlotSignupService
                                           Attended = t != null ? t.Attended : false // Set Attended based on presence in TimeSlotSignups
                                       }).ToListAsync();
 
+                // Set successful response
                 response.Data = userDtos;
                 response.Success = true;
                 response.Message = "Users fetched successfully.";
             }
             catch (Exception ex)
             {
+                // Log the exception and set failure response
                 logger.LogError(ex, "Error fetching users by time slot");
                 response.Success = false;
                 response.Message = $"Error fetching users: {ex.Message}";
@@ -59,6 +73,11 @@ namespace LogicalPantry.Services.TimeSlotSignupService
             return response;
         }
 
+        /// <summary>
+        /// Posts a list of time slot sign-ups for users and saves them to the database.
+        /// </summary>
+        /// <param name="users">A list of <see cref="TimeSlotSignupDto"/> representing the time slot sign-ups.</param>
+        /// <returns>A task that represents the asynchronous operation, containing a <see cref="ServiceResponse{string}"/> that indicates the result of the operation.</returns>
         public async Task<ServiceResponse<string>> PostTimeSlotSignup(List<TimeSlotSignupDto> users)
         {
             var response = new ServiceResponse<string>();
@@ -103,32 +122,11 @@ namespace LogicalPantry.Services.TimeSlotSignupService
             return response;
         }
 
-
-
-        //public async Task<bool> AddTimeSlotSignUp(TimeSlotSignupDto dto)
-        //{
-        //    try
-        //    {
-        //        // Example logic for adding a time slot signup
-        //        var timeSlotSignup = new TimeSlotSignup
-        //        {
-        //            TimeSlotId = dto.TimeSlotId,
-        //            UserId = dto.UserId,
-        //            Attended = dto.Attended
-        //        };
-
-        //        dataContext.TimeSlotSignups.Add(timeSlotSignup);
-        //        await dataContext.SaveChangesAsync();
-
-        //        return true;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // Log exception
-        //        throw new Exception("Error adding time slot signup: " + ex.Message);
-        //    }
-        //}
-
+        /// <summary>
+        /// Adds a time slot sign-up for a user.
+        /// </summary>
+        /// <param name="dto">The time slot sign-up data.</param>
+        /// <returns>A tuple with a boolean indicating success and a string message.</returns>
         public async Task<(bool success, string message)> AddTimeSlotSignUp(TimeSlotSignupDto dto)
         {
             try

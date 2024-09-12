@@ -38,41 +38,6 @@ namespace LogicalPantry.Web.Controllers
             return View();
         }
 
-        //[HttpGet("Get")]
-        //public async Task<IActionResult> Get(string tenantid)
-        //{
-        //    _logger.LogInformation("Get Object call started");
-        //    try
-        //    {
-        //        if (!int.TryParse(tenantid, out int tenantId) || tenantId == 0)
-        //        {
-        //            return BadRequest("Invalid tenant ID");
-        //        }
-
-        //        var response = await _informationService.GetTenant(tenantId);
-        //        if (response?.Data == null)
-        //        {
-        //            return NotFound("Tenant data not found");
-        //        }
-
-        //        // Assuming response.Data is of type TenantDto
-        //        var tenantDto = response.Data;
-        //        if (string.IsNullOrEmpty(tenantDto.Logo))
-        //        {
-        //            return NotFound("ImageUrl not found");
-        //        }
-
-        //        _logger.LogInformation("Get Object call ended");
-        //        // return Ok(tenantDto.Logo); 
-        //        return Ok(tenantDto);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "An error occurred while getting tenant.");
-        //        return StatusCode(StatusCodes.Status500InternalServerError);
-        //    }
-        //}
-
        //No need to authorization public method 
         [HttpGet("Get")]
         public async Task<IActionResult> Get(int tenantId)
@@ -116,12 +81,7 @@ namespace LogicalPantry.Web.Controllers
             // Log the starting of the Index method execution.
             _logger.LogInformation("AddTenant Get method call started");
             var tenantName = TenantName;
-            //var tenantIdString = HttpContext.Session.GetString("TenantId");
-
-            //if (!int.TryParse(tenantIdString, out int tenantId) || tenantId == 0)
-            //{
-            //    return BadRequest("Invalid tenant ID");
-            //}
+            
             var TenantDisplayName = HttpContext.Session.GetString("TenantDisplayName");
             ViewBag.PageName = TenantDisplayName;
             var response = await _informationService.GetTenantByNameAsync(tenantName);
@@ -282,7 +242,7 @@ namespace LogicalPantry.Web.Controllers
             }         
             else
             {
-                ViewBag.ErrorMessage = "Page Not Found.";
+                ViewBag.ErrorMessage = "   Page Not Found.";
                 // Log the ended of the Index method execution.
                 _logger.LogInformation("Home method call ended");
                 return View("Error");

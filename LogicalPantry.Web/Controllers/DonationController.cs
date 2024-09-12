@@ -6,19 +6,30 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LogicalPantry.Web.Controllers
 {
+    /// <summary>
+    /// Controller responsible for handling donation-related actions.
+    /// </summary>
     [Route("Donation")]
     public class DonationController : BaseController
     {
         private readonly IConfiguration _configuration;
         private readonly ILogger _logger;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DonationController"/> class.
+        /// </summary>
+        /// <param name="configuration">The configuration service.</param>
+        /// <param name="logger">The logger service.</param>
         public DonationController(IConfiguration configuration, ILogger<DonationController> logger)
         {
             _configuration = configuration;
             _logger = logger;
         }
 
-       //No need authorization public method
+        /// <summary>
+        /// Displays the PayPal donation page.
+        /// </summary>
+        /// <returns>The view for the PayPal donation page.</returns>
         [HttpGet("PayPal")]
         public IActionResult PayPal()
         {
@@ -32,7 +43,12 @@ namespace LogicalPantry.Web.Controllers
             return View();
         }
 
-       // [Authorize(Roles = "Admin,User")]
+
+        /// <summary>
+        /// Completes the PayPal payment process.
+        /// </summary>
+        /// <param name="paymentDto">The PayPal payment details.</param>
+        /// <returns>An <see cref="IActionResult"/> indicating the result of the operation.</returns>
         [HttpPost]
         [Route("CompletePayment")]
         public async Task<IActionResult> CompletePayment([FromBody] PayPalPaymentDto paymentDto)
@@ -47,6 +63,10 @@ namespace LogicalPantry.Web.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Displays the success page after a successful payment.
+        /// </summary>
+        /// <returns>The view for the success page.</returns>
         public IActionResult Success()
         {
             _logger.LogInformation($"Success method call started");

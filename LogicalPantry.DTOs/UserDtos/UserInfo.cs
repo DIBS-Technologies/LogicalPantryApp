@@ -11,6 +11,8 @@ namespace LogicalPantry.DTOs.UserDtos
             public int UserId { get; set; }
             public string Role { get; set; }
             public string Message { get; set; }
-       
+        public bool IsRegistered { get; set; }
+        public bool IsAllowed { get; set; }
+
     }
 }

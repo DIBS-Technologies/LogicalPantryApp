@@ -17,6 +17,7 @@ using System.Data;
 using Microsoft.AspNetCore.Http;
 using System.Globalization;
 using Azure.Core;
+using Azure;
 
 namespace LogicalPantry.Services.UserServices
 {
@@ -41,37 +42,13 @@ namespace LogicalPantry.Services.UserServices
             this.dataContext = dataContext;
         }
 
-        //public async Task<ServiceResponse<IEnumerable<UserDto>>> GetAllRegisteredUsersAsync()
-        //{
-        //    var response = new ServiceResponse<IEnumerable<UserDto>>();
 
-        //    try
-        //    {
-        //        var users = await dataContext.Users
-        //            .Where(u => u.IsRegistered)
-        //            .Select(u => new UserDto
-        //            {
-        //                Id = u.Id,
-        //                FullName = u.FullName,
-        //                Email = u.Email,
-        //                PhoneNumber = u.PhoneNumber,
-        //                Address = u.Address,
-        //                IsAllow = u.IsAllow,
-        //                IsRegistered = u.IsRegistered
-        //            }).ToListAsync();
-
-        //        response.Data = users;
-        //        response.Success = true;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        response.Success = false;
-        //        response.Message = $"Error fetching users: {ex.Message}";
-        //    }
-
-        //    return response;
-        //}
-
+        /// <summary>
+        /// Retrieves all registered users for a specific tenant who have the role of 'User'.
+        /// </summary>
+        /// <param name="tenantId">The ID of the tenant for which registered users are being retrieved.</param>
+        /// <returns>A task that represents the asynchronous operation, containing a <see cref="ServiceResponse{IEnumerable{UserDto}}"/> with the list of registered users.</returns>
+        /// <exception cref="Exception">Thrown when an error occurs while fetching users.</exception>
         public async Task<ServiceResponse<IEnumerable<UserDto>>> GetAllRegisteredUsersAsync(int tenantId)
         {
             var response = new ServiceResponse<IEnumerable<UserDto>>();
@@ -79,43 +56,31 @@ namespace LogicalPantry.Services.UserServices
             try
             {
                 var userRoleId = (int)UserRoleEnum.User; // Get the enum value for 'User'
-                //var users = await dataContext.Users
-                //    .Where(u => u.IsRegistered && u.TenantId == tenantId)
-                //    .Select(u => new UserDto
-                //    {
-                //        Id = u.Id,
-                //        FullName = u.FullName,
-                //        Email = u.Email,
-                //        PhoneNumber = u.PhoneNumber,
-                //        Address = u.Address,
-                //        IsAllow = u.IsAllow,
-                //        IsRegistered = u.IsRegistered
-                //    }).ToListAsync();
 
-                var users = await dataContext.Users
-           .Join(
-               dataContext.UserRoles,
-               u => u.Id,
-               ur => ur.UserId,
-               (u, ur) => new { User = u, UserRole = ur }
-           )
-           .Join(
-               dataContext.Roles,
-               ur => ur.UserRole.RoleId,
-               r => r.Id,
-               (ur, r) => new { ur.User, Role = r }
-           )
-           .Where(x => x.User.IsRegistered && x.User.TenantId == tenantId &&  x.Role.Id == userRoleId)
-           .Select(x => new UserDto
-           {
-               Id = x.User.Id,
-               FullName = x.User.FullName,
-               Email = x.User.Email,
-               PhoneNumber = x.User.PhoneNumber,
-               Address = x.User.Address,
-               IsAllow = x.User.IsAllow,
-               IsRegistered = x.User.IsRegistered
-           }).ToListAsync();
+                            var users = await dataContext.Users
+                       .Join(
+                           dataContext.UserRoles,
+                           u => u.Id,
+                           ur => ur.UserId,
+                           (u, ur) => new { User = u, UserRole = ur }
+                       )
+                       .Join(
+                           dataContext.Roles,
+                           ur => ur.UserRole.RoleId,
+                           r => r.Id,
+                           (ur, r) => new { ur.User, Role = r }
+                       )
+                       .Where(x => x.User.IsRegistered && x.User.TenantId == tenantId &&  x.Role.Id == userRoleId)
+                       .Select(x => new UserDto
+                       {
+                           Id = x.User.Id,
+                           FullName = x.User.FullName,
+                           Email = x.User.Email,
+                           PhoneNumber = x.User.PhoneNumber,
+                           Address = x.User.Address,
+                           IsAllow = x.User.IsAllow,
+                           IsRegistered = x.User.IsRegistered
+                       }).ToListAsync();
 
                 response.Data = users;
                 response.Success = true;
@@ -129,6 +94,12 @@ namespace LogicalPantry.Services.UserServices
             return response;
         }
 
+        /// <summary>
+        /// Retrieves a user by their ID.
+        /// </summary>
+        /// <param name="id">The ID of the user to retrieve.</param>
+        /// <returns>A task that represents the asynchronous operation, containing a <see cref="ServiceResponse{UserDto}"/> with the user details if found, otherwise an error message.</returns>
+        /// <exception cref="Exception">Thrown when an error occurs while fetching the user.</exception>
         public async Task<ServiceResponse<UserDto>> GetUserByIdAsync(int id)
         {
             var response = new ServiceResponse<UserDto>();
@@ -167,19 +138,31 @@ namespace LogicalPantry.Services.UserServices
 
             return response;
         }
+
+
+
+        /// <summary>
+        /// Deletes a user and all associated data from the database.
+        /// </summary>
+        /// <param name="id">The ID of the user to delete.</param>
+        /// <returns>A task that represents the asynchronous operation, containing a <see cref="ServiceResponse{bool}"/> indicating success or failure of the operation.</returns>
+        /// <exception cref="Exception">Thrown when an error occurs during the deletion process.</exception>
         public async Task<ServiceResponse<bool>> DeleteUserAsync(int id)
         {
             var response = new ServiceResponse<bool>();
 
             try
             {
+                // Begin a transaction to ensure atomicity
                 using (var transaction = await dataContext.Database.BeginTransactionAsync())
                 {
+                    // Retrieve the user and include related entities
                     var user = await dataContext.Users
-                        .Include(u => u.UserRoles)
-                        .Include(u => u.TimeSlotSignups)
-                        .Include(u => u.TimeSlots)
+                        .Include(u => u.UserRoles)         // Include user roles to remove them
+                        .Include(u => u.TimeSlotSignups)   // Include time slot sign-ups to remove them
+                        .Include(u => u.TimeSlots)         // Include time slots to remove them
                         .FirstOrDefaultAsync(u => u.Id == id);
+                    
 
                     if (user == null)
                     {
@@ -189,9 +172,9 @@ namespace LogicalPantry.Services.UserServices
                     }
 
                     // Remove related entities
-                    dataContext.UserRoles.RemoveRange(user.UserRoles);
-                    dataContext.TimeSlotSignups.RemoveRange(user.TimeSlotSignups);
-                    dataContext.TimeSlots.RemoveRange(user.TimeSlots);
+                    dataContext.UserRoles.RemoveRange(user.UserRoles);        // Remove user roles
+                    dataContext.TimeSlotSignups.RemoveRange(user.TimeSlotSignups); // Remove time slot sign-ups
+                    dataContext.TimeSlots.RemoveRange(user.TimeSlots);        // Remove time slots
 
                     // Remove the user
                     dataContext.Users.Remove(user);
@@ -213,48 +196,20 @@ namespace LogicalPantry.Services.UserServices
             return response;
         }
 
-        //public async Task<ServiceResponse<bool>> DeleteUserAsync(int id)
-        //{
-        //    var response = new ServiceResponse<bool>();
 
-        //    try
-        //    {
-        //        var user = await dataContext.Users.FindAsync(id);
-        //        var userroles = await dataContext.UserRoles.FindAsync(id);  
-        //        var timeslotsignup = await dataContext.TimeSlotSignups.FindAsync(id);  
-        //        var timeslot = await dataContext.TimeSlots.FindAsync(id);
-        //        if (user == null)
-        //        {
-        //            response.Success = false;
-        //            response.Message = "User not found.";
-        //            return response;
-        //        }
-
-        //        dataContext.UserRoles.Remove(userroles);
-        //        dataContext.TimeSlotSignups.Remove(timeslotsignup);
-        //        dataContext.TimeSlots.Remove(timeslot);
-        //        dataContext.Users.Remove(user);
-        //        /// Records delete for all tables 
-        //        await dataContext.SaveChangesAsync();
-
-        //        response.Data = true;
-        //        response.Success = true;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        response.Success = false;
-        //        response.Message = $"Error deleting user: {ex.Message}";
-        //    }
-
-        //    return response;
-        //}
-
+        /// <summary>
+        /// Updates the details of an existing user in the database.
+        /// </summary>
+        /// <param name="userDto">The <see cref="UserDto"/> object containing the updated user information.</param>
+        /// <returns>A task that represents the asynchronous operation, containing a <see cref="ServiceResponse{UserDto}"/> with the updated user information or an error message.</returns>
+        /// <exception cref="Exception">Thrown when an error occurs during the update process.</exception>
         public async Task<ServiceResponse<UserDto>> UpdateUserAsync(UserDto userDto)
         {
             var response = new ServiceResponse<UserDto>();
 
             try
             {
+                // Find the user by ID
                 var user = await dataContext.Users.FindAsync(userDto.Id);
                 if (user == null)
                 {
@@ -267,6 +222,7 @@ namespace LogicalPantry.Services.UserServices
                 dataContext.Users.Update(user);
                 await dataContext.SaveChangesAsync();
 
+                // Set response data and success status
                 response.Data = userDto;
                 response.Success = true;
             }
@@ -279,127 +235,12 @@ namespace LogicalPantry.Services.UserServices
             return response;
         }
 
-
-
-
-        //public async Task<ServiceResponse<bool>> UpdateUserAllowStatusAsync(List<UserAttendedDto> userAllowStatusDtos)
-        //{
-        //    var response = new ServiceResponse<bool>();
-
-        //    if (userAllowStatusDtos == null || !userAllowStatusDtos.Any())
-        //    {
-        //        response.Success = false;
-        //        response.Message = "No users to update.";
-        //        return response;
-        //    }
-
-        //    try
-        //    {
-        //        // Extract user IDs from the list of DTOs
-        //        var userIds = userAllowStatusDtos
-        //            .Where(dto => dto.IsAttended)
-        //            .Select(dto => dto.Id)
-        //            .ToList();
-
-        //        if (!userIds.Any())
-        //        {
-        //            response.Success = false;
-        //            response.Message = "No users with AllowStatus set to true.";
-        //            return response;
-        //        }
-
-        //        // Fetch users matching the IDs from the database
-        //        var usersToUpdate = await dataContext.Users
-        //            .Where(u => userIds.Contains(u.Id))
-        //            .ToListAsync();
-
-        //        // Update the 'IsAllow' status for matching users
-        //        foreach (var userDto in userAllowStatusDtos)
-        //        {
-        //            if (userDto.IsAttended) // Only update users with AllowStatus true
-        //            {
-        //                var user = usersToUpdate.FirstOrDefault(u => u.Id == userDto.Id);
-        //                if (user != null)
-        //                {
-        //                    user.IsAllow = userDto.IsAttended;
-        //                }
-        //            }
-        //        }
-
-        //        // Save changes to the database
-        //        await dataContext.SaveChangesAsync();
-
-        //        response.Data = true;
-        //        response.Success = true;
-        //        response.Message = "User allow status updated successfully.";
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        response.Success = false;
-        //        response.Message = $"Error updating user allow status: {ex.Message}";
-        //    }
-
-        //    return response;
-        //}
-
-        //public async Task<ServiceResponse<bool>> UpdateUserAttendanceStatusAsync(List<UserAttendedDto> userAttendedDtos)
-        //{
-        //    var response = new ServiceResponse<bool>();
-
-        //    if (userAttendedDtos == null || !userAttendedDtos.Any())
-        //    {
-        //        response.Success = false;
-        //        response.Message = "No users to update.";
-        //        return response;
-        //    }
-
-        //    try
-        //    {
-        //        // Extract user IDs from the list of DTOs
-        //        var userIds = userAttendedDtos
-        //            .Select(dto => dto.Id)
-        //            .ToList();
-
-        //        if (!userIds.Any())
-        //        {
-        //            response.Success = false;
-        //            response.Message = "No valid users provided.";
-        //            return response;
-        //        }
-
-        //        // Fetch matching records from the TimeSlotSignups table
-        //        var timeSlotSignupsToUpdate = await dataContext.TimeSlotSignups
-        //            .Where(ts => userIds.Contains(ts.UserId))
-        //            .ToListAsync();
-
-        //        // Update the 'Attended' status for matching records
-        //        foreach (var userDto in userAttendedDtos)
-        //        {
-        //            var timeSlotSignup = timeSlotSignupsToUpdate.FirstOrDefault(ts => ts.UserId == userDto.Id);
-        //            if (timeSlotSignup != null)
-        //            {
-        //                timeSlotSignup.Attended = userDto.IsAttended;
-        //            }
-        //        }
-
-        //        // Save changes to the database
-        //        await dataContext.SaveChangesAsync();
-
-        //        response.Data = true;
-        //        response.Success = true;
-        //        response.Message = "User attendance status updated successfully.";
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        response.Success = false;
-        //        response.Message = $"Error updating user attendance status: {ex.Message}";
-        //    }
-
-        //    return response;
-        //}
-
-
-
+        /// <summary>
+        /// Updates the attendance status for a list of users and time slots.
+        /// </summary>
+        /// <param name="userAttendedDtos">A list of <see cref="UserDto"/> objects containing user IDs, time slot IDs, and their attendance status.</param>
+        /// <returns>A task that represents the asynchronous operation, containing a <see cref="ServiceResponse{bool}"/> indicating the result of the operation.</returns>
+        /// <exception cref="Exception">Thrown when an error occurs during the update process.</exception>
         public async Task<ServiceResponse<bool>> UpdateUserAttendanceStatusAsync(List<UserDto> userAttendedDtos)
         {
             var response = new ServiceResponse<bool>();
@@ -462,66 +303,13 @@ namespace LogicalPantry.Services.UserServices
             return response;
         }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        //Commented By Swapnil
-        //public async Task<UserDto> CheckUserExisist(string email)
-        //{
-        //    var response = new ServiceResponse<Task<UserDto>>();
-
-        //    //if (email == null)
-        //    //{
-        //    //    response.Success = false;
-        //    //    response.Message = "No users to update.";
-        //    //    return response;
-        //    //}
-
-
-
-        //    //    // Save changes to the database asynchronously
-        //    //    await dataContext.SaveChangesAsync();
-
-        //    //    response.Success = true;
-        //    //    response.Message = "Time Slot Signup updated successfully.";
-        //    //}
-        //    //catch (Exception ex)
-        //    //{
-        //    //    logger.LogError(ex, "Error posting time slot signups");
-        //    //    response.Success = false;
-        //    //    response.Message = $"Error posting time slot signups: {ex.Message}";
-        //    //}
-
-        //    return response;
-        //}
         /// <summary>
-        /// Changes in TimeSlot Service : Gte Users by Time Slot Id
+        /// Retrieves a list of registered users for a specific tenant and time slot.
         /// </summary>
-        /// <param name="timeSlot"></param>
-        /// <param name="tenantId"></param>
-        /// <returns></returns>
-
+        /// <param name="timeSlot">The date and time slot to filter the users by.</param>
+        /// <param name="tenantId">The ID of the tenant to which the users belong.</param>
+        /// <returns>A task that represents the asynchronous operation, containing a <see cref="ServiceResponse{IEnumerable{UserDto}}"/> with the list of users or an error message.</returns>
+        /// <exception cref="Exception">Thrown when an error occurs during data retrieval.</exception>
         public async Task<ServiceResponse<IEnumerable<UserDto>>> GetUsersbyTimeSlot(DateTime timeSlot, int tenantId)
         {
             var response = new ServiceResponse<IEnumerable<UserDto>>();
@@ -565,156 +353,16 @@ namespace LogicalPantry.Services.UserServices
             return response;
         }
 
-        //public async Task<ServiceResponse<UserDto>> GetUserByEmailAsync(string email)
-        //{
-        //    var response = new ServiceResponse<UserDto>();
 
-        //    var message = string.Empty;
-        //    try
-        //    {
-
-        //        //var userEmails = dataContext.Users
-        //        //    .Where(u => u.Email == email).Select(u => new UserDto
-        //        //    {
-        //        //        Id = u.Id,
-        //        //        FullName = u.FullName,
-        //        //        Email = u.Email,
-        //        //        PhoneNumber = u.PhoneNumber,
-        //        //        IsAllow = u.IsAllow,
-        //        //        TenantId = u.TenantId,
-        //        //    }).FirstOrDefault();
-        //        // Retrieve users matching the tenantId and where IsRegistered is true
-
-        //        var users = dataContext.Users
-        //            .Where(u => u.Email == email)
-        //            .Select(u => new UserDto
-        //            {
-        //                Id = u.Id,
-        //                FullName = u.FullName,
-        //                Email = u.Email,
-        //                PhoneNumber = u.PhoneNumber,
-        //                IsAllow = u.IsAllow
-        //            })
-        //            .FirstOrDefault();
-
-
-        //            //getUserRole = dataContext.UserRoles
-        //            //    .Where(u => u.UserId != users.Id).Select(x => new { x.UserId, x.RoleId }).ToListAsync().Result;
-
-        //            if (users == null)
-        //            {
-        //                // Create a new user entity
-        //                var newUser = new User
-        //                {
-        //                    TenantId = users.TenantId,
-        //                    FullName = string.Empty,
-        //                    Address = string.Empty,
-        //                    Email = email,
-        //                    PhoneNumber = string.Empty,
-        //                    IsAllow = false,
-        //                    IsRegistered = false
-        //                };
-
-        //                // Add the new user to the database
-        //                dataContext.Users.Add(newUser);
-        //                await dataContext.SaveChangesAsync(); // Use SaveChangesAsync for consistency
-
-        //                // Retrieve the newly created user
-        //                var usersUpdate = dataContext.Users
-        //                    .Where(u => u.Email == email)
-        //                    .Select(u => new UserDto
-        //                    {
-        //                        Id = u.Id,
-        //                        FullName = u.FullName,
-        //                        Email = u.Email,
-        //                        PhoneNumber = u.PhoneNumber,
-        //                        IsAllow = u.IsAllow
-        //                    }).FirstOrDefault();
-
-        //                // Add a role for the new user
-        //                var role = new UserRole
-        //                {
-        //                    UserId = usersUpdate.Id,
-        //                    RoleId = (int)UserRoleEnum.User
-        //                };
-        //                dataContext.UserRoles.Add(role);
-        //                await dataContext.SaveChangesAsync(); // Use SaveChangesAsync for consistency
-
-        //                // Prepare the user DTO to return
-        //                var user = new UserDto
-        //                {
-        //                    Id = newUser.Id,
-        //                    FullName = newUser.FullName,
-        //                    Email = newUser.Email,
-        //                    PhoneNumber = newUser.PhoneNumber,
-        //                    IsAllow = newUser.IsAllow
-        //                };
-
-        //                // Set the response message
-        //                response.Data = user; // Indicating success
-        //                response.Success = true;
-        //                response.Message = "User registered successfully.";
-        //            }
-
-        //        else
-        //        {
-        //            // User already exists, retrieve their role
-        //            var existingUser = dataContext.Users
-        //                .Where(u => u.Email == email)
-        //                .Select(u => new
-        //                {
-        //                    u.Id,
-        //                    RoleId = dataContext.UserRoles
-        //                        .Where(ur => ur.UserId == u.Id)
-        //                        .Select(ur => ur.RoleId)
-        //                        .FirstOrDefault()
-        //                }).FirstOrDefault();
-
-        //            if (existingUser != null)
-        //            {
-        //                // Set message based on the existing user's role
-        //                if (existingUser.RoleId == (int)UserRoleEnum.Admin)
-        //                {
-        //                    response.Message = "User already exists with Admin role.";
-        //                }
-        //                else if (existingUser.RoleId == (int)UserRoleEnum.User)
-        //                {
-        //                    response.Message = "User already exists with User role.";
-        //                }
-        //                else
-        //                {
-        //                    response.Message = "User already exists with an unknown role.";
-        //                }
-
-        //                // Optionally, include user details in the response
-        //                response.Data = new UserDto
-        //                {
-        //                    Id = existingUser.Id,
-        //                    // Include other relevant user details if needed
-        //                };
-        //                response.Success = true;
-        //            }
-        //            else
-        //            {
-        //                response.Message = "User already available.";
-        //                response.Success = false;
-        //                response.Data = userEmails; // Indicating success
-        //            }
-        //        }
-
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        response.Success = false;
-        //        response.Message = $"Error registering user: {ex.Message}";
-        //        response.Data = null; // Indicating failure
-        //    }
-
-
-
-        //    return response;
-        //}
-
+        /// <summary>
+        /// Retrieves a user by their email address and tenant ID. If the user does not exist, creates a new user.
+        /// If the email is found in the Tenant table, assigns the role accordingly.
+        /// </summary>
+        /// <param name="email">The email address of the user to retrieve or create.</param>
+        /// <param name="tenantId">The ID of the tenant associated with the user.</param>
+        /// <returns>A task that represents the asynchronous operation, containing a <see cref="ServiceResponse{UserDto}"/> 
+        /// with the user information or an error message.</returns>
+        /// <exception cref="Exception">Thrown when an error occurs during the operation.</exception>
         public async Task<ServiceResponse<UserDto>> GetUserByEmailAsync(string email,int tenantId)
         {
             var response = new ServiceResponse<UserDto>();
@@ -745,10 +393,10 @@ namespace LogicalPantry.Services.UserServices
                                 .Where(ur => ur.UserId == existingUser.Id)
                                 .Select(ur => ur.RoleId)
                                 .FirstOrDefault();
-                            //one join
+                        
                             if (existingUserRole == (int)UserRoleEnum.Admin)
                             {
-                                response.Message = "User already exists with Admin role.";
+                                response.Message = "User already exists with Admin role.";                              
                             }
                             else if (existingUserRole == (int)UserRoleEnum.User)
                             {
@@ -909,56 +557,14 @@ namespace LogicalPantry.Services.UserServices
 
 
 
-        //public async Task<ServiceResponse<IEnumerable<UserDto>>> GetUsersbyTimeSlotId( int timeSlotId)
-        //{
-        //    var response = new ServiceResponse<IEnumerable<UserDto>>();
-
-        //    try
-        //    {
-
-        //        // select user id from timeSlots with timeSlotId join user table and return these user info 
-        //        var users = await dataContext.TimeSlots
-        //         .Where(ts => ts.Id == timeSlotId)
-        //         .Join(dataContext.Users,
-        //               ts => ts.UserId,
-        //               u => u.Id,
-        //               (ts, u) => new UserDto
-        //               {
-        //                   Id = u.Id,
-        //                   FullName = u.FullName,
-        //                   Email = u.Email,
-        //                   PhoneNumber = u.PhoneNumber,
-        //                   IsAllow = u.IsAllow,
-        //                   TenantId = u.TenantId,
-        //               })
-        //             .ToListAsync();
-
-
-        //         var user1 = await dataContext.TimeSlotSignups.Where(us => us.UserId == users.id)
-        //        if (!users.Any())
-        //        {
-        //            response.Success = false;
-        //            response.Message = "No registered users found for the specified tenant.";
-        //            response.Data = Enumerable.Empty<UserDto>();
-        //        }
-        //        else
-        //        {
-        //            response.Data = users;
-        //            response.Success = true;
-        //            response.Message = "Users retrieved successfully.";
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        response.Success = false;
-        //        response.Message = $"Error fetching users: {ex.Message}";
-        //        response.Data = Enumerable.Empty<UserDto>();
-        //    }
-
-        //    return response;
-        //}
-
-
+        /// <summary>
+        /// Retrieves users associated with a specified time slot and have the role 'User'.
+        /// Includes attendance status for each user.
+        /// </summary>
+        /// <param name="timeSlotId">The ID of the time slot for which to retrieve users.</param>
+        /// <returns>A task that represents the asynchronous operation, containing a <see cref="ServiceResponse{IEnumerable{UserDto}}"/> 
+        /// with the list of users or an error message.</returns>
+        /// <exception cref="Exception">Thrown when an error occurs during the operation.</exception>
         public async Task<ServiceResponse<IEnumerable<UserDto>>> GetUsersbyTimeSlotId(int timeSlotId)
         {
             var response = new ServiceResponse<IEnumerable<UserDto>>();
@@ -1028,12 +634,19 @@ namespace LogicalPantry.Services.UserServices
         }
 
 
-
+        /// <summary>
+        /// Retrieves the ID of a user based on their email address.
+        /// </summary>
+        /// <param name="email">The email address of the user whose ID is to be retrieved.</param>
+        /// <returns>A task that represents the asynchronous operation, containing a <see cref="ServiceResponse{int}"/> 
+        /// with the user ID if found, or an error message if the user is not found or an error occurs.</returns>
+        /// <exception cref="Exception">Thrown when an error occurs during the operation.</exception>
         public async Task<ServiceResponse<int>> GetUserIdByEmail(string email)
         {
             var response = new ServiceResponse<int>();
             try
             {
+                // Retrieve the user with the specified email address
                 var user = await dataContext.Users
                     .Where(u => u.Email == email)
                     .FirstOrDefaultAsync();
@@ -1059,39 +672,49 @@ namespace LogicalPantry.Services.UserServices
             return response;
         }
 
-        public  async  Task<RoleDto> GetUserRoleAsync(int id)
+        /// <summary>
+        /// Retrieves the role of a user based on their user ID.
+        /// </summary>
+        /// <param name="id">The ID of the user whose role is to be retrieved.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result is a <see cref="RoleDto"/> 
+        /// containing the role ID and role name of the user, or null if the user is not found or an error occurs.</returns>
+        public async  Task<RoleDto> GetUserRoleAsync(int id)
         {
-           
+            var response = new ServiceResponse<RoleDto>();
             var role = new RoleDto();
             try
             {
-                
+                // Retrieve the role associated with the user ID
                 var user = await dataContext.UserRoles
                     .Where(u => u.UserId == id)
                     .FirstOrDefaultAsync();
 
                 if (user != null)
                 {
-
-
+                    // Map the role details to the RoleDto
                     role = new RoleDto
                     {
                         Id = user.RoleId,
                         RoleName = user.RoleId == 1 ? UserRoleEnum.Admin.ToString() : UserRoleEnum.User.ToString(),
                     };
-                }
-                
+                }                
             }
             catch (Exception ex)
             {
-
+                response.Success = false;
+                response.Message = $"Error registering user: {ex.Message}";
+                response.Data = null; // Indicating failure
             }
-
             return role;
         }
 
 
-
+        /// <summary>
+        /// Registers or updates a user profile based on the provided <see cref="UserDto"/>.
+        /// </summary>
+        /// <param name="userDto">The user data transfer object containing user details.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result is a <see cref="ServiceResponse{UserDto}"/> 
+        /// containing the updated or newly created user profile data and the status of the operation.</returns>
         public async Task<ServiceResponse<UserDto>> ProfileRagistration(UserDto userDto)
         {
             var response = new ServiceResponse<UserDto>();
@@ -1182,11 +805,20 @@ namespace LogicalPantry.Services.UserServices
             return response;
         }
 
+
+
+        /// <summary>
+        /// Retrieves user details based on the provided email address.
+        /// </summary>
+        /// <param name="email">The email address of the user whose details are to be retrieved.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result is a <see cref="ServiceResponse{UserDto}"/> 
+        /// containing the user details and the status of the operation.</returns>
         public async Task<ServiceResponse<UserDto>> GetUserDetailsByEmail(string email)
         {
             var response = new ServiceResponse<UserDto>();
             try
             {
+                // Retrieve the user from the database based on the provided email
                 var user = await dataContext.Users
                     .Where(u => u.Email == email)
                     .FirstOrDefaultAsync();
@@ -1219,12 +851,14 @@ namespace LogicalPantry.Services.UserServices
                 }
                 else
                 {
+                    // User not found, set response message and success status
                     response.Success = false;
                     response.Message = "User not found.";
                 }
             }
             catch (Exception ex)
             {
+                // Handle exceptions and set response message and success status
                 response.Success = false;
                 response.Message = $"Error retrieving user details: {ex.Message}";
             }

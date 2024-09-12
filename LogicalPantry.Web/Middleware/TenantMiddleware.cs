@@ -1,5 +1,4 @@
-﻿
-using LogicalPantry.Models.Models;
+﻿using LogicalPantry.Models.Models;
 using LogicalPantry.Services.InformationService;
 using LogicalPantry.Services.UserServices;
 using Microsoft.AspNetCore.Http;
@@ -9,17 +8,30 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
+/// <summary>
+/// Middleware to handle tenant-based routing and caching.
+/// </summary>
 public class TenantMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly IMemoryCache _cache;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TenantMiddleware"/> class.
+    /// </summary>
+    /// <param name="next">The next request delegate in the pipeline.</param>
+    /// <param name="cache">The in-memory cache used to store tenant data.</param>
     public TenantMiddleware(RequestDelegate next, IMemoryCache cache)
     {
         _next = next;
         _cache = cache;
     }
 
+    /// <summary>
+    /// Invokes the middleware to process the HTTP request.
+    /// </summary>
+    /// <param name="context">The HTTP context for the current request.</param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
     public async Task InvokeAsync(HttpContext context)
     {        
         var path = context.Request.Path.Value;
@@ -29,7 +41,7 @@ public class TenantMiddleware
         {
             context.Response.StatusCode = StatusCodes.Status400BadRequest;
             // await context.Response.WriteAsync("Tenant name is missing");
-            await context.Response.WriteAsync("Page Not Found");
+            await context.Response.WriteAsync("   Page Not Found");
             return;
         }
 
@@ -60,6 +72,7 @@ public class TenantMiddleware
             //    return;
             //}
 
+            // Process authenticated users
             if (context.User.Identity.IsAuthenticated)
             {
                 var userEmail = context.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
@@ -83,9 +96,10 @@ public class TenantMiddleware
                     {                      
                         context.Response.StatusCode = StatusCodes.Status404NotFound;
                         // await context.Response.WriteAsync("Tenant not found");
-                        await context.Response.WriteAsync("Page Not Found");
+                        await context.Response.WriteAsync("   Page Not Found");
                         return;
                     }
+                    // Cache tenant information and update context
                     context.Items["TenantId"] = tenant.Data?.Id;
                     context.Items["TenantImage"] = tenant.Data?.Logo;
                     context.Items["TenantDisplayName"] = tenant.Data?.TenantDisplayName;
@@ -103,12 +117,12 @@ public class TenantMiddleware
                     cachedValues = (cachedTenantName, userEmail);
                 }
 
-                //if (tenantNameFromUrl != cachedValues.TenantName)
+                // Verify tenant name in the cache matches the URL
                 if (!string.Equals(tenantNameFromUrl, cachedValues.TenantName, StringComparison.OrdinalIgnoreCase))
                 {                    
                         context.Response.StatusCode = StatusCodes.Status403Forbidden;
                     //await context.Response.WriteAsync("Unauthorized: Tenant mismatch");
-                    await context.Response.WriteAsync("Page Not Found");
+                    await context.Response.WriteAsync("   Page Not Found");
                     return;                   
                   
                 }
@@ -130,19 +144,20 @@ public class TenantMiddleware
             }
             else
             {
-
+                // Process unauthenticated users
                 var cachedTenantName = tenantNameFromUrl;
                 context.Items["TenantName"] = cachedTenantName;
                 var informationService = context.RequestServices.GetRequiredService<IInformationService>();
                 var tenant = await informationService.GetTenantByNameAsync(cachedTenantName);
                 if (tenant.Success == false)
+
                 {
                     context.Response.StatusCode = StatusCodes.Status404NotFound;
-                    //await context.Response.WriteAsync("Tenant not found");
-                    await context.Response.WriteAsync("Page Not Found");
+                    await context.Response.WriteAsync("   Page Not Found");
                     return;
                 }
 
+                // Cache tenant information and update context for unauthenticated users
                 context.Items["TenantId"] = tenant.Data?.Id;
                 var tName = tenant.Data.TenantName;
                 context.Items["TenantImage"] = tenant.Data?.Logo;
@@ -160,6 +175,7 @@ public class TenantMiddleware
             }
         }      
 
+        //forward request 
         await _next(context);
     }
 }
