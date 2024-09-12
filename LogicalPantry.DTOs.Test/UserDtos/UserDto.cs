@@ -20,5 +20,15 @@ namespace LogicalPantry.DTOs.Test.UserDtos
         public bool Attended { get; set; }
 
         public int TimeSlotId { get; set; }
+
+
+        public string? ZipCode { get; set; }    // Zip Code
+        public bool? IsMarried { get; set; }    // Married (Yes/No)
+        public int? HouseholdSize { get; set; } // Number in Household
+        public bool? HasSchoolAgedChildren { get; set; } // School-aged Children (Yes/No)
+        public bool? IsVeteran { get; set; }    // Veteran (Yes/No)
+        public DateTime? DateOfBirth { get; set; } // Date of Birth (Month/Year)
+        public string? EmploymentStatus { get; set; } // Employment Status Dropdown
+        public string? ProfilePictureUrl { get; set; } // URL for the uploaded profile picture
     }
 }

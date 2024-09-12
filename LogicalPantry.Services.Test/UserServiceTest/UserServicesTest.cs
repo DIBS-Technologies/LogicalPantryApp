@@ -167,18 +167,18 @@ namespace LogicalPantry.Services.Test.UserServiceTest
             return response;
         }
 
-            public async Task<bool> DeleteUserAsync(int userId)
-            {
-                var user = await dataContext.Users.FindAsync(userId);
-                if (user == null)
-                    return false;
+        public async Task<bool> DeleteUserAsync(int userId)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+                return false;
 
-                dataContext.Users.Remove(user);
-                await dataContext.SaveChangesAsync();
-                return true;
-            }
+            _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+            return true;
         }
     }
+}
 
 
 
