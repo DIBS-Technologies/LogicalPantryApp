@@ -34,8 +34,8 @@ builder.Services.AddRateLimiter(options =>
             factory: partition => new FixedWindowRateLimiterOptions
             {
                 //Specifies the maximum number of permits that can be granted within the defined time window.
-                //PermitLimit = 100,
-                PermitLimit = 500,
+                PermitLimit = 100,
+               // PermitLimit = 500,
                 /// Defines the duration of the time window during which the permit limit is enforced.
                 Window = TimeSpan.FromMinutes(1),
                 /// Determines the order in which requests in the queue are processed.
