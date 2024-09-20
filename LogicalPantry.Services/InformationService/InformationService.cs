@@ -480,6 +480,7 @@ namespace LogicalPantry.Services.InformationService
                     TenantName = tenant.TenantName,
                     // Add other properties as needed
                     PageName = tenant.PageName,
+                    AdminEmail= tenant.AdminEmail,
                     TenantDisplayName = tenant.TenantDisplayName,
                 };
                 response.Success = true;

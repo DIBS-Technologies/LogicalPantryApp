@@ -188,7 +188,7 @@ namespace LogicalPantry.Web.Controllers
         /// An <see cref="IActionResult"/> that renders the tenant's home page if the page name is found and the file exists; 
         /// otherwise, returns an error page or a default view if the tenant or page is not found.
         /// </returns>
-        [HttpGet("/{action?}")]
+         [HttpGet("/{action?}")]
         public async Task<IActionResult> Home()
         {
             // Log the started of the Index method execution.
