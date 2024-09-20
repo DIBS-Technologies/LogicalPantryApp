@@ -17,6 +17,9 @@ namespace LogicalPantry.Services.Test.UserServiceTest
         Task<ServiceResponse<bool>> CheckUserDeleteResponse(int userId);
         Task<bool> DeleteUserAsync(int userId);
         Task<ServiceResponse<UserDto>> CheckUserPostResponse(UserDto userDto);
-       
+
+        Task<ServiceResponse<UserDto>> ProfileAsync(string userEmail);
+
+
     }
 }

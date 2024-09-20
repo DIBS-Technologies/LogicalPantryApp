@@ -111,11 +111,11 @@ namespace LogicalPantry.Tests.Controllers
         public async Task GetUsersbyTimeSlot_With_ValidResponse()
         {
             // Arrange
-            string dateTimeString = "2024-08-25 07:33:00.0000000"; // Use the exact format as stored in the database
+            string dateTimeString = "2024-09-13 09:36:00.0000000"; // Use the exact format as stored in the database
             DateTime dateTime = DateTime.ParseExact(dateTimeString, "yyyy-MM-dd HH:mm:ss.fffffff", System.Globalization.CultureInfo.InvariantCulture);
 
             // Act
-            var response = await _client.GetAsync($"/LP/TimeSlotSignup/GetUsersbyTimeSlot?timeSlot={dateTimeString}");
+            var response = await _client.GetAsync($"/Logic/TimeSlotSignup/GetUsersbyTimeSlot?timeSlot={dateTimeString}");
             var responseContent = await response.Content.ReadAsStringAsync();
             Console.WriteLine($"Response Status Code: {response.StatusCode}");
 
@@ -146,8 +146,8 @@ namespace LogicalPantry.Tests.Controllers
             var timeSlotSignUpDtos = new TimeSlotSignupDto
             {
                
-                TimeSlotId = 190,
-                UserId = 61,
+                TimeSlotId = 281,
+                UserId = 371,
                 Attended = true,
             };
 
@@ -155,7 +155,7 @@ namespace LogicalPantry.Tests.Controllers
 
             // Act
 
-            var response = await _client.PostAsync("/LP/TimeSlotSignup/AddTimeSlotSignUps", content);
+            var response = await _client.PostAsync("/Logic/TimeSlotSignup/AddTimeSlotSignUps", content);
             var responseContent = await response.Content.ReadAsStringAsync();
             Console.WriteLine($"Response Status Code: {response.StatusCode}");
             Console.WriteLine($"Response Content: {responseContent}");

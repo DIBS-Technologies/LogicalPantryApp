@@ -177,6 +177,51 @@ namespace LogicalPantry.Services.Test.UserServiceTest
             await _context.SaveChangesAsync();
             return true;
         }
+
+        public async Task<ServiceResponse<UserDto>> ProfileAsync(string userEmail)
+        {
+            var response = new ServiceResponse<UserDto>();
+
+            if(userEmail == null)
+            {
+                response.Success = false;
+                response.Message = "User email is found";
+            }
+
+            try
+            {
+                var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == userEmail);
+
+                if(user == null)
+                {
+                    response.Success = false;
+                    response.Message = "User not found";
+                   
+
+                }
+                else
+                {
+                    response.Success = true;
+                    response.Message = "User found Successfully";
+                    response.Data = new UserDto
+                    {
+                        FullName = user.FullName,
+                        Address = user.Address,
+                        Email = user.Email,
+                        PhoneNumber = user.PhoneNumber,
+                        IsAllow = user.IsAllow,
+                    };
+                    return response;
+                }
+            }
+            catch(Exception ex)
+            {
+                response.Success = false;
+                response.Message = ex.Message;
+            }
+
+            return response;
+        }
     }
 }
 
