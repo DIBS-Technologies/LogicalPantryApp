@@ -140,45 +140,8 @@ namespace LogicalPantry.Web.Controllers
 
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> SaveEvent([FromBody]TimeSlotDto timeSlotDto)
-        //{
-        //    _logger.LogInformation("SaveEvent method call started.");
+       
 
-        //    if (ModelState.IsValid)
-        //    {
-        //        if (timeSlotDto.Id == 0)
-        //        {
-        //            // Add new event
-        //            await _timeSlotService.AddTimeSlotAsync(timeSlotDto);
-        //        }
-        //        else
-        //        {
-        //            // Update existing event
-        //            await _timeSlotService.UpdateTimeSlotAsync(timeSlotDto);
-        //        }
-        //        return Ok();
-        //    }
-
-        //    _logger.LogInformation("SaveEvent method call ended.");
-
-        //    return BadRequest();
-
-        //}
-
-
-        /// <summary>
-        /// Converts a DateTimeOffset to a Unix timestamp in seconds.
-        /// </summary>
-        /// <param name="dateTime">The DateTimeOffset to convert.</param>
-        /// <returns>Returns the Unix timestamp as a long.</returns>
-        // Helper method to convert DateTimeOffset to Unix timestamp (seconds)
-        private long ToUnixTimestamp(DateTimeOffset dateTime)
-        {
-            _logger.LogInformation("ToUnixTimestamp method call started.");
-            _logger.LogInformation("ToUnixTimestamp method call ended.");
-            return dateTime.ToUnixTimeSeconds();
-        }
 
         /// <summary>
         /// Retrieves the ID of a time slot based on the provided time range and time slot name.
@@ -330,7 +293,31 @@ namespace LogicalPantry.Web.Controllers
 
 
 
+        //[HttpPost]
+        //public async Task<IActionResult> SaveEvent([FromBody]TimeSlotDto timeSlotDto)
+        //{
+        //    _logger.LogInformation("SaveEvent method call started.");
 
+        //    if (ModelState.IsValid)
+        //    {
+        //        if (timeSlotDto.Id == 0)
+        //        {
+        //            // Add new event
+        //            await _timeSlotService.AddTimeSlotAsync(timeSlotDto);
+        //        }
+        //        else
+        //        {
+        //            // Update existing event
+        //            await _timeSlotService.UpdateTimeSlotAsync(timeSlotDto);
+        //        }
+        //        return Ok();
+        //    }
+
+        //    _logger.LogInformation("SaveEvent method call ended.");
+
+        //    return BadRequest();
+
+        //}
 
     }
 

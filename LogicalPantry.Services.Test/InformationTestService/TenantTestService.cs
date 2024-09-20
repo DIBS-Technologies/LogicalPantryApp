@@ -1,4 +1,5 @@
-﻿using LogicalPantry.DTOs.Test.TenantDtos;
+﻿using LogicalPantry.DTOs.Test;
+using LogicalPantry.DTOs.Test.TenantDtos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -34,12 +35,47 @@ namespace LogicalPantry.Services.Test.TenantTestService
             _context = new ApplicationDataContext(builder.Options);
         }
 
-        public async Task<bool> IsAddSuccessful(TenantDto tenantDto)
+        public async Task<ServiceResponse<TenantDto>> IsAddSuccessful(TenantDto tenantDto)
         {
-            var tenant = _context.Tenants
-                .FirstOrDefault(t => t.TenantName == tenantDto.TenantName && t.AdminEmail == tenantDto.AdminEmail && t.PaypalId == tenantDto.PaypalId && t.PageName == tenantDto.PageName);
-            return tenant != null;
+            var response = new ServiceResponse<TenantDto>();
+
+            // Retrieve tenant matching the specified details
+            var tenant = await _context.Tenants
+                .FirstOrDefaultAsync(t => t.TenantName == tenantDto.TenantName
+                                          && t.AdminEmail == tenantDto.AdminEmail
+                                          && t.PaypalId == tenantDto.PaypalId
+                                          && t.PageName == tenantDto.PageName);
+
+            if (tenant != null)
+            {
+                // Map the found tenant to a TenantDto
+                var tenantDetails = new TenantDto
+                {
+                    Id = tenant.Id,
+                    TenantName = tenant.TenantName,
+                    AdminEmail = tenant.AdminEmail,
+                    PaypalId = tenant.PaypalId,
+                    PageName = tenant.PageName,
+                    Logo = tenant.Logo,
+                    Timezone = tenant.Timezone
+                };
+
+                // Set response data and success status
+                response.Data = tenantDetails;
+                response.Success = true;
+                response.Message = "Tenant found successfully.";
+            }
+            else
+            {
+                // Set failure response if tenant is not found
+                response.Data = null;
+                response.Success = false;
+                response.Message = "Tenant not found.";
+            }
+
+            return response;
         }
+
 
         public async Task<bool> IsUpdateSuccessful(TenantDto tenantDto)
         {

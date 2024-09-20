@@ -247,6 +247,10 @@
             padding-top: 29px;
            
         } */
+
+        .calendar .calendar-events .calendar-event {
+            border-radius: 15px;
+        }
        
     </style>
 </head>
@@ -330,7 +334,7 @@
     <script src="~/jquery.touchswipe/jquery.touchswipe.min.js"></script>
     <link rel="stylesheet" href="~/css/jquery-calendar.min.css">
     <script src="~/js/jquery-calendar.min.js"></script>
-
+        
             <script>
                 $(document).ready(function () {
                     debugger;
@@ -342,7 +346,7 @@
                 locale: 'en',
                 weekday: {
                     timeline: {
-                        intervalMinutes: 30,
+                        intervalMinutes: 60,
                         fromHour: 7, // Adjusted from 9 to 7
                         toHour: 23
                     }
@@ -358,7 +362,7 @@
                     timeline: {
                         fromHour: 7,
                         toHour: 23,
-                        intervalMinutes: 30,
+                        intervalMinutes: 60,
                         format: 'HH:mm',
                         heightPx: 50,
                         autoResize: true

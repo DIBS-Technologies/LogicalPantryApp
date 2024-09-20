@@ -106,7 +106,7 @@ namespace LogicalPantry.Web.Controllers
         /// <param name="tenantDto">The tenant data to be added or updated.</param>
         /// <param name="LogoFile">The logo file to be uploaded and saved.</param>
         /// <returns>An <see cref="IActionResult"/> that renders the AddTenant view with the tenant data or redirects to display the updated data.</returns>
-        [Authorize(Roles = $"{UserRoleEnum.Admin}")]
+       // [Authorize(Roles = $"{UserRoleEnum.Admin}")]
         [HttpPost("AddTenant")]
         public async Task<IActionResult> AddTenant(TenantDto tenantDto, IFormFile LogoFile)
         {

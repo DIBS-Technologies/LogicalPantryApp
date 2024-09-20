@@ -88,10 +88,10 @@ namespace LogicalPantry.Tests
         {
             var userDto = new UserDto
             {
-                TenantId = 5,
+                TenantId = 15,
                 FullName = "Sample User3",
                 Email = "sampleUser@gmail.com",
-                PhoneNumber = "1234567890",
+                PhoneNumber = "+1 (123) 456-7890",
                 Address = "Sample Address"
             };
 

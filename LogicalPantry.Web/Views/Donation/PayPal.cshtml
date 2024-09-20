@@ -8,7 +8,7 @@
     var tenantId = ViewBag.TenantId;
     var pagename = ViewBag.PageName as string;
     var isUser = User.IsInRole("User");
-
+    var PayPalEmail = ViewBag.PaypalEmail;
 
     var userClaim = User.Claims
                         .Where(c => c.Type == ClaimTypes.Role)
@@ -337,25 +337,54 @@
                             amount: {
                                 value: currentAmount
                             },
-                            description: 'Charitable Donation'
+                            description: 'Charitable Donation',
+                            payee: {
+                                email_address: '@ViewBag.PaypalEmail' // Receiver's PayPal email (admin's email)
+                                
+                            }
                         }]
                     });
                 },
                 onApprove: function (data, actions) {
                     return actions.order.capture().then(function (details) {
-                        alert('Transaction completed by ' + details.payer.name.given_name);
+                        const payerName = details.payer.name.given_name;
+                        const transactionId = details.id;  // Transaction ID
+                        const amount = details.purchase_units[0].amount.value;  // Paid amount
+                        const reciver = '@ViewBag.PaypalEmail'; // Ensure this is correctly rendered
+                        // Show success alert with transaction details
                         Swal.fire({
                             title: 'Payment Successful!',
-                            text: `Thank you for your donation, ${details.payer.name.given_name}!`,
+                            html: `
+                                <p>Thank you for your donation, ${payerName}!</p>
+                                <p><strong>Transaction ID:</strong> ${transactionId}</p>
+                                <p><strong>Amount Donated:</strong> $${amount}</p>
+                                <p><strong>Receiver Email:</strong> ${reciver}</p>
+                               
+                            `,
                             icon: 'success',
                             confirmButtonText: 'OK'
                         }).then(() => {
-                            // Redirect or perform other actions if needed
+                            // Optionally redirect or perform other actions if needed
                             // window.location.href = '/success'; // Example redirect
                         });
                     });
                 }
             }).render('#paypal-button-container');
+            //     onApprove: function (data, actions) {
+            //         return actions.order.capture().then(function (details) {
+            //             //alert('Transaction completed by ' + details.payer.name.given_name);
+            //             Swal.fire({
+            //                 title: 'Payment Successful!',
+            //                 text: `Thank you for your donation, ${details.payer.name.given_name}!`,
+            //                 icon: 'success',
+            //                 confirmButtonText: 'OK'
+            //             }).then(() => {
+            //                 // Redirect or perform other actions if needed
+            //                 // window.location.href = '/success'; // Example redirect
+            //             });
+            //         });
+            //     }
+            // }).render('#paypal-button-container');
         }
 
         // function renderPayPalButton() {

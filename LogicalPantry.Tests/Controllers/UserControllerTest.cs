@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Http;
 using NuGet.Protocol;
 using Microsoft.AspNetCore.Mvc;
 using LogicalPantry.Models.Test.ModelTest;
+using LogicalPantry.Services.Test.RegistrationService;
 
 namespace LogicalPantry.Tests
 {
@@ -29,9 +30,9 @@ namespace LogicalPantry.Tests
         private HttpClient _client;
         private TestApplicationDataContext _context;
         private IUserServiceTest _userServiceTest;
+        //private IRegistrationTestService _registrationTestService;
         private IConfiguration _configuration;
 
-        // This method is called before each test method is run.
         [TestInitialize]
         public void Setup()
         {
@@ -61,6 +62,7 @@ namespace LogicalPantry.Tests
                         services.AddDbContext<TestApplicationDataContext>(options =>
                             options.UseSqlServer(connectionString));
 
+                        //services.AddTransient<IRegistrationTestService, RegistrationTestService>();
                         // Register the test service.
                         services.AddTransient<IUserServiceTest, UserServicesTest>();
 
@@ -72,8 +74,9 @@ namespace LogicalPantry.Tests
                             var scopedServices = scope.ServiceProvider;
                             _context = scopedServices.GetRequiredService<TestApplicationDataContext>();
                             _userServiceTest = scopedServices.GetRequiredService<IUserServiceTest>();
-
-                            // Ensure the in-memory database is created.
+                            //_registrationTestService = scopedServices.GetRequiredService<IRegistrationTestService>();
+                            //// Ensure the in-memory database is created.
+                            //_context.Database.EnsureCreated();
                             var db = scopedServices.GetRequiredService<TestApplicationDataContext>();
                             db.Database.EnsureCreated();
                         }
@@ -287,6 +290,10 @@ namespace LogicalPantry.Tests
             Assert.IsNull(deletedUser);
         }
 
+
+
+        //18/9/24
+
         //Add User profile when valid data 
         [TestMethod]
         public async Task Add_WhenValidData_Profile()
@@ -352,19 +359,10 @@ namespace LogicalPantry.Tests
         }
 
 
-        //[TestMethod]
-        //public async Task Profile_GetUserDetails()
-        //{
-        //    // Arrange
-        //    var userEmail = "test@example.com";
-        //    var userDetails = new User();
-        //    // Act
-        //    var result = await _controller.Profile() as ViewResult;
-        //    // Assert
-        //    Assert.NotNull(result);
-        //    Assert.Equal("Profile", result.ViewName);
-        //    Assert.Equal(userDetails, result.Model);
-        //}
+      
+
+
+
 
 
     }

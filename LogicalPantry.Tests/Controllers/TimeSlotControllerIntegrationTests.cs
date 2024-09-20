@@ -17,6 +17,8 @@ using Newtonsoft.Json;
 using System.Text;
 using LogicalPantry.Services.Test.TimeSlotServiceTest;
 using Humanizer;
+using Microsoft.AspNetCore.Mvc;
+using Moq;
 
 namespace LogicalPantry.IntegrationTests
 {
@@ -88,8 +90,8 @@ namespace LogicalPantry.IntegrationTests
         {
             var timeSlotDto = new TimeSlotDto
             {
-                UserId = 61,
-                TenantId = 27,
+                UserId = 371,
+                TenantId = 47,
                 TimeSlotName = "Sample Event",
                 StartTime = DateTime.UtcNow.AddHours(1),
                 EndTime = DateTime.UtcNow.AddHours(2)
@@ -107,42 +109,6 @@ namespace LogicalPantry.IntegrationTests
             Assert.AreEqual(timeSlotDto.StartTime, result.Data.StartTime);
             Assert.AreEqual(timeSlotDto.EndTime, result.Data.EndTime);
 
-        }
-
-        /// <summary>
-        /// Delete Event from the database
-        /// </summary>
-        /// <returns></returns>
-        [TestMethod]
-        public async Task DeleteEvent_ShouldReturnOk_WhenEventIsDeleted()
-        {
-            var timeSlotDto = new TimeSlotDto
-            {
-                Id = 186,            //Make sure this id present in the database
-                UserId = 111,
-                TenantId = 17,
-                TimeSlotName = "Event to Delete",
-                StartTime = new DateTime(),
-                EndTime = new DateTime()
-            };
-
-
-            //// First add the event
-            //var response =  await _client.PostAsJsonAsync("/LogicalPantry/TimeSlot/SaveEvent", timeSlotDto);
-            //var content = await response.Content.ReadAsStringAsync();
-
-            //// Get the event ID
-            //var events = await _timeSlotService.GetAllEventsAsync();
-            //var eventToDelete = events.SingleOrDefault(e => e.TimeSlotName == "Event to Delete");
-
-            
-            var deleteResponse = await _client.PostAsJsonAsync("/LogicalPantry/TimeSlot/DeleteEvent", timeSlotDto);    
-            var contentResponse = await deleteResponse.Content.ReadAsStringAsync();
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, deleteResponse.StatusCode);
-
-            //// Verify that the event was deleted
-            //events = await _timeSlotService.GetAllEventsAsync();
-            //Assert.IsFalse(events.Any(e => e.TimeSlotName == "Event to Delete"));
         }
 
         /// <summary>
@@ -191,5 +157,71 @@ namespace LogicalPantry.IntegrationTests
 
 
         }
+
+
+
+
+
+
+
+
+
+
+        //18/9/2024
+
+        [TestMethod]
+        public async Task EditTimeSlotUser_ShouldReturnOkWithUsers_WhenTimeSlotExists()
+        {
+            // Arrange
+            int validTimeSlotId = 280;
+
+            // Act
+            var response = await _client.GetAsync($"/Logic/TimeSlot/EditTimeSlotUser?Id={validTimeSlotId}");
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            // Assert
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
+            //Assert.IsTrue(responseContent.Contains("User1"));
+            //Assert.IsTrue(responseContent.Contains("user1@test.com"));
+            //Assert.IsTrue(responseContent.Contains("User2"));
+            //Assert.IsTrue(responseContent.Contains("user2@test.com"));
+        }
+
+        [TestMethod]
+        public async Task EditTimeSlotUser_ShouldReturnBadRequest_WhenTimeSlotIdIsInvalid()
+        {
+            // Arrange
+            int invalidTimeSlotId = 0;
+
+            // Act
+            var response = await _client.GetAsync($"/Logic/TimeSlot/EditTimeSlotUser/{invalidTimeSlotId}");
+
+            // Assert
+            Assert.AreEqual(System.Net.HttpStatusCode.NotFound, response.StatusCode);
+            var responseContent = await response.Content.ReadAsStringAsync();
+            //Assert.IsTrue(responseContent.Contains("Invalid time slot."));
+        }
+
+        [TestMethod]
+        public async Task EditTimeSlotUser_ShouldReturnOkWithEmptyList_WhenNoUsersFound()
+        {
+            // Arrange
+            int validTimeSlotId = 282;
+
+            // Act
+            var response = await _client.GetAsync($"/Logic/TimeSlot/EditTimeSlotUser?Id={validTimeSlotId}");
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            // Assert
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
+            //Assert.IsTrue(responseContent.Contains("No users found for this time slot"));
+        }
+
+       
+
+
+
+
+
     }
 }

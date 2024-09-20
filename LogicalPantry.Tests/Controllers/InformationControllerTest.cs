@@ -1,8 +1,10 @@
 ﻿
 using LogicalPantry.DTOs.Test.TenantDtos;
 using LogicalPantry.Services.InformationService;
+using LogicalPantry.Services.Test.TenantTestService;
 using LogicalPantry.Web;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -24,7 +26,8 @@ namespace LogicalPantry.IntegrationTests
     {
         private WebApplicationFactory<Startup> _factory;
         private HttpClient _client;
-        private IInformationService _informationService;
+       // private IInformationService _informationService;
+        private ITenantTestService _tenantTestService;
         private IConfiguration _configuration;
 
         [TestInitialize]
@@ -56,7 +59,7 @@ namespace LogicalPantry.IntegrationTests
                             options.UseSqlServer(connectionString));
 
 
-                        services.AddTransient<IInformationService, InformationService>();
+                        services.AddTransient<ITenantTestService, TenantTestService>();
 
                     
                         var serviceProvider = services.BuildServiceProvider();
@@ -65,7 +68,7 @@ namespace LogicalPantry.IntegrationTests
                         using (var scope = serviceProvider.CreateScope())
                         {
                             var scopedServices = scope.ServiceProvider;
-                            _informationService = scopedServices.GetRequiredService<IInformationService>();
+                            _tenantTestService = scopedServices.GetRequiredService<ITenantTestService>();
                         }
                     });
                 });
@@ -104,12 +107,12 @@ namespace LogicalPantry.IntegrationTests
             // Create the TenantDto
             var tenantDto = new TenantDto
             {
-                TenantName = "Test Tenant",
-                AdminEmail = "admin@test.com",
-                PaypalId = "paypal123",
-                PageName = "test-page",
-                Logo = "/Image/test-logo.png",
-                Timezone = "UTC"
+                TenantName = "Logic",
+                AdminEmail = "Shrikantdandiledib1@gmail.com",
+                PaypalId = "Shrikantdandiledib1@gmail.com",
+                PageName = "Index.html",
+                Logo = "/Image/838a7921-35e3-4a75-a9df-e6e6541aef30.svg",
+                Timezone = "US/Eastern"
             };
 
             //// Create MultipartFormDataContent to send the form data
@@ -124,8 +127,8 @@ namespace LogicalPantry.IntegrationTests
             form.Add(new StringContent(tenantDto.Timezone), nameof(tenantDto.Timezone));
 
             // Create a mock IFormFile
-            var fileName = "test-logo.png";
-            var contentType = "image/png";
+            var fileName = "/5114218a-5aba-482f-a342-4bbb5cc184e3.svg";
+            var contentType = "image/svg";
             var fileContent = new byte[] { /* file content */ }; // Example file content as byte array
             var fileStream = new MemoryStream(fileContent);
             var logoFile = new FormFile(fileStream, 0, fileContent.Length, "LogoFile", fileName)
@@ -138,7 +141,19 @@ namespace LogicalPantry.IntegrationTests
             form.Add(new StreamContent(logoFile.OpenReadStream()), "LogoFile", logoFile.FileName);
 
             // Send the POST request to the correct URL
-            var response = await _client.PostAsync("/LogicalPantry/Information/AddTenant", form);
+            var response = await _client.PostAsync("/Logic/Information/AddTenant", form);
+
+            // Act: Retrieve the tenant from the database to verify it was added
+            var result = await _tenantTestService.IsAddSuccessful(tenantDto);
+
+            //Compare the data
+            Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
+            Assert.AreEqual(tenantDto.TenantName, result.Data.TenantName);
+            Assert.AreEqual(tenantDto.PageName, result.Data.PageName);
+            Assert.AreEqual(tenantDto.PaypalId, result.Data.PaypalId);
+            Assert.AreEqual(tenantDto.AdminEmail, result.Data.AdminEmail);
+            Assert.AreEqual(tenantDto.Timezone, result.Data.Timezone);
+
 
             // Assert the response status code
             Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
@@ -201,7 +216,7 @@ namespace LogicalPantry.IntegrationTests
         public async Task Home_ShouldReturnView_WhenTenantNameIsValid() 
         {
             // test data 
-            var pageName = "Index"; // Ensure this page name exists in your test environment
+            var pageName = "Index.html"; // Ensure this page name exists in your test environment
 
             // api ressponse 
             var response = await _client.GetAsync($"/LP/Information/Home?PageName={pageName}");
@@ -254,5 +269,15 @@ namespace LogicalPantry.IntegrationTests
             var tenant = await response.Content.ReadFromJsonAsync<TenantDto>();
             Assert.IsNotNull(tenant);
         }
+
+
+
+
+
+        //9/18/2024
+
+        
+
+
     }
 }
