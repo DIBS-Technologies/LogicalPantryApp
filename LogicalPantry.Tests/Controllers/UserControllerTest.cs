@@ -96,40 +96,31 @@ namespace LogicalPantry.Tests
         [TestMethod]
         public async Task UpdateUser_when_ValidData()
         {
-
-            // Arrange
-            var userId = 67;
-            var isAllow = true;
-
+           
             var userDto = new UserDto
             {
-                Id = userId,
-                IsAllow = isAllow,
+                Id = 372,
+                IsAllow = false,
             };
+
 
             var content = new StringContent(JsonConvert.SerializeObject(userDto), Encoding.UTF8, "application/json");
 
-
-            //Act
-            var response = await _client.PostAsync("/TenantB/User/UpdateUser", content);
+            // Act
+            var response = await _client.PostAsync("/Logic/User/UpdateUser", content);
             var responseContent = await response.Content.ReadAsStringAsync();
-            Console.WriteLine($"Response status code: {response.StatusCode}");
-            Console.WriteLine($"Response Content: {responseContent}");
 
+            // Assert
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode);
 
-            //Assert
-            response.EnsureSuccessStatusCode();
-            Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
-
-            //check if the data saved correctly in the database
-
+            // Check if the data saved correctly in the database
             var user = await _userServiceTest.CheckUserPostResponse(userDto);
 
             Assert.IsNotNull(user);
             Assert.AreEqual(userDto.Id, user.Data.Id);
             Assert.AreEqual(userDto.IsAllow, user.Data.IsAllow);
-
         }
+
 
         /// <summary>
         ///Tests the <see cref="UpdateUserBatch_when_ValidData"/> method to ensure it correctly update the List of the users.
@@ -141,15 +132,15 @@ namespace LogicalPantry.Tests
             //Arrage
             var userDto = new List<UserDto>
             {
-                new UserDto{Id = 61, TimeSlotId = 82, Attended = true},
-                new UserDto{Id = 67, TimeSlotId = 82, Attended =true},
+                new UserDto{Id = 372, TimeSlotId = 284, Attended = true},
+                new UserDto{Id = 372, TimeSlotId = 285, Attended =true},
             };
 
             var content = new StringContent(JsonConvert.SerializeObject(userDto), Encoding.UTF8, "application/json");
 
             //Act
 
-            var response = await _client.PostAsync("/TenantB/User/UpdateUserBatch", content);
+            var response = await _client.PostAsync("/Logic/User/UpdateUserBatch", content);
 
             //Assert
             Assert.IsNotNull(response);
@@ -177,16 +168,10 @@ namespace LogicalPantry.Tests
         [TestMethod]
         public async Task ManageUsers_GetAllRegisterUsers()
         {
-            //Arrange
-            var userCount = 3;
-
-            var tenantId = 5;
-
-            var session = _client.DefaultRequestHeaders;
-            session.Add("TenantId", tenantId.ToString());
+           
 
             //Act
-            var response = await _client.GetAsync("/LP/User/ManageUsers");
+            var response = await _client.GetAsync("/Logic/User/ManageUsers");
             var responseContent = await response.Content.ReadAsStringAsync();
 
             //Assert
@@ -205,7 +190,7 @@ namespace LogicalPantry.Tests
         public async Task GetUserIdByEmail()
         {
             //Arrange
-            var userEmail = "jaygaikwad2312@gmail.com";
+            var userEmail = "jayantgaikwad410@gmail.com";
 
             var userDto = new UserDto
             {
@@ -216,11 +201,12 @@ namespace LogicalPantry.Tests
 
             //Act
             var response = await _client.PostAsync("/LP/User/GetUserIdByEmail", content);
-
+            var contentResponse = await response.Content.ReadFromJsonAsync<UserDto>();
             //Assert
             response.EnsureSuccessStatusCode();
             Assert.IsNotNull(response);
             Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
+          
         }
 
         /// <summary>
@@ -231,10 +217,14 @@ namespace LogicalPantry.Tests
         [TestMethod]
         public async Task DeleteUserById()
         {
-            //Arrange
-            var userId = 72;
-            //Act
-            var response = await _client.DeleteAsync($"/TenantB/User/DeleteUser/{userId}");
+            // Arrange
+            var userId = 61;
+
+            // Act
+            var response = await _client.PostAsync($"/LogicalPantry/User/DeleteUser?userId={userId}", null);
+
+            var responseContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine();
             //Assert
             Assert.IsNotNull(response);
             Assert.AreEqual(response.StatusCode, HttpStatusCode.OK);
@@ -251,13 +241,25 @@ namespace LogicalPantry.Tests
             //  Define a new user to add.
             var newUser = new UserDto
             {
-                FullName = "New User",
-                Email = "newuser@example.com",
-                PhoneNumber = "3333333333"
+                FullName = "new user",
+                Address = "abc",
+                Email = "newUser@gmail.com",
+                PhoneNumber = "123456454",
+                IsAllow = true,
+                IsRegistered = true,
+                DateOfBirth = new DateTime(2000, 1, 1), // Provide a valid DateTime
+                ZipCode = "12345",
+                HouseholdSize = 4,
+                HasSchoolAgedChildren = true,
+                IsMarried = false,
+                ProfilePictureUrl = "profile.jpj",
+                EmploymentStatus = "Employed",
+                IsVeteran = false
             };
 
+            var content = new StringContent(JsonConvert.SerializeObject(newUser), Encoding.UTF8, "application/json");
             // Send a POST request to add the new user.
-            var response = await _client.PostAsJsonAsync("/User/AddUser", newUser);
+            var response = await _client.PostAsync("Logic/User/Register", content);
 
             // Verify the response status code is OK (200).
             Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
@@ -266,32 +268,13 @@ namespace LogicalPantry.Tests
             var addedUser = await _userServiceTest.CheckUserPostResponse(newUser);
             Assert.IsNotNull(addedUser);
 
-            // added data matches what was sent in the request.
-            //Assert.AreEqual(newUser.FullName, addedUser.FullName);
-            //Assert.AreEqual(newUser.Email, addedUser.Email);
-            //Assert.AreEqual(newUser.PhoneNumber, addedUser.PhoneNumber);
+            //added data matches what was sent in the request.
+            Assert.AreEqual(newUser.FullName, addedUser.Data.FullName);
+            Assert.AreEqual(newUser.Email, addedUser.Data.Email);
+            Assert.AreEqual(newUser.PhoneNumber, addedUser.Data.PhoneNumber);
         }
 
-        // Test method for deleting a user.
-        [TestMethod]
-        public async Task DeleteUser_ShouldReturnSuccess_WhenDeletionIsValid()
-        {
-            //  Define a user to deleted.
-            var userId = 1;
-
-            // Send a DELETE request to remove the user.
-            var response = await _client.DeleteAsync($"/User/DeleteUser/{userId}");
-
-            //  Verify the response status code is OK (200).
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
-
-            // Confirm the user was removed from the database.
-            var deletedUser = await _userServiceTest.DeleteUserAsync(userId);
-            Assert.IsNull(deletedUser);
-        }
-
-
-
+     
         //18/9/24
 
         //Add User profile when valid data 
@@ -301,9 +284,9 @@ namespace LogicalPantry.Tests
             // Create the UserDto
             var user = new UserDto
             {
-                FullName = "abc",
-                Address = "abc",
-                Email = "abc@gmail.com",
+                FullName = "abcd",
+                Address = "abcd",
+                Email = "abcd@gmail.com",
                 PhoneNumber = "abc",
                 IsAllow = true,
                 IsRegistered = true,
@@ -353,17 +336,13 @@ namespace LogicalPantry.Tests
             // Send the POST request to the correct URL
             var response = await _client.PostAsync("/Logic/User/Profile", form);
             var responseContent = await response.Content.ReadAsStringAsync();
-            //Console.WriteLine(responseContent);
-            //// Assert the response status code
-            //Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
+
+            var userProfile = await _userServiceTest.ProfileAsync(user.Email);
+            Assert.AreEqual(user.FullName , userProfile.Data.FullName);
+            Assert.AreEqual(user.Address, userProfile.Data.Address);
+            Assert.AreEqual(user.Email, userProfile.Data.Email);
+            Assert.AreEqual(user.PhoneNumber, userProfile.Data.PhoneNumber);
         }
-
-
-      
-
-
-
-
 
     }
 }

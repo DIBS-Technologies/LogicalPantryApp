@@ -90,15 +90,18 @@ namespace LogicalPantry.IntegrationTests
         {
             var timeSlotDto = new TimeSlotDto
             {
-                UserId = 371,
-                TenantId = 47,
+
+                UserId = 61,
+                TenantId = 17,
                 TimeSlotName = "Sample Event",
                 StartTime = DateTime.UtcNow.AddHours(1),
-                EndTime = DateTime.UtcNow.AddHours(2)
+                EndTime = DateTime.UtcNow.AddHours(2),
+                EventType = "Appointment",
+                MaxNumberOfUsers = 1,
             };
 
             var content = new StringContent(JsonConvert.SerializeObject(timeSlotDto), Encoding.UTF8, "application/json");
-            var response = await _client.PostAsync("/LogicalPantry/TimeSlot/SaveEvent", content);
+            var response = await _client.PostAsync("/LogicalPantry/TimeSlot/AddEvent", content);
 
             //Get the event from the database and check if add in the database.
             var result = await _timeSlotTestService.GetEvent(timeSlotDto);
@@ -121,13 +124,13 @@ namespace LogicalPantry.IntegrationTests
 
             var timeSlotDto = new TimeSlotDto
             {
-                TimeSlotName = "food",
-                StartTime = DateTime.ParseExact("2024-08-29 13:01:00.0000000", "yyyy-MM-dd HH:mm:ss.fffffff", null),
-                EndTime = DateTime.ParseExact("2024-08-29 15:32:00.0000000", "yyyy-MM-dd HH:mm:ss.fffffff", null),
+                TimeSlotName = "Sample Event",
+                StartTime = DateTime.ParseExact("2024-09-20 11:08:44.5178367", "yyyy-MM-dd HH:mm:ss.fffffff", null),
+                EndTime = DateTime.ParseExact("2024-09-20 12:08:44.5279682", "yyyy-MM-dd HH:mm:ss.fffffff", null),
             };
 
 
-            var response = await _client.PostAsJsonAsync("/LP/TimeSlot/GetTimeSlotId", timeSlotDto);         
+            var response = await _client.PostAsJsonAsync("/LogicalPantry/TimeSlot/GetTimeSlotId", timeSlotDto);         
             Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
             var responseContent = await response.Content.ReadFromJsonAsync<dynamic>();
             Assert.IsNotNull(responseContent.timeSlotId);
@@ -173,7 +176,7 @@ namespace LogicalPantry.IntegrationTests
         public async Task EditTimeSlotUser_ShouldReturnOkWithUsers_WhenTimeSlotExists()
         {
             // Arrange
-            int validTimeSlotId = 280;
+            int validTimeSlotId = 286;
 
             // Act
             var response = await _client.GetAsync($"/Logic/TimeSlot/EditTimeSlotUser?Id={validTimeSlotId}");
@@ -206,7 +209,7 @@ namespace LogicalPantry.IntegrationTests
         public async Task EditTimeSlotUser_ShouldReturnOkWithEmptyList_WhenNoUsersFound()
         {
             // Arrange
-            int validTimeSlotId = 282;
+            int validTimeSlotId = 2582;
 
             // Act
             var response = await _client.GetAsync($"/Logic/TimeSlot/EditTimeSlotUser?Id={validTimeSlotId}");
@@ -216,12 +219,6 @@ namespace LogicalPantry.IntegrationTests
             Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
             //Assert.IsTrue(responseContent.Contains("No users found for this time slot"));
         }
-
-       
-
-
-
-
 
     }
 }
