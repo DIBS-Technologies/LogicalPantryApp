@@ -115,6 +115,8 @@ namespace LogicalPantry.Web.Controllers
             tenantDto.TenantName = TenantName;
             var TenantDisplayName = HttpContext.Session.GetString("TenantDisplayName");
             ViewBag.PageName = TenantDisplayName;
+
+
             if (LogoFile != null && LogoFile.Length > 0)
             {
                 // Generate a unique file name to avoid conflicts
@@ -264,7 +266,7 @@ namespace LogicalPantry.Web.Controllers
             }         
             else
             {
-                ViewBag.ErrorMessage = "   Page Not Found.";
+                ViewBag.ErrorMessage = "   Page Not Found";
                 // Log the ended of the Index method execution.
                 _logger.LogInformation("Home method call ended");
                 // return View("Error");

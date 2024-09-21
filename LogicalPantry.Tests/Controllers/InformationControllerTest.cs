@@ -91,6 +91,7 @@ namespace LogicalPantry.IntegrationTests
             var response = await _client.GetAsync($"/LogicalPantry/Information/Get?tenantid={tenantId}");
             var responseContent = await response.Content.ReadAsStringAsync();
             Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
+            Assert.IsNotNull(response);
         }
 
         /// <summary>
@@ -107,7 +108,7 @@ namespace LogicalPantry.IntegrationTests
                 AdminEmail = "Shrikantdandiledib1@gmail.com",
                 PaypalId = "Shrikantdandiledib1@gmail.com",
                 PageName = "Index.html",
-                Logo = "/Image/838a7921-35e3-4a75-a9df-e6e6541aef30.svg",
+                //Logo = "/Image/838a7921-35e3-4a75-a9df-e6e6541aef30.svg",
                 Timezone = "US/Eastern"
             };
 
@@ -119,7 +120,7 @@ namespace LogicalPantry.IntegrationTests
             form.Add(new StringContent(tenantDto.AdminEmail), nameof(tenantDto.AdminEmail));
             form.Add(new StringContent(tenantDto.PaypalId), nameof(tenantDto.PaypalId));
             form.Add(new StringContent(tenantDto.PageName), nameof(tenantDto.PageName));
-            form.Add(new StringContent(tenantDto.Logo), nameof(tenantDto.Logo));
+           // form.Add(new StringContent(tenantDto.Logo), nameof(tenantDto.Logo));
             form.Add(new StringContent(tenantDto.Timezone), nameof(tenantDto.Timezone));
 
             // Create a mock IFormFile

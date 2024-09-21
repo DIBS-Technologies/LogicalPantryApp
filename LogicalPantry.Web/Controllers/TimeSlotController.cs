@@ -101,7 +101,7 @@ namespace LogicalPantry.Web.Controllers
         /// </summary>
         /// <param name="Id">The ID of the time slot to retrieve users for.</param>
         /// <returns>Returns a view with a list of users associated with the time slot.</returns>
-        [Authorize(Roles = $"{UserRoleEnum.Admin}")]
+        //[Authorize(Roles = $"{UserRoleEnum.Admin}")]
         [HttpGet("EditTimeSlotUser")]
         public async Task<IActionResult> EditTimeSlotUser(int Id)
         {

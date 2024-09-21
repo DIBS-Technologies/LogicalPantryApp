@@ -97,7 +97,11 @@ namespace LogicalPantry.Services.Test.UserServiceTest
             return response;
         }
 
-
+        /// <summary>
+        /// Check User Delete Response is sucessfull 
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public async Task<ServiceResponse<bool>> CheckUserDeleteResponse(int userId)
         {
             var response = new ServiceResponse<bool>();
@@ -128,11 +132,11 @@ namespace LogicalPantry.Services.Test.UserServiceTest
             return response;
         }
 
-        public Task CheckUserDeleteResponse(UserDto user)
-        {
-            throw new NotImplementedException();
-        }
-
+        /// <summary>
+        /// Check User Post Response
+        /// </summary>
+        /// <param name="userDto"></param>
+        /// <returns></returns>
         public async Task<ServiceResponse<UserDto>> CheckUserPostResponse(UserDto userDto)
         {
             var response = new ServiceResponse<UserDto>();
@@ -167,6 +171,11 @@ namespace LogicalPantry.Services.Test.UserServiceTest
             return response;
         }
 
+        /// <summary>
+        /// sservice for delete user
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
         public async Task<bool> DeleteUserAsync(int userId)
         {
             var user = await _context.Users.FindAsync(userId);
@@ -178,6 +187,11 @@ namespace LogicalPantry.Services.Test.UserServiceTest
             return true;
         }
 
+        /// <summary>
+        /// service for profile
+        /// </summary>
+        /// <param name="userEmail"></param>
+        /// <returns></returns>
         public async Task<ServiceResponse<UserDto>> ProfileAsync(string userEmail)
         {
             var response = new ServiceResponse<UserDto>();
@@ -221,6 +235,64 @@ namespace LogicalPantry.Services.Test.UserServiceTest
             }
 
             return response;
+        }
+
+
+
+        /// <summary>
+        /// check for Get User Details By Email
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        public async Task<ServiceResponse<UserDto>> GetUserDetailsByEmail(string email)
+        {
+            var response = new ServiceResponse<UserDto>();
+            try
+            {
+                // Retrieve the user from the database based on the provided email
+                var user = await _context.Users
+                    .Where(u => u.Email == email)
+                    .FirstOrDefaultAsync();
+
+                if (user != null)
+                {
+                    // Map the User entity to UserDto
+                    var userDto = new UserDto
+                    {
+                        Id = user.Id,
+                        TenantId = user.TenantId,
+                        FullName = user.FullName,
+                        Email = user.Email,
+                        PhoneNumber = user.PhoneNumber,
+                        Address = user.Address,
+                        IsRegistered = user.IsRegistered,
+                     
+                    };
+
+                    response.Data = userDto;
+                    response.Success = true;
+                }
+                else
+                {
+                    // User not found, set response message and success status
+                    response.Success = false;
+                    response.Message = "User not found.";
+                }
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions and set response message and success status
+                response.Success = false;
+                response.Message = $"Error retrieving user details: {ex.Message}";
+            }
+
+            return response;
+        }
+
+
+        public Task CheckUserDeleteResponse(UserDto user)
+        {
+            throw new NotImplementedException();
         }
     }
 }

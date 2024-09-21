@@ -388,7 +388,7 @@ namespace LogicalPantry.Services.InformationService
                 else
                 {
                     response.Success = false;
-                    response.Message = "   Page Not Found.";
+                    response.Message = "   Page Not Found";
                 }
             }
             catch (Exception ex)
