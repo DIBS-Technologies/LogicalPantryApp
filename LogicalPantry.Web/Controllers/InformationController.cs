@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Caching.Memory;
 using System.Reflection;
+using System.Security.Policy;
 using static System.Net.WebRequestMethods;
 
 namespace LogicalPantry.Web.Controllers
@@ -106,68 +107,45 @@ namespace LogicalPantry.Web.Controllers
         /// <param name="tenantDto">The tenant data to be added or updated.</param>
         /// <param name="LogoFile">The logo file to be uploaded and saved.</param>
         /// <returns>An <see cref="IActionResult"/> that renders the AddTenant view with the tenant data or redirects to display the updated data.</returns>
-         [Authorize(Roles = $"{UserRoleEnum.Admin}")]
+        //[Authorize(Roles = $"{UserRoleEnum.Admin}")]
         [HttpPost("AddTenant")]
         public async Task<IActionResult> AddTenant(TenantDto tenantDto, IFormFile LogoFile)
         {
-            // Log the starting of the method execution.
+            // Log the starting of the Index method execution.
             _logger.LogInformation("AddTenant post method call started");
+            tenantDto.TenantName = TenantName;
+            var TenantDisplayName = HttpContext.Session.GetString("TenantDisplayName");
+            ViewBag.PageName = TenantDisplayName;
 
-            try
+
+            if (LogoFile != null && LogoFile.Length > 0)
             {
-                if (LogoFile != null && LogoFile.Length > 0)
+                // Generate a unique file name to avoid conflicts
+                var fileName = Guid.NewGuid().ToString() + Path.GetExtension(LogoFile.FileName);
+                //var filePath = Path.Combine("wwwroot\\Image", fileName);
+                var filePath = Path.Combine(_webHostEnvironment.WebRootPath, "Image", fileName);
+
+                // Save the file
+                using (var stream = new FileStream(filePath, FileMode.Create))
                 {
-                   
-                    var directoryPath = Path.Combine(_webHostEnvironment.WebRootPath, "Image");
-
-                    // Create the directory if it does not exist
-                    if (!Directory.Exists(directoryPath))
-                    {
-                        Directory.CreateDirectory(directoryPath);
-                    }
-
-                    // Generate a unique file name to avoid conflicts
-                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(LogoFile.FileName);
-                    var filePath = Path.Combine(directoryPath, fileName);
-
-
-                    // Save the file
-                    try
-                    {
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await LogoFile.CopyToAsync(stream);
-                        }
-                        tenantDto.Logo = "/Image/" + fileName;
-                        Console.WriteLine($"File saved successfully at {filePath}");
-                        _logger.LogInformation($"File saved successfully at {filePath}");
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogError(ex, "Error saving logo file.");
-                    }
+                    await LogoFile.CopyToAsync(stream);
                 }
 
-            }
-            catch (Exception ex)
-            {
-                // Log the exception
-                _logger.LogError(ex, "Error saving logo file.");
-                ModelState.AddModelError("", "Error saving file: " + ex.Message);
+                // Update the tenantDto with the new logo path
+                tenantDto.Logo = "/Image/" + fileName;
             }
 
-            // Proceed to save the tenant information
             var response = await _informationService.PostTenant(tenantDto);
             if (response.Success)
             {
-                @TempData["MessageClass"] = "alert-success";
-                @TempData["SuccessMessageInfo"] = "Information Saved Successfully";
-                var TenantDisplayName = HttpContext.Session.GetString("TenantDisplayName");
-                ViewBag.PageName = TenantDisplayName;
 
+                @TempData["MessageClass"] = "alert-success";
+                @TempData["SuccessMessageInfo"] = "Infromation Saved Successfully";
+                TenantDisplayName = HttpContext.Session.GetString("TenantDisplayName");
+                ViewBag.PageName = TenantDisplayName;
                 // Redirect to the GET method to display the updated data
-                //return RedirectToAction(nameof(SomeGetMethod)); // Replace with your appropriate action
                 return View(tenantDto);
+                //return RedirectToAction(nameof(AddTenant));
             }
             else
             {
@@ -176,10 +154,88 @@ namespace LogicalPantry.Web.Controllers
                 ModelState.AddModelError("", response.Message);
             }
 
-            // Log the ending of the method execution.
+            // Log the ending of the Index method execution.
             _logger.LogInformation("AddTenant post method call ended");
             return View(tenantDto);
         }
+
+        //[HttpPost("AddTenant")]
+        //public async Task<IActionResult> AddTenant(TenantDto tenantDto, IFormFile LogoFile)
+        //{
+        //    // Log the starting of the method execution.
+        //    _logger.LogInformation("AddTenant post method call started");
+
+        //    try
+        //    {
+        //        if (LogoFile != null && LogoFile.Length > 0)
+        //        {
+        //            var directoryPath = Path.Combine(_webHostEnvironment.WebRootPath, "Image");
+
+        //            // Create the directory if it does not exist
+        //            if (!Directory.Exists(directoryPath))
+        //            {
+        //                Directory.CreateDirectory(directoryPath);
+        //            }
+
+        //            // Generate a unique file name to avoid conflicts
+        //            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(LogoFile.FileName);
+        //            var filePath = Path.Combine(directoryPath, fileName);
+
+
+        //            // Save the file
+        //            try
+        //            {
+        //                using (var stream = new FileStream(filePath, FileMode.Create))
+        //                {
+        //                    await LogoFile.CopyToAsync(stream);
+        //                }
+        //                tenantDto.Logo = "/Image/" + fileName;
+        //                Console.WriteLine($"File saved successfully at {filePath}");
+        //                _logger.LogInformation($"File saved successfully at {filePath}");
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                _logger.LogError(ex, "Error saving logo file.");
+        //            }
+        //        }
+
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Log the exception
+        //        _logger.LogError(ex, "Error saving logo file.");
+        //        ModelState.AddModelError("", "Error saving file: " + ex.Message);
+        //    }
+
+        //    // Proceed to save the tenant information
+        //    var response = await _informationService.PostTenant(tenantDto);
+        //    if (response.Success)
+        //    {
+        //        @TempData["MessageClass"] = "alert-success";
+        //        @TempData["SuccessMessageInfo"] = "Information Saved Successfully";
+        //        var TenantDisplayName = HttpContext.Session.GetString("TenantDisplayName");
+        //        ViewBag.PageName = TenantDisplayName;
+
+        //        // Redirect to the GET method to display the updated data
+        //        //return RedirectToAction(nameof(SomeGetMethod)); // Replace with your appropriate action
+        //        return View(tenantDto);
+        //    }
+        //    else
+        //    {
+        //        @TempData["MessageClass"] = "alert-danger";
+        //        @TempData["ErrorMessageInfo"] = "Internal server error.";
+        //        ModelState.AddModelError("", response.Message);
+        //    }
+
+        //    // Log the ending of the method execution.
+        //    _logger.LogInformation("AddTenant post method call ended");
+        //    return View(tenantDto);
+        //}
+
+
+
+
+
 
         /// <summary>
         /// Redirects to the tenant's view based on the provided tenant ID.
