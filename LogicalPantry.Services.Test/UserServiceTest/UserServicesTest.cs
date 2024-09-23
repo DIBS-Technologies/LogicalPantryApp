@@ -224,6 +224,7 @@ namespace LogicalPantry.Services.Test.UserServiceTest
                         Email = user.Email,
                         PhoneNumber = user.PhoneNumber,
                         IsAllow = user.IsAllow,
+                        IsRegistered = user.IsRegistered,
                     };
                     return response;
                 }
