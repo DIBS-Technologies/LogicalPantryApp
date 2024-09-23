@@ -9,6 +9,10 @@
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
 
+  <!--<ItemGroup>
+    <None Remove="wwwroot\Images\25850300-c0b4-48be-8dc6-a6675c5dcce4.jpg" />
+  </ItemGroup>-->
+
   <ItemGroup>
     <PackageReference Include="AspNetCoreRateLimit" Version="5.0.0" />
     <PackageReference Include="coverlet.collector" Version="6.0.0" />

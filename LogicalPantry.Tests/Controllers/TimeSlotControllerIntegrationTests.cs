@@ -111,6 +111,8 @@ namespace LogicalPantry.IntegrationTests
             Assert.AreEqual(timeSlotDto.TimeSlotName, result.Data.TimeSlotName);
             Assert.AreEqual(timeSlotDto.StartTime, result.Data.StartTime);
             Assert.AreEqual(timeSlotDto.EndTime, result.Data.EndTime);
+            Assert.AreEqual(timeSlotDto.EventType, result.Data.EventType);
+            Assert.AreEqual(timeSlotDto.MaxNumberOfUsers, result.Data.MaxNumberOfUsers);
 
         }
 

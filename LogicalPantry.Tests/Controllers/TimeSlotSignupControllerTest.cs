@@ -169,7 +169,7 @@ namespace LogicalPantry.Tests.Controllers
             Assert.IsNotNull(timeslotInfo);
             Assert.AreEqual(timeSlotSignUpDtos.UserId, timeslotInfo.Data.UserId);
             Assert.AreEqual(timeSlotSignUpDtos.TimeSlotId , timeslotInfo.Data.TimeSlotId);
-            
+            Assert.AreEqual(timeSlotSignUpDtos.Attended, timeslotInfo.Data.Attended);
         }
 
 

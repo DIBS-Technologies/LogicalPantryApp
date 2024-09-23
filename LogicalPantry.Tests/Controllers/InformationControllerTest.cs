@@ -10,12 +10,16 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Moq;
 using Newtonsoft.Json;
+using NuGet.ProjectModel;
 using System.IO;
 using System.IO.Pipes;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,7 +30,7 @@ namespace LogicalPantry.IntegrationTests
     {
         private WebApplicationFactory<Startup> _factory;
         private HttpClient _client;
-       // private IInformationService _informationService;
+        // private IInformationService _informationService;
         private ITenantTestService _tenantTestService;
         private IConfiguration _configuration;
 
@@ -61,7 +65,7 @@ namespace LogicalPantry.IntegrationTests
 
                         services.AddTransient<ITenantTestService, TenantTestService>();
 
-                    
+
                         var serviceProvider = services.BuildServiceProvider();
 
                         // declare scope 
@@ -89,88 +93,90 @@ namespace LogicalPantry.IntegrationTests
             var response = await _client.GetAsync($"/LogicalPantry/Information/Get?tenantid={tenantId}");
             var responseContent = await response.Content.ReadAsStringAsync();
             Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
-            //var tenant = await response.Content.ReadFromJsonAsync<TenantDto>();
-            //Assert.IsNotNull(tenant);
+            var tenant = await response.Content.ReadFromJsonAsync<TenantDto>();
+            Assert.IsNotNull(tenant);
 
             // check tenant id is mating  with user 
-            //Assert.AreEqual(tenantId, tenant.Id);
-            // logo 
+            Assert.AreEqual(tenantId, tenant.Id);
         }
 
         /// <summary>
         ///If Model is Valid then add tenant information
         /// </summary>
         /// <returns></returns>
+
         [TestMethod]
         public async Task AddTenant_ShouldAddTenant_WhenModelIsValid()
         {
-            // Create the TenantDto
+            // Arrange
             var tenantDto = new TenantDto
             {
                 TenantName = "Logic",
                 AdminEmail = "Shrikantdandiledib1@gmail.com",
                 PaypalId = "Shrikantdandiledib1@gmail.com",
                 PageName = "Index.html",
-                Logo = "/Image/838a7921-35e3-4a75-a9df-e6e6541aef30.svg",
                 Timezone = "US/Eastern"
             };
 
-            //// Create MultipartFormDataContent to send the form data
             var form = new MultipartFormDataContent();
-
-            // Add each property of TenantDto as form data with keys matching the property names
             form.Add(new StringContent(tenantDto.TenantName), nameof(tenantDto.TenantName));
             form.Add(new StringContent(tenantDto.AdminEmail), nameof(tenantDto.AdminEmail));
             form.Add(new StringContent(tenantDto.PaypalId), nameof(tenantDto.PaypalId));
             form.Add(new StringContent(tenantDto.PageName), nameof(tenantDto.PageName));
-            form.Add(new StringContent(tenantDto.Logo), nameof(tenantDto.Logo));
             form.Add(new StringContent(tenantDto.Timezone), nameof(tenantDto.Timezone));
 
-            // Create a mock IFormFile
-            var fileName = "/5114218a-5aba-482f-a342-4bbb5cc184e3.svg";
-            var contentType = "image/svg";
-            var fileContent = new byte[] { /* file content */ }; // Example file content as byte array
-            var fileStream = new MemoryStream(fileContent);
-            var logoFile = new FormFile(fileStream, 0, fileContent.Length, "LogoFile", fileName)
+            var assemblyLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var imagesDir = Path.Combine(assemblyLocation!, "..", "..", "..", "StaticContent", "Images");
+            var imagePath = Path.Combine(imagesDir, "Screenshot (45).png");
+
+            // Ensure the images directory exists
+            if (!Directory.Exists(imagesDir))
             {
-                Headers = new HeaderDictionary(),
-                ContentType = contentType
-            };
+                Directory.CreateDirectory(imagesDir);
+            }
 
-            // Add the IFormFile to the form with the correct key name
-            form.Add(new StreamContent(logoFile.OpenReadStream()), "LogoFile", logoFile.FileName);
+            // Check if the test image exists
+            if (!File.Exists(imagePath))
+            {
+                Assert.Fail($"Test image not found at path: {imagePath}");
+            }
 
-            // Send the POST request to the correct URL
-            var response = await _client.PostAsync("/Logic/Information/AddTenant", form);
+            var fileContent = File.ReadAllBytes(imagePath);
 
-            // Act: Retrieve the tenant from the database to verify it was added
-            var result = await _tenantTestService.IsAddSuccessful(tenantDto);
+            // Use a MemoryStream to hold the file content
+            using (var fileStream = new MemoryStream(fileContent))
+            {
+                // Create the StreamContent from the MemoryStream
+                var streamContent = new StreamContent(fileStream);
+                var logoFileName = Path.GetFileName(imagePath);
+                streamContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
 
-            //Compare the data
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
-            Assert.AreEqual(tenantDto.TenantName, result.Data.TenantName);
-            Assert.AreEqual(tenantDto.PageName, result.Data.PageName);
-            Assert.AreEqual(tenantDto.PaypalId, result.Data.PaypalId);
-            Assert.AreEqual(tenantDto.AdminEmail, result.Data.AdminEmail);
-            Assert.AreEqual(tenantDto.Timezone, result.Data.Timezone);
+                // Add the StreamContent to the form
+                form.Add(streamContent, "LogoFile", logoFileName);
 
+                // Act
+                var response = await _client.PostAsync("/Logic/Information/AddTenant", form);
+                var content = await response.Content.ReadAsStringAsync();
+                var result = await _tenantTestService.IsAddSuccessful(tenantDto);
 
-            // Assert the response status code
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
+                // Assert
+                Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
+                Assert.IsNotNull(result);
+                Assert.AreEqual(tenantDto.TenantName, result.Data.TenantName);
+                Assert.AreEqual(tenantDto.PageName, result.Data.PageName);
+                Assert.AreEqual(tenantDto.PaypalId, result.Data.PaypalId);
+                Assert.AreEqual(tenantDto.AdminEmail, result.Data.AdminEmail);
+                Assert.AreEqual(tenantDto.Timezone, result.Data.Timezone);
+            }
         }
-
-
-
-
-
 
         /// <summary>
         ///  When Model is invalid then  return 404 bad request 
         /// </summary>
         /// <returns></returns>
-        
+
         [TestMethod]
-        public async Task AddTenant_ShouldReturnBadRequest_WhenModelIsInvalid()   
+        public async Task AddTenant_ShouldReturnBadRequest_WhenModelIsInvalid()
         {
             var tenantDto = new TenantDto
             {
@@ -185,7 +191,7 @@ namespace LogicalPantry.IntegrationTests
             var responseContent = await response.Content.ReadAsStringAsync();
             // Check the response
             Assert.IsNull(responseContent);
-            
+
         }
 
         /// <summary>
@@ -213,7 +219,7 @@ namespace LogicalPantry.IntegrationTests
         /// </summary>
         /// <returns></returns>
         [TestMethod]
-        public async Task Home_ShouldReturnView_WhenTenantNameIsValid() 
+        public async Task Home_ShouldReturnView_WhenTenantNameIsValid()
         {
             // test data 
             var pageName = "Index.html"; // Ensure this page name exists in your test environment
@@ -222,7 +228,7 @@ namespace LogicalPantry.IntegrationTests
             var response = await _client.GetAsync($"/LP/Information/Home?PageName={pageName}");
 
             Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
-            
+
         }
 
         /// <summary>
@@ -259,7 +265,7 @@ namespace LogicalPantry.IntegrationTests
         {
 
             // mail for test 
-            var userEmail = "jayantgaikwad410@gmail.com"; 
+            var userEmail = "jayantgaikwad410@gmail.com";
 
             // Api Call
             var response = await _client.GetAsync($"/LP/Information/GetTenantByUserEmail?userEmail={userEmail}");
@@ -276,7 +282,7 @@ namespace LogicalPantry.IntegrationTests
 
         //9/18/2024
 
-        
+
 
 
     }
