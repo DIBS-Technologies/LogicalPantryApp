@@ -166,16 +166,13 @@ namespace LogicalPantry.IntegrationTests
 
 
 
-
-
-
-
-
-
         //18/9/2024
-
+        /// <summary>
+        /// Tests that GetUserListByTimeSlotId returns an OK status and users when a valid time slot exists.
+        /// </summary>
+        /// <returns>A task representing the asynchronous unit test.</returns>
         [TestMethod]
-        public async Task EditTimeSlotUser_ShouldReturnOkWithUsers_WhenTimeSlotExists()
+        public async Task GetUserListByTimeSlotId_ShouldReturnOkWithUsers_WhenTimeSlotExists()
         {
             // Arrange
             int validTimeSlotId = 286;
@@ -186,14 +183,14 @@ namespace LogicalPantry.IntegrationTests
 
             // Assert
             Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
-            //Assert.IsTrue(responseContent.Contains("User1"));
-            //Assert.IsTrue(responseContent.Contains("user1@test.com"));
-            //Assert.IsTrue(responseContent.Contains("User2"));
-            //Assert.IsTrue(responseContent.Contains("user2@test.com"));
         }
 
+        /// <summary>
+        /// Tests that GetUserListByTimeSlotId returns a BadRequest status when the time slot ID is invalid.
+        /// </summary>
+        /// <returns>A task representing the asynchronous unit test.</returns>
         [TestMethod]
-        public async Task EditTimeSlotUser_ShouldReturnBadRequest_WhenTimeSlotIdIsInvalid()
+        public async Task GetUserListByTimeSlotId_ShouldReturnBadRequest_WhenTimeSlotIdIsInvalid()
         {
             // Arrange
             int invalidTimeSlotId = 0;
@@ -204,11 +201,14 @@ namespace LogicalPantry.IntegrationTests
             // Assert
             Assert.AreEqual(System.Net.HttpStatusCode.NotFound, response.StatusCode);
             var responseContent = await response.Content.ReadAsStringAsync();
-            //Assert.IsTrue(responseContent.Contains("Invalid time slot."));
         }
 
+        /// <summary>
+        /// Tests that GetUserListByTimeSlotId returns an OK status with an empty list when no users are found for the valid time slot.
+        /// </summary>
+        /// <returns>A task representing the asynchronous unit test.</returns>
         [TestMethod]
-        public async Task EditTimeSlotUser_ShouldReturnOkWithEmptyList_WhenNoUsersFound()
+        public async Task GetUserListByTimeSlotId_ShouldReturnOkWithEmptyList_WhenNoUsersFound()
         {
             // Arrange
             int validTimeSlotId = 2582;
@@ -219,7 +219,6 @@ namespace LogicalPantry.IntegrationTests
 
             // Assert
             Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
-            //Assert.IsTrue(responseContent.Contains("No users found for this time slot"));
         }
 
     }

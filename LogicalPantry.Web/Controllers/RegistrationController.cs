@@ -38,7 +38,7 @@ namespace LogicalPantry.Web.Controllers
         /// Displays the registration index page.
         /// </summary>
         /// <returns>An <see cref="IActionResult"/> representing the result of the action.</returns>
-        [Authorize(Roles = $"{UserRoleEnum.User}")]
+        //[Authorize(Roles = $"{UserRoleEnum.User}")]
         [HttpGet("Index")]
         public IActionResult Index()
         {
@@ -53,7 +53,7 @@ namespace LogicalPantry.Web.Controllers
         /// </summary>
         /// <param name="user">The user data to register.</param>
         /// <returns>An <see cref="IActionResult"/> representing the result of the registration operation.</returns>
-        [Authorize(Roles = $"{UserRoleEnum.User}")]
+       // [Authorize(Roles = $"{UserRoleEnum.User}")]
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] UserDto user) 
         {

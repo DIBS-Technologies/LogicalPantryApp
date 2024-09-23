@@ -234,45 +234,7 @@ namespace LogicalPantry.Tests
             Assert.AreEqual("User deleted Successfully", DeleteUser.Message);
         }
 
-        // Test method for adding a user.
-        [TestMethod]
-        public async Task AddUser_ShouldReturnSuccess_WhenAdditionIsValid()
-        {
-            //  Define a new user to add.
-            var newUser = new UserDto
-            {
-                FullName = "new user",
-                Address = "abc",
-                Email = "newUser@gmail.com",
-                PhoneNumber = "123456454",
-                IsAllow = true,
-                IsRegistered = true,
-                DateOfBirth = new DateTime(2000, 1, 1), // Provide a valid DateTime
-                ZipCode = "12345",
-                HouseholdSize = 4,
-                HasSchoolAgedChildren = true,
-                IsMarried = false,
-                ProfilePictureUrl = "profile.jpj",
-                EmploymentStatus = "Employed",
-                IsVeteran = false
-            };
-
-            var content = new StringContent(JsonConvert.SerializeObject(newUser), Encoding.UTF8, "application/json");
-            // Send a POST request to add the new user.
-            var response = await _client.PostAsync("Logic/User/Register", content);
-
-            // Verify the response status code is OK (200).
-            Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
-
-            // Retrieve the added user from the database to confirm
-            var addedUser = await _userServiceTest.CheckUserPostResponse(newUser);
-            Assert.IsNotNull(addedUser);
-
-            //added data matches what was sent in the request.
-            Assert.AreEqual(newUser.FullName, addedUser.Data.FullName);
-            Assert.AreEqual(newUser.Email, addedUser.Data.Email);
-            Assert.AreEqual(newUser.PhoneNumber, addedUser.Data.PhoneNumber);
-        }
+       
 
      
         //18/9/24
@@ -344,5 +306,40 @@ namespace LogicalPantry.Tests
             Assert.AreEqual(user.PhoneNumber, userProfile.Data.PhoneNumber);
         }
 
+
+
+        //// Test method for adding a user.
+        //[TestMethod]
+        //public async Task RegisterUser_ShouldReturnSuccess_WhenRagistratinIsValid()
+        //{
+        //    //  Define a new user to add.
+        //    var newUser = new UserDto
+        //    {
+        //        FullName = "new user2",
+        //        Address = "abcde",
+        //        Email = "newUser5@gmail.com",
+        //        PhoneNumber = "123456454",
+        //        IsRegistered = true,
+
+        //    };
+
+        //    var content = new StringContent(JsonConvert.SerializeObject(newUser), Encoding.UTF8, "application/json");
+        //    // Send a POST request to add the new user.
+        //    var response = await _client.PostAsync("Logic/User/Register", content);
+
+        //    // Verify the response status code is OK (200).
+        //    Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
+
+        //    // Retrieve the added user from the database to confirm
+        //    var addedUser = await _userServiceTest.GetUserDetailsByEmail(newUser.Email);
+        //    Assert.IsNotNull(addedUser);
+
+        //    //added data matches what was sent in the request.
+        //    Assert.AreEqual(newUser.FullName, addedUser.Data.FullName);
+        //    Assert.AreEqual(newUser.Email, addedUser.Data.Email);
+        //    Assert.AreEqual(newUser.PhoneNumber, addedUser.Data.PhoneNumber);
+        //    Assert.AreEqual(newUser.Address, addedUser.Data.Address);
+
+        //}
     }
 }

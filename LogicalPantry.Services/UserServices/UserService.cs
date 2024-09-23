@@ -71,6 +71,7 @@ namespace LogicalPantry.Services.UserServices
                            (ur, r) => new { ur.User, Role = r }
                        )
                        .Where(x => x.User.IsRegistered && x.User.TenantId == tenantId &&  x.Role.Id == userRoleId)
+                       .OrderBy(x => x.User.FullName)
                        .Select(x => new UserDto
                        {
                            Id = x.User.Id,
@@ -590,6 +591,7 @@ namespace LogicalPantry.Services.UserServices
                             RoleName = r.RoleName // Include RoleName for filtering
                         })
                     .Where(result => result.RoleName == "User") // Filter by RoleName
+                    .OrderBy(result => result.User.FullName) // Order by FullName in ascending order
                     .Select(result => new UserDto
                     {
                         Id = result.User.Id,

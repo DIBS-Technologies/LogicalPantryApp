@@ -275,9 +275,9 @@ namespace LogicalPantry.Web.Controllers
         /// </remarks>
         /// <exception cref="ArgumentException">Thrown when the tenant ID cannot be parsed from the context.</exception>
         /// <exception cref="Exception">Thrown for unexpected errors during the registration process.</exception>
-        [Authorize(Roles = $"{UserRoleEnum.User}")]
+       // [Authorize(Roles = $"{UserRoleEnum.User}")]
         [HttpPost("Register")]
-        public async Task<IActionResult> Register(UserDto user)
+        public async Task<IActionResult> Register(/*[FromBody]*/ UserDto user)
         {
             _logger.LogInformation($"Register method call started");
 

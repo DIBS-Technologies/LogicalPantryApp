@@ -388,7 +388,7 @@ namespace LogicalPantry.Services.InformationService
                 else
                 {
                     response.Success = false;
-                    response.Message = "   Page Not Found.";
+                    response.Message = "   Page Not Found";
                 }
             }
             catch (Exception ex)
@@ -480,6 +480,7 @@ namespace LogicalPantry.Services.InformationService
                     TenantName = tenant.TenantName,
                     // Add other properties as needed
                     PageName = tenant.PageName,
+                    AdminEmail= tenant.AdminEmail,
                     TenantDisplayName = tenant.TenantDisplayName,
                 };
                 response.Success = true;

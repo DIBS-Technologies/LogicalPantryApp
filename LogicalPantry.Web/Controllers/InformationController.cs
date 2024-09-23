@@ -181,81 +181,6 @@ namespace LogicalPantry.Web.Controllers
             return View(tenantDto);
         }
 
-
-
-
-        //[HttpPost("AddTenant")]
-        //public async Task<IActionResult> AddTenant(TenantDto tenantDto, IFormFile LogoFile)
-        //{
-        //    // Log the starting of the Index method execution.
-        //    _logger.LogInformation("AddTenant post method call started");
-        //    tenantDto.TenantName = TenantName;
-        //    var TenantDisplayName = HttpContext.Session.GetString("TenantDisplayName");
-        //    ViewBag.PageName = TenantDisplayName;
-
-
-
-
-        //    if (LogoFile != null && LogoFile.Length > 0)
-        //    {
-        //        try
-        //        {
-        //            // Create the directory if it does not exist
-        //            var directoryPath = Path.Combine("wwwroot", "Image");
-        //            if (!Directory.Exists(directoryPath))
-        //            {
-        //                Directory.CreateDirectory(directoryPath);
-        //            }
-
-        //            // Generate a unique file name to avoid conflicts
-        //            var fileName = Guid.NewGuid().ToString() + Path.GetExtension(LogoFile.FileName);
-        //            var filePath = Path.Combine(directoryPath, fileName);
-
-        //            // Save the file
-        //            using (var stream = new FileStream(filePath, FileMode.Create))
-        //            {
-        //                await LogoFile.CopyToAsync(stream);
-        //            }
-
-        //            // Update the tenantDto with the new logo path
-        //            tenantDto.Logo = "/Image/" + fileName;
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            Console.WriteLine(ex.ToString());
-        //        }
-        //    }
-
-
-
-        //    var response = await _informationService.PostTenant(tenantDto);
-        //    if (response.Success)
-        //    {
-
-        //        @TempData["MessageClass"] = "alert-success";
-        //        @TempData["SuccessMessageInfo"] = "Infromation Saved Successfully";
-        //        TenantDisplayName = HttpContext.Session.GetString("TenantDisplayName");
-        //        ViewBag.PageName = TenantDisplayName;
-        //        // Redirect to the GET method to display the updated data
-        //        return View(tenantDto);
-        //        //return RedirectToAction(nameof(AddTenant));
-        //    }
-        //    else
-        //    {
-        //        @TempData["MessageClass"] = "alert-danger";
-        //        @TempData["ErrorMessageInfo"] = "Internal server error.";
-        //        ModelState.AddModelError("", response.Message);
-        //    }
-
-        //    // Log the ending of the Index method execution.
-        //    _logger.LogInformation("AddTenant post method call ended");
-        //    return View(tenantDto);
-        //}
-
-
-
-
-
         /// <summary>
         /// Redirects to the tenant's view based on the provided tenant ID.
         /// </summary>
@@ -289,7 +214,7 @@ namespace LogicalPantry.Web.Controllers
         /// An <see cref="IActionResult"/> that renders the tenant's home page if the page name is found and the file exists; 
         /// otherwise, returns an error page or a default view if the tenant or page is not found.
         /// </returns>
-        [HttpGet("/{action?}")]
+         [HttpGet("/{action?}")]
         public async Task<IActionResult> Home()
         {
             // Log the started of the Index method execution.
@@ -365,7 +290,7 @@ namespace LogicalPantry.Web.Controllers
             }         
             else
             {
-                ViewBag.ErrorMessage = "   Page Not Found.";
+                ViewBag.ErrorMessage = "   Page Not Found";
                 // Log the ended of the Index method execution.
                 _logger.LogInformation("Home method call ended");
                 // return View("Error");

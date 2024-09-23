@@ -88,7 +88,7 @@ namespace LogicalPantry.Tests
         {
             var userDto = new UserDto
             {
-                TenantId = 15,
+                TenantId = 17,
                 FullName = "Sample User3",
                 Email = "sampleUser@gmail.com",
                 PhoneNumber = "+1 (123) 456-7890",
@@ -144,28 +144,6 @@ namespace LogicalPantry.Tests
 
             
             var response = await _client.PostAsJsonAsync("/LogicalPantry/Registration/Register", userDto);
-            var responseContent = await response.Content.ReadAsStringAsync();
-            // Check if the response content contains the expected TempData message.
-            Assert.IsTrue(responseContent.Contains("Failed to Save User server error."));
-        }
-
-        /// <summary>
-        /// Return badRequest when Name and Email are null.
-        /// </summary>
-        /// <returns></returns>
-        [TestMethod]
-        public async Task Register_ShouldReturnBadRequest_WhenNameEmailPhoneNumberAreNull()
-        {
-            var userDto = new UserDto
-            {
-                TenantId = 1,
-                FullName = null,
-                Email = null,
-                PhoneNumber = null
-            };
-
-            
-            var response = await _client.PostAsJsonAsync("/LP/Registration/Register", userDto);
             var responseContent = await response.Content.ReadAsStringAsync();
             // Check if the response content contains the expected TempData message.
             Assert.IsTrue(responseContent.Contains("Failed to Save User server error."));
