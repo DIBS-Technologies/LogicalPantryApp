@@ -129,7 +129,6 @@ builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
 builder.Services.AddScoped<IRegistrationService , RegistrationService>();
 builder.Services.AddScoped<IInformationService, InformationService>();
-builder.Services.AddScoped<IRegistrationService, RegistrationService>();
 builder.Services.AddScoped<ITimeSlotSignupService, TimeSlotSignupService>();
 //builder.Services.AddScoped<ITimeSlotSignupService, TimeSlotSignupService>();
 builder.Services.Configure<PayPalDto>(builder.Configuration.GetSection("PayPal"));
@@ -166,7 +165,7 @@ else
 
 app.UseHttpsRedirection(); // Redirect HTTP requests to HTTPS
 app.UseAuthentication(); // Enable authentication middleware
-// Add the Tenant Middleware
+                         // Add the Tenant Middleware
 
 app.UseStaticFiles(); // Serve static files from wwwroot folder
 app.UseSession(); // Enable session middleware
@@ -182,7 +181,6 @@ app.MapControllerRoute(
     name: "tenantRoute",
     pattern: "{tenant?}/{controller=Information}/{action=Home}/{id?}"
 );
-
 
 
 app.Run();

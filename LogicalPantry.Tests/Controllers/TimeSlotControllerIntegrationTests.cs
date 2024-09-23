@@ -19,6 +19,11 @@ using LogicalPantry.Services.Test.TimeSlotServiceTest;
 using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
+using Microsoft.AspNetCore.Http;
+using System.Net.Http.Headers;
+using System.Security.Claims;
+using LogicalPantry.Models.Models.Enums;
+using Microsoft.AspNetCore.Hosting;
 
 namespace LogicalPantry.IntegrationTests
 {
@@ -44,6 +49,7 @@ namespace LogicalPantry.IntegrationTests
             _configuration = builder.Build();
 
             _factory = new WebApplicationFactory<Startup>()
+    
                 .WithWebHostBuilder(builder =>
                 {
                     builder.ConfigureServices(services =>
@@ -76,7 +82,9 @@ namespace LogicalPantry.IntegrationTests
                             _timeSlotTestService = scopedServices.GetRequiredService<ITimeSlotTestService>();
                             _context.Database.EnsureCreated();
                         }
+                 
                     });
+                    builder.UseEnvironment("Development"); // Set environment to Development
                 });
 
             _client = _factory.CreateClient();
@@ -139,7 +147,7 @@ namespace LogicalPantry.IntegrationTests
         [TestMethod]
         public async Task Calendar_ShouldReturnViewWithEvents()
         {
-           
+
             var response = await _client.GetAsync("/LP/TimeSlot/Calendar");
             var responseContent = await response.Content.ReadAsStringAsync();
             Assert.IsNotNull(response);
