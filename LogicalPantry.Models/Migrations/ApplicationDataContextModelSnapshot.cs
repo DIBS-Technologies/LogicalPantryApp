@@ -172,6 +172,9 @@ namespace LogicalPantry.Models.Migrations
                     b.Property<bool>("IsAllow")
                         .HasColumnType("bit");
 
+                    b.Property<bool?>("IsDisabled")
+                        .HasColumnType("bit");
+
                     b.Property<bool?>("IsMarried")
                         .HasColumnType("bit");
 

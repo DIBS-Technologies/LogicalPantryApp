@@ -747,6 +747,7 @@ namespace LogicalPantry.Services.UserServices
                     existingUser.IsMarried = userDto.IsMarried;             
                     existingUser.EmploymentStatus = userDto.EmploymentStatus;
                     existingUser.IsVeteran = userDto.IsVeteran;
+                    existingUser.IsDisabled = userDto.IsDisabled;
                     if(userDto.ProfilePictureUrl != null )
                     {
                         existingUser.ProfilePictureUrl = userDto.ProfilePictureUrl;
@@ -773,7 +774,8 @@ namespace LogicalPantry.Services.UserServices
                         IsMarried = userDto.IsMarried,
                         ProfilePictureUrl = userDto.ProfilePictureUrl,
                         EmploymentStatus = userDto.EmploymentStatus,
-                        IsVeteran = userDto.IsVeteran
+                        IsVeteran = userDto.IsVeteran,
+                        IsDisabled = userDto.IsDisabled,    
                     };
 
                     // Add the new user to the database
@@ -840,6 +842,7 @@ namespace LogicalPantry.Services.UserServices
                         HouseholdSize = user.HouseholdSize,
                         HasSchoolAgedChildren = user.HasSchoolAgedChildren,
                         IsVeteran = user.IsVeteran,
+                        IsDisabled = user.IsDisabled,
                         DateOfBirth = user.DateOfBirth,
                         EmploymentStatus = user.EmploymentStatus,
                         ProfilePictureUrl = user.ProfilePictureUrl,

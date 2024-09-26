@@ -565,39 +565,7 @@
 
 
             });
-            // function showMessage(message, isError) {
-            //     debugger;
-            //     var modalTitle = isError ? 'Error' : 'Success';
-            //     var modalClass = isError ? 'error' : 'success';
-            //     console.log(message);
-            //     //You have already signed up for this time slot.//if this message come the plese add here error modalclass 
-            //     //Successfully signed up for the time slot.  //if this message come the only show the sucess true
-            //     Swal.fire({
-            //         title: modalTitle,
-            //         text: message,
-            //         icon: modalClass,
-            //         showConfirmButton: true, // No need for a Close button
-            //         customClass: {
-            //             container: 'swal-container',
-            //             popup: 'swal-popup',
-            //             title: 'swal-title',
-            //             content: 'swal-content'
-            //         },
-            //         didClose: function () {
-            //             // Restore the scroll behavior after the modal is hidden
-            //             $('body').css({
-            //                 'overflow-y': 'auto',
-            //                 'overflow-x': 'hidden'
-            //             });
-            //         }
-            //     });
-
-            //     // Prevent horizontal scroll bar
-            //     $('body').css({
-            //         'overflow-y': 'auto',
-            //         'overflow-x': 'hidden'
-            //     });
-            // }
+           
             function showMessage(message, isError) {
                 var modalTitle = 'Success';
                 var modalClass = 'success';
@@ -605,7 +573,7 @@
                 if (message.includes('You have already signed up for this time slot.')) {
                     modalTitle = 'Warning';
                     modalClass = 'warning'; // Change to warning for this specific message
-                } else if (message.includes('The signup limit of 100 users for this time slot has been reached.')) {
+                } else if (message.includes('Slot is full please select different slot.')) {
                     modalTitle = 'Warning';
                     modalClass = 'warning'; // Change to warning for this specific message
                 } else if (message.includes('Successfully signed up for the time slot.')) {

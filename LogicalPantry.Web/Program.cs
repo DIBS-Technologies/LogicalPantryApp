@@ -58,8 +58,8 @@ builder.Services.AddDbContext<ApplicationDataContext>(options =>
 // Configure session
 builder.Services.AddSession(options =>
 {
-    // Set session timeout to 30 minutes
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    // Set session timeout to 180 minutes
+    options.IdleTimeout = TimeSpan.FromMinutes(180);
     options.Cookie.HttpOnly = true; // Only accessible via HTTP
     options.Cookie.IsEssential = true; // Cookie is essential for the application
 });
@@ -75,7 +75,7 @@ builder.Services.AddAuthentication(options =>
 {
     options.LoginPath = "/Auth/loginview";
     options.LogoutPath = "/Auth/Logout";
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(30); // Set appropriate expiry time
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(180); // Set appropriate expiry time
     options.SlidingExpiration = true;
     options.Cookie.HttpOnly = true;
     options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Ensure it's set to Secure if using HTTPS

@@ -28,6 +28,8 @@ namespace LogicalPantry.DTOs.UserDtos
         public int? HouseholdSize { get; set; } // Number in Household
         public bool? HasSchoolAgedChildren { get; set; } // School-aged Children (Yes/No)
         public bool? IsVeteran { get; set; }    // Veteran (Yes/No)
+        public bool? IsDisabled { get; set; }    // Veteran (Yes/No)
+
         public DateTime? DateOfBirth { get; set; } // Date of Birth (Month/Year)
         public string? EmploymentStatus { get; set; } // Employment Status Dropdown
         public string? ProfilePictureUrl { get; set; } // URL for the uploaded profile picture

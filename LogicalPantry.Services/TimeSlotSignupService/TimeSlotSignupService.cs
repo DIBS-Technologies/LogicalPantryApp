@@ -153,7 +153,8 @@ namespace LogicalPantry.Services.TimeSlotSignupService
                 // Check if the signup limit of 100 users has been reached for this time slot
                 if (signupCount >= dto.MaxNumberOfUsers)
                 {
-                    return (false, $"The signup limit of {dto.MaxNumberOfUsers} users for this time slot has been reached.");
+                   // return (false, $"The signup limit of users for this time slot has been reached.");
+                    return (false, $"Slot is full please select different slot.");
                 }
 
                 // Create a new TimeSlotSignup entity

@@ -654,13 +654,14 @@
                     } else if (startDateTime < now) {
                         $('#startError').text('Please select a future date.');
                         isValid = false;
-                    }
+                    } 
+
 
                     // Validate End Date (only the date, not the time)
                     const endDateTime = new Date($('#eventEnd').val().trim());
                     endDateTime.setHours(0, 0, 0, 0); // Reset time to 00:00:00
                     if (startDateTime.getTime() !== endDateTime.getTime()) {
-                        $('#endError').text('Please add a single day entry only. the end date must be the same day.');
+                        $('#endError').text('Please add a single day entry only. The end date must be the same day.');
                         isValid = false;
                     }
                     if (isNaN(endDateTime)) {
@@ -669,10 +670,12 @@
                     } else if (endDateTime < now) {
                         $('#endError').text('Please select a future date.');
                         isValid = false;
-                    } else if (endDateTime < startDateTime) {
+                    }  else if (endDateTime < startDateTime) {
                         $('#endError').text('End date must be after the start date.');
                         isValid = false;
-                    }
+                    } 
+                        
+                   
                
                    
                 //If all fields are valid, submit the form
@@ -700,13 +703,13 @@
                                     var redirectUrl = '/@tenantName/TimeSlot/Calendar';
                                     window.location.href = redirectUrl;
                                 } else {
-                                    $("#maxUsersError").css("color", "red").text("Entry is overlapping, please add the correct event.");
+                                    $("#maxUsersError").css("color", "red").text("Entry is overlapping, Please add the correct event.");
 
                                 }
                             },
                             error: function (xhr, status, error) {
                                 console.error('Error adding event:', error);
-                                $("#maxUsersError").css("color", "red").text("Entry is overlapping, please add the correct event.");
+                                $("#maxUsersError").css("color", "red").text("Entry is overlapping, Please add the correct event.");
 
                             }
                         });

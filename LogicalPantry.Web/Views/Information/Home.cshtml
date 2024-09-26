@@ -260,7 +260,7 @@
                 @if (isAuthenticated && (isAdmin || isUser))
                 {
                      <a class="nav-link" href="/@tenantName/User/Profile" id="profile">Profile</a>
-                     <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar" id="pickUp">Pickup</a>
+                    <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar" id="pickUp1" >Pickup</a>
                 }
                 <a class="nav-link" href="/@tenantName/Donation/PayPal">Donation</a>
                @*  @if (isAuthenticated)
@@ -314,6 +314,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
     @section Scripts {
         <script>
+           
+
             $(document).ready(function () {
                 var isAdmin = '@isAdmin.ToString().ToLower()'; // Convert boolean to lowercase string
                 var isAuthenticated = '@isAuthenticated.ToString().ToLower()'; // Convert boolean to lowercase string
@@ -376,6 +378,42 @@
                 //     });
                 // }
 
+
+
+         
+
+                var userEmail = '@User.FindFirstValue(ClaimTypes.Email)';
+                fetchUserInfo(userEmail);
+
+                async function fetchUserInfo(userEmail) {
+                    debugger;
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            url: `/@tenantName/User/GetUser`,
+                            method: "GET",
+                            data: { email: userEmail },
+                            success: function (response) {
+                                console.log("Response:", response);
+                                if (response) {
+                                    $("#pickUp1").show(); // Show the element
+
+                                    console.log("Pickup link shown: home", response);
+                                } else {
+                                    $("#pickUp1").css('display', 'none'); // Set display to none using CSS                                  
+
+                                    // $("#pickUp").hide(); // Hide the element
+                                    console.log("Pickup link hidden, invalid response: home", response);
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.error("Cannot find Image src", status, error);
+                                reject(new Error(`Cannot find Image src: ${status} ${error}`));
+                            }
+                        });
+                    });
+                }
+
+        
 
                 async function fetchImageUrl(tenantId) {
                     debugger;
@@ -451,36 +489,10 @@
                     tenantId = tenantId.toString(); // Ensure tenantId is a string
                 }
                 debugger;
-           
-               // 3/9/24
-                // // Get the value from the input field
-                // var handlerValue = $("#HomePag").val();
-                // var iframe = $('<iframe>', {
-                //     src: '/TenantHomePage/' + handlerValue, 
-                //     id: 'urlFrameId'
-                // });
-
-                // // Append the iframe to the desired element
-                // $('#iframe').empty().append(iframe);
 
 
 
-                // var handlerValue = $("#HomePag").val(); // Retrieve the value from the input/select element
-                // var basePath = '/TenantHomePage/'; // Base path for your pages
-
-                // // Construct the full URL
-                // var fullUrl = basePath + encodeURIComponent(handlerValue);
-
-                // // Create an iframe element
-                // var iframe = $('<iframe>', {
-                //     src: fullUrl,
-                //     id: 'urlFrameId',
-         
-                // });
-
-                // // Append the iframe to the desired element
-                // $('#iframe').empty().append(iframe);
-
+                
 
 
 
@@ -533,7 +545,7 @@
                
             });
 
-
+           
 
             // var userEmail = '@User.FindFirstValue(ClaimTypes.Email)';
             // fetchUserInfo(userEmail);

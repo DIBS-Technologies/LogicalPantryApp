@@ -616,7 +616,7 @@
     </script>
 
     <script>
-    $(document).ready(function () {
+     $(document).ready(function () {
     var pageHeaderTitle = '';
 
     // Get the current path
@@ -666,20 +666,45 @@
                 fetchUserInfo(userEmail);
 
                 async function fetchUserInfo(userEmail) {
+                    debugger;
                     return new Promise((resolve, reject) => {
                         $.ajax({
                             url: `/@tenantName/User/GetUser`,
                             method: "GET",
                             data: { email: userEmail },
                             success: function (response) {
-                            console.log("Response:", response);
+                            console.log("Response layout:", response);
 
                                 if (response) {
 
                                     $("#pickUp").show();
+                                $("#pickUp").attr('style', 'display:block');
 
                                 } else {
                                     $("#pickUp").hide();
+                                // $(".page-header").remove();
+                                // $("#sidenavAccordion").remove();
+                                // $(".container-fluid").remove();
+                                // $("#layoutSidenav").remove();
+                                // $(".footer-admin").remove();
+                                   
+                                // $("body").css("background-color", "white");
+                                // $("body").append(`
+                                //     <div style="
+                                //         margin: 10px;
+                                //                     margin-top: 14px;
+                                //         font-size: 13px;
+                                //                 font-weight: normal;
+                                //                 color: black;
+                                //                 padding-left: 15px;
+                                //                font-family: monospace;">
+                                //              Page Not Found
+                                //     </div>
+                                // `);
+                                if (window.location.pathname.includes("TimeSlot/UserCalendar")) {
+                                    window.location.href = "/@tenantName/Donation/PayPal";
+                                }
+                                  // window.location.href = "/@tenantName/Donation/PayPal";
                                 }
                             },
                             error: function (xhr, status, error) {
