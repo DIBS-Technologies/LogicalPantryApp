@@ -324,7 +324,7 @@ namespace LogicalPantry.Web.Controllers
         /// If the details are successfully retrieved, they are passed to the view. Otherwise, an empty profile view is returned.
         /// </remarks>
         /// <exception cref="Exception">Thrown for unexpected errors while fetching user details.</exception>
-        [Authorize(Roles = $"{UserRoleEnum.Admin},{UserRoleEnum.User}")]
+        [Authorize(Roles = $"{UserRoleEnum.User}")]
         [HttpGet("Profile")]
         public async Task<IActionResult> Profile()
         {
@@ -355,7 +355,7 @@ namespace LogicalPantry.Web.Controllers
         /// </remarks>
         /// <exception cref="ArgumentException">Thrown when the tenant ID cannot be parsed from the context.</exception>
         /// <exception cref="Exception">Thrown for unexpected errors during profile update or file upload.</exception>
-        [Authorize(Roles = $"{UserRoleEnum.Admin},{UserRoleEnum.User}")]
+        [Authorize(Roles = $"{UserRoleEnum.User}")]
         [HttpPost("Profile")]
         public async Task<IActionResult> Profile(UserDto user, IFormFile ProfilePicture)
         {

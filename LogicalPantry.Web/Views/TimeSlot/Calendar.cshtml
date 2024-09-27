@@ -34,82 +34,7 @@
         #layoutSidenav{
         margin-top: -3%;
         }
-        /* .dropdown-menu {
-            max-height: 2.5rem;
-            overflow-y: auto;
-            white-space: nowrap;
-            width: 200px;
-        }
-
-        .dropdown-item {
-            white-space: nowrap;
-        }
-
-        .dropdown {
-            position: relative;
-            display: inline-block;
-        }
-
-        .dropdown-menu {
-            display: none;
-            position: absolute;
-            background-color: #fff;
-            border: 1px solid #ccc;
-            z-index: 1000;
-        }
-
-            .dropdown-menu.show {
-                display: block;
-            }
-
-        select {
-            display: block;
-            width: 100%;
-        }
-
-        .calendar-categories {
-            margin-bottom: 10px;
-            overflow-x: auto;
-            width: 100%;
-            margin: 12px;
-            z-index: 10;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: .25em .4em;
-            font-size: 75%;
-            font-weight: 700;
-            line-height: 1;
-            text-align: center;
-            white-space: nowrap;
-            vertical-align: baseline;
-            padding: 7px;
-            border-radius: .25rem;
-            transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
-        }
-
-        .row > * {
-            flex-shrink: 0;
-            max-width: 100%;
-            padding-right: calc(var(--bs-gutter-x)* .5);
-            padding-left: calc(var(--bs-gutter-x)* .5);
-            margin-top: var(--bs-gutter-y);
-        }
-
-        .container-fluid {
-            max-width: 90%;
-            margin-top: 50px;
-            margin: 50px auto;
-        }
-
-        h3 {
-            margin: 0;
-        }
-
-        #calendar {
-            margin-top: 20px;
-        }
+   
 
         /* New CSS */
         .dropdown select {
@@ -127,23 +52,7 @@
             gap: 10px;
         }
 
-        /*
-                .btn.btn-sm.btn-light.btn-move-calendar:before {
-                    font-size: 30;
-                    margin: 0 2px;
-
-                }
-
-                .btn.btn-sm.btn-light.btn-move-calendar[data-direction="left"]:before {
-                    content: "\2190";
-
-                }
-
-
-                .btn.btn-sm.btn-light.btn-move-calendar[data-direction="right"]:before {
-                    content: "\2192";
-                } */
-
+    
         /* Button hover effect */
         .btn.btn-sm.btn-light.btn-move-calendar:hover {
             background-color: #f0f0f0;
@@ -320,12 +229,7 @@
         </div>
     </div>
 
-    @*    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/moment.js/moment-with-locales.min.js"></script>
-    <script src="~/jquery.touchswipe/jquery.touchswipe.min.js"></script>
-
-    <script src="~/js/jquery-calendar.min.js"></script> *@
+ 
 
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -414,80 +318,7 @@
                 $('#eventModal').modal('show');
             });
 
-            //jayant
-            // $('#saveEventBtn').on('click', function () {
-            //     debugger;
-            //     var eventData = {
-            //         timeSlotName: $('#eventTitle').val(),
-            //         startTime: $('#eventStart').val(),
-            //         endTime: $('#eventEnd').val()
-            //     };
-
-            //     $.ajax({
-            //         url: 'AddEvent', // Ensure the URL is correct
-            //         type: 'POST',
-            //         contentType: 'application/json',
-            //         data: JSON.stringify(eventData),
-            //         success: function (response) {
-            //             if (response.success) {
-                   
-            //                 // alert('sucessfully  1');
-            //                 // Example URL based on response data
-            //                  var redirectUrl = '/@tenantName/TimeSlot/Calendar';
-            //                  window.location.href = redirectUrl;
-            //             } else {
-            //                 alert('Error adding event.');
-            //             }
-            //         },
-            //         error: function (xhr, status, error) {
-            //             console.error('Error adding event:', error);
-            //            // alert('Error adding event: ' + error);
-            //         }
-            //     });
-            // });
-
-            // $('#saveEventBtn').on('click', function () {
-            //     debugger;
-            //     var eventData = {
-            //         timeSlotName: $('#eventTitle').val(),
-            //         startTime: $('#eventStart').val(),
-            //         endTime: $('#eventEnd').val()
-            //     };
-
-            //     $.ajax({
-            //         url: 'AddEvent', // Ensure the URL is correct
-            //         type: 'POST',
-            //         contentType: 'application/json',
-            //         data: JSON.stringify(eventData),
-            //         success: function (response) {
-            //             alert('call  adding event.');
-            //             // if (response.success) {
-            //             //     $.ajax({
-            //             //         url: '/@tenantName/TimeSlot/Calendar', 
-            //             //         type: 'GET', 
-            //             //         success: function (calendarHtml) {
-            //             //             $('#calendarContainer').html(calendarHtml); 
-            //             //         },
-            //             //         error: function (xhr, status, error) {
-            //             //             console.error('Error loading calendar:', error);
-            //             //             alert('Error loading calendar: ' + error);
-            //             //         }
-            //             //     });
-            //             // } else {
-            //             //     alert('Error adding event.');
-            //             // }
-            //         },
-            //         error: function (xhr, status, error) {
-            //             console.error('Error adding event:', error);
-            //             alert('Error adding event: ' + error);
-            //         }
-            //     });
-            // });
-
-
-
-
-
+           
 
             $('#calendar').on('Calendar.event-click', function (event, instance, elem, evt) {
                 debugger;
@@ -514,21 +345,7 @@
                         success: function (response) {
                             if (response && response.timeSlotId) {
                                 // Call the EditTimeSlotUser method using an HTTP GET request
-                              window.location.href = 'EditTimeSlotUser?id=' + response.timeSlotId;
-                                // $.ajax({
-                                //     url: '/@tenantName/TimeSlot/GetTimeSlotUser',
-                                //     type: 'GET',
-                                //     data: { Id: response.timeSlotId }, // Pass the timeSlotId as a query parameter
-                                //     success: function (response) {
-                                //         // Handle the result, such as updating the view
-           
-                                //         console.log("EditTimeSlotUser response:", response);
-                                //         // You can update the page or perform any additional actions here
-                                //     },
-                                //     error: function (xhr, status, error) {
-                                //         alert('Error during GET request: ' + error);
-                                //     }
-                                // });
+                              window.location.href = 'EditTimeSlotUser?id=' + response.timeSlotId;                            
 
                             } else {
                                 alert('Time slot not found.');
@@ -546,65 +363,7 @@
                 var selectedEventId = selectedOption.val();
                 var selectedEventTitle = selectedOption.data('title');
             }
-                // $('#saveEventBtn').on('click', function (e) {
-                //     e.preventDefault();
-
-                //     // Clear previous validation messages
-                //     $('.validation-message').text('');
-
-                //     // Validation flags
-                //     let isValid = true;
-
-                //     // Get the current date (with time set to the start of the day)
-                //     const now = new Date();
-                //     now.setHours(0, 0, 0, 0); // Reset time to midnight
-
-                //     // Validate Title
-                //     const title = $('#eventTitle').val().trim();
-                //     if (title === '') {
-                //         $('#titleError').text('Title is required.');
-                //         isValid = false;
-                //     }
-
-                //     // Validate Start Date
-                //     const startDateStr = $('#eventStart').val().trim();
-                //     if (startDateStr === '') {
-                //         $('#startError').text('Start date is required.');
-                //         isValid = false;
-                //     } else {
-                //         // Convert startDateStr to Date object
-                //         const startDate = new Date(startDateStr);
-                //         if (startDate < now) {
-                //             $('#startError').text('Start date must be today or in the future.');
-                //             isValid = false;
-                //         }
-                //     }
-
-                //     // Validate End Date
-                //     const endDateStr = $('#eventEnd').val().trim();
-                //     if (endDateStr === '') {
-                //         $('#endError').text('End date is required.');
-                //         isValid = false;
-                //     } else {
-                //         // Convert endDateStr to Date object
-                //         const endDate = new Date(endDateStr);
-                //         if (endDate < now) {
-                //             $('#endError').text('End date must be today or in the future.');
-                //             isValid = false;
-                //         }
-
-                //         // Check if endDate is after startDate
-                //         if (new Date(startDateStr) >= endDate) {
-                //             $('#endError').text('End date must be after the start date.');
-                //             isValid = false;
-                //         }
-                //     }
-
-                //     // If all fields are valid, submit the form
-                //     if (isValid) {
-                //         $('#eventForm').submit(); // Submit the form or call your saving logic here
-                //     }
-                // });
+                
 
 
 
@@ -644,7 +403,9 @@
                     now.setHours(0, 0, 0, 0); // Reset time to 00:00:00
 
                     // Validate Start Date (only the date, not the time)
-                    const startDateTime = new Date($('#eventStart').val().trim());
+                     const startDateTime = new Date($('#eventStart').val().trim());
+                    const startDateTimeInput1 = $('#eventStart').val();
+                    const startDateTimeInput2 = new Date(startDateTimeInput1);
                     startDateTime.setHours(0, 0, 0, 0); // Reset time to 00:00:00
 
 
@@ -654,7 +415,18 @@
                     } else if (startDateTime < now) {
                         $('#startError').text('Please select a future date.');
                         isValid = false;
-                    } 
+                    } else {
+                     
+                        const startHours = startDateTimeInput2.getHours();
+                        const startMinutes = startDateTimeInput2.getMinutes();
+
+                        // Validate that the time is after 7:00 AM
+                        if (startHours < 7 || (startHours === 7 && startMinutes < 0)) {
+                            $('#startError').text('Please select a start time after 7 AM.');
+                            isValid = false;
+                        }
+                    }
+                
 
 
                     // Validate End Date (only the date, not the time)

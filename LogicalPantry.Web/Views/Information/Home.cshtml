@@ -257,20 +257,18 @@
      
 
             <div class="navbar-nav">
+                @if (isAuthenticated && (!isAdmin || isUser))
+                {
+                    <a class="nav-link" href="/@tenantName/User/Profile" id="profile">Profile</a>
+
+                }
                 @if (isAuthenticated && (isAdmin || isUser))
                 {
-                     <a class="nav-link" href="/@tenantName/User/Profile" id="profile">Profile</a>
+                    /// <a class="nav-link" href="/@tenantName/User/Profile" id="profile">Profile</a>
                     <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar" id="pickUp1" >Pickup</a>
                 }
                 <a class="nav-link" href="/@tenantName/Donation/PayPal">Donation</a>
-               @*  @if (isAuthenticated)
-                {
-                    <a class="nav-link" href="/@tenantName/Auth/Logout">Logout</a>
-                }
-                else
-                {
-                    <a class="nav-link" href="/@tenantName/Auth/LoginView">Log In</a>
-                } *@
+              
                 @if (isAuthenticated)
                 {
                     <li class="nav-item dropdown no-caret dropdown-user me-3 me-lg-4">

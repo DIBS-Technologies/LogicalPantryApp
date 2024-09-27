@@ -529,13 +529,13 @@
             @if (isAuthenticated && (!isAdmin || isUser))
             {
                 <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar" id="pickUp" style="display:none;">Pickup</a>
-               
+                <a class="nav-link" href="/@tenantName/User/Profile" id="profile">Profile</a>
 
             }
-            @if (isAuthenticated)
+            @* @if (isAuthenticated)
             {
-                <a class="nav-link" href="/@tenantName/User/Profile" id="profile">Profile</a>
-            }          
+                //<a class="nav-link" href="/@tenantName/User/Profile" id="profile">Profile</a>
+            }  *@         
             <a class="nav-link" href="/@tenantName/Donation/PayPal">Donation</a>
             @if (isAuthenticated)
             {
