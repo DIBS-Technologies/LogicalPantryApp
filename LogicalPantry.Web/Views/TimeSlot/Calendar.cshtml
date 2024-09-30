@@ -427,10 +427,12 @@
                         }
                     }
                 
-
+                debugger;
 
                     // Validate End Date (only the date, not the time)
                     const endDateTime = new Date($('#eventEnd').val().trim());
+                    const endDateTimeInput1 = $('#eventEnd').val();
+                    const endDateTimeInput2 = new Date(endDateTimeInput1);
                     endDateTime.setHours(0, 0, 0, 0); // Reset time to 00:00:00
                     if (startDateTime.getTime() !== endDateTime.getTime()) {
                         $('#endError').text('Please add a single day entry only. The end date must be the same day.');
@@ -443,9 +445,24 @@
                         $('#endError').text('Please select a future date.');
                         isValid = false;
                     }  else if (endDateTime < startDateTime) {
+                        debugger;
                         $('#endError').text('End date must be after the start date.');
                         isValid = false;
-                    } 
+                    } else {
+                        const endHours = endDateTimeInput2.getHours();
+                        const endMinutes = endDateTimeInput2.getMinutes();
+                        const startHours = startDateTimeInput2.getHours();
+                        const startMinutes = startDateTimeInput2.getMinutes();
+                        // Validate that the end time is after the start time
+                        if (endHours < startHours || (endHours === startHours && endMinutes <= startMinutes)) {
+                            $('#endError').text('End time must be after the start time.');
+                            isValid = false;
+                        } else if (startDateTime.getTime() !== endDateTime.getTime()) {
+                            $('#endError').text('Please add a single day entry only. The end date must be the same day.');
+                            isValid = false;
+                        }
+                        
+                    }
                         
                    
                
