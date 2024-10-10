@@ -515,6 +515,20 @@
                 document.getElementById('ZipCode-error').innerText = ''; // Clear error message if valid or empty
             }
 
+            // Household Size validation
+            var householdSize = document.getElementById('HouseholdSize').value.trim();
+            if (householdSize !== '') { // If value is not empty, validate it
+                var householdNumber = parseInt(householdSize);
+                if (isNaN(householdNumber) || householdNumber <= 0) {
+                    document.getElementById('HouseholdSize-error').innerText = 'Please enter a positive number for Household Size.';
+                    isValid = false;
+                } else {
+                    document.getElementById('HouseholdSize-error').innerText = ''; // Clear error if valid
+                }
+            } else {
+                document.getElementById('HouseholdSize-error').innerText = ''; // Clear error if empty
+            }
+
             return isValid;
         }
 

@@ -455,7 +455,7 @@
                         const startMinutes = startDateTimeInput2.getMinutes();
                         // Validate that the end time is after the start time
                         if (endHours < startHours || (endHours === startHours && endMinutes <= startMinutes)) {
-                            $('#endError').text('End time must be after the start time.');
+                            $('#endError').text('End time should be greater than start time.');
                             isValid = false;
                         } else if (startDateTime.getTime() !== endDateTime.getTime()) {
                             $('#endError').text('Please add a single day entry only. The end date must be the same day.');

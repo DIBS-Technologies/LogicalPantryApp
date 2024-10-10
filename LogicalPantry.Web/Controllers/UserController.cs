@@ -37,17 +37,6 @@ namespace LogicalPantry.Web.Controllers
             _registrationService = registrationService;
         }
 
-        /// <summary>
-        /// Displays the default index page for the UserController.
-        /// </summary>
-        /// <returns>Returns the view for the index page.</returns>
-        public IActionResult Index()
-        {
-            _logger.LogInformation("Index method call started.");
-
-            _logger.LogInformation("Index method call ended.");
-            return View();
-        }
 
 
         /// <summary>
@@ -200,6 +189,18 @@ namespace LogicalPantry.Web.Controllers
         }
 
 
+
+        /// <summary>
+        /// Displays the default index page for the UserController.
+        /// </summary>
+        /// <returns>Returns the view for the index page.</returns>
+        public IActionResult Index()
+        {
+            _logger.LogInformation("Index method call started.");
+
+            _logger.LogInformation("Index method call ended.");
+            return View();
+        }
 
         /// <summary>
         /// Deletes a user based on the provided user ID.

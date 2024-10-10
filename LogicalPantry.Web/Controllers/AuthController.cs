@@ -52,10 +52,7 @@ namespace LogicalPantry.Web.Controllers
             //return Redirect(tenantUrl);
             var properties = new AuthenticationProperties
             {
-                RedirectUri = $"/{TenantName}/Auth/GoogleResponse"
-                // RedirectUri = Url.Action(nameof(GoogleResponse))
-                // RedirectUri = Url.Action("GoogleResponse", "Auth")
-                // RedirectUri = Url.Action("GoogleResponse", "Auth", new { tenantName = TenantName })
+                RedirectUri = $"/{TenantName}/Auth/GoogleResponse"              
                 //RedirectUri = Url.RouteUrl($"{TenantName}/Auth/GoogleResponse")
 
             };
@@ -388,14 +385,7 @@ namespace LogicalPantry.Web.Controllers
 
 
 
-        //public class UserInfo
-        //{
-        //    public int UserId { get; set; }
-        //    public string Role { get; set; }
-        //    public string Message { get; set; }
-        //    public bool IsRegistered { get; set; }   
-        //    public bool IsAllowed { get; set; }
-        //}
+    
 
        
     }

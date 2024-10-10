@@ -67,11 +67,7 @@ public class TenantMiddleware
                 await _next(context);
                 return;
             }
-            //if (tenantNameFromUrl == "TenantHomePage")
-            //{
-            //    await _next(context);
-            //    return;
-            //}
+         
 
             // Process authenticated users
             if (context.User.Identity.IsAuthenticated)
