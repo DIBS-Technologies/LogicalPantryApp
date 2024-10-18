@@ -532,10 +532,22 @@
             return isValid;
         }
 
-        // Utility function to validate phone number format
-        function isValidPhone(phoneNumber) {
-            var phoneRegex = /^(?:\+1\s?)?\(\d{3}\)\s\d{3}-\d{4}$/;
-            return phoneRegex.test(phoneNumber);
+        // // Utility function to validate phone number format
+        // function isValidPhone(phoneNumber) {
+        //     var phoneRegex = /^(?:\+1\s?)?\(\d{3}\)\s\d{3}-\d{4}$/;
+        //     return phoneRegex.test(phoneNumber);
+        // }
+
+        // function isValidPhone(phone) {
+        //     var phoneRegex = /^(?:\+1\s?)?(?:\(\d{3}\)|\d{3})[\s.-]?\d{3}[\s.-]?\d{4}$/;
+        //     return phoneRegex.test(phone);
+        // }
+
+        function isValidPhone(phone) {
+            // Regex to validate various US phone number formats
+            var phoneRegex = /^(?:\+1\s?)?(\(\d{3}\)|\d{3})?[\s.-]?\d{3}[\s.-]?\d{4}$/;
+
+            return phoneRegex.test(phone);
         }
 
         // Utility function to validate Date of Birth in MM/YYYY format

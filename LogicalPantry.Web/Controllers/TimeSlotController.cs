@@ -320,6 +320,45 @@ namespace LogicalPantry.Web.Controllers
 
         //}
 
+
+
+        /// <summary>
+        /// Updates the details of an existing time slot event.
+        /// </summary>
+        /// <param name="timeSlotDto">The updated time slot event data.</param>
+        /// <returns>A JSON response indicating the success or failure of the operation.</returns>
+        //[Authorize(Roles = $"{UserRoleEnum.Admin}")]
+        [HttpPost("UpdateEvent")]
+        public async Task<IActionResult> UpdateEvent([FromBody] TimeSlotDto timeSlotDto)
+        {
+            _logger.LogInformation("UpdateEvent method call started.");
+
+            if (timeSlotDto == null || timeSlotDto.Id == 0)
+            {
+                return BadRequest("Invalid event data.");
+            }
+
+            if (ModelState.IsValid)
+            {
+                // Call the service to update the event
+                var success = await _timeSlotService.UpdateTimeSlotAsync(timeSlotDto);
+                if (success)
+                {
+                    _logger.LogInformation("Event updated successfully.");
+                    return Json(new { success = true });
+                }
+                else
+                {
+                    _logger.LogError("An error occurred while updating the event.");
+                    return StatusCode(500, "An error occurred while updating the event. Please try again.");
+                }
+            }
+
+            _logger.LogInformation("UpdateEvent method call ended.");
+            return BadRequest(ModelState); // Return a bad request response with validation errors
+        }
+
+
     }
 
 }

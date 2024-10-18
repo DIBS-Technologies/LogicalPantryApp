@@ -23,7 +23,7 @@ namespace LogicalPantry.Services.TimeSlotServices
         /// </summary>
         /// <param name="timeSlotDto">The data transfer object containing updated time slot information.</param>
         /// <returns>A task that represents the asynchronous operation.</returns>
-        Task UpdateTimeSlotAsync(TimeSlotDto timeSlotDto);
+        Task<bool> UpdateTimeSlotAsync(TimeSlotDto timeSlotDto);
 
         /// <summary>
         /// Adds a new time slot with the provided data.
@@ -55,5 +55,6 @@ namespace LogicalPantry.Services.TimeSlotServices
         Task<TimeSlotDto> GetTimeSlotDetailsAsync(DateTime? startTime, DateTime? endTime, string title);
 
 
+        
     }
 }

@@ -90,22 +90,7 @@ namespace LogicalPantry.Services.TimeSlotServices
             }
         }
 
-        /// <summary>
-        /// Updates an existing time slot with the provided data.
-        /// </summary>
-        /// <param name="timeSlotDto">The data transfer object containing the updated time slot information.</param>
-        /// <returns>A task that represents the asynchronous operation.</returns>
-        public async Task UpdateTimeSlotAsync(TimeSlotDto timeSlotDto)
-        {
-            var timeSlot = await _context.TimeSlots.FindAsync(timeSlotDto.Id);
-            if (timeSlot != null)
-            {
-                timeSlot.TimeSlotName = timeSlotDto.TimeSlotName;
-                timeSlot.StartTime = timeSlotDto.StartTime;
-                timeSlot.EndTime = timeSlotDto.EndTime;
-                await _context.SaveChangesAsync();
-            }
-        }
+       
 
         /// <summary>
         /// Retrieves all events from the time slots table.
@@ -157,11 +142,67 @@ namespace LogicalPantry.Services.TimeSlotServices
             return timeSlot;
         }
 
+
+
+        /// <summary>
+        /// Updates an existing time slot in the database.
+        /// </summary>
+        /// <param name="timeSlotDto">The data transfer object containing updated time slot information.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains a boolean indicating the success of the operation.</returns>
+        public async Task<bool> UpdateTimeSlotAsync(TimeSlotDto timeSlotDto)
+        {
+            try
+            {
+                // Retrieve the existing time slot from the database
+                var existingTimeSlot = await _context.TimeSlots
+                    .FirstOrDefaultAsync(ts => ts.Id == timeSlotDto.Id);
+
+                if (existingTimeSlot == null)
+                {
+                    throw new InvalidOperationException("The specified time slot does not exist.");
+                }
+
+                // Check for overlapping time slots, excluding the existing one being updated
+                var overlappingTimeSlot = await _context.TimeSlots
+                    .Where(ts => ts.TenantId == timeSlotDto.TenantId
+                                && ts.UserId == timeSlotDto.UserId
+                                && ts.Id != timeSlotDto.Id // Exclude the current time slot
+                                && ts.StartTime.Date == timeSlotDto.StartTime.Date
+                                && (ts.StartTime < timeSlotDto.EndTime && ts.EndTime > timeSlotDto.StartTime))
+                    .FirstOrDefaultAsync();
+
+                if (overlappingTimeSlot != null)
+                {
+                    throw new InvalidOperationException("This time slot overlaps with an existing time slot on the same day.");
+                }
+
+                // Update the existing time slot's properties
+                existingTimeSlot.TimeSlotName = timeSlotDto.TimeSlotName;
+                existingTimeSlot.StartTime = timeSlotDto.StartTime;
+                existingTimeSlot.EndTime = timeSlotDto.EndTime;
+                existingTimeSlot.EventType = timeSlotDto.EventType;
+                existingTimeSlot.MaxNumberOfUsers = timeSlotDto.MaxNumberOfUsers;
+
+                // Save changes to the database
+                await _context.SaveChangesAsync();
+
+                return true; // Indicate that the update was successful
+            }
+            catch (Exception ex)
+            {
+                // Log the exception for debugging
+                Console.Error.WriteLine(ex);
+
+                // Return false to indicate failure
+                return false;
+            }
+        }
+
+
+
+
+
     }
-
-
-
-
 
 }
 

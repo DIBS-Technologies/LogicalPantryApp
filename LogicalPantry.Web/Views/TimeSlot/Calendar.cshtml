@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="~/css/StyleSheet.css">
    @*  <script src="~/lib/jquery/dist/jquery.min.js"></script> *@
    @*  <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> *@
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
     <style>
@@ -70,6 +71,7 @@
             border-radius: 4px;
         }
 
+       /*  display: inline-grid; */
         .calendar-categories {
             height: 20px;
         }
@@ -160,7 +162,28 @@
         .calendar .calendar-events .calendar-event {
             border-radius: 15px;
         }
-       
+
+        .modal-c2 {
+            background-color: #c1c1c1;
+        }
+
+        .modal .fade2 {
+            background-color: #00000F;
+        }
+
+
+     
+        /* Styles applied only when an event is clicked */
+        .event-active .modal.fade {
+            display: block !important;
+        }
+
+        .event-active .modal-backdrop {
+            display: block !important;
+            opacity: 0.5; 
+        }
+
+
     </style>
 </head>
 
@@ -168,10 +191,15 @@
     <div class="container-fluid">
         <div class="calendar-header">
             @*  <h3>TimeSlot </h3> *@
+           
             <div class="d-flex align-items-center" style="
                  display: flex;
-                 justify-content: end;">            
-                <button type="button" class="btn btn-success" id="addEventBtn">Add Event</button>
+                 justify-content: end;">
+                <div class="form-check form-switch me-3">
+                    <input class="form-check-input" type="checkbox" id="toggleSwitch">
+                    <label class="form-check-label" for="toggleSwitch">Edit mode</label>
+                </div>
+                <button type="button" class="btn btn-success" id="addEventBtn">Add Event</button>             
             </div>
 
         <div class="row">
@@ -179,7 +207,7 @@
                 <div id="calendar"></div>
             </div>
         </div>
-
+       
     
         <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -188,7 +216,8 @@
                         <h5 class="modal-title" id="eventModalLabel">Event Details</h5>
                     </div>
                     <div class="modal-body">
-                        <form id="eventForm" method="post">
+                        <form id="eventForm" method="post">                            
+
                             <div class="form-group">
                                 <label for="eventTitle">Title:</label>
                                     <input type="text" class="form-control" id="eventTitle" name="Title" placeholder="Please add title" required>
@@ -227,6 +256,57 @@
                 </div>
             </div>
         </div>
+
+            <!-- Edit Event Modal (New) -->
+            <div class="modal fade" id="editEventModal" tabindex="-1" role="dialog" aria-labelledby="editEventModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editEventModalLabel">Edit Event Details</h5>
+                        </div>
+                        <div class="modal-body">
+                            <form id="editEventForm" method="post">
+                                <!-- Hidden field for event ID -->
+                                <input type="hidden" id="editEventId" name="EventId">
+
+                                <div class="form-group">
+                                    <label for="editEventTitle">Title:</label>
+                                    <input type="text" class="form-control" id="editEventTitle" name="Title" required>
+                                    <span class="text-danger validation-message" id="editTitleError"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editEventStart">Start Date and Time:</label>
+                                    <input type="datetime-local" class="form-control" id="editEventStart" name="StartDateTime" required>
+                                    <span class="text-danger validation-message" id="editStartError"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editEventEnd">End Date and Time:</label>
+                                    <input type="datetime-local" class="form-control" id="editEventEnd" name="EndDateTime" required>
+                                    <span class="text-danger validation-message" id="editEndError"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editEventType">Event Type:</label>
+                                    <select class="form-control" id="editEventType" name="Type" required>
+                                        <option value="">Select Type</option>
+                                        <option value="Food Pickup">Food Pickup</option>
+                                        <option value="Volunteer">Volunteer</option>
+                                        <option value="Appointment">Appointment</option>
+                                    </select>
+                                    <span class="text-danger validation-message" id="editTypeError"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editEventMaxUsers">Maximum Number of Users:</label>
+                                    <input type="number" class="form-control" id="editEventMaxUsers" name="MaxUsers" min="1" required>
+                                    <span class="text-danger validation-message" id="editMaxUsersError"></span>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" id="saveEditEventBtn">Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
     </div>
 
  
@@ -239,7 +319,9 @@
     <link rel="stylesheet" href="~/css/jquery-calendar.min.css">
     <script src="~/js/jquery-calendar.min.js"></script>
         
-            <script>
+         <script>
+         
+            
                 $(document).ready(function () {
                     debugger;
                     var events = @Html.Raw(Json.Serialize(Model.Events));
@@ -315,47 +397,170 @@
             }).init();
 
             $('#addEventBtn').on('click', function () {
-                $('#eventModal').modal('show');
-            });
-
-           
-
-            $('#calendar').on('Calendar.event-click', function (event, instance, elem, evt) {
                 debugger;
-                // $('#calendar-modal').attr
-                var startTime = evt.start;
-                var endTime = evt.end;
-                var timeSlotName = evt.title;
+                    $('#eventModal').modal('show');                  
+                   // $('body').addClass('event-active'); // Add class when the event is
+                   
+            });
+                
 
-                // Convert Unix timestamps to ISO format
-                var startTimeISO = new Date(startTime * 1000).toISOString();
-                var endTimeISO = new Date(endTime * 1000).toISOString();
+                // $('#toggleEditMode').on('click', function () {
+                //     isEditMode = !isEditMode; // Toggle the edit mode state
+                //     $(this).text(isEditMode ? 'Exit Edit Mode' : 'Enter Edit Mode');
+                // });
 
-                // Get time slot ID using the extracted details
-                $.ajax({
-                    url: 'GetTimeSlotId',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify({
-                        StartTime: startTimeISO,
-                        EndTime: endTimeISO,
-                        TimeSlotName: timeSlotName
-                    }),
-                    
+
+
+                // var isEditMode = false; // Set this based on your application's logic
+
+                // // Event listener for toggle switch
+                // document.getElementById('toggleSwitch').addEventListener('change', function () {
+                //     if (this.checked) {
+                //         console.log('Edit mode is ON');
+                //         isEditMode = true;  // Set edit mode to true when the toggle is ON
+                //     } else {
+                //         console.log('Edit mode is OFF');
+                //         isEditMode = false; // Set edit mode to false when the toggle is OFF
+                //     }
+                // });
+
+                // Initialize isEditMode from local storage
+                var isEditMode = localStorage.getItem('isEditMode') === 'true';
+
+                // Set the initial state of the toggle switch based on local storage
+                document.getElementById('toggleSwitch').checked = isEditMode;
+
+                // Function to update the edit mode state
+                function updateEditMode() {
+                    if (isEditMode) {
+                        console.log('Edit mode is ON');
+                        // Add your logic for enabling edit mode here
+                    } else {
+                        console.log('Edit mode is OFF');
+                        // Add your logic for disabling edit mode here
+                    }
+                }
+
+                // Event listener for toggle switch
+                document.getElementById('toggleSwitch').addEventListener('change', function () {
+                    isEditMode = this.checked; // Update the isEditMode state
+                    localStorage.setItem('isEditMode', isEditMode); // Store the state in local storage
+                    updateEditMode(); // Call the function to handle the state change
+                });
+
+                // Initial call to set up the edit mode on page load
+                updateEditMode();
+
+                $('#calendar').on('Calendar.event-click', function (event, instance, elem, evt) {
+                    debugger;
+                    $('#editEndError').text('');
+                    $('#editStartError').text('');
+                    $('#editMaxUsersError').text('');
+                    $('#editTypeError').text('');
+                    $('#editTitleError').text('');
+                    // $('#calendar-modal').attr
+                    var startTime = evt.start;
+                    var endTime = evt.end;
+                    var timeSlotName = evt.title;
+
+                    // Convert Unix timestamps to ISO format
+                    var startTimeISO = new Date(startTime * 1000).toISOString();
+                    var endTimeISO = new Date(endTime * 1000).toISOString();
+
+                    // Get time slot ID using the extracted details
+                    $.ajax({
+                        url: 'GetTimeSlotId',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            StartTime: startTimeISO,
+                            EndTime: endTimeISO,
+                            TimeSlotName: timeSlotName
+                        }),
+
                         success: function (response) {
                             if (response && response.timeSlotId) {
                                 // Call the EditTimeSlotUser method using an HTTP GET request
-                              window.location.href = 'EditTimeSlotUser?id=' + response.timeSlotId;                            
+                                // $('body').removeClass('event-active'); // Ensure the class is removed when adding an event
+                                //window.location.href = 'EditTimeSlotUser?id=' + response.timeSlotId;
+                                debugger;
+                                if (isEditMode) {
+                                    // If edit mode is on, show the modal for editing
+                                    var eventId = response.timeSlotId; // Assuming your event has an ID field
+                                    var eventTitle = evt.title;
+                                    var eventStart = new Date(evt.start * 1000); // Convert to milliseconds
+                                    var eventEnd = new Date(evt.end * 1000); // Convert to milliseconds
+                                    var eventType = evt.category;
+                                    var eventMaxUsers = response.maxUsers || 1;
+
+
+                                    // Format the Date objects to 'YYYY-MM-DDTHH:mm' for datetime-local input
+                                    var formattedStartTime = formatDateForDateTimeLocalInput(eventStart);
+                                    var formattedEndTime = formatDateForDateTimeLocalInput(eventEnd);
+
+                                    // Set the values in the edit modal
+                                    $('#editEventStart').val(formattedStartTime); // Set formatted start time
+                                    $('#editEventEnd').val(formattedEndTime); // Set formatted end time
+                                    // Set the values in the edit modal
+                                    $('#editEventId').val(eventId); // Hidden field for event ID
+                                    $('#editEventTitle').val(eventTitle);                       
+                                    $('#editEventType').val(eventType);
+                                    $('#editEventMaxUsers').val(eventMaxUsers);
+                                    $('#editEventModal').modal('show');
+                                } else {
+                                    // If edit mode is off, redirect to the edit page
+                                    window.location.href = 'EditTimeSlotUser?id=' + response.timeSlotId;
+                                }
 
                             } else {
                                 alert('Time slot not found.');
                             }
                         },
-                    error: function (xhr, status, error) {
-                        alert('Error retrieving time slot ');
-                    }
+                        error: function (xhr, status, error) {
+                            alert('Error retrieving time slot ');
+                        }
+                    });
+                    $('body').removeClass('event-active'); // Ensure the class is removed when adding an event
                 });
-            });
+
+                function formatDateToLocal(date) {
+                    // Get the individual components of the date
+                    var year = date.getFullYear();
+                    var month = ('0' + (date.getMonth() + 1)).slice(-2); // Months are zero-indexed
+                    var day = ('0' + date.getDate()).slice(-2);
+                    var hours = ('0' + date.getHours()).slice(-2);
+                    var minutes = ('0' + date.getMinutes()).slice(-2);
+
+                    // Format it in 'YYYY-MM-DDTHH:mm' for the datetime-local input
+                    return `${year}-${month}-${day}T${hours}:${minutes}`;
+                }
+
+                // // Optional: Remove the class when the modal is closed
+                // $('#eventModal').on('hidden.bs.modal', function () {
+                //     $('body').removeClass('event-active'); // Remove the class when modal is closed
+                // });
+
+                // function toUnixTimestamp(date) {
+                //     return Math.floor(date.getTime() / 1000); // Convert to seconds
+                // }
+                // function formatDateTime(date) {
+                //     const options = {
+                //         year: 'numeric',
+                //         month: '2-digit',
+                //         day: '2-digit',
+                //         hour: '2-digit',
+                //         minute: '2-digit',
+                //         hour12: true
+                //     };
+
+                //     const formattedDate = date.toLocaleString('en-US', options);
+                //     const parts = formattedDate.split(', ');
+                //     const datePart = parts[0].split('/');
+                //     const timePart = parts[1].trim();
+                //     const formattedDateString = `${datePart[0].padStart(2, '0')}-${datePart[1].padStart(2, '0')}-${datePart[2]}`;
+
+                //     return `${formattedDateString} ${timePart}`;
+                // }
 
 
             function handleSelectChange() {
@@ -363,8 +568,8 @@
                 var selectedEventId = selectedOption.val();
                 var selectedEventTitle = selectedOption.data('title');
             }
-                
 
+                
 
 
             $('#saveEventBtn').on('click', function (e) {
@@ -463,9 +668,8 @@
                         }
                         
                     }
-                        
-                   
-               
+
+
                    
                 //If all fields are valid, submit the form
                 if (isValid) {
@@ -503,9 +707,204 @@
                             }
                         });
                     //$('#eventForm').submit(); // Submit the form or call your saving logic here
+
+
+
+                       
                 }
+                   
             });
+
+                // // Save the edited event when the user clicks "Save Changes"
+                // $('#saveEditEventBtn').on('click', function () {
+                //     debugger;
+
+                //     // Validate the fields before proceeding
+                //     if (!validateEventFields()) {
+                //         return; // Stop execution if validation fails
+                //     }
+
+                //     var eventData = {
+                //         Id: $('#editEventId').val(),
+                //         TimeSlotName: $('#editEventTitle').val(),
+
+
+                //         StartTime: $('#editEventStart').val(),
+                //         EndTime: $('#editEventEnd').val(),
+                        
+
+                //         EventType: $('#editEventType').val(),
+                //         MaxNumberOfUsers: parseInt($('#editEventMaxUsers').val(), 10)
+                //     };
+
+                //     // Send the updated event details to the server via AJAX
+                //     $.ajax({
+                //         url: 'UpdateEvent', // Ensure this URL is correct
+                //         type: 'POST',
+                //         contentType: 'application/json',
+                //         data: JSON.stringify(eventData),
+                //         success: function (response) {
+                //             if (response.success) {
+                //                 // Close the modal and refresh the calendar if the update was successful
+                //                 $('#editEventModal').modal('hide');
+                //                 var redirectUrl = '/@tenantName/TimeSlot/Calendar';
+                //                 window.location.href = redirectUrl;
+                //                 // Optionally, refresh the calendar or event list
+                //             } else {
+                //                 //alert('Failed to update the event.');
+                //             }
+                //         },
+                //         error: function (xhr, status, error) {
+                //             //alert('An error occurred while updating the event.');
+                //         }
+                //     });
+                // });
+
+                $('#saveEditEventBtn').on('click', function () {
+                    // Clear previous validation messages
+                    $('.validation-message').text('');
+
+                    // Validation flags
+                    let isValid = true;
+
+                    // Validate Title
+                    const title = $('#editEventTitle').val().trim();
+                    if (title === '') {
+                        $('#editTitleError').text('Title is required.');
+                        isValid = false;
+                    }
+
+                    // Validate Event Type
+                    const eventType = $('#editEventType').val();
+                    if (eventType === "") {
+                        $("#editTypeError").text("Event type is required.");
+                        isValid = false;
+                    }
+
+                    // Validate Maximum Number of Users
+                    const maxUsers = $('#editEventMaxUsers').val();
+                    if (maxUsers === "") {
+                        $("#editMaxUsersError").text("Maximum number of users is required.");
+                        isValid = false;
+                    } else if (maxUsers <= 0) {
+                        $("#editMaxUsersError").text("Maximum number of users must be a positive number.");
+                        isValid = false;
+                    }
+
+                    // Get today's date without time
+                    const now = new Date();
+                    now.setHours(0, 0, 0, 0); // Reset time to 00:00:00
+
+                    // Validate Start Date
+                    const startDateTime = new Date($('#editEventStart').val().trim());
+                    const startDateTimeInput1 = $('#editEventStart').val();
+                    const startDateTimeInput2 = new Date(startDateTimeInput1);
+                    if (isNaN(startDateTime)) {
+                        $('#editStartError').text('Start date is required.');
+                        isValid = false;
+                    } else if (startDateTime < now) {
+                        $('#editStartError').text('Please select a future date.');
+                        isValid = false;
+                    } 
+                    else {
+
+                        const startHours = startDateTimeInput2.getHours();
+                        const startMinutes = startDateTimeInput2.getMinutes();
+
+                        // Validate that the time is after 7:00 AM
+                        if (startHours < 7 || (startHours === 7 && startMinutes < 0)) {
+                            $('#editStartError').text('Please select a start time after 7 AM.');
+                            isValid = false;
+                        }
+                    }
+
+                    // Validate End Date
+                    const endDateTime = new Date($('#editEventEnd').val().trim());
+                    const endDateTimeInput1 = $('#editEventEnd').val();
+                    const endDateTimeInput2 = new Date(endDateTimeInput1);
+                    if (isNaN(endDateTime)) {
+                        $('#editEndError').text('End date is required.');
+                        isValid = false;
+                    } else if (endDateTime < now) {
+                        $('#editEndError').text('Please select a future date.');
+                        isValid = false;
+                    } else if (endDateTime < startDateTime) {
+                        $('#editEndError').text('End date must be after the start date.');
+                        isValid = false;
+                     } 
+                    else {
+               
+                        const endHours = endDateTimeInput2.getHours();
+                        const endMinutes = endDateTimeInput2.getMinutes();
+                        const startHours = startDateTimeInput2.getHours();
+                        const startMinutes = startDateTimeInput2.getMinutes();
+                        // Validate that the end time is after the start time
+                        if (endHours < startHours || (endHours === startHours && endMinutes <= startMinutes)) {
+                            $('#editEndError').text('End time should be greater than start time.');
+                            isValid = false;
+                        }
+                        // } else if (startDateTime.getTime() !== endDateTime.getTime()) {
+                        //     $('#editEndError').text('Please add a single day entry only. The end date must be the same day.');
+                        //     isValid = false;
+                        // }
+
+                    }
+
+                    // If all fields are valid, submit the form
+                    if (isValid) {
+                        var eventData = {
+                            Id: $('#editEventId').val(),
+                            TimeSlotName: $('#editEventTitle').val(),
+                            StartTime: $('#editEventStart').val(),
+                            EndTime: $('#editEventEnd').val(),
+                            EventType: $('#editEventType').val(),
+                            MaxNumberOfUsers: parseInt($('#editEventMaxUsers').val(), 10)
+                        };
+
+                        // Send the updated event details to the server via AJAX
+                        $.ajax({
+                            url: 'UpdateEvent', // Ensure this URL is correct
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(eventData),
+                            success: function (response) {
+                                if (response.success) {
+                                    // Close the modal and refresh the calendar if the update was successful
+                                    $('#editEventModal').modal('hide');
+                                    var redirectUrl = '/@tenantName/TimeSlot/Calendar';
+                                    window.location.href = redirectUrl;
+                                } else {
+                                    // Handle failure response (e.g., show error message)
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                // Handle error (e.g., show error message)
+                            }
+                        });
+                    }
+                });
+
+
+                // // Optional: Remove the class when the modal is closed
+                // $('#eventModal').on('hidden.bs.modal', function () {
+                //    // $('body').removeClass('event-active'); // Remove the class when modal is closed
+                //     $('body').removeClass('modal.fade'); // Remove the class when modal is closed D
+                 
+                // });
+              
+                function formatDateForDateTimeLocalInput(date) {
+                    var year = date.getFullYear();
+                    var month = ('0' + (date.getMonth() + 1)).slice(-2); // Months are 0-indexed
+                    var day = ('0' + date.getDate()).slice(-2);
+                    var hours = ('0' + date.getHours()).slice(-2);
+                    var minutes = ('0' + date.getMinutes()).slice(-2);
+
+                    // Return the formatted string: 'YYYY-MM-DDTHH:mm'
+                    return `${year}-${month}-${day}T${hours}:${minutes}`;
+                }
+
          });
+
     </script>
 
 

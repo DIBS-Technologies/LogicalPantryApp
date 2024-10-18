@@ -246,6 +246,7 @@
         display: flex;
         flex-wrap: wrap;
         gap: 1rem;
+                justify-content: end;
     }
 
     .topnav .nav-link {
@@ -347,6 +348,7 @@
         .topnav .navbar-nav {
             flex-direction: column;
             width: 100%;
+                    justify-content: end;
         }
 
         .sidenav {
@@ -494,6 +496,34 @@
             padding-left: 16px;
         }
 
+        #pickUp
+        {
+            padding-left: 0px;
+            padding-right: 0px;
+        }
+
+        #profile {
+            padding-left: 0px;
+            padding-right: 0px;
+        }
+
+        #donation
+        {
+            padding-left: 0px;
+            padding-right: 0px;
+        }
+
+        #navbarDropdownUserImage{
+            padding-left: 0px;
+            padding-right: 0px;
+            border-left-width: 0px;
+            border-right-width: 0px;
+        }
+
+        
+}
+
+     
 </style>
 
 </head>
@@ -512,7 +542,7 @@
             </div>
         </div>
     </header>
-
+   
     <nav class="topnav navbar navbar-expand shadow navbar-light bg-white" id="sidenavAccordion">
         <div class="tenantImage">
             <img id="logoImage" src="" style="padding-left: 10px; opacity:100%"  />
@@ -535,8 +565,9 @@
             @* @if (isAuthenticated)
             {
                 //<a class="nav-link" href="/@tenantName/User/Profile" id="profile">Profile</a>
-            }  *@         
-            <a class="nav-link" href="/@tenantName/Donation/PayPal">Donation</a>
+            }  *@
+      
+            <a class="nav-link" href="/@tenantName/Donation/PayPal" id="donation">Donation</a>
             @if (isAuthenticated)
             {
                 <li class="nav-item dropdown no-caret dropdown-user me-3 me-lg-4">
