@@ -294,33 +294,6 @@ namespace LogicalPantry.Web.Controllers
 
 
 
-        //[HttpPost]
-        //public async Task<IActionResult> SaveEvent([FromBody]TimeSlotDto timeSlotDto)
-        //{
-        //    _logger.LogInformation("SaveEvent method call started.");
-
-        //    if (ModelState.IsValid)
-        //    {
-        //        if (timeSlotDto.Id == 0)
-        //        {
-        //            // Add new event
-        //            await _timeSlotService.AddTimeSlotAsync(timeSlotDto);
-        //        }
-        //        else
-        //        {
-        //            // Update existing event
-        //            await _timeSlotService.UpdateTimeSlotAsync(timeSlotDto);
-        //        }
-        //        return Ok();
-        //    }
-
-        //    _logger.LogInformation("SaveEvent method call ended.");
-
-        //    return BadRequest();
-
-        //}
-
-
 
         /// <summary>
         /// Updates the details of an existing time slot event.

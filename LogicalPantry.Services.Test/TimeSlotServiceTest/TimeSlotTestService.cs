@@ -53,6 +53,8 @@ namespace LogicalPantry.Services.Test.TimeSlotServiceTest
                         TimeSlotName = result.TimeSlotName,
                         StartTime = result.StartTime,
                         EndTime = result.EndTime,
+                        EventType =result.EventType,
+                        MaxNumberOfUsers =result.MaxNumberOfUsers,
                     };
                     return response;
                 }

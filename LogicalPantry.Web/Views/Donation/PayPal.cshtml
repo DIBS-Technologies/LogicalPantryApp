@@ -34,7 +34,7 @@
     <title>Partner with Us</title>
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
-    <style>
+     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -76,13 +76,15 @@
             }
 
         .donation-container {
-            margin-top: 15px;
+            margin-top: 25px;
             /* display: flex; */
                 display: inline-block;
-            background-color: lightslategray;
+            background-color: whitesmoke;
             flex-direction: column;
             align-items: center;
             padding: 10px;
+            border-radius: 15px;
+            border: 0.5px solid black;
         }
 
         .donation-options {
@@ -102,6 +104,7 @@
                 cursor: pointer;
                 margin: 3px;
                 transition: background-color 0.3s;
+               
             }
 
                 .donation-options button.selected {
@@ -109,9 +112,7 @@
                     color: #003366;
                     border: 2px solid #003366; 
                 }
-               /*  .donation-options button:hover {
-                    background-color: #002244; 
-                } */
+             
 
         .custom-amount-container {
             display: none;
@@ -171,7 +172,6 @@
             transition: padding-left 0.3s;
         }
 
-        /* Responsive Styles */
         @@media (max-width: 768px) {
             .hero-overlay h1 {
                 font-size: 1.5rem;
@@ -220,7 +220,7 @@
             max-width: 90%;
             margin: 0 auto;
             text-align: center;
-            margin-left: @contentMarginLeft;
+         
         }
 
         
@@ -307,17 +307,19 @@
                 font-size: 0.8rem;
             }
 
+
             #sidenavAccordion {
                 display: flex;
-                flex-direction: row;
-                margin-left: auto; 
-                justify-content: end;
+                flex-direction: column;
+                justify-content: center;
             }
+
+
         }
         #sidenavAccordion {
             display: flex;
             flex-direction: row;
-            margin-left: auto; /* Push links to the right */
+            margin-left: auto;
             justify-content: end;
         }
 
@@ -330,183 +332,17 @@
             font-size: 0.9rem;
         }
         .donation-button.active {
-            background-color: white; /* Change to desired color for selected */
-            color: black; /* Change text color if needed */
+            background-color: white; 
+            color: black; 
         }
 
         .paypal-button-row.paypal-button-number-1 {
-            display: none !important; /* Hide the modal by default */
+            display: none !important; 
         }
+
+
     </style>
-
-    @*  <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            background-color: #f4f4f4;
-            color: #333;
-        }
-
-        .hero-image {
-            position: relative;
-            width: 100%;
-            height: 50vh;
-            background-image: url('https://plus.unsplash.com/premium_photo-1682092585257-58d1c813d9b4?q=80&w=1000&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
-            background-size: cover;
-            background-position: center;
-        }
-
-        .hero-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .hero-overlay h1 {
-            font-size: 2rem;
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            color: white;
-        }
-
-        .content {
-            padding: 20px;
-            max-width: 90%;
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        /* Side navigation container */
-        #sidenavAccordion {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-            background-color: white;
-            padding: 10px;
-        }
-
-        .donation-container {
-            margin-top: 20px;
-            display: inline-block;
-            background-color: lightslategray;
-            flex-direction: column;
-            align-items: center;
-            padding: 10px;
-        }
-
-        .donation-options {
-            margin-bottom: 20px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .donation-options button {
-            background-color: #003366;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            font-size: 0.8rem;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 3px;
-        }
-
-        .donation-options button.selected {
-            background-color: white;
-            color: #003366;
-            border: 2px solid #003366;
-        }
-
-        .custom-amount-container {
-            display: none;
-            margin-top: 10px;
-            text-align: center;
-        }
-
-        .custom-amount-container input {
-            padding: 6px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            font-size: 0.8rem;
-            margin-right: 5px;
-        }
-
-        .custom-amount-container button {
-            background-color: #003366;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            font-size: 0.8rem;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .paypal-button-container {
-            margin-top: 20px;
-        }
-
-        /* Responsive Styles */
-        @@media (max-width: 768px) {
-            .hero-overlay h1 {
-                font-size: 1.5rem;
-            }
-
-            .content {
-                padding: 15px;
-                max-width: 95%;
-            }
-
-            #sidenavAccordion {
-                flex-direction: column;
-                align-items: center;
-            }
-        }
-
-        @@media (max-width: 480px) {
-            .hero-image {
-                height: 40vh;
-            }
-
-            .hero-overlay h1 {
-                font-size: 1.2rem;
-            }
-
-            .content {
-                padding: 10px;
-                max-width: 90%;
-            }
-
-            #sidenavAccordion {
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-            }
-
-            .nav-link {
-                font-size: 0.85rem;
-                padding: 0.5rem;
-            }
-
-            footer {
-                font-size: 0.8rem;
-                padding: 8px;
-            }
-        }
-    </style> *@
+  
 </head>
 <body>
 
@@ -543,7 +379,8 @@
                 and showing them the love of Christ.
             </p>
             <p><strong class="bold">Join in our dream of changing lives, sharing God’s Word and alleviating poverty! You can make a difference!</strong></p>
-            <p>Donations to Lighting the Path are used for caring for and empowering women, building schools, providing educational supplies, offering business school courses, and teaching women they are strong and capable by giving them skills they can use to earn an income and change lives.</p>
+             <p>Donations to Lighting the Path are used for caring for and empowering women, building schools, providing educational supplies, offering business school courses,<br>
+                 and teaching women they are strong and capable by giving them skills they can use to earn an income and change lives.</p> 
             <p>
                 <strong class="bold">Your donation helps to meet the needs of so many!</strong><br>
                 We support churches and ministers, provide formula for malnourished infants, food for families,<br>
@@ -749,7 +586,7 @@
         });
 
         // function removeDebitCreditCardOption() {
-        //     debugger;
+        //     
         //     const elementToRemove = document.querySelector('div[aria-label="Debit or Credit Card"]');
         //     if (elementToRemove) {
         //         elementToRemove.remove();

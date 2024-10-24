@@ -16,8 +16,8 @@ namespace LogicalPantry.Models.Test.ModelTest
         public string TimeSlotName { get; set; }
         public DateTime StartTime { get; set; }
         public DateTime EndTime { get; set; }
-
-
+        public int MaxNumberOfUsers { get; set; }
+        public string EventType { get; set; }
 
         public ICollection<TimeSlotSignup> TimeSlotSignups { get; set; }
     }

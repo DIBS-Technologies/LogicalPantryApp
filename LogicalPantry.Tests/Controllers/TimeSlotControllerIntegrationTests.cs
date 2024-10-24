@@ -24,7 +24,8 @@ using System.Net.Http.Headers;
 using System.Security.Claims;
 using LogicalPantry.Models.Models.Enums;
 using Microsoft.AspNetCore.Hosting;
-
+using System.Net;
+using LogicalPantry.DTOs.TimeSlotDtos;
 namespace LogicalPantry.IntegrationTests
 {
     [TestClass]
@@ -43,7 +44,7 @@ namespace LogicalPantry.IntegrationTests
         {
             //Setup configuration to load appsettings.json
             var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory()) //Ensure the correct path
+                .SetBasePath(Directory.GetCurrentDirectory()) 
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
 
             _configuration = builder.Build();
@@ -96,7 +97,7 @@ namespace LogicalPantry.IntegrationTests
         [TestMethod]
         public async Task AddEvent_ShouldReturnOk_WhenEventIsAddedSuccessfully()
         {
-            var timeSlotDto = new TimeSlotDto
+            var timeSlotDto = new DTOs.Test.TimeSlotDtos.TimeSlotDto
             {
 
                 UserId = 61,
@@ -132,7 +133,7 @@ namespace LogicalPantry.IntegrationTests
         public async Task GetTimeSlotId_ShouldReturnOk_WhenTimeSlotExists()
         {
 
-            var timeSlotDto = new TimeSlotDto
+            var timeSlotDto = new DTOs.Test.TimeSlotDtos.TimeSlotDto
             {
                 TimeSlotName = "Sample Event",
                 StartTime = DateTime.ParseExact("2024-09-20 11:08:44.5178367", "yyyy-MM-dd HH:mm:ss.fffffff", null),
@@ -228,6 +229,62 @@ namespace LogicalPantry.IntegrationTests
             // Assert
             Assert.AreEqual(System.Net.HttpStatusCode.OK, response.StatusCode);
         }
+
+
+
+
+
+        /// <summary>
+        /// Update Event , Updates Event Successfully
+        /// </summary>
+        /// <returns></returns>
+        [TestMethod]
+        public async Task UpdateEvent_UpdatesEventSuccessfully()
+        {
+            // Arrange
+            var updateEventDto = new DTOs.Test.TimeSlotDtos.TimeSlotDto
+            {
+                Id = 320, // The ID of the event to update
+                TimeSlotName = "Updated Event",
+                StartTime = new DateTime(2024, 10, 02, 21, 0, 0),
+                EndTime = new DateTime(2024, 10, 02, 22, 0, 0),
+                EventType = "Food Pickup",
+                MaxNumberOfUsers = 100,
+                UserId = 398,
+                TenantId = 53
+            };
+
+            var content = new StringContent(JsonConvert.SerializeObject(updateEventDto), Encoding.UTF8, "application/json");
+
+            // Act
+            var response = await _client.PostAsync("/Logic/TimeSlot/UpdateEvent", content);
+            var responseContent = await response.Content.ReadAsStringAsync();
+
+            // Output response details for debugging (optional)
+            Console.WriteLine($"Response Status Code: {response.StatusCode}");
+            Console.WriteLine($"Response Content: {responseContent}");
+
+            // Assert
+            Assert.AreEqual(HttpStatusCode.OK, response.StatusCode, "Response status code should be OK.");
+
+            // Fetch the updated event details from the database or service
+            var updatedEventInfo = await _timeSlotTestService.GetEvent(updateEventDto);
+
+            // Ensure the event is not null
+            Assert.IsNotNull(updatedEventInfo, "Updated event should not be null.");
+
+            // Assert each field to verify the update
+            Assert.AreEqual(updateEventDto.TimeSlotName, updatedEventInfo.Data.TimeSlotName, "TimeSlotName should be updated.");           
+            Assert.AreEqual(updateEventDto.EventType, updatedEventInfo.Data.EventType, "EventType should be updated.");
+            Assert.AreEqual(updateEventDto.MaxNumberOfUsers, updatedEventInfo.Data.MaxNumberOfUsers, "MaxNumberOfUsers should be updated.");
+            Assert.AreEqual(updateEventDto.UserId, updatedEventInfo.Data.UserId, "UserId should be updated.");
+            Assert.AreEqual(updateEventDto.TenantId, updatedEventInfo.Data.TenantId, "TenantId should be updated.");
+            Assert.AreEqual(updateEventDto.StartTime, updatedEventInfo.Data.StartTime, "StartTime should be updated.");
+            Assert.AreEqual(updateEventDto.EndTime, updatedEventInfo.Data.EndTime, "EndTime should be updated.");
+
+        }
+
+
 
     }
 }

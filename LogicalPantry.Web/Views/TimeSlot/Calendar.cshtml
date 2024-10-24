@@ -323,7 +323,6 @@
          
             
                 $(document).ready(function () {
-                    debugger;
                     var events = @Html.Raw(Json.Serialize(Model.Events));
                      //var buttonHtml = '<button type="button" class="btn btn-success" id="addEventBtn">Add Event</button>';
                     // $('.nav-fixed .container').append(buttonHtml);
@@ -397,7 +396,7 @@
             }).init();
 
             $('#addEventBtn').on('click', function () {
-                debugger;
+
                     $('#eventModal').modal('show');                  
                    // $('body').addClass('event-active'); // Add class when the event is
                    
@@ -452,7 +451,7 @@
                 updateEditMode();
 
                 $('#calendar').on('Calendar.event-click', function (event, instance, elem, evt) {
-                    debugger;
+                  
                     $('#editEndError').text('');
                     $('#editStartError').text('');
                     $('#editMaxUsersError').text('');
@@ -483,7 +482,7 @@
                                 // Call the EditTimeSlotUser method using an HTTP GET request
                                 // $('body').removeClass('event-active'); // Ensure the class is removed when adding an event
                                 //window.location.href = 'EditTimeSlotUser?id=' + response.timeSlotId;
-                                debugger;
+                         
                                 if (isEditMode) {
                                     // If edit mode is on, show the modal for editing
                                     var eventId = response.timeSlotId; // Assuming your event has an ID field
@@ -573,7 +572,7 @@
 
 
             $('#saveEventBtn').on('click', function (e) {
-                debugger;
+            
                  e.preventDefault();
 
                 // Clear previous validation messages
@@ -632,7 +631,7 @@
                         }
                     }
                 
-                debugger;
+        
 
                     // Validate End Date (only the date, not the time)
                     const endDateTime = new Date($('#eventEnd').val().trim());
@@ -650,7 +649,7 @@
                         $('#endError').text('Please select a future date.');
                         isValid = false;
                     }  else if (endDateTime < startDateTime) {
-                        debugger;
+                 
                         $('#endError').text('End date must be after the start date.');
                         isValid = false;
                     } else {
@@ -673,7 +672,7 @@
                    
                 //If all fields are valid, submit the form
                 if (isValid) {
-                    debugger;
+                 
                         var eventData = {
                             timeSlotName: $('#eventTitle').val(),
                             startTime: $('#eventStart').val(),

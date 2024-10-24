@@ -280,7 +280,7 @@
                                 <div class="form-group">
                                     <label for="DateOfBirth">Birth Date (MM/YYYY)<span class="mandatory">*</span></label>
                                     <input type="text" name="DateOfBirth" class="form-control" value="@(Model.DateOfBirth.HasValue ? Model.DateOfBirth.Value.ToString("MM/yyyy") : "")" id="DateOfBirth" placeholder="MM/YYYY" required />
-                                    <span class="text-danger" id="DateOfBirth-error"></span>
+                                    <span class="text-danger errorfont" id="DateOfBirth-error"></span>
                                 </div>
                                
                                 <div class="row">
@@ -295,7 +295,7 @@
                                                 <input type="radio" name="IsMarried" value="false" class="form-check-input" id="IsMarriedNo" @(Model.IsMarried == false ? "checked" : "") />
                                                 <label class="form-check-label" for="IsMarriedNo">No</label>
                                             </div>
-                                            <span class="text-danger" id="IsMarried-error"></span>
+                                            <span class="text-danger errorfont" id="IsMarried-error"></span>
                                         </div>
                                     </div>
 
@@ -310,7 +310,7 @@
                                                 <input type="radio" name="IsDisabled" value="false" class="form-check-input" id="IsDisabledNo" @(Model.IsDisabled == false ? "checked" : "") />
                                                 <label class="form-check-label" for="IsDisabledNo">No</label>
                                             </div>
-                                            <span class="text-danger" id="IsDisabled-error"></span>
+                                            <span class="text-danger errorfont" id="IsDisabled-error"></span>
                                         </div>
                                     </div>
                                 </div>
@@ -371,7 +371,7 @@
                                 <div class="form-group">
                                     <label for="HouseholdSize">Household Size</label>
                                     <input type="number" name="HouseholdSize" class="form-control" value="@Model.HouseholdSize" id="HouseholdSize" placeholder="Number in Household" />
-                                    <span class="text-danger" id="HouseholdSize-error"></span>
+                                    <span class="text-danger errorfont" id="HouseholdSize-error"></span>
                                 </div>
 
 
@@ -387,13 +387,13 @@
                                         <option value="UnemployedLooking">Unemployed - Looking</option>
                                         <option value="UnemployedNotLooking">Unemployed - Not Looking</option>
                                     </select>
-                                    <span asp-validation-for="EmploymentStatus" class="text-danger"></span>
+                                    <span asp-validation-for="EmploymentStatus" class="text-danger errorfont"></span>
                                 </div>
 
                                 <div class="form-group">
                                     <label for="ZipCode">Zip Code</label>
                                     <input type="text" name="ZipCode" class="form-control" id="ZipCode" value="@Model.ZipCode" placeholder="Enter Zip Code" />
-                                    <span class="text-danger" id="ZipCode-error"></span> <!-- Error message for ZIP Code -->
+                                    <span class="text-danger errorfont" id="ZipCode-error"></span> <!-- Error message for ZIP Code -->
                                 </div>
 
                              
@@ -410,7 +410,7 @@
                                             <input type="radio" name="IsVeteran" value="false" class="form-check-input " id="isVeteranNo" @(Model.IsVeteran == false ? "checked" : "") />
                                             <label class="form-check-label" for="isVeteranNo">No</label>
                                         </div>
-                                        <span class="text-danger" id="isVeteran-error"></span>
+                                        <span class="text-danger errorfont" id="isVeteran-error"></span>
                                     </div>
 
                                     <div class="form-group">
@@ -423,7 +423,7 @@
                                             <input type="radio" name="HasSchoolAgedChildren" value="false" class="form-check-input" id="HasSchoolAgedChildrenNo" @(Model.HasSchoolAgedChildren == false ? "checked" : "") />
                                             <label class="form-check-label" for="HasSchoolAgedChildrenNo">No</label>
                                         </div>
-                                        <span class="text-danger" id="HasSchoolAgedChildren-error"></span>
+                                        <span class="text-danger errorfont" id="HasSchoolAgedChildren-error"></span>
                                     </div>
 
 
@@ -532,23 +532,23 @@
             return isValid;
         }
 
-        // // Utility function to validate phone number format
-        // function isValidPhone(phoneNumber) {
-        //     var phoneRegex = /^(?:\+1\s?)?\(\d{3}\)\s\d{3}-\d{4}$/;
-        //     return phoneRegex.test(phoneNumber);
-        // }
 
-        // function isValidPhone(phone) {
-        //     var phoneRegex = /^(?:\+1\s?)?(?:\(\d{3}\)|\d{3})[\s.-]?\d{3}[\s.-]?\d{4}$/;
-        //     return phoneRegex.test(phone);
-        // }
+
+
+
 
         function isValidPhone(phone) {
             // Regex to validate various US phone number formats
             var phoneRegex = /^(?:\+1\s?)?(\(\d{3}\)|\d{3})?[\s.-]?\d{3}[\s.-]?\d{4}$/;
-
             return phoneRegex.test(phone);
         }
+
+
+
+
+
+
+
 
         // Utility function to validate Date of Birth in MM/YYYY format
         function validateDateOfBirth(dob) {
