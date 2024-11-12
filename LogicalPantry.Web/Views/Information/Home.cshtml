@@ -1,0 +1,579 @@
+﻿@using System.Security.Claims;
+
+@{
+    var tenantName = ViewBag.TenantName as string;
+    var pagename = ViewBag.PageName as string;
+    var homePageName = ViewBag.homepageName as string;
+    var isUser = User.IsInRole("User");
+    var tenantId = ViewBag.TenantId;
+    var userClaim = User.Claims
+               .Where(c => c.Type == ClaimTypes.Role)
+               .Select(c => c.Value).ToList();
+
+    bool isAdmin = userClaim.Contains("Admin");
+    var isAuthenticated = User.Identity.IsAuthenticated;
+    var userEmail = User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value;
+    var userName = User.FindFirstValue(ClaimTypes.Name) ?? User.Claims.FirstOrDefault(c => c.Type == "name")?.Value;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - LogicalPantry.Web</title>
+
+    <link href="/css/default-main.css" rel="stylesheet" />
+    <link href="~/css/style.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>   
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+   
+
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            /* overflow: hidden; */ /* Prevent scrollbars */
+        }
+
+        #pageName {
+            display: flex;
+            justify-content: start;
+            margin-left: 4%;
+        }
+
+        #layoutSidenav {
+            display: flex;
+            flex-direction: column;
+            height: 100vh; /* Full viewport height */
+            width: 100vw; /* Full viewport width */
+            margin: 0;
+        }
+
+        #layoutSidenav_content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            overflow: hidden;
+            margin: 0;
+            padding-left: @(isAuthenticated ? (isAdmin ? "15rem" : "0") : "0");
+            padding-right: @(isAuthenticated ? "0" : "0");
+            top: @(isAuthenticated ? (isAdmin ? "3.625rem" : "4rem") : "auto");
+            padding-bottom: @(isAuthenticated ? "5rem" : "0");
+        }
+
+        .topnav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1rem;
+            background-color: white;
+            height: 60px; /* Adjust based on navbar height */
+            width: 100%; /* Ensure full width */
+        }
+
+            .topnav .navbar-nav {
+                display: flex;
+                flex-direction: row;
+                margin-left: auto; /* Push links to the right */
+                justify-content: end;
+            }
+
+            .topnav .nav-link {
+                padding-right: 1rem;
+                padding-left: 1rem;
+                font-weight: normal;
+                transition: color 0.3s, font-weight 0.3s;
+            }
+
+                .topnav .nav-link:hover {
+                    color: #0061f2;
+                    font-weight: bold;
+                }
+
+        .page-name {
+            flex: 1;
+            text-align: center;
+            font-weight: bold;
+            color: #1f2d41;
+            font-size: 1.25rem;
+        }
+
+        main {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%; /* Full height */
+            padding: 0; /* Remove padding */
+            margin: 0; /* Remove margin */
+            overflow: hidden; /* Hide overflow */
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
+        }
+
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #f8f9fa;
+            color: #6c757d;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+            padding : 10px;
+        }
+
+        .footer-custom {
+            background-color: #fff;
+            color: #1f2d41;
+        }
+
+        .sidenav-light {
+            background-color: #fff;
+            color: #1f2d41;
+        }
+
+            .sidenav-light .sidenav-menu .nav-link:hover {
+                color: #0061f2;
+            }
+
+        .sidenav .sidenav-menu .nav .sidenav-menu-heading {
+            padding: 1.75rem 1rem 0.75rem;
+            font-size: 0.7rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .sidenav-light .sidenav-menu .nav-link:hover {
+            color: #0061f2;
+            background-color: #f1f1f1;
+            border-radius: 0.2rem;
+            margin: 0rem 0.5rem 0rem 0.75rem;
+            padding-left: 0.5rem !important;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+
+        #layoutSidenav_content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+            overflow: hidden;
+            margin: 0;
+            padding-left: @(User.Identity.IsAuthenticated ? (isAdmin ? "15rem" : "0") : "0");
+            padding-right: @(User.Identity.IsAuthenticated ? "0" : "0");
+            top: @(User.Identity.IsAuthenticated ? (isAdmin ? "3.625rem" : "4rem") : "auto");
+            padding-bottom: @(User.Identity.IsAuthenticated ? "5rem" : "0");
+        }
+
+        .nav-fixed #layoutSidenav #layoutSidenav_content {
+            padding-left: 0;
+            padding-right: 0;
+            top: 1rem;
+            padding-bottom: 5rem;
+        }
+
+        .nav-fixed #layoutSidenav #layoutSidenav_content {
+            padding-left: @(User.Identity.IsAuthenticated ? (isAdmin ? "7.5rem" : "") : "0");
+            /* padding-right: 2rem; */
+            top: 1rem;
+            padding-bottom: @(User.Identity.IsAuthenticated ? (isAdmin ? "0rem" : "5rem") : "0");
+            ;
+        }
+
+        .nav-fixed #layoutSidenav #layoutSidenav_nav .sidenav {
+            padding-top: 0rem;
+        }
+
+        .dropdown-menu {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            transform: translateY(10px);
+        }
+
+            .dropdown-menu.show {
+                display: block;
+                opacity: 1;
+                transform: translateY(0);
+            }
+
+        #pageName {
+            display: flex;
+            justify-content: start;
+            margin-left: 2%;
+        }
+
+        img {
+            vertical-align: middle;
+            border-style: none;
+            max-height: 40px;
+        }
+
+      
+        /* Mobile view */
+@@media (max-width: 968px) {
+            .topnav {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0 1rem;
+                background-color: white;
+                height: 60px; /* Adjust based on navbar height */
+                width: 100%; /* Ensure full width */
+            }
+
+                .topnav .navbar-nav {
+                    display: flex;
+                    flex-direction: row;
+                    margin-left: auto; /* Push links to the right */
+                    justify-content: end;
+                }
+
+                .topnav .nav-link {
+                    padding-right: 1rem;
+                    padding-left: 1rem;
+                    font-weight: normal;
+                    transition: color 0.3s, font-weight 0.3s;
+                }
+
+                    .topnav .nav-link:hover {
+                        color: #0061f2;
+                        font-weight: bold;
+                    }
+
+
+    
+
+    .page-name {
+        font-size: 1rem;
+    }
+
+    footer {
+        font-size: 0.9rem;
+    }
+
+    /* Sidebar management */
+    #layoutSidenav {
+        display: block; /* Stack elements vertically on smaller screens */
+    }
+
+    #layoutSidenav_content {
+        padding: 1rem;
+    }
+
+            #sidenavAccordion {
+                display: flex;
+                flex-direction: row;
+                margin-left: auto; /* Push links to the right */
+                justify-content: end;
+            }
+}
+
+/* Small mobile view */
+@@media (max-width: 280px) {
+    .topnav {
+        padding: 0.5rem;
+    }
+
+    .page-name {
+        font-size: 0.9rem;
+    }
+
+    .nav-link {
+        font-size: 0.85rem;
+        padding: 0.5rem;
+    }
+
+    footer {
+        padding: 8px;
+        font-size: 0.8rem;
+    }
+
+            #sidenavAccordion {
+                display: flex;
+                flex-direction: row;
+                margin-left: auto; /* Push links to the right */
+                justify-content: end;
+            }
+}
+
+        #sidenavAccordion {
+            display: flex;
+            flex-direction: row;
+            margin-left: auto; /* Push links to the right */
+            justify-content: end;
+        }
+
+       
+    </style>
+
+</head>
+<body class="@(isAdmin ? "nav-fixed" : "")">
+    <div id="layoutSidenav">
+        <nav class="topnav navbar navbar-expand shadow navbar-light bg-white" id="sidenavAccordion">
+        
+            <div class="tenantImage">
+                <img id="logoImage" @* src="" *@ style="padding-left: 10px; opacity:100%" />
+            </div>
+            <div class="page-name" id="pageName">
+                @*   @{
+                string formattedPageName = !string.IsNullOrEmpty(pagename)
+                ? char.ToUpper(pagename.Replace(".html", " ")[0]) + pagename.Replace(".html", " ").Substring(1)
+                : "";
+                } *@
+                @*    @pagename *@
+            </div>
+     
+
+            <div class="navbar-nav">
+                
+                @if (isAuthenticated && (isAdmin || isUser))
+                {
+                    /// <a class="nav-link" href="/@tenantName/User/Profile" id="profile">Profile</a>
+                    <a class="nav-link" href="/@tenantName/TimeSlot/UserCalendar" id="pickUp1" >Pickup</a>
+                }@if (isAuthenticated && (!isAdmin || isUser))
+                {
+                    <a class="nav-link" href="/@tenantName/User/Profile" id="profile">Profile</a>
+
+                }
+                <a class="nav-link" href="/@tenantName/Donation/PayPal">Donation</a>
+              
+                @if (isAuthenticated)
+                {
+                    <li class="nav-item dropdown no-caret dropdown-user me-3 me-lg-4">
+                        <a class="btn btn-icon btn-transparent-dark dropdown-toggle" id="navbarDropdownUserImage" href="javascript:void(0);" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><img src="~/assets/sass/freepik/profiles/person.svg" /></a>
+                        <div class="dropdown-menu dropdown-menu-end border-0 shadow animated--fade-in-up" aria-labelledby="navbarDropdownUserImage">
+                            <h6 class="dropdown-header d-flex align-items-center">
+                                <img class="dropdown-user-img" src="~/assets/sass/freepik/profiles/profile-6.png" />
+                                <div class="dropdown-user-details">
+                                    <div class="dropdown-user-details-name">@userName</div>
+                                    <div class="dropdown-user-details-email">@userEmail</div>
+                                </div>
+                            </h6>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="/@tenantName/Auth/Logout">
+                                <div class="dropdown-item-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></div>
+                                Logout
+                            </a>
+                        </div>
+                    </li>
+                }
+                else
+                {
+                    <a class="nav-link" href="/@tenantName/Auth/loginView">Log In</a>
+                }
+               @*  <input id="pag" type="hidden" name="name" value="@pagename" /> *@
+                <input id="HomePag" type="hidden" name="homePageName" value="@homePageName" />
+                <input type="hidden" value="@isUser" id="isUser" />
+            </div>
+        </nav>
+        
+        <div id="layoutSidenav_content">
+            <main id="iframe">
+                @* <iframe src="" id="urlFrameId"></iframe> *@
+            </main>
+        </div>
+    </div>
+
+
+    @* <script src="~/js/site.js" asp-append-version="true"></script> *@
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
+    @section Scripts {
+        <script>
+           
+
+            $(document).ready(function () {
+                var isAdmin = '@isAdmin.ToString().ToLower()'; // Convert boolean to lowercase string
+                var isAuthenticated = '@isAuthenticated.ToString().ToLower()'; // Convert boolean to lowercase string
+                if (isAdmin === 'false' && isAuthenticated === 'true') {
+                    $('header.page-header').remove(); // Remove the header with class 'page-header'
+                }
+
+                $('.dropdown-user').click(function () {
+                    var $dropdownMenu = $(this).next('.dropdown-menu');
+                    $dropdownMenu.toggleClass('show');
+                });
+
+                // Optional: Close the dropdown if clicking outside of it
+                $(document).click(function (e) {
+                    if (!$(e.target).closest('.dropdown-menu, #navbarDropdownUserImage').length) {
+                        $('.dropdown-menu').removeClass('show');
+                    }
+                });
+
+                var userEmail = '@User.FindFirstValue(ClaimTypes.Email) ?? User.Claims.FirstOrDefault(c => c.Type == "preferred_username")?.Value';
+
+                var userEmail = '@User.FindFirstValue(ClaimTypes.Email)';
+                fetchUserInfo(userEmail);
+
+                async function fetchUserInfo(userEmail) {
+                    debugger;
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            url: `/@tenantName/User/GetUser`,
+                            method: "GET",
+                            data: { email: userEmail },
+                            success: function (response) {
+                                console.log("Response:", response);
+                                if (response) {
+                                    $("#pickUp1").show(); // Show the element
+
+                                    console.log("Pickup link shown: home", response);
+                                } else {
+                                    $("#pickUp1").css('display', 'none'); // Set display to none using CSS                                  
+
+                                    // $("#pickUp").hide(); // Hide the element
+                                    console.log("Pickup link hidden, invalid response: home", response);
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.error("Cannot find Image src", status, error);
+                                reject(new Error(`Cannot find Image src: ${status} ${error}`));
+                            }
+                        });
+                    });
+                }
+                async function fetchImageUrl(tenantId) {
+                    debugger;
+                    return new Promise((resolve, reject) => {
+                        $.ajax({
+                            url: `/@tenantName/Information/Get`,
+                            method: "GET",
+                            data: { tenantId: tenantId },
+                            success: function (response) {
+
+                                console.log("Response:", response);
+
+                                const imageUrl = response.logo;
+                                var tenantDisplayName = response.tenantDisplayName;
+                                if (tenantDisplayName) {
+                                    $(".page-name").text(tenantDisplayName);
+                                }
+                                if (imageUrl) {
+                                    const tenantDiv = $('.tenantImage');
+
+                                    if (tenantDiv.length > 0) {
+                                        tenantDiv.find('#logoImage').remove();
+
+                                        const img = $('<img>', {
+                                            id: 'logoImage',
+                                            src: imageUrl,
+                                            style: ' padding-left: 10px; opacity: 100%;'
+                                        });
+
+                                        tenantDiv.append(img);
+
+                                        resolve(imageUrl);
+                                    } else {
+                                        console.error("No element found with class 'tenantImage'");
+                                        reject(new Error("No element found with class 'tenantImage'"));
+                                    }
+                                } else {
+                                    console.error("ImageUrl is missing in the response");
+                                    reject(new Error("ImageUrl is missing in the response"));
+                                }
+                                
+                            },
+                            error: function (xhr, status, error) {
+                                console.error("Cannot find Image src", status, error);
+                                reject(new Error(`Cannot find Image src: ${status} ${error}`));
+                            }
+                        });
+                    });
+                }
+                async function updateImage(tenantId) {
+                    try {
+                        await fetchImageUrl(tenantId);
+                    } catch (error) {
+                        console.error("Failed to update image", error);
+                    }
+                }
+
+               var  tenantId = @tenantId;
+                updateImage(tenantId);
+
+                debugger;
+
+
+
+                var tenantId = @ViewBag.TenantId ?? 'null'; // Default to 'null' if ViewBag.TenantId is null
+                var pageName = '@ViewBag.PageName';
+
+                // Convert tenantId to a string if needed
+                if (tenantId !== 'null') {
+                    tenantId = tenantId.toString(); // Ensure tenantId is a string
+                }
+                debugger;
+
+
+                var tenantDisplayName = $("#pag").val();
+                $("#pageName").text(tenantDisplayName);
+
+
+                // Retrieve the value from the input/select element
+                var handlerValue = $("#HomePag").val();
+
+                // Check if handlerValue is null or empty
+                if (handlerValue) {
+                    var basePath = '/TenantHomePage/'; // Base path for your pages
+
+                    // Construct the full URL
+                    var fullUrl = basePath + encodeURIComponent(handlerValue);
+
+                    // Create an iframe element
+                    var iframe = $('<iframe>', {
+                        src: fullUrl,
+                        id: 'urlFrameId',
+                    });
+
+                    // Append the iframe to the desired element
+                    $('#iframe').empty().append(iframe);
+                } else {
+                    // Optionally handle the case where handlerValue is null or empty
+                    console.log("Page name is null or empty. No iframe will be added.");
+                    // You can also clear the iframe container if needed
+                    $('#iframe').empty();
+                }
+
+                //$("#pageName").text(tenantDisplayName ? tenantDisplayName.replace('.html', ' ') : ' ');
+
+                // AJAX call to update the sidebar dynamically based on tenant
+                var isAuthenticated = '@isAuthenticated'.toLowerCase() === 'true';
+
+                var isAdmin = '@isAdmin'.toLowerCase() === 'true';
+
+
+                // Hide the header if not authenticated
+                if (!isAuthenticated) {
+                    $('header').hide();
+                }
+
+                if (isAuthenticated && isAdmin) {
+                    $('header').hide();
+                }
+
+               
+            });
+
+        </script>
+    }
+</body>
+</html>

@@ -1,0 +1,400 @@
+﻿@model IEnumerable<LogicalPantry.DTOs.UserDtos.UserDto>
+
+@{
+    ViewData["Title"] = "Manage Users";
+    var tenantName = ViewBag.TenantName as string;
+}
+
+@Html.AntiForgeryToken()
+
+<head>
+    <link rel="stylesheet" href="https://cdn.datatables.net/v/bs5/jszip-3.10.1/dt-2.0.8/b-3.0.2/b-html5-3.0.2/r-3.0.2/sc-2.4.3/sp-2.3.1/sl-2.0.3/datatables.min.css" />
+    <link href="~/css/site.css" rel="stylesheet" />
+    <link href="~/css/Style.css" rel="stylesheet" />
+    <link href="~/css/StyleSheet.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/2.1.4/js/dataTables.js"></script>
+   
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        .page-header-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+
+        .page-header-title {
+            font-size: 1.5rem;
+            margin: 0;
+        }
+
+        .container {
+            padding: 1rem;
+        }
+
+        .card {
+            border-radius: 0.5rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+      
+        .card-body {
+            padding: 1rem;
+        }
+
+        .datatable {
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        table.dataTable {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        table.dataTable thead th, table.dataTable tfoot th {
+            background-color: #f1f1f1;
+            color: #333;
+            font-weight: bold;
+        }
+
+        table.dataTable tbody td {
+            padding: 0.75rem;
+            vertical-align: middle;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .text-left {
+            text-align: left;
+        }
+
+        .checkbox-wrapper-4 {
+            display: flex;
+            align-items: center;
+        }
+
+        .cbx {
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .cbx span {
+            width: 1.2rem;
+            height: 1.2rem;
+            border-radius: 0.25rem;
+            border: 2px solid #007bff;
+            background-color: #fff;
+        }
+
+        .cbx input:checked + label span {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+
+        .deleteHref {
+            color: #dc3545;
+            text-decoration: none;
+        }
+
+        .deleteHref:hover {
+            text-decoration: underline;
+        }
+
+      
+      
+        .swal-container {
+            max-width: 90vw;
+            max-height: 90vh;
+            width: auto;
+            height: auto;
+            padding: 1em;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .swal-popup {
+            border-radius: 10px;
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+            max-height: 80vh;
+        }
+
+        /* .nav-fixed #layoutSidenav #layoutSidenav_nav .sidenav {
+            padding-top: 0rem;
+        } */
+
+        .container {
+            padding: 5rem;
+        }
+
+        .card-header{
+           font-weight : 500;
+        }
+
+       .container{
+            max-width: 1050px;
+       }
+
+       .page-header > .container-fluid:first-of-type {
+            display: flex;
+            justify-content: center;
+        }
+
+        .nav-fixed #layoutSidenav #layoutSidenav_nav .sidenav {
+            padding-top: 0rem;
+        }
+
+        .page-header-compact .page-header-content .page-header-title {
+            font-size: 1.5rem;
+        }
+
+        .container-fluid {
+            margin-left: 60px;
+        }
+
+        .page-header > .container-fluid:first-of-type {
+            max-height: 6vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        .page-header{
+            padding-top: 1rem;
+        }
+
+            .page-header > .container-fluid:first-of-type {
+                max-height: 100vh;
+                /*   padding: 1rem; */
+                margin-bottom: -10px;
+            }
+
+            .page-header-content >.row {
+            margin-top: -10px;
+            }
+
+        #layoutSidenav_content{
+            margin-bottom : -5%;
+        }
+
+        #layoutSidenav {
+            margin-top: -2%;
+        }
+
+        .page-header-title {
+            font-size: larger;
+        }
+
+        .page-header > .container-fluid:first-of-type {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 5px;
+        }
+
+        .mb-3 {
+            margin-top: 5% !important;
+        }
+
+        .container-fluid
+        {
+            margin-left: 9%;
+        }
+    </style>
+</head>
+
+<main>
+    <!-- Main page content-->
+    <div class="container mt-n10">
+        <div class="card mb-4">
+            <div class="card-header">Manage Users</div>
+            <div class="card-body">
+                <div class="datatable">
+                    <div id="successMessageUser" class="alert alert-success" style="display:none;">
+                        Updated succesfully.
+                    </div>
+
+
+
+                    <div id="errorMessageUser" class="alert alert-danger" style="display:none;">
+                        Error occured while updating user.
+                    </div>
+                    <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Allow</th>
+                                <th>Delete</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var user in Model)
+                            {
+                                <tr>
+                                    <td>@user.FullName</td>
+                                    <td>@user.Email</td>
+                                    <td class="leave-td">
+                                        <div class="checkbox-wrapper-4">
+                                            <input class="inp-cbx" type="checkbox" id="allowCheckbox_@user.Id" data-user-id="@user.Id" @(user.IsAllow ? "checked" : "") />
+                                            <label class="cbx" for="allowCheckbox_@user.Id">
+                                                <span>
+                                                    <svg width="12px" height="10px">
+                                                        <use xlink:href="#check-4"></use>
+                                                    </svg>
+                                                </span>
+                                            </label>
+                                            <svg class="inline-svg">
+                                                <symbol id="check-4" viewBox="0 0 12 10">
+                                                    <polyline points="1.5 6 4.5 9 10.5 1"></polyline>
+                                                </symbol>
+                                            </svg>
+                                        </div>
+                                    </td>
+                                    @* <td class="text-center">
+                                        <a href="#" class="deleteHref" onclick="deleteUser('@user.Id')">Delete</a>
+                                    </td> *@
+
+                                    <td>
+                                        <button class="btn btn-datatable btn-icon btn-transparent-dark deleteHref" data-user-id="@user.Id"  *@>
+                                            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 48 48">
+                                                <path d="M 20.5 4 A 1.50015 1.50015 0 0 0 19.066406 6 L 14.640625 6 C 12.796625 6 11.086453 6.9162188 10.064453 8.4492188 L 7.6972656 12 L 7.5 12 A 1.50015 1.50015 0 1 0 7.5 15 L 40.5 15 A 1.50015 1.50015 0 1 0 40.5 12 L 40.302734 12 L 37.935547 8.4492188 C 36.913547 6.9162187 35.202375 6 33.359375 6 L 28.933594 6 A 1.50015 1.50015 0 0 0 27.5 4 L 20.5 4 z M 8.9726562 18 L 11.125 38.085938 C 11.425 40.887937 13.77575 43 16.59375 43 L 31.40625 43 C 34.22325 43 36.574 40.887938 36.875 38.085938 L 39.027344 18 L 8.9726562 18 z"></path>
+                                            </svg>
+    @*                                         <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="100" height="100" viewBox="0 0 48 48">
+                                                <path fill="#90caf9" d="M14.149,18.39l2.66,24.823C16.917,44.229,17.775,45,18.797,45h18.405	c1.022,0,1.879-0.771,1.988-1.787l2.661-24.823c0.077-0.72-0.487-1.348-1.211-1.348H15.36C14.636,17.043,14.072,17.67,14.149,18.39z"></path>
+                                                <path fill="none" stroke="#18193f" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="3" d="M36.249,29.839L38,13.5"></path>
+                                                <path fill="none" stroke="#18193f" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="3" d="M10.608,19.171l2.009,18.755c0.218,2.033,1.933,3.574,3.977,3.574h14.811c2.044,0,3.759-1.541,3.977-3.574l0.373-3.48"></path>
+                                                <line x1="7.5" x2="40.5" y1="13.5" y2="13.5" fill="none" stroke="#18193f" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="3"></line>
+                                                <line x1="20.5" x2="27.5" y1="5.5" y2="5.5" fill="none" stroke="#18193f" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="3"></line>
+                                                <path fill="none" stroke="#18193f" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="3" d="M10,13.5l2.813-4.219c0.741-1.113,1.99-1.781,3.328-1.781H31.86c1.337,0,2.586,0.668,3.328,1.781L38,13.5"></path>
+                                            </svg> *@
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+@section Scripts {
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/2.1.4/js/dataTables.js"></script>
+    <script src="https://cdn.datatables.net/2.1.4/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    
+
+    <script>
+        $(document).ready(function () {
+            var pageClass = $('body').attr('class');
+
+            if (pageClass === 'nav-fixed') {
+                $('.page-header-title').text('Manage Users');
+                $('.page-header-title').addClass('custom-style');
+            }
+            // Initialize DataTable with custom options
+            $('#dataTable').DataTable({
+                paging: true,
+                responsive: true,
+                lengthChange: false,
+                searching: false,
+                columnDefs: [
+                    { targets: '_all', className: 'text-left' }
+                ]
+            });
+
+            $(".inp-cbx").on("change", function () {
+                var checkbox = $(this);
+                var userId = checkbox.data("user-id");
+                var isChecked = checkbox.prop("checked");
+
+                var tenantName = '@ViewBag.TenantName';
+
+
+                $.ajax({
+                    url: "/" + tenantName + "/User/UpdateUser?userId=" + userId + "&isAllow=" + isChecked,
+                    type: "POST",
+                    success: function (response) {
+                        if (response.success) {
+                            $('#successMessageUser').text('Changes saved successfully.').fadeIn().delay(2000).fadeOut();
+                        } else {
+                            $('#errorMessageUser').text('Error occurred while saving user.').fadeIn().delay(2000).fadeOut();
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error updating user status:", error);
+                    }
+                });
+            });
+
+            $(".deleteHref").on("click", function (e) {
+                debugger;
+                e.preventDefault();
+                var userId = $(this).data("user-id");
+                var tenantName = '@ViewBag.TenantName';
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "All timeslots and other information for this user will be permanently deleted. This is not reversible.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: "/" + tenantName + "/User/DeleteUser",
+                            type: "POST",
+                            data: { userId: userId },
+                            success: function (response) {
+                                if (response.success) {
+                                    // location.reload();
+                                    // if (response.success) {
+                                    //     $('#successMessageUser').text('Deleteed succesfully').fadeIn().delay(2000).fadeOut();
+                                    // } else {
+                                    //     $('#errorMessageUser').text('Somthing went to wrong').fadeIn().delay(2000).fadeOut();
+                                    // }
+                                    Swal.fire(
+                                        'Deleted!',
+                                        'User has been deleted.',
+                                        'success'
+                                    ).then(() => {
+                                        location.reload();
+                                    });
+                                } else {
+                                    Swal.fire(
+                                        'Error!',
+                                        'There was an issue deleting the user.',
+                                        'error'
+                                    );
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.error("Error deleting user:", error);
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

@@ -1,24 +1,55 @@
-using Autofac.Core;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Facebook;
-using Microsoft.AspNetCore.Authentication.Google;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using LogicalPantry.Models.Models;
 using LogicalPantry.Services.RoleServices;
 using LogicalPantry.Services.UserServices;
 using NLog.Extensions.Logging;
-using System;
+using LogicalPantry.Services.TimeSlotServices;
+using LogicalPantry.Services.TenantServices;
+
+using System.Configuration;
+using LogicalPantry.DTOs.PayPalSettingDtos;
+using LogicalPantry.Services.RegistrationService;
+using Autofac.Core;
+using LogicalPantry.Services.InformationService;
+using LogicalPantry.Services.TimeSlotSignupService;
+using System.Threading.RateLimiting;
 
 var builder = WebApplication.CreateBuilder(args);
 
+//Add Cashe to the browser
+builder.Services.AddMemoryCache();
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+
+
+// Add rate limiter middleware
+builder.Services.AddRateLimiter(options =>
+{
+    options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+        RateLimitPartition.GetFixedWindowLimiter(
+            partitionKey: context.User?.Identity?.Name ?? context.Request.Headers.Host.ToString(),
+            factory: partition => new FixedWindowRateLimiterOptions
+            {
+                //Specifies the maximum number of permits that can be granted within the defined time window.
+                PermitLimit = 100,
+               // PermitLimit = 500,
+                /// Defines the duration of the time window during which the permit limit is enforced.
+                Window = TimeSpan.FromMinutes(1),
+                /// Determines the order in which requests in the queue are processed.
+                QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                /// Specifies the maximum number of requests that can be queued for processing.
+                QueueLimit = 2
+            })
+    );
+    options.RejectionStatusCode = 429;
+});
+
+
+
+
 
 // Add Entity Framework Core DbContext with SQL Server
 builder.Services.AddDbContext<ApplicationDataContext>(options =>
@@ -27,11 +58,12 @@ builder.Services.AddDbContext<ApplicationDataContext>(options =>
 // Configure session
 builder.Services.AddSession(options =>
 {
-    // Set session timeout to 30 minutes
-    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    // Set session timeout to 180 minutes
+    options.IdleTimeout = TimeSpan.FromMinutes(180);
     options.Cookie.HttpOnly = true; // Only accessible via HTTP
     options.Cookie.IsEssential = true; // Cookie is essential for the application
 });
+
 
 // Configure authentication services
 builder.Services.AddAuthentication(options =>
@@ -39,7 +71,16 @@ builder.Services.AddAuthentication(options =>
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme; // Default authentication scheme
     options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme; // Default sign-in scheme
 })
-.AddCookie() // Add cookie authentication
+.AddCookie(options =>
+{
+    options.LoginPath = "/Auth/loginview";
+    options.LogoutPath = "/Auth/Logout";
+    options.ExpireTimeSpan = TimeSpan.FromMinutes(180); // Set appropriate expiry time
+    options.SlidingExpiration = true;
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Ensure it's set to Secure if using HTTPS
+    options.AccessDeniedPath = "/Auth/AccessDenied"; // Path to access denied page  //8/30/24
+}) // Add cookie authentication
 .AddOpenIdConnect(options =>
 {
     // Configure OpenID Connect authentication
@@ -75,9 +116,28 @@ builder.Services.AddAuthentication(options =>
     options.AppSecret = builder.Configuration["Authentication:Facebook:AppSecret"];
 });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("AdminPolicy", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("UserPolicy", policy => policy.RequireRole("User"));
+});
+
+
 // Add scoped services for dependency injection
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<ITimeSlotService, TimeSlotService>();
+builder.Services.AddScoped<IRegistrationService , RegistrationService>();
+builder.Services.AddScoped<IInformationService, InformationService>();
+builder.Services.AddScoped<ITimeSlotSignupService, TimeSlotSignupService>();
+//builder.Services.AddScoped<ITimeSlotSignupService, TimeSlotSignupService>();
+builder.Services.Configure<PayPalDto>(builder.Configuration.GetSection("PayPal"));
+builder.Services.AddMemoryCache(); // Add in-memory caching
+
+
+
+//builder.Services.AddScoped<ITenantService,TenantService>();
+
 
 // Add AutoMapper for object mapping
 builder.Services.AddAutoMapper(typeof(Startup));
@@ -104,16 +164,24 @@ else
 }
 
 app.UseHttpsRedirection(); // Redirect HTTP requests to HTTPS
+app.UseAuthentication(); // Enable authentication middleware
+                         // Add the Tenant Middleware
+
 app.UseStaticFiles(); // Serve static files from wwwroot folder
 app.UseSession(); // Enable session middleware
+app.UseMiddleware<TenantMiddleware>(); //coustom middleware
+
 app.UseRouting(); // Enable routing
-app.UseAuthentication(); // Enable authentication middleware
 app.UseAuthorization(); // Enable authorization middleware
 
-// Configure default controller route
+app.UseRateLimiter(); // Only one instance of this
+
+
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Auth}/{action=loginView}/{id?}");
+    name: "tenantRoute",
+    pattern: "{tenant?}/{controller=Information}/{action=Home}/{id?}"
+);
+
 
 app.Run();
 

@@ -1,0 +1,373 @@
+﻿@model LogicalPantry.Models.Models.User
+@using System.Security.Claims;
+@{
+    ViewData["Title"] = "Create Tenant";
+    var tenantName = ViewBag.TenantName as string;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="~/css/StyleSheet.css" />
+    <link rel="stylesheet" href="~/css/StyleSheet.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .container-fluid.header-container {
+            max-height: 60px; /* Limit header height */
+            overflow: hidden; /* Hide overflow */
+            padding: 0; /* Remove padding */
+            overflo
+        }
+
+        .registration-container {
+            max-height: calc(100vh - 60px); /* Adjust based on header height */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .card {
+            width: 100%;
+            max-width: 600px; /* Adjusted card width for better responsiveness */
+            display: flex;
+            flex-direction: row;
+            margin-top: 1rem;
+            margin-bottom: 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Added subtle shadow */
+        }
+
+        .card-body {
+            display: flex;
+            flex-direction: row;
+            padding: 0;
+            height: 100%;
+            box-sizing: border-box;
+        }
+
+        .card-image {
+            flex: 1;
+            background: url('https://www.w3schools.com/w3images/avatar2.png') no-repeat center center;
+            background-size: cover;
+            min-height: 40vh;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+
+        .form-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 2rem;
+            box-sizing: border-box;
+        }
+
+        .card-header {
+            text-align: center;
+            font-weight: 500;
+            padding: 1rem;
+            margin: 0;
+            height: 60px;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 0.5rem;
+            }
+
+            .form-group .form-control {
+                width: 100%;
+            }
+
+        .saveButton {
+            background-color: #1A2A52;
+            color: white;
+            border-radius: 5px;
+            border: none;
+            font-size: 1rem;
+            padding: 0.5rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #saveButtonDiv {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 1rem;
+        }
+
+        @@media (max-width: 768px) {
+            .card {
+                flex-direction: column;
+                max-width: 100%; /* Ensure card takes full width on small screens */
+            }
+
+            .card-image {
+                display: none; /* Hide image on smaller screens */
+            }
+
+            .form-container {
+                padding: 1rem;
+            }
+
+            .form-group {
+                margin-bottom: 1rem;
+                margin-top: 1rem;
+            }
+        }
+
+        .nav-fixed #layoutSidenav #layoutSidenav_nav .sidenav {
+            padding-top: 0;
+        }
+
+
+        .nav-fixed #layoutSidenav #layoutSidenav_content {
+            padding-left: 0rem;
+            top: 3.625rem;
+        }
+
+        #layoutSidenav_content {
+            margin-bottom: -3%;
+        }
+
+        .page-header-compact .page-header-content {
+            padding: 0;
+            padding-top: 10px;
+        }
+
+        .form-group {
+            padding-top: 1rem;
+        }
+
+        .card-header {
+            text-align: center;
+            font-weight: 500;
+            padding: 0; /* Remove padding */
+            margin: 0;
+            width: 100%; /* Ensure full width */
+            box-sizing: border-box; /* Include padding and border in the element's total width and height */
+        }
+
+
+        .form-container {
+            padding: 0;
+        }
+
+        .card-header {
+            width: 100%;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            padding-left: 3%;
+        }
+
+
+        form {
+            padding: 3%;
+        }
+
+
+        .form-group {
+            padding-top: 0rem;
+        }
+
+
+        #layoutSidenav {
+            margin-top: -4%;
+        }
+
+        .pt-2, .py-2 {
+            padding-top: 1rem !important;
+        }
+
+        .page-header-title {
+            font-size: larger;
+        }
+
+    </style>
+
+    </style>
+</head>
+<body>
+    <!-- Page Title Container -->
+    <!-- Registration Container -->
+    <div class="registration-container">
+        <div class="card mb-4">
+            <div class="card-body">
+                @*  <div class="card-image">
+                <!-- Image or icon -->
+                </div> *@
+                <div class="form-container">
+                    <div class="card-header">
+                        Registration
+                    </div>
+                    @if (!string.IsNullOrEmpty(TempData["SuccessMessageUser"] as string))
+                    {
+                        <div id="successMessageUser" class="alert @TempData["MessageClass"]">
+                            @TempData["SuccessMessageUser"]
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(TempData["ErrorMessageUser"] as string))
+                    {
+                        <div id="errorMessageUser" class="alert @TempData["MessageClass"]">
+                            @TempData["ErrorMessageUser"]
+                        </div>
+                    }
+
+                    <form method="post" id="register" action="/@tenantName/User/Register">
+                        <div class="form-group">
+                            @{
+                                var userName = User.FindFirstValue(ClaimTypes.Name);
+                            }
+                            <label for="FullName">Name<span class="mandatory">*</span></label>
+                            <input name="FullName" class="form-control" value="@userName" id="FullName" placeholder="Enter Name" />
+                            <input type="hidden" name="FullName" value="@userName" />
+                            <span class="text-danger errorfont" id="FullName-error"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="Address">Address<span class="mandatory">*</span></label>
+                            <input name="Address" class="form-control" id="Address" placeholder="Enter Address" />
+                            <span class="text-danger errorfont" id="Address-error"></span>
+                        </div>
+                        <div class="form-group">
+                            @{
+                                var userEmails = User.FindFirstValue(ClaimTypes.Email);
+                            }
+                            <label for="Email">Email<span class="mandatory">*</span></label>
+                            <input type="email" name="Email" value="@userEmails" class="form-control" id="Email" placeholder="Enter Email" disabled />
+                            <input type="hidden" name="Email" value="@userEmails" />
+                            <span class="text-danger errorfont" id="Email-error"></span>
+                        </div>
+                        <div class="form-group">
+                            <label for="PhoneNumber">Phone Number<span class="mandatory">*</span></label>
+                            <input type="tel" name="PhoneNumber" class="form-control" id="PhoneNumber" placeholder="Enter Phone Number" />
+                            <span class="text-danger errorfont" id="PhoneNumber-error"></span>
+                        </div>
+
+                        <div id="saveButtonDiv">
+                            <button class="saveButton" type="submit" onclick="return validateForm();">Register</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#FullName, #Address, #Email, #PhoneNumber').on('blur change keyup', function () {
+                validateField(this);
+            });
+
+            //$('#successMessageUser').fadeIn().delay(0000).fadeOut();
+            $('#successMessageUser').hide();
+            $('#errorMessageUser').fadeIn().delay(2000).fadeOut();
+
+            // $('header.page-header').remove();
+        });
+
+        function validateField(field) {
+            var isValid = true;
+            var id = $(field).attr('id');
+            var value = $(field).val().trim();
+            var errorId = '#' + id + '-error';
+
+            switch (id) {
+                case 'FullName':
+                    if (value === "") {
+                        $(errorId).text("Name is required.").show();
+                        isValid = false;
+                    } else {
+                        $(errorId).text("").hide();
+                    }
+                    break;
+                case 'Address':
+                    if (value === "") {
+                        $(errorId).text("Address is required.").show();
+                        isValid = false;
+                    } else {
+                        $(errorId).text("").hide();
+                    }
+                    break;
+                case 'Email':
+                    if (value === "") {
+                        $(errorId).text("Email is required.").show();
+                        isValid = false;
+                    } else if (!isValidEmail(value)) {
+                        $(errorId).text("Invalid Email format.").show();
+                        isValid = false;
+                    } else {
+                        $(errorId).text("").hide();
+                    }
+                    break;
+                case 'PhoneNumber':
+                    if (value === "") {
+                        $(errorId).text("Phone Number is required.").show();
+                        isValid = false;
+                    } else if (!isValidPhone(value)) {
+                        $(errorId).text("Invalid Phone Number format.").show();
+                        isValid = false;
+                    } else {
+                        $(errorId).text("").hide();
+                    }
+                    break;
+            }
+
+            return isValid;
+        }
+
+        function validateForm() {
+            var isValid = true;
+
+            $('#FullName, #Address, #Email, #PhoneNumber').each(function () {
+                if (!validateField(this)) {
+                    isValid = false;
+                }
+            });
+
+            return isValid;
+        }
+
+        function isValidEmail(email) {
+            var emailRegex = /^[^\s@@]+@@[^\s@@]+\.[^\s@@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function isValidPhone(phone) {
+            // Regex to validate various US phone number formats
+            var phoneRegex = /^(?:\+1\s?)?(\(\d{3}\)|\d{3})?[\s.-]?\d{3}[\s.-]?\d{4}$/;
+
+            return phoneRegex.test(phone);
+        }
+        // function isValidPhone(phone) {
+        //     var phoneRegex = /^(?:\+1\s?)?\(\d{3}\)\s\d{3}-\d{4}$/;
+        //     return phoneRegex.test(phone);
+        // }
+
+
+    </script>
+</body>
+</html>

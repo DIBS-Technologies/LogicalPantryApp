@@ -1,0 +1,144 @@
+﻿@model LogicalPantry.Models.Models.Tenant
+
+@{
+    ViewData["Title"] = "Create Tenant";
+}
+
+<style>
+
+</style>
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+<div class="container mt-n10" style="margin-top: 3rem !important;">
+    <div class="row">
+        <div class="col-lg-9">
+            <div id="default">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        Add User
+                    </div>
+                    <div class="card-body">
+                        <div class="sbp-preview">
+                            <div class="sbp-preview-content">
+                                <form method="post" id="createUser" action="/Tenant/Create"> 
+                                    <div class="form-group">
+                                        <label for="UserName">Name<span class="mandatory">*</span></label>
+                                        <input name="UserName" class="form-control" id="Name" placeholder="Enter Name" />
+                                        <span class="text-danger errorfont" id="name-error"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="City">Address<span class="mandatory">*</span></label>
+                                        <input name="Addresss" class="form-control" id="Address" placeholder="Enter Address" />
+                                        <span class="text-danger errorfont" id="address-error"></span>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="Email">Email<span class="mandatory">*</span></label>
+                                        <input  tyep="email" name="email" class="form-control" id="email" placeholder="Enter Email" />
+                                        <span class="text-danger errorfont" id="email-error"></span>
+                                    </div>s
+                                    <div class="form-group">
+                                        <label for="PhoneNumber">Phone Number<span class="mandatory">*</span></label>
+                                        <input type="tel" name="PhoneNumber" class="form-control" id="PhoneNumber" placeholder="Enter Phone Number" />
+                                        <span class="text-danger errorfont" id="phone-error"></span>
+                                    </div>
+
+                                    <div id="saveButtonDiv">
+                                        <button class="saveButton" style="align-content: flex-end" type="submit" onclick="return validateForm();">Register</button>
+                                    </div>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}
+
+<script>
+
+    $('#PhoneNumber').on('change keyup blur', function () {
+        var phnNo = $(this).val();
+
+
+        if (phnNo.length < 10) {
+            validateForm();
+            return;
+        }
+
+        $.ajax({
+            url: '/User/VerifyPhoneNoAdd',
+            type: 'GET',
+            data: { phoneNumber: phnNo },
+            success: function (response) {
+                console.log(response);
+                if (response === false) {
+                    // Email is available
+                    $('#phone-error').text('Phone Number Already Exists').show();
+                    $(".saveButton").prop("disabled", true); // Enable Save Button
+
+                } else {
+                    // Email already exists
+
+                    $('#phone-error').text('');
+                    $(".saveButton").prop("disabled", false);
+                    validateForm();// Enable Save Button
+                }
+            },
+            error: function () {
+
+
+            }
+        });
+    });
+
+
+
+
+
+    function validateForm() {
+        // Reset error messages
+        $("#rollno-error").text("");
+        $("#name-error").text("");
+        $("#phone-error").text("");
+
+        // Validate fields
+        var isValid = true;
+
+        var rollNo = $("#RollNo").val();
+        if (rollNo.trim() === "") {
+            $("#rollno-error").text("Roll No is required.").show();
+            isValid = false;
+        }
+
+        var name = $("#Name").val();
+        if (name.trim() === "") {
+            $("#name-error").text("Name is required.").show();
+            isValid = false;
+        }
+
+        var phoneNumber = $("#PhoneNumber").val();
+        if (phoneNumber.trim() === "") {
+            $("#phone-error").text("Phone Number is required.").show();
+            isValid = false;
+        } else if (phoneNumber.length >= 10 && !isValidPhoneNumber(phoneNumber)) {
+            $("#phone-error").text("Invalid Phone Number format.").show();
+            isValid = false;
+        }
+
+        return isValid;
+    }
+
+    function isValidPhoneNumber(phoneNumber) {
+        var phoneRegex = /^\d{10}$/;
+        return phoneRegex.test(phoneNumber);
+    }
+
+</script>

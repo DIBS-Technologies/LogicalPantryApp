@@ -10,6 +10,12 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Hosting;
+using LogicalPantry.Services.InformationService;
+using LogicalPantry.Services.TimeSlotSignupService;
+using Microsoft.EntityFrameworkCore.Internal;
+using LogicalPantry.Services.RegistrationService;
+using LogicalPantry.Services.TenantServices;
+using System.Globalization;
 public class Startup
 {
     public IConfiguration Configuration { get; }
@@ -34,7 +40,11 @@ public class Startup
 
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IRoleService, RoleService>();
-
+        services.AddScoped<IInformationService, InformationService>();
+        services.AddScoped<IRegistrationService, RegistrationService>();
+        services.AddScoped<ITimeSlotSignupService, TimeSlotSignupService>();
+        services.AddScoped<ITenantService,TenantService>();
+       
         // Add AutoMapper
         services.AddAutoMapper(typeof(Startup));
 
@@ -58,13 +68,14 @@ public class Startup
         app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
+        //app.UseMiddleware<TenantMiddleware>();
 
 
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Auth}/{action=loginView}/{id?}");
+                pattern: "{controller=Home}/{action=Index}/{id?}");
         });
     }
 }

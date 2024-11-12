@@ -1,0 +1,919 @@
+﻿@{
+    var tenantName = ViewBag.TenantName as string;
+    var pagename = ViewBag.PageName as string;
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Calendar</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/css/jquery-calendar.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/2.1.2/sweetalert.min.css">
+    @*  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet"> *@
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="~/css/StyleSheet.css">
+   @*  <script src="~/lib/jquery/dist/jquery.min.js"></script> *@
+   @*  <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> *@
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+    <style>
+
+
+        .calendar-header {
+            margin-bottom: 20px;
+           /*  display: flex;
+            justify-content: end; */
+            align-items: center;
+        }
+
+        #layoutSidenav{
+        margin-top: -3%;
+        }
+   
+
+        /* New CSS */
+        .dropdown select {
+            display: inline-block;
+            width: 200px;
+            margin-right: 10px; 
+        }
+
+        .btn-success {
+            margin-left: 0; 
+        }
+
+        .calendar-header .d-flex {
+            align-items: center;
+            gap: 10px;
+        }
+
+    
+        /* Button hover effect */
+        .btn.btn-sm.btn-light.btn-move-calendar:hover {
+            background-color: #f0f0f0;
+            border-color: #333;
+            color: black;
+        }
+
+        .btn.btn-sm.btn-default.btn-move-calendar {
+            background-color: white;
+            border: 2px solid black;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+
+       /*  display: inline-grid; */
+        .calendar-categories {
+            height: 20px;
+        }
+
+        .nav-fixed #layoutSidenav #layoutSidenav_nav .sidenav {
+            padding-top: 0rem;
+        }
+
+        .page-header > .container-fluid:first-of-type {
+            display: flex;
+            justify-content: center;
+            margin-bottom: -10px;
+          
+        }
+
+
+      
+
+        .page-header-compact .page-header-content .page-header-title {
+            font-size: 1.5rem;
+        }
+
+        .calendar-header {
+            margin: 20px auto;
+           
+           
+            align-items: center;
+            width: 100%;
+           /*  max-width: 1200px; */
+            padding-left: 6rem;
+            padding-right: 5rem;
+        }
+
+        .container-fluid {
+            margin-left: 58px;
+        }
+
+        .container, .container-fluid, .container-sm, .container-md, .container-lg, .container-xl, .container-xxl {
+            padding-left: 0rem; 
+            padding-right: 0rem;
+        }
+
+        .container-fluid {
+            max-width: 100%;
+            margin: 10px auto;
+        }
+
+        html body {
+            font-family: Arial, sans-serif;
+        }
+
+        footer {
+            background-color: #eff3f9;
+            color: #6c757d;
+            text-align: center;
+            padding: 1rem;
+            width: 100%;
+            position: relative;
+            bottom: 0;
+            flex-shrink: 0; /* Prevent footer from shrinking */
+        }
+
+        
+        .pt-2, .py-2 {
+            padding-top: 1rem !important;
+        }
+
+        .page-header-title {
+            font-size: larger;
+        }
+
+        .page-header > .container-fluid:first-of-type {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 5px;
+        }
+
+        .mb-3 {
+            margin-top: 5% !important;
+        }
+
+        /* .calendar-timeline
+        {
+            padding-top: 29px;
+           
+        } */
+
+        .calendar .calendar-events .calendar-event {
+            border-radius: 15px;
+        }
+
+        .modal-c2 {
+            background-color: #c1c1c1;
+        }
+
+        .modal .fade2 {
+            background-color: #00000F;
+        }
+
+
+     
+        /* Styles applied only when an event is clicked */
+        .event-active .modal.fade {
+            display: block !important;
+        }
+
+        .event-active .modal-backdrop {
+            display: block !important;
+            opacity: 0.5; 
+        }
+
+
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid">
+        <div class="calendar-header">
+            @*  <h3>TimeSlot </h3> *@
+           
+            <div class="d-flex align-items-center" style="
+                 display: flex;
+                 justify-content: end;">
+                <div class="form-check form-switch me-3">
+                    <input class="form-check-input" type="checkbox" id="toggleSwitch">
+                    <label class="form-check-label" for="toggleSwitch">Edit mode</label>
+                </div>
+                <button type="button" class="btn btn-success" id="addEventBtn">Add Event</button>             
+            </div>
+
+        <div class="row">
+            <div class="col">
+                <div id="calendar"></div>
+            </div>
+        </div>
+       
+    
+        <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="eventModalLabel">Event Details</h5>
+                    </div>
+                    <div class="modal-body">
+                        <form id="eventForm" method="post">                            
+
+                            <div class="form-group">
+                                <label for="eventTitle">Title:</label>
+                                    <input type="text" class="form-control" id="eventTitle" name="Title" placeholder="Please add title" required>
+                                <span class="text-danger validation-message" id="titleError"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="eventStart">Start Date and Time:</label>
+                                <input type="datetime-local" class="form-control" id="eventStart" name="StartDateTime" required>
+                                <span class="text-danger validation-message" id="startError"></span>
+                            </div>
+                            <div class="form-group">
+                                <label for="eventEnd">End Date and Time:</label>
+                                <input type="datetime-local" class="form-control" id="eventEnd" name="EndDateTime" required>
+                                <span class="text-danger validation-message" id="endError"></span>
+                            </div>
+                                 <div class="form-group">
+                                    <label for="eventType">Event Type:</label>
+                                    <select class="form-control" id="eventType" name="Type" required>
+                                        <option value="">Select Type</option>
+                                        <option value="Food Pickup">Food Pickup</option>
+                                        <option value="Volunteer">Volunteer</option>
+                                        <option value="Appointment">Appointment</option>
+                                    </select>
+                                    <span class="text-danger validation-message" id="typeError"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="eventMaxUsers">Maximum Number of Users:</label>
+                                    <input type="number" class="form-control" id="eventMaxUsers" name="MaxUsers" min="1" placeholder="Enter maximum number of users"  required>
+                                    <span class="text-danger validation-message" id="maxUsersError"></span>
+                                </div> 
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" id="saveEventBtn">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+            <!-- Edit Event Modal (New) -->
+            <div class="modal fade" id="editEventModal" tabindex="-1" role="dialog" aria-labelledby="editEventModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editEventModalLabel">Edit Event Details</h5>
+                        </div>
+                        <div class="modal-body">
+                            <form id="editEventForm" method="post">
+                                <!-- Hidden field for event ID -->
+                                <input type="hidden" id="editEventId" name="EventId">
+
+                                <div class="form-group">
+                                    <label for="editEventTitle">Title:</label>
+                                    <input type="text" class="form-control" id="editEventTitle" name="Title" required>
+                                    <span class="text-danger validation-message" id="editTitleError"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editEventStart">Start Date and Time:</label>
+                                    <input type="datetime-local" class="form-control" id="editEventStart" name="StartDateTime" required>
+                                    <span class="text-danger validation-message" id="editStartError"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editEventEnd">End Date and Time:</label>
+                                    <input type="datetime-local" class="form-control" id="editEventEnd" name="EndDateTime" required>
+                                    <span class="text-danger validation-message" id="editEndError"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editEventType">Event Type:</label>
+                                    <select class="form-control" id="editEventType" name="Type" required>
+                                        <option value="">Select Type</option>
+                                        <option value="Food Pickup">Food Pickup</option>
+                                        <option value="Volunteer">Volunteer</option>
+                                        <option value="Appointment">Appointment</option>
+                                    </select>
+                                    <span class="text-danger validation-message" id="editTypeError"></span>
+                                </div>
+                                <div class="form-group">
+                                    <label for="editEventMaxUsers">Maximum Number of Users:</label>
+                                    <input type="number" class="form-control" id="editEventMaxUsers" name="MaxUsers" min="1" required>
+                                    <span class="text-danger validation-message" id="editMaxUsersError"></span>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" id="saveEditEventBtn">Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+ 
+
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/moment.js/moment-with-locales.min.js"></script>
+    <script src="~/jquery.touchswipe/jquery.touchswipe.min.js"></script>
+    <link rel="stylesheet" href="~/css/jquery-calendar.min.css">
+    <script src="~/js/jquery-calendar.min.js"></script>
+        
+         <script>
+         
+            
+                $(document).ready(function () {
+                    var events = @Html.Raw(Json.Serialize(Model.Events));
+                     //var buttonHtml = '<button type="button" class="btn btn-success" id="addEventBtn">Add Event</button>';
+                    // $('.nav-fixed .container').append(buttonHtml);
+
+            $('#calendar').Calendar({
+                locale: 'en',
+                weekday: {
+                    timeline: {
+                        intervalMinutes: 60,
+                        fromHour: 7, // Adjusted from 9 to 7
+                        toHour: 23
+                    }
+                },
+                events: events,
+                view: 'week',                    
+                defaultView: {
+                    largeScreen: 'week',
+                    smallScreen: 'day',
+                    smallScreenThreshold: 1000
+                },
+                weekday: {
+                    timeline: {
+                        fromHour: 7,
+                        toHour: 23,
+                        intervalMinutes: 60,
+                        format: 'HH:mm',
+                        heightPx: 50,
+                        autoResize: true
+                    },
+                    dayline: {
+                        weekdays: [0, 1, 2, 3, 4, 5, 6],
+                        format: 'MM/DD',
+                        heightPx: 31,
+                        month: {
+                            format: 'MMMM YYYY',
+                            heightPx: 30,
+                            weekFormat: 'w'
+                        }
+                    }
+                },
+                month: {
+                    format: 'MMMM YYYY',
+                    heightPx: 31,
+                    weekline: {
+                        format: 'w',
+                        heightPx: 80
+                    },
+                    dayheader: {
+                        weekdays: [0, 1, 2, 3, 4, 5, 6],
+                        format: 'dddd',
+                        heightPx: 30
+                    },
+                    day: {
+                        format: 'MM/DD'
+                    }
+                },
+                unixTimestamp: moment().format('X'),
+                event: {
+                    hover: {
+                        delay: 5000000
+                    },
+
+                },
+               categories: {
+                enable: true,
+                hover: {
+                  delay: 500
+                }
+              }
+
+            }).init();
+
+            $('#addEventBtn').on('click', function () {
+
+                    $('#eventModal').modal('show');                  
+                   // $('body').addClass('event-active'); // Add class when the event is
+                   
+            });
+                
+
+                // $('#toggleEditMode').on('click', function () {
+                //     isEditMode = !isEditMode; // Toggle the edit mode state
+                //     $(this).text(isEditMode ? 'Exit Edit Mode' : 'Enter Edit Mode');
+                // });
+
+
+
+                // var isEditMode = false; // Set this based on your application's logic
+
+                // // Event listener for toggle switch
+                // document.getElementById('toggleSwitch').addEventListener('change', function () {
+                //     if (this.checked) {
+                //         console.log('Edit mode is ON');
+                //         isEditMode = true;  // Set edit mode to true when the toggle is ON
+                //     } else {
+                //         console.log('Edit mode is OFF');
+                //         isEditMode = false; // Set edit mode to false when the toggle is OFF
+                //     }
+                // });
+
+                // Initialize isEditMode from local storage
+                var isEditMode = localStorage.getItem('isEditMode') === 'true';
+
+                // Set the initial state of the toggle switch based on local storage
+                document.getElementById('toggleSwitch').checked = isEditMode;
+
+                // Function to update the edit mode state
+                function updateEditMode() {
+                    if (isEditMode) {
+                        console.log('Edit mode is ON');
+                        // Add your logic for enabling edit mode here
+                    } else {
+                        console.log('Edit mode is OFF');
+                        // Add your logic for disabling edit mode here
+                    }
+                }
+
+                // Event listener for toggle switch
+                document.getElementById('toggleSwitch').addEventListener('change', function () {
+                    isEditMode = this.checked; // Update the isEditMode state
+                    localStorage.setItem('isEditMode', isEditMode); // Store the state in local storage
+                    updateEditMode(); // Call the function to handle the state change
+                });
+
+                // Initial call to set up the edit mode on page load
+                updateEditMode();
+
+                $('#calendar').on('Calendar.event-click', function (event, instance, elem, evt) {
+                  
+                    $('#editEndError').text('');
+                    $('#editStartError').text('');
+                    $('#editMaxUsersError').text('');
+                    $('#editTypeError').text('');
+                    $('#editTitleError').text('');
+                    // $('#calendar-modal').attr
+                    var startTime = evt.start;
+                    var endTime = evt.end;
+                    var timeSlotName = evt.title;
+
+                    // Convert Unix timestamps to ISO format
+                    var startTimeISO = new Date(startTime * 1000).toISOString();
+                    var endTimeISO = new Date(endTime * 1000).toISOString();
+
+                    // Get time slot ID using the extracted details
+                    $.ajax({
+                        url: 'GetTimeSlotId',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            StartTime: startTimeISO,
+                            EndTime: endTimeISO,
+                            TimeSlotName: timeSlotName
+                        }),
+
+                        success: function (response) {
+                            if (response && response.timeSlotId) {
+                                // Call the EditTimeSlotUser method using an HTTP GET request
+                                // $('body').removeClass('event-active'); // Ensure the class is removed when adding an event
+                                //window.location.href = 'EditTimeSlotUser?id=' + response.timeSlotId;
+                         
+                                if (isEditMode) {
+                                    // If edit mode is on, show the modal for editing
+                                    var eventId = response.timeSlotId; // Assuming your event has an ID field
+                                    var eventTitle = evt.title;
+                                    var eventStart = new Date(evt.start * 1000); // Convert to milliseconds
+                                    var eventEnd = new Date(evt.end * 1000); // Convert to milliseconds
+                                    var eventType = evt.category;
+                                    var eventMaxUsers = response.maxUsers || 1;
+
+
+                                    // Format the Date objects to 'YYYY-MM-DDTHH:mm' for datetime-local input
+                                    var formattedStartTime = formatDateForDateTimeLocalInput(eventStart);
+                                    var formattedEndTime = formatDateForDateTimeLocalInput(eventEnd);
+
+                                    // Set the values in the edit modal
+                                    $('#editEventStart').val(formattedStartTime); // Set formatted start time
+                                    $('#editEventEnd').val(formattedEndTime); // Set formatted end time
+                                    // Set the values in the edit modal
+                                    $('#editEventId').val(eventId); // Hidden field for event ID
+                                    $('#editEventTitle').val(eventTitle);                       
+                                    $('#editEventType').val(eventType);
+                                    $('#editEventMaxUsers').val(eventMaxUsers);
+                                    $('#editEventModal').modal('show');
+                                } else {
+                                    // If edit mode is off, redirect to the edit page
+                                    window.location.href = 'EditTimeSlotUser?id=' + response.timeSlotId;
+                                }
+
+                            } else {
+                                alert('Time slot not found.');
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            alert('Error retrieving time slot ');
+                        }
+                    });
+                    $('body').removeClass('event-active'); // Ensure the class is removed when adding an event
+                });
+
+                function formatDateToLocal(date) {
+                    // Get the individual components of the date
+                    var year = date.getFullYear();
+                    var month = ('0' + (date.getMonth() + 1)).slice(-2); // Months are zero-indexed
+                    var day = ('0' + date.getDate()).slice(-2);
+                    var hours = ('0' + date.getHours()).slice(-2);
+                    var minutes = ('0' + date.getMinutes()).slice(-2);
+
+                    // Format it in 'YYYY-MM-DDTHH:mm' for the datetime-local input
+                    return `${year}-${month}-${day}T${hours}:${minutes}`;
+                }
+
+                // // Optional: Remove the class when the modal is closed
+                // $('#eventModal').on('hidden.bs.modal', function () {
+                //     $('body').removeClass('event-active'); // Remove the class when modal is closed
+                // });
+
+                // function toUnixTimestamp(date) {
+                //     return Math.floor(date.getTime() / 1000); // Convert to seconds
+                // }
+                // function formatDateTime(date) {
+                //     const options = {
+                //         year: 'numeric',
+                //         month: '2-digit',
+                //         day: '2-digit',
+                //         hour: '2-digit',
+                //         minute: '2-digit',
+                //         hour12: true
+                //     };
+
+                //     const formattedDate = date.toLocaleString('en-US', options);
+                //     const parts = formattedDate.split(', ');
+                //     const datePart = parts[0].split('/');
+                //     const timePart = parts[1].trim();
+                //     const formattedDateString = `${datePart[0].padStart(2, '0')}-${datePart[1].padStart(2, '0')}-${datePart[2]}`;
+
+                //     return `${formattedDateString} ${timePart}`;
+                // }
+
+
+            function handleSelectChange() {
+                var selectedOption = $('#eventSelect option:selected');
+                var selectedEventId = selectedOption.val();
+                var selectedEventTitle = selectedOption.data('title');
+            }
+
+                
+
+
+            $('#saveEventBtn').on('click', function (e) {
+            
+                 e.preventDefault();
+
+                // Clear previous validation messages
+                $('.validation-message').text('');
+                    var eventType = $("#eventType").val();
+                    var maxUsers = $("#eventMaxUsers").val();
+                // Validation flags
+                let isValid = true;
+
+                // Validate Title
+                const title = $('#eventTitle').val().trim();
+                if (title === '') {
+                    $('#titleError').text('Title is required.');
+                    isValid = false;
+                }
+                    // Validate event type (dropdown must not be empty)
+                    if (eventType === "") {
+                        $("#typeError").text("Event type is required.");
+                        isValid = false;
+                    }
+
+                    // Validate max users (must be a positive number and not empty)
+                    if (maxUsers === "") {
+                        $("#maxUsersError").text("Maximum number of users is required.");
+                        isValid = false;
+                    } else if (maxUsers <= 0) {
+                        $("#maxUsersError").text("Maximum number of users must be a positive number.");
+                        isValid = false;
+                    }
+                    // Get today's date without time
+                    const now = new Date();
+                    now.setHours(0, 0, 0, 0); // Reset time to 00:00:00
+
+                    // Validate Start Date (only the date, not the time)
+                     const startDateTime = new Date($('#eventStart').val().trim());
+                    const startDateTimeInput1 = $('#eventStart').val();
+                    const startDateTimeInput2 = new Date(startDateTimeInput1);
+                    startDateTime.setHours(0, 0, 0, 0); // Reset time to 00:00:00
+
+
+                    if (isNaN(startDateTime)) {
+                        $('#startError').text('Start date is required.');
+                        isValid = false;
+                    } else if (startDateTime < now) {
+                        $('#startError').text('Please select a future date.');
+                        isValid = false;
+                    } else {
+                     
+                        const startHours = startDateTimeInput2.getHours();
+                        const startMinutes = startDateTimeInput2.getMinutes();
+
+                        // Validate that the time is after 7:00 AM
+                        if (startHours < 7 || (startHours === 7 && startMinutes < 0)) {
+                            $('#startError').text('Please select a start time after 7 AM.');
+                            isValid = false;
+                        }
+                    }
+                
+        
+
+                    // Validate End Date (only the date, not the time)
+                    const endDateTime = new Date($('#eventEnd').val().trim());
+                    const endDateTimeInput1 = $('#eventEnd').val();
+                    const endDateTimeInput2 = new Date(endDateTimeInput1);
+                    endDateTime.setHours(0, 0, 0, 0); // Reset time to 00:00:00
+                    if (startDateTime.getTime() !== endDateTime.getTime()) {
+                        $('#endError').text('Please add a single day entry only. The end date must be the same day.');
+                        isValid = false;
+                    }
+                    if (isNaN(endDateTime)) {
+                        $('#endError').text('End date is required.');
+                        isValid = false;
+                    } else if (endDateTime < now) {
+                        $('#endError').text('Please select a future date.');
+                        isValid = false;
+                    }  else if (endDateTime < startDateTime) {
+                 
+                        $('#endError').text('End date must be after the start date.');
+                        isValid = false;
+                    } else {
+                        const endHours = endDateTimeInput2.getHours();
+                        const endMinutes = endDateTimeInput2.getMinutes();
+                        const startHours = startDateTimeInput2.getHours();
+                        const startMinutes = startDateTimeInput2.getMinutes();
+                        // Validate that the end time is after the start time
+                        if (endHours < startHours || (endHours === startHours && endMinutes <= startMinutes)) {
+                            $('#endError').text('End time should be greater than start time.');
+                            isValid = false;
+                        } else if (startDateTime.getTime() !== endDateTime.getTime()) {
+                            $('#endError').text('Please add a single day entry only. The end date must be the same day.');
+                            isValid = false;
+                        }
+                        
+                    }
+
+
+                   
+                //If all fields are valid, submit the form
+                if (isValid) {
+                 
+                        var eventData = {
+                            timeSlotName: $('#eventTitle').val(),
+                            startTime: $('#eventStart').val(),
+                            endTime: $('#eventEnd').val(),
+                            eventType: $('#eventType').val(),
+                            maxNumberOfUsers: $("#eventMaxUsers").val(),
+                            
+                        };
+
+                        $.ajax({
+                            url: 'AddEvent', // Ensure the URL is correct
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(eventData),
+                            success: function (response) {
+                                if (response.success) {
+
+                                    // alert('sucessfully  1');
+                                    // Example URL based on response data
+                                    var redirectUrl = '/@tenantName/TimeSlot/Calendar';
+                                    window.location.href = redirectUrl;
+                                } else {
+                                    $("#maxUsersError").css("color", "red").text("Entry is overlapping, Please add the correct event.");
+
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.error('Error adding event:', error);
+                                $("#maxUsersError").css("color", "red").text("Entry is overlapping, Please add the correct event.");
+
+                            }
+                        });
+                    //$('#eventForm').submit(); // Submit the form or call your saving logic here
+
+
+
+                       
+                }
+                   
+            });
+
+                // // Save the edited event when the user clicks "Save Changes"
+                // $('#saveEditEventBtn').on('click', function () {
+                //     debugger;
+
+                //     // Validate the fields before proceeding
+                //     if (!validateEventFields()) {
+                //         return; // Stop execution if validation fails
+                //     }
+
+                //     var eventData = {
+                //         Id: $('#editEventId').val(),
+                //         TimeSlotName: $('#editEventTitle').val(),
+
+
+                //         StartTime: $('#editEventStart').val(),
+                //         EndTime: $('#editEventEnd').val(),
+                        
+
+                //         EventType: $('#editEventType').val(),
+                //         MaxNumberOfUsers: parseInt($('#editEventMaxUsers').val(), 10)
+                //     };
+
+                //     // Send the updated event details to the server via AJAX
+                //     $.ajax({
+                //         url: 'UpdateEvent', // Ensure this URL is correct
+                //         type: 'POST',
+                //         contentType: 'application/json',
+                //         data: JSON.stringify(eventData),
+                //         success: function (response) {
+                //             if (response.success) {
+                //                 // Close the modal and refresh the calendar if the update was successful
+                //                 $('#editEventModal').modal('hide');
+                //                 var redirectUrl = '/@tenantName/TimeSlot/Calendar';
+                //                 window.location.href = redirectUrl;
+                //                 // Optionally, refresh the calendar or event list
+                //             } else {
+                //                 //alert('Failed to update the event.');
+                //             }
+                //         },
+                //         error: function (xhr, status, error) {
+                //             //alert('An error occurred while updating the event.');
+                //         }
+                //     });
+                // });
+
+                $('#saveEditEventBtn').on('click', function () {
+                    // Clear previous validation messages
+                    $('.validation-message').text('');
+
+                    // Validation flags
+                    let isValid = true;
+
+                    // Validate Title
+                    const title = $('#editEventTitle').val().trim();
+                    if (title === '') {
+                        $('#editTitleError').text('Title is required.');
+                        isValid = false;
+                    }
+
+                    // Validate Event Type
+                    const eventType = $('#editEventType').val();
+                    if (eventType === "") {
+                        $("#editTypeError").text("Event type is required.");
+                        isValid = false;
+                    }
+
+                    // Validate Maximum Number of Users
+                    const maxUsers = $('#editEventMaxUsers').val();
+                    if (maxUsers === "") {
+                        $("#editMaxUsersError").text("Maximum number of users is required.");
+                        isValid = false;
+                    } else if (maxUsers <= 0) {
+                        $("#editMaxUsersError").text("Maximum number of users must be a positive number.");
+                        isValid = false;
+                    }
+
+                    // Get today's date without time
+                    const now = new Date();
+                    now.setHours(0, 0, 0, 0); // Reset time to 00:00:00
+
+                    // Validate Start Date
+                    const startDateTime = new Date($('#editEventStart').val().trim());
+                    const startDateTimeInput1 = $('#editEventStart').val();
+                    const startDateTimeInput2 = new Date(startDateTimeInput1);
+                    if (isNaN(startDateTime)) {
+                        $('#editStartError').text('Start date is required.');
+                        isValid = false;
+                    } else if (startDateTime < now) {
+                        $('#editStartError').text('Please select a future date.');
+                        isValid = false;
+                    } 
+                    else {
+
+                        const startHours = startDateTimeInput2.getHours();
+                        const startMinutes = startDateTimeInput2.getMinutes();
+
+                        // Validate that the time is after 7:00 AM
+                        if (startHours < 7 || (startHours === 7 && startMinutes < 0)) {
+                            $('#editStartError').text('Please select a start time after 7 AM.');
+                            isValid = false;
+                        }
+                    }
+
+                    // Validate End Date
+                    const endDateTime = new Date($('#editEventEnd').val().trim());
+                    const endDateTimeInput1 = $('#editEventEnd').val();
+                    const endDateTimeInput2 = new Date(endDateTimeInput1);
+                    if (isNaN(endDateTime)) {
+                        $('#editEndError').text('End date is required.');
+                        isValid = false;
+                    } else if (endDateTime < now) {
+                        $('#editEndError').text('Please select a future date.');
+                        isValid = false;
+                    } else if (endDateTime < startDateTime) {
+                        $('#editEndError').text('End date must be after the start date.');
+                        isValid = false;
+                     } 
+                    else {
+               
+                        const endHours = endDateTimeInput2.getHours();
+                        const endMinutes = endDateTimeInput2.getMinutes();
+                        const startHours = startDateTimeInput2.getHours();
+                        const startMinutes = startDateTimeInput2.getMinutes();
+                        // Validate that the end time is after the start time
+                        if (endHours < startHours || (endHours === startHours && endMinutes <= startMinutes)) {
+                            $('#editEndError').text('End time should be greater than start time.');
+                            isValid = false;
+                        }
+                        // } else if (startDateTime.getTime() !== endDateTime.getTime()) {
+                        //     $('#editEndError').text('Please add a single day entry only. The end date must be the same day.');
+                        //     isValid = false;
+                        // }
+
+                    }
+
+                    // If all fields are valid, submit the form
+                    if (isValid) {
+                        var eventData = {
+                            Id: $('#editEventId').val(),
+                            TimeSlotName: $('#editEventTitle').val(),
+                            StartTime: $('#editEventStart').val(),
+                            EndTime: $('#editEventEnd').val(),
+                            EventType: $('#editEventType').val(),
+                            MaxNumberOfUsers: parseInt($('#editEventMaxUsers').val(), 10)
+                        };
+
+                        // Send the updated event details to the server via AJAX
+                        $.ajax({
+                            url: 'UpdateEvent', // Ensure this URL is correct
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(eventData),
+                            success: function (response) {
+                                if (response.success) {
+                                    // Close the modal and refresh the calendar if the update was successful
+                                    $('#editEventModal').modal('hide');
+                                    var redirectUrl = '/@tenantName/TimeSlot/Calendar';
+                                    window.location.href = redirectUrl;
+                                } else {
+                                    // Handle failure response (e.g., show error message)
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                // Handle error (e.g., show error message)
+                            }
+                        });
+                    }
+                });
+
+
+                // // Optional: Remove the class when the modal is closed
+                // $('#eventModal').on('hidden.bs.modal', function () {
+                //    // $('body').removeClass('event-active'); // Remove the class when modal is closed
+                //     $('body').removeClass('modal.fade'); // Remove the class when modal is closed D
+                 
+                // });
+              
+                function formatDateForDateTimeLocalInput(date) {
+                    var year = date.getFullYear();
+                    var month = ('0' + (date.getMonth() + 1)).slice(-2); // Months are 0-indexed
+                    var day = ('0' + date.getDate()).slice(-2);
+                    var hours = ('0' + date.getHours()).slice(-2);
+                    var minutes = ('0' + date.getMinutes()).slice(-2);
+
+                    // Return the formatted string: 'YYYY-MM-DDTHH:mm'
+                    return `${year}-${month}-${day}T${hours}:${minutes}`;
+                }
+
+         });
+
+    </script>
+
+
+    <style>
+            .calendar-timeline{             
+                padding-top: 31px;
+                margin-top: 70px;
+            
+            }
+    </style>
+</body>
+
+</html>

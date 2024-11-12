@@ -1,80 +1,249 @@
-﻿<!DOCTYPE html>
+﻿@{
+    ViewData["Title"] = "Login";
+    Layout = "CustomeLayout";
+    var tenantName = ViewBag.TenantName as string ?? "defaultTenant"; // Fallback if tenant name is not provided
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <title>@ViewData["Title"]</title>
+    <!-- Use one Bootstrap version -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    
+    <style>
+        body {
+            background-image: url('../../images/pngtree-hands-donate-hearts-charity-give-picture-image_8403059.png');
+            background-repeat: no-repeat;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Black overlay */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Adjust the opacity as needed */
+            z-index: 1;
+        }
+
+        /* Card container */
+        .container {
+            position: relative;
+            z-index: 2;
+        }
+
+        .card {
+            max-width: 500px;
+            min-width: 450px;
+            border: 1px solid rgba(0, 0, 0, .125);
+            border-radius: .25rem;
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .text-center {
+            margin-bottom: 1rem;
+        }
+
+        .btn-block {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        body {
+            background-image: url('../../images/pngtree-hands-donate-hearts-charity-give-picture-image_8403059.png');
+            background-repeat: no-repeat;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Black overlay with reduced opacity */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.3); /* Lighter black overlay */
+            z-index: 1;
+        }
+
+        /* Card container centered */
+        .container {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Ensures full-height centering */
+        }
+
+        .card {
+            max-width: 500px;
+            min-width: 450px;
+            border: 1px solid rgba(0, 0, 0, .125);
+            border-radius: .25rem;
+            background-color: rgba(255, 255, 255, 0.7); /* Increased transparency */
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .text-center {
+            margin-bottom: 1rem;
+        }
+
+        .btn-block {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        body {
+            //background-image: url('images\pngtree-hands-donate-hearts-charity-give-picture-image_8403059.png');
+            background-image: url('../../images/pngtree-hands-donate-hearts-charity-give-picture-image_8403059.png');
+            // ../../images/12065298_4869878.jpg;
+            //logo.jpg background-repeat: no-repeat;
+            background-size: cover;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Black overlay with reduced opacity */
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.2); /* Reduced opacity */
+            z-index: 1;
+        }
+
+        /* Card container centered */
+        .container {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh; /* Ensures full-height centering */
+        }
+
+        .card {
+            max-width: 500px;
+            min-width: 450px;
+            border: 1px solid rgba(0, 0, 0, .125);
+            border-radius: .25rem;
+            background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent background */
+            backdrop-filter: blur(10px); /* Glass effect */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Soft shadow for depth */
+        }
+
+        .card-body {
+            padding: 1.5rem;
+            color: #fff; /* Ensure text is readable */
+        }
+
+        .text-center {
+            margin-bottom: 1rem;
+        }
+
+        .btn-block {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        #welcomeText {
+            border-bottom: 1px solid white;
+        }
+
+        #signInText{
+           margin-bottom: 0;
+        }
+
+        button {
+            padding: 15px;
+        }
+
+        .btn {
+            padding: 15px;
+        }
+
+        .card {
+            max-width: 500px;
+            min-width: 550px;
+            border: 1px solid rgba(0, 0, 0, .125);
+            border-radius: .25rem;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            max-height: 450px;
+        }
+
+        form {
+        padding-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
+    <!-- Black overlay -->
+    <div class="overlay"></div>
 
-    <div class="container mt-5">
-        <div class="row">
-            <div class="col-md-6 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Google Login</h5>
-                        <p class="card-text">Sign in using your Google account.</p>
-                        <form method="post" asp-area="" asp-controller="Auth" asp-action="GoogleLogin">
-                            <button type="submit" class="btn btn-danger btn-block">
-                                <i class="fab fa-google"></i> Login With Google
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Facebook Login</h5>
-                        <p class="card-text">Sign in using your Facebook account.</p>
-                        <form method="post" asp-area="" asp-controller="Auth" asp-action="FacebookLogin">
-                            <button type="submit" class="btn btn-primary btn-block">
-                                <i class="fab fa-facebook"></i> Login With Facebook
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Microsoft Login</h5>
-                        <p class="card-text">Sign in using your Microsoft account.</p>
-                        <form method="post" asp-area="" asp-controller="Auth" asp-action="MicrosoftLogin">
-                            <button type="submit" class="btn btn-primary btn-block">
-                                <i class="fab fa-microsoft"></i> Login With Microsoft
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-
-            <div class="col-md-6 mb-4">
-                <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">Microsoft 365 Login</h5>
-                        <p class="card-text">Sign in using your Microsoft 365 account.</p>
-                        <form method="post" asp-area="" asp-controller="Auth" asp-action="Microsoft365Login">
-                            <button type="submit" class="btn btn-primary btn-block">
-                                <i class="fab fa-microsoft"></i> Login With Microsoft 365
-                            </button>
-                        </form>
-                    </div>
-                </div>
+    <div class="container">
+        <div class="card">
+            <div class="card-body">
+                <h4 class="text-center" id="signInText">Sign in</h4>
+                <p class="text-center" id="welcomeText">Welcome Back Again !!!</p>
+                <form method="post" action="/@tenantName/Auth/GoogleLogin">
+                    <button type="submit" class="btn btn-danger btn-block">
+                        <i class="fab fa-google"></i> Login With Google
+                    </button>
+                </form>
+                <form method="post" action="/@tenantName/Auth/FacebookLogin">
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fab fa-facebook"></i> Login With Facebook
+                    </button>
+                </form>
+                <form method="post" action="/@tenantName/Auth/MicrosoftLogin">
+                    <button type="submit" class="btn btn-dark btn-block">
+                        <i class="fab fa-microsoft"></i> Login With Microsoft
+                    </button>
+                </form>
             </div>
         </div>
     </div>
 
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
