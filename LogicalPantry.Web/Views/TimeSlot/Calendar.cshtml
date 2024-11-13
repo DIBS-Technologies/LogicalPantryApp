@@ -183,7 +183,21 @@
             opacity: 0.5; 
         }
 
+        @@media (max-width: 768px) {
+            #layoutSidenav_content
+            {
+                margin-right: 0px;
+                padding-right: 10px;
+            }
 
+            .calendar-header
+            {
+                padding-right: 10px;
+                padding-left: 20px;
+            }
+            
+           
+        }
     </style>
 </head>
 
@@ -716,7 +730,7 @@
 
                 // // Save the edited event when the user clicks "Save Changes"
                 // $('#saveEditEventBtn').on('click', function () {
-                //     debugger;
+                //     
 
                 //     // Validate the fields before proceeding
                 //     if (!validateEventFields()) {

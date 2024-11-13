@@ -425,7 +425,7 @@
                 fetchUserInfo(userEmail);
 
                 async function fetchUserInfo(userEmail) {
-                    debugger;
+                    
                     return new Promise((resolve, reject) => {
                         $.ajax({
                             url: `/@tenantName/User/GetUser`,
@@ -452,7 +452,7 @@
                     });
                 }
                 async function fetchImageUrl(tenantId) {
-                    debugger;
+                    
                     return new Promise((resolve, reject) => {
                         $.ajax({
                             url: `/@tenantName/Information/Get`,
@@ -510,7 +510,7 @@
                var  tenantId = @tenantId;
                 updateImage(tenantId);
 
-                debugger;
+                
 
 
 
@@ -521,7 +521,7 @@
                 if (tenantId !== 'null') {
                     tenantId = tenantId.toString(); // Ensure tenantId is a string
                 }
-                debugger;
+                
 
 
                 var tenantDisplayName = $("#pag").val();

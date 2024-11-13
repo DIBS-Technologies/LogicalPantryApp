@@ -107,11 +107,7 @@
             width: 100%;
         }
 
-        @@media (max-width: 768px) {
-            .form-group {
-                margin-left: 0;
-            }
-        }
+       
 
         .nav-fixed #layoutSidenav #layoutSidenav_nav .sidenav {
             padding-top: 0rem;
@@ -216,6 +212,93 @@
             margin-top: 2%;
         }
 
+        @@media (max-width: 768px)
+        {
+            .container-fluid.mt-5.p-1 
+            {
+                margin-right: 0;
+                margin-left: 0;
+            }
+
+            #layoutSidenav_content {
+                margin-right: 0;
+                padding-right: 0;
+                padding-top: 0px;
+                overflow-y: auto;
+                max-height: 100vh;
+                padding-bottom: 200px; 
+            }
+
+            #layoutSidenav
+            {
+                margin-top: -15%;
+            }
+
+            #tenantInfoContainer {
+                padding-right: 20px;
+                padding-bottom: 20px;
+                padding-left: 20px;
+            }
+            
+            #layoutHeader
+            {
+                height: 81px;
+            }
+
+            footer {
+                position: relative; /* Allows it to flow within the document */
+                bottom: 0;
+                width: 100%;
+                padding: 1rem;
+                background-color: #eff3f9; /* Same as desktop view */
+                color: #6c757d;
+                text-align: center;
+                display: block; /* Ensure footer is displayed */
+            }
+        
+        }
+        @@media (max-width: 480px) {
+            .container-fluid.mt-5.p-1 {
+                margin-right: 0;
+                margin-left: 0;
+            }
+
+            #layoutSidenav_content {
+                margin-right: 0;
+                padding-right: 0;
+                padding-top: 0px;
+                overflow-y: auto;
+                max-height: 100vh;
+                padding-bottom: 200px; 
+            }
+
+            #layoutSidenav {
+                margin-top: -15%;
+            }
+
+            #tenantInfoContainer {
+                padding-right: 20px;
+                padding-bottom: 20px;
+                padding-left: 20px;
+            }
+
+            #layoutHeader {
+                height: 81px;
+            }
+
+            footer {
+                position: relative; /* Allows it to flow within the document */
+                bottom: 0;
+                width: 100%;
+                padding: 1rem;
+                background-color: #eff3f9; /* Same as desktop view */
+                color: #6c757d;
+                text-align: center;
+                display: block; /* Ensure footer is displayed */
+            }
+    }
+
+      
     </style>
 </head>
 <body>
@@ -294,7 +377,7 @@
 
     <script>
         $(document).ready(function () {
-            debugger;
+            
             $('#successMessageUser').fadeIn().delay(2000).fadeOut();
             $('#errorMessageUser').fadeIn().delay(2000).fadeOut();
 
@@ -318,65 +401,9 @@
             });
         });
 
-        // //i want to show here only us base time zones only //next serch bar in drop down
-        // function populateTimeZones() {
-        //     var timezones = moment.tz.names();
-        //     var $timeZoneSelect = $('#timeZone');
-        //     $.each(timezones, function (index, timezone) {
-        //         $timeZoneSelect.append($('<option>', { value: timezone, text: timezone }));
-        //     });
-        //     $timeZoneSelect.val('@Model.Timezone');
-        // }
-
-        // function populateTimeZones() {
-
-        //     //var timezones = moment.tz.zonesForCountry('Us');
-        //     var timezones = moment.tz.names();
-        //     var usTimezones = timezones.filter(function (timezone) {
-        //         return timezone.startsWith('US/');
-        //     });
-
-        //     var $timeZoneSelect = $('#timeZone');
-        //     $.each(usTimezones, function (index, timezone) {
-        //         $timeZoneSelect.append($('<option>', { value: timezone, text: timezone }));
-        //     });
-        //     $timeZoneSelect.val('@Model.Timezone');
-        //     $('#timeZone').timezones({
-        //     guessUserTimezone:true,
-        //     defaultRegion:1024
-        //     });
-
-        // }
-
-        // function populateTimeZones() {
-        //     // Get all U.S. time zones
-        //     var usTimezones = moment.tz.zonesForCountry('US');
-
-        //     // Populate the dropdown
-        //     var $timeZoneSelect = $('#timeZone');
-        //     $timeZoneSelect.empty(); // Clear existing options
-
-        //     $.each(usTimezones, function (index, timezone) {
-        //         // Get the current offset for this time zone
-        //         var offset = moment.tz(timezone).format('Z'); // Get the offset in +HH:mm format
-        //         var gmtOffset = offset.replace(':', ''); // Remove the colon for GMT format
-        //         var displayText = ' (GMT' + gmtOffset + ')' + timezone;
-
-        //         // Add each time zone to the dropdown
-        //         $timeZoneSelect.append($('<option>', { value: timezone, text: displayText }));
-        //     });
-
-        //     // Set the selected value if needed
-        //     $timeZoneSelect.val('@Model.Timezone'); 
-
-           
-        // }
-
-       
-
-
+  
         function populateTimeZones() {
-            debugger;
+            
             var $timeZoneSelect = $('#timeZone');
             $timeZoneSelect.empty(); // Clear existing options
            // $timeZoneSelect.append($('<option>', { value: 'NULL', text: '-- Select --' }));

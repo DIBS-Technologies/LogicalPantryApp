@@ -212,6 +212,103 @@
         {
             margin-left: 9%;
         }
+
+
+        @@media only screen and (max-width: 768px) {
+        .page-header-title {
+            font-size: 1.2rem;
+        }
+
+        .datatable {
+            font-size: 0.85rem;
+        }
+
+        .container {
+            padding: 1rem;
+        }
+
+        .checkbox-wrapper-4 {
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .checkbox-wrapper-4 label {
+            margin-top: 0.5rem;
+        }
+
+        table.dataTable tbody td {
+            padding: 0.5rem;
+        }
+
+            #layoutSidenav_content {
+                margin-right: 0px;      
+                padding-right: 2px;
+        
+                padding-left: 220px;
+            }
+
+            #layoutHeader
+            {
+                height: 120px;
+            }
+
+            .card-body {
+                padding-top: 10px;
+                padding-right: 10px;
+                padding-bottom: 10px;
+                padding-left: 10px;
+            }
+    }
+
+    @@media only screen and (max-width: 480px) {
+        .page-header-title {
+            font-size: 1rem;
+        }
+
+        .datatable {
+            font-size: 0.75rem;
+        }
+
+        .container {
+            padding: 0.5rem;
+        }
+
+        .checkbox-wrapper-4 {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .checkbox-wrapper-4 label {
+            margin-top: 0.3rem;
+        }
+
+        .card-header {
+            font-size: 1rem;
+        }
+
+        table.dataTable tbody td {
+            padding: 0.3rem;
+        }
+
+            #layoutSidenav_content {
+                margin-right: 0px;
+                padding-right: 2px;
+          
+                padding-left: 220px;
+            }
+
+            #layoutHeader {
+                height: 120px;
+            }
+
+            .card-body
+            {
+                padding-top: 10px;
+                padding-right: 10px;
+                padding-bottom: 10px;
+                padding-left: 10px;
+            }
+    }
     </style>
 </head>
 
@@ -231,7 +328,7 @@
                     <div id="errorMessageUser" class="alert alert-danger" style="display:none;">
                         Error occured while updating user.
                     </div>
-                    <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                    <table class="table table-bordered table-hover" id="dataTable"@*  width="100%" *@ cellspacing="0">
                         <thead>
                             <tr>
                                 <th>Name</th>
@@ -346,7 +443,7 @@
             });
 
             $(".deleteHref").on("click", function (e) {
-                debugger;
+                
                 e.preventDefault();
                 var userId = $(this).data("user-id");
                 var tenantName = '@ViewBag.TenantName';

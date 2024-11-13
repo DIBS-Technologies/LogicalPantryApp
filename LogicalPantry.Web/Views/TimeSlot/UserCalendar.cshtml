@@ -224,16 +224,7 @@
             gap: 10px;
         }
 
-        @@media (max-width: 768px) {
-            .page-header-title {
-                font-size: 1.5rem;
-            }
-
-            .calendar-header {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-        }
+       
 
 
         .page-header-title {
@@ -352,68 +343,9 @@
             padding-right: 0px;
         }
 
-        @@media (max-width: 968px) {
-            .topnav {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 0 1rem;
-                background-color: white;
-                height: 60px; /* Adjust based on navbar height */
-                width: 100%; /* Ensure full width */
-            }
+      
 
-                .topnav .navbar-nav {
-                    display: flex;
-                    flex-direction: row;
-                    margin-left: auto; /* Push links to the right */
-                    justify-content: end;
-                }
-
-                .topnav .nav-link {
-                    padding-right: 1rem;
-                    padding-left: 1rem;
-                    font-weight: normal;
-                    transition: color 0.3s, font-weight 0.3s;
-                }
-
-                    .topnav .nav-link:hover {
-                        color: #0061f2;
-                        font-weight: bold;
-                    }
-
-
-
-
-            .page-name {
-                font-size: 1rem;
-            }
-
-            footer {
-                font-size: 0.9rem;
-            }
-            /* Sidebar management */
-            #layoutSidenav {
-                display: block; /* Stack elements vertically on smaller screens */
-            }
-
-            #layoutSidenav_content {
-                padding: 1rem;
-            }
-
-            #sidenavAccordion {
-                display: flex;
-                flex-direction: row;
-                margin-left: auto; /* Push links to the right */
-                justify-content: end;
-            }
-        }
-
-        /* Small mobile view */
-        @@media (max-width: 280px) {
-            .topnav {
-                padding: 0.5rem;
-            }
+        
 
             .page-name {
                 font-size: 0.9rem;
@@ -439,10 +371,55 @@
                 padding-left: 0px;
                 padding-right: 0px;
             }
+
+
+        @@media (max-width: 968px) 
+        {
+            .container-fluid
+            {
+                padding-right: 10px;
+                margin-right: 0px;
+                padding-left: 165px;
+            }
+
+                .page-header 
+                {
+                    margin-right: 0px;
+                    margin-left: 180px;
+                 }
+
+            .container {
+                padding-bottom: 0px;
+                padding-left: 0px;
+                padding-right: 0px;
+                padding-top: 0px;
+
+                 }
+
            
+        }
 
-    
+        @@media (max-width: 768px) {
+            .container-fluid {
+                padding-right: 10px;
+                margin-right: 0px;
+                padding-left: 165px;
+            }
 
+            .page-header {
+                margin-right: 0px;
+                margin-left: 180px;
+            }
+
+            .container {
+                padding-bottom: 0px;
+                padding-left: 0px;
+                padding-right: 0px;
+                padding-top: 0px;
+            }
+
+          
+        }
     </style>
 </head>
 <header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4 .pgaeheader">
@@ -574,7 +551,7 @@
 
                 // Handle calendar event click and prevent default behavior
                 $('#calendar').on('Calendar.event-click', function (event, instance, elem, evt) {
-                    debugger;
+                    
                     var startTime = evt.start;
                     var endTime = evt.end;
                     var timeSlotName = evt.title;

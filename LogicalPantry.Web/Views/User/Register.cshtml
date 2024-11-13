@@ -114,25 +114,7 @@
             margin-top: 1rem;
         }
 
-        @@media (max-width: 768px) {
-            .card {
-                flex-direction: column;
-                max-width: 100%; /* Ensure card takes full width on small screens */
-            }
-
-            .card-image {
-                display: none; /* Hide image on smaller screens */
-            }
-
-            .form-container {
-                padding: 1rem;
-            }
-
-            .form-group {
-                margin-bottom: 1rem;
-                margin-top: 1rem;
-            }
-        }
+       
 
         .nav-fixed #layoutSidenav #layoutSidenav_nav .sidenav {
             padding-top: 0;
@@ -202,6 +184,50 @@
             font-size: larger;
         }
 
+
+        @@media (max-width: 768px) {
+            .card {
+                flex-direction: column;
+                max-width: 100%; /* Ensure card takes full width on small screens */
+            }
+
+            .card-image {
+                display: none; /* Hide image on smaller screens */
+            }
+
+            .form-container {
+                padding: 1rem;
+            }
+
+            .form-group {
+                margin-bottom: 1rem;
+                margin-top: 1rem;
+            }
+
+            #layoutSidenav {
+                padding-left: 220px;
+               
+            }
+            
+            #layoutSidenav_content {
+                margin-right: 0px;
+                padding-right: 10px;
+               /*  top: 20px;
+                padding-bottom: 20px; */
+                padding-top: 0px;
+                top: 0px;
+            }
+
+            .nav-fixed #layoutSidenav #layoutSidenav_content {
+                padding-left: 0rem;
+                top: 0.625rem;
+            }
+
+            #layoutHeader 
+            {
+                height: 71px;
+            }
+        }
     </style>
 
     </style>

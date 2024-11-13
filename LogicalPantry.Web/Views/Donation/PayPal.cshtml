@@ -172,40 +172,7 @@
             transition: padding-left 0.3s;
         }
 
-        @@media (max-width: 768px) {
-            .hero-overlay h1 {
-                font-size: 1.5rem;
-            }
-
-            .hero-overlay .donate-btn {
-                font-size: 0.9rem;
-                padding: 10px 20px;
-            }
-
-            .content {
-                padding: 15px;
-            }
-        }
-
-        @@media (max-width: 480px) {
-            .hero-image {
-                height: 40vh;
-            }
-
-            .hero-overlay h1 {
-                font-size: 1.2rem;
-            }
-
-            .hero-overlay .donate-btn {
-                font-size: 0.8rem;
-                padding: 8px 15px;
-            }
-
-            .content {
-                padding: 10px;
-                font-size: 0.9rem;
-            }
-        }
+      
         
        
         .hero-overlay h1 {
@@ -230,16 +197,7 @@
 
 
   
-        @@media (max-width: 968px) {
-            .topnav {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 0 1rem;
-                background-color: white;
-                height: 60px; 
-                width: 100%;
-            }
+      
 
                 .topnav .navbar-nav {
                     display: flex;
@@ -275,47 +233,17 @@
                 display: block; 
             }
 
-            #layoutSidenav_content {
-                padding: 1rem;
-            }
-
+          
             #sidenavAccordion {
                 display: flex;
                 flex-direction: row;
                 margin-left: auto;
                 justify-content: end;
             }
-        }
+        
 
   
-        @@media (max-width: 280px) {
-            .topnav {
-                padding: 0.5rem;
-            }
-
-            .page-name {
-                font-size: 0.9rem;
-            }
-
-            .nav-link {
-                font-size: 0.85rem;
-                padding: 0.5rem;
-            }
-
-            footer {
-                padding: 8px;
-                font-size: 0.8rem;
-            }
-
-
-            #sidenavAccordion {
-                display: flex;
-                flex-direction: column;
-                justify-content: center;
-            }
-
-
-        }
+      
         #sidenavAccordion {
             display: flex;
             flex-direction: row;
@@ -340,6 +268,51 @@
             display: none !important; 
         }
 
+        @@media (max-width: 968px) {
+            .hero-overlay h1 {
+                font-size: 1.00rem;
+            }
+
+           
+
+            .hero-overlay .donate-btn {
+                font-size: 0.9rem;
+                padding: 10px 20px;
+            }
+
+            .content {
+                padding: 15px;
+            }
+
+
+            #layoutSidenav_content {
+                margin-right: 0px;
+                padding-right: 0px;
+               
+            }
+
+            .nav-fixed #layoutSidenav #layoutSidenav_content {
+                padding-left: 210px;
+                top: 3.625rem;
+                transition: padding-left 0.3s;
+            }
+
+            #sidenavAccordion
+            {
+                padding-top: 7px;
+                padding-bottom: 7px;
+            }
+
+            .donation-container {
+                max-width: 100%;                         
+                margin: 10px; 
+                background-color: #f5f5f5;                
+                flex-direction: column; 
+                align-items: center;
+                border-radius: 15px; 
+                border: 0.5px solid black;
+            }
+        }
 
     </style>
   
