@@ -34,174 +34,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
-    @* <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 950px;
-        }
-
-        .topnav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 1rem;
-            background-color: #fff;
-            height: 60px;
-            width: 100%;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            box-sizing: border-box;
-        }
-
-            .topnav .navbar-nav {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 1rem;
-            }
-
-            .topnav .nav-link {
-                font-weight: normal;
-                transition: color 0.3s, font-weight 0.3s;
-                text-decoration: none;
-            }
-
-                .topnav .nav-link:hover {
-                    color: #0061f2;
-                    font-weight: bold;
-                }
-
-        .page-name {
-            flex: 1;
-            text-align: center;
-            font-weight: bold;
-            color: #1f2d41;
-            font-size: 1.25rem;
-        }
-
-        #layoutSidenav {
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-        }
-
-        #layoutSidenav_nav {
-            display: @(isAdmin ? "block" : "none");
-            flex-shrink: 0;
-        }
-
-        #layoutSidenav_content {
-            flex: 1;
-            margin-left: @(isAdmin ? "250px" : "20px");
-            margin-right: 20px;
-            transition: margin 0.15s ease-in-out;
-            padding: @(isAdmin ? "10px" : "0");
-            overflow: auto;
-        }
-
-        .sidenav {
-            background-color: #fff;
-            color: #1f2d41;
-            box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .sidenav-menu {
-            padding: 1rem;
-        }
-
-            .sidenav-menu .nav-link {
-                display: block;
-                padding: 0.5rem 1rem;
-                color: #1f2d41;
-                text-decoration: none;
-            }
-
-                .sidenav-menu .nav-link:hover {
-                    background-color: #f1f1f1;
-                    border-radius: 0.2rem;
-                }
-
-        footer {
-            display: flex;
-            justify-content: center;
-            padding: 1rem;
-            background-color: #eff3f9;
-            color: #6c757d;
-            width: 100%;
-            position: relative;
-            bottom: 0;
-            text-align: center;
-        }
-
-            footer p {
-                margin: 0;
-                color: black;
-            }
-
-        /* Media Queries */
-        @@media (max-width: 768px) {
-            .topnav {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-                .topnav .navbar-nav {
-                    flex-direction: column;
-                    width: 100%;
-                }
-
-            .sidenav {
-                position: absolute;
-                top: 60px;
-                left: 0;
-                width: 100%;
-                height: calc(100vh - 60px);
-                overflow-y: auto;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            }
-
-            #layoutSidenav_content {
-                margin-left: 0;
-            }
-        }
-
-        @@media (min-width: 769px) {
-            .sidenav {
-                width: 250px;
-                position: fixed;
-                top: 60px;
-                bottom: 0;
-            }
-
-            #layoutSidenav_content {
-                margin-left: 250px;
-            }
-        }
-
-        .page-header > .container-fluid:first-of-type {
-            max-height: 40vh;
-            display: flex;
-            justify-content: center;
-        }
-
-        .page-header-compact .page-header-content .page-header-title {
-            font-size: 1.5rem;
-        }
-
-        .nav-fixed #layoutSidenav #layoutSidenav_nav .sidenav {
-            padding-top: 0rem;
-        }
-
-        .container-fluid {
-            max-width: 90%;
-            margin: 10px auto;
-        }
-    </style> *@
+  
 
     <style>
    /*  body {
@@ -338,45 +171,9 @@
         margin: 10px auto;
     }
 
-    /* Media Queries */
-    @@media (max-width: 768px) {
-        .topnav {
-            flex-direction: column;
-            align-items: flex-start;
-        }
 
-        .topnav .navbar-nav {
-            flex-direction: column;
-            width: 100%;
-                    justify-content: end;
-        }
+       
 
-        .sidenav {
-            position: absolute;
-            top: 60px;
-            left: 0;
-            width: 100%;
-            height: calc(100vh - 60px);
-            overflow-y: auto;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        #layoutSidenav_content {
-            margin-left: 0;
-        }
-
-            #pageName {
-                display: flex;
-                justify-content: start;
-                margin-left: 2%;
-                font-size: 0.91rem;
-            }
-
-           /*  #logoImage {
-                padding-left: 5px;
-                opacity: 100%;
-            } */
-    }
 
     @@media (min-width: 769px) {
         .sidenav {
@@ -534,9 +331,144 @@
             border-right-width: 0px;
         }
 
-        
-}
 
+        /* Default: Sidebar hidden on larger screens */
+        .sidebar-nav, .menu-toggle {
+            display: none; /* Hide by default */
+        }
+
+        /* Sidebar Styling */
+        .sidebar-nav {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100%;
+            background-color: #f1f1f1;
+            color: #333;
+            overflow-y: auto;
+            transition: left 0.3s ease;
+            z-index: 1000;
+        }
+
+            .sidebar-nav .inner {
+                padding: 20px;
+            }
+
+            .sidebar-nav h2 {
+                color: #333;
+                margin-top: 0;
+            }
+
+            /* Links styling */
+            .sidebar-nav ul {
+                list-style: none;
+                padding: 0;
+            }
+
+                .sidebar-nav ul li {
+                    margin: 10px 0;
+                }
+
+                    .sidebar-nav ul li a {
+                        color: #333;
+                        text-decoration: none;
+                    }
+
+                        .sidebar-nav ul li a:hover {
+                            text-decoration: underline;
+                        }
+
+            /* Menu open class */
+            .sidebar-nav.show {
+                left: 0; /* Slide in */
+            }
+
+            /* Close button */
+            .sidebar-nav .close {
+                display: block;
+                padding: 10px 20px;
+                color: #333;
+                text-align: center;
+                text-decoration: none;
+                background-color: #444;
+                cursor: pointer;
+            }
+
+        /* Media Queries */
+        @@media (max-width: 868px) {
+            .topnav {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+                .topnav .navbar-nav {
+                    flex-direction: column;
+                    width: 100%;
+                    justify-content: end;
+                }
+
+            .sidenav {
+                position: absolute;
+                top: 60px;
+                left: 0;
+                width: 100%;
+/*                 height: calc(100vh - 60px); */
+                height: 300px; /* Reduced height */
+                overflow-y: auto;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            #layoutSidenav_content {
+                margin-left: 0;
+            }
+
+            #pageName {
+                display: flex;
+                justify-content: start;
+                margin-left: 2%;
+                font-size: 0.91rem;
+            }
+
+
+            .sidebar-nav, .menu-toggle {
+                display: block; 
+            }
+           
+            .menu-toggle {
+         
+                top: 15px;
+                left: 15px;
+                background: none; 
+                color: #000; 
+                padding: 10px 15px;
+                border: none;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 16px;
+                z-index: 1050;
+                display: inline-block;
+                padding-left: 0px;
+                padding-top: 0px;
+                padding-bottom: 0px;
+                padding-right: 0px;
+            }
+           
+            .d-lg-none {
+                display: block;
+            }
+          
+            .sidebar-nav {
+                left: -60%;
+                height: 250px;
+                width: 100%; 
+                max-width: 200px;
+            }
+                .sidebar-nav.show {
+                    left: 0;
+                    margin-top: -10px;
+                }
+        }
      
 </style>
 
@@ -582,6 +514,7 @@
             }  *@
       
             <a class="nav-link" href="/@tenantName/Donation/PayPal" id="donation">Donation</a>
+        
             @if (isAuthenticated)
             {
                 <li class="nav-item dropdown no-caret dropdown-user me-3 me-lg-4">
@@ -599,6 +532,7 @@
                             <div class="dropdown-item-icon"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-log-out"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg></div>
                             Logout
                         </a>
+                       
                     </div>
                 </li>
             }
@@ -606,10 +540,15 @@
             {
                 <a class="nav-link" href="/@tenantName/Auth/loginView">Log In</a>
             }
+
+             @if (isAuthenticated && (isAdmin || !isUser))
+            {
+                <button id="openMenu" class="menu-toggle">☰</button>
+            }
         </div>
     </nav>
 
-    <div id="layoutSidenav">
+    @* <div id="layoutSidenav">
         <div id="layoutSidenav_nav">
             @if (isAuthenticated && isAdmin)
             {
@@ -643,6 +582,77 @@
                 @RenderBody()
             </main>
         </div>
+    </div> *@
+
+    <div id="layoutSidenav">
+
+      
+        <nav id="menu" class="sidebar-nav">
+           @*  <div class="inner"> *@
+                <ul>
+                  @*   <div class="sidenav-menu-heading">Admin</div>                 
+                    <li><a class="nav-link" href="/@tenantName/Information/AddTenant">  <div class="nav-link-icon"><i data-feather="file"></i></div>Information</a></li>
+                    <li><a class="nav-link" href="/@tenantName/User/ManageUsers">    <div class="nav-link-icon"><i data-feather="users"></i></div>User Management</a></li>
+                    <li><a class="nav-link" href="/@tenantName/TimeSlot/Calendar"> <div class="nav-link-icon"><i data-feather="calendar"></i></div>Pickup Slots</a></li> *@
+                    <nav class="sidenav shadow-right sidenav-light">
+                        <div class="sidenav-menu">
+                            <div class="nav accordion" id="accordionSidenav">
+                                <div class="sidenav-menu-heading">Admin</div>
+                                <a class="nav-link" href="/@tenantName/Information/AddTenant">
+                                    <div class="nav-link-icon"><i data-feather="file"></i></div>
+                                    Information
+                                </a>
+                                <a class="nav-link" href="/@tenantName/User/ManageUsers">
+                                    <div class="nav-link-icon"><i data-feather="users"></i></div>
+                                    User Management
+                                </a>
+                                <a class="nav-link" href="/@tenantName/TimeSlot/Calendar">
+                                    <div class="nav-link-icon"><i data-feather="calendar"></i></div>
+                                    Pickup Slots
+                                </a>
+                            </div>
+                        </div>
+                    </nav>
+                </ul>
+           @*  </div> *@
+          @*   <a class="close" href="javascript:void(0)" id="closeMenu">Close</a> *@
+        </nav>
+
+        <!-- Sidebar Navigation -->
+        <div id="layoutSidenav_nav" class="collapse d-lg-block">
+          
+            @if (isAuthenticated && isAdmin)
+            {
+               
+
+                <nav class="sidenav shadow-right sidenav-light">
+                    <div class="sidenav-menu">
+                        <div class="nav accordion" id="accordionSidenav">
+                            <div class="sidenav-menu-heading">Admin</div>
+                            <a class="nav-link" href="/@tenantName/Information/AddTenant">
+                                <div class="nav-link-icon"><i data-feather="file"></i></div>
+                                Information
+                            </a>
+                            <a class="nav-link" href="/@tenantName/User/ManageUsers">
+                                <div class="nav-link-icon"><i data-feather="users"></i></div>
+                                User Management
+                            </a>
+                            <a class="nav-link" href="/@tenantName/TimeSlot/Calendar">
+                                <div class="nav-link-icon"><i data-feather="calendar"></i></div>
+                                Pickup Slots
+                            </a>
+                        </div>
+                    </div>
+                </nav>
+            }
+        </div>
+
+        <!-- Main Content -->
+        <div id="layoutSidenav_content">
+            <main>
+                @RenderBody()
+            </main>
+        </div>
     </div>
 
     <footer class="footer-admin mt-auto footer-light">
@@ -656,8 +666,43 @@
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.3/dist/sweetalert2.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
+
     <script>
-        feather.replace();
+        feather.replace(); // Initialize Feather Icons
+
+        // // Toggle sidebar visibility
+        // document.getElementById('openMenu').addEventListener('click', function () {
+        //     document.getElementById('menu').classList.add('show');
+        // });
+
+        // // Close sidebar when clicking the close button
+        // document.getElementById('closeMenu').addEventListener('click', function () {
+        //     document.getElementById('menu').classList.remove('show');
+        // });
+        document.addEventListener('DOMContentLoaded', function () {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const sidebar = document.querySelector('.sidebar-nav');
+
+            // Toggle sidebar visibility
+            menuToggle.addEventListener('click', function () {
+                if (sidebar.classList.contains('show')) {
+                    sidebar.classList.remove('show');
+                    sidebar.style.display = 'none'; // Hide sidebar
+                } else {
+                    sidebar.style.display = 'block'; // Show sidebar
+                    sidebar.classList.add('show');
+                }
+            });
+
+            // Optional: Hide sidebar when clicking outside
+            document.addEventListener('click', function (e) {
+                if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
+                    sidebar.classList.remove('show');
+                    sidebar.style.display = 'none';
+                }
+            });
+        });
+
     </script>
 
     <script>

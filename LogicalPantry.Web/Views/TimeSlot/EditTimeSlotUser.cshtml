@@ -11,7 +11,7 @@
     <link href="~/css/site.css" rel="stylesheet" />
     <link href="~/css/Style.css" rel="stylesheet" />
     <link href="~/css/StyleSheet.css" rel="stylesheet" />
-   
+
     <style>
         /* Flexbox to align the Save button */
         #saveButtonDiv {
@@ -128,12 +128,7 @@
             width: 100%;
         }
 
-        @@media (max-width: 768px) {
-            .form-group {
-                margin-left: 0;
-            }
-        }
-
+      
         .nav-fixed #layoutSidenav #layoutSidenav_nav .sidenav {
             padding-top: 0rem;
         }
@@ -185,6 +180,53 @@
                 visibility: visible;
                 opacity: 1;
             }
+
+        #userTable {
+            max-height: 300px; /* Set a fixed height for the container */
+            overflow-y: auto; /* Enable vertical scrolling */
+            overflow-x: hidden; /* Prevent horizontal scrolling */
+        }
+
+             /* Mobile view adjustments */
+        @@media (max-width: 768px) {
+            .container-fluid {
+                padding: 0 15px;
+                max-width: 100%;
+            }
+
+            .card {
+                width: 180%;
+                margin: 0;
+                border: none;
+                box-shadow: none;
+            }
+
+            /* Adjust table cell padding and font for smaller screens */
+            .table thead th, .table tbody td {
+                font-size: 0.9rem;
+                padding: 0.5rem;
+            }
+
+            #saveButtonDiv {
+                display: flex;
+                justify-content: center;
+                margin-top: 1rem;
+            }
+
+            .saveButton {
+                font-size: 0.9rem;
+                padding: 0.5rem 1rem;
+            }
+
+            #userTable
+            {
+                max-height: 300px; /* Set a fixed height for the container */
+                overflow-y: auto; /* Enable vertical scrolling */
+                overflow-x: hidden; /* Prevent horizontal scrolling */
+                width : 100%;
+            }
+        }
+    </style>
     </style>
 </head>
 
@@ -276,7 +318,9 @@
     <script>      
 
         $(document).ready(function () {
-            debugger;
+
+
+
             $(document).ready(function () {
                 $('header.page-header').remove(); // Removes the header with class 'page-header'
             });
