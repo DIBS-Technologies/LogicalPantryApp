@@ -252,6 +252,7 @@
                 display: block;
                 opacity: 1;
                 transform: translateY(0);
+                overflow: hidden;
             }
 
         html, body {
@@ -335,6 +336,7 @@
         /* Default: Sidebar hidden on larger screens */
         .sidebar-nav, .menu-toggle {
             display: none; /* Hide by default */
+            overflow: hidden;
         }
 
         /* Sidebar Styling */
@@ -417,10 +419,12 @@
                 height: 300px; /* Reduced height */
                 overflow-y: auto;
                 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                overflow: hidden;
             }
 
             #layoutSidenav_content {
                 margin-left: 0;
+
             }
 
             #pageName {
@@ -432,7 +436,8 @@
 
 
             .sidebar-nav, .menu-toggle {
-                display: block; 
+                display: block;
+                overflow: hidden;
             }
            
             .menu-toggle {
@@ -456,18 +461,56 @@
            
             .d-lg-none {
                 display: block;
+                overflow: hidden;
             }
           
             .sidebar-nav {
-                left: -60%;
+                left: -70%;
                 height: 250px;
                 width: 100%; 
                 max-width: 200px;
+                overflow: hidden;
             }
                 .sidebar-nav.show {
                     left: 0;
                     margin-top: -10px;
+                    overflow: hidden;
                 }
+        }
+
+        @@media (max-width: 468px) {
+            .topnav .navbar-nav {
+                display: flex;
+                flex-wrap: wrap;
+             /*    gap: 0.3rem; */
+                
+            }
+
+            .nav-item.dropdown.no-caret.dropdown-user {
+                margin-right: 0 !important; /* Override any margin applied by me-3 or me-lg-4 */
+            }
+            #sidenavAccordion
+            {
+                padding-right: 8px;
+            }
+
+         
+        }
+
+        @@media (max-width: 368px) {
+            .topnav .navbar-nav {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.2rem;
+            }
+
+            .nav-item.dropdown.no-caret.dropdown-user {
+                margin-right: 0 !important; /* Override any margin applied by me-3 or me-lg-4 */
+            }
+
+            #sidenavAccordion {
+                padding-right: 8px;
+            }
         }
      
 </style>

@@ -187,14 +187,18 @@
             padding-right: 0;
             top: 1rem;
             padding-bottom: 5rem;
+      
+
         }
 
         .nav-fixed #layoutSidenav #layoutSidenav_content {
             padding-left: @(User.Identity.IsAuthenticated ? (isAdmin ? "7.5rem" : "") : "0");
             /* padding-right: 2rem; */
             top: 1rem;
-            padding-bottom: @(User.Identity.IsAuthenticated ? (isAdmin ? "0rem" : "5rem") : "0");
-            ;
+           /*  padding-bottom: @(User.Identity.IsAuthenticated ? (isAdmin ? "0rem" : "5rem") : "0");
+            ; */
+            padding-bottom: 0;
+          /*   margin-left: 0px; */
         }
 
         .nav-fixed #layoutSidenav #layoutSidenav_nav .sidenav {
@@ -225,101 +229,221 @@
             border-style: none;
             max-height: 40px;
         }
-
-      
-        /* Mobile view */
-@@media (max-width: 968px) {
-            .topnav {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 0 1rem;
-                background-color: white;
-                height: 60px; /* Adjust based on navbar height */
-                width: 100%; /* Ensure full width */
-            }
-
-                .topnav .navbar-nav {
-                    display: flex;
-                    flex-direction: row;
-                    margin-left: auto; /* Push links to the right */
-                    justify-content: end;
-                }
-
-                .topnav .nav-link {
-                    padding-right: 1rem;
-                    padding-left: 1rem;
-                    font-weight: normal;
-                    transition: color 0.3s, font-weight 0.3s;
-                }
-
-                    .topnav .nav-link:hover {
-                        color: #0061f2;
-                        font-weight: bold;
-                    }
-
-
-    
-
-    .page-name {
-        font-size: 1rem;
-    }
-
-    footer {
-        font-size: 0.9rem;
-    }
-
-    /* Sidebar management */
-    #layoutSidenav {
-        display: block; /* Stack elements vertically on smaller screens */
-    }
-
-    #layoutSidenav_content {
-        padding: 1rem;
-    }
-
-            #sidenavAccordion {
-                display: flex;
-                flex-direction: row;
-                margin-left: auto; /* Push links to the right */
-                justify-content: end;
-            }
-}
-
-/* Small mobile view */
-@@media (max-width: 280px) {
-    .topnav {
-        padding: 0.5rem;
-    }
-
-    .page-name {
-        font-size: 0.9rem;
-    }
-
-    .nav-link {
-        font-size: 0.85rem;
-        padding: 0.5rem;
-    }
-
-    footer {
-        padding: 8px;
-        font-size: 0.8rem;
-    }
-
-            #sidenavAccordion {
-                display: flex;
-                flex-direction: row;
-                margin-left: auto; /* Push links to the right */
-                justify-content: end;
-            }
-}
-
         #sidenavAccordion {
             display: flex;
             flex-direction: row;
-            margin-left: auto; /* Push links to the right */
+            margin-left: auto; 
             justify-content: end;
         }
+
+        /* add by jayant*/
+
+      
+        /* Default: Sidebar hidden on larger screens */
+        .sidebar-nav, .menu-toggle {
+            display: none; /* Hide by default */
+        }
+
+        /* Sidebar Styling */
+        .sidebar-nav {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100%;
+            background-color: #f1f1f1;
+            color: #333;
+            overflow-y: auto;
+            transition: left 0.3s ease;
+            z-index: 1000;
+        }
+
+            .sidebar-nav .inner {
+                padding: 20px;
+            }
+
+            .sidebar-nav h2 {
+                color: #333;
+                margin-top: 0;
+            }
+
+            /* Links styling */
+            .sidebar-nav ul {
+                list-style: none;
+                padding: 0;
+            }
+
+            /* Menu open class */
+            .sidebar-nav.show {
+                left: 0; /* Slide in */
+            }
+
+            /* Close button */
+            .sidebar-nav .close {
+                display: block;
+                padding: 10px 20px;
+                color: #333;
+                text-align: center;
+                text-decoration: none;
+                background-color: #444;
+                cursor: pointer;
+            }
+
+       
+
+        @@media (max-width: 767px) {
+           /*  iframe {
+           
+                padding-left: @(isAuthenticated ? "34%" : "52%");
+
+            }  */         
+              
+
+            .sidenav {
+                position: absolute;
+                top: 60px;
+                left: 0;
+                width: 100%;
+                height: 300px;
+                overflow-y: auto;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            
+            #layoutSidenav_content {
+                margin-left: 0;
+                padding-bottom: 0px;
+            }
+
+            #pageName {
+                display: flex;
+                justify-content: start;
+                margin-left: 2%;
+                font-size: 0.91rem;
+            }
+
+
+            .sidebar-nav, .menu-toggle {
+                display: block;
+            }
+
+            .menu-toggle {
+                top: 15px;
+                left: 15px;
+                background: none;
+                color: #000;
+                padding: 10px 15px;
+                border: none;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 16px;
+                z-index: 1050;
+                display: inline-block;
+                padding-left: 0px;
+                padding-top: 0px;
+                padding-bottom: 0px;
+                padding-right: 0px;
+            }
+
+            .d-lg-none {
+                display: block;
+            }
+
+            .sidebar-nav {
+                left: -70%;
+                height: 250px;
+                width: 100%;
+                max-width: 200px;
+            }
+
+                .sidebar-nav.show {
+                    left: 0;
+                    margin-top: -10px;
+                }
+
+            iframe {
+                padding-left: @(isAuthenticated ? "34%" : "51%");
+            }
+
+            /* .nav-fixed #layoutSidenav #layoutSidenav_content {
+              
+                   margin-left: 0px; 
+            } */
+        }
+
+            /* Media Query for max-width: 468px */
+            @@media (max-width: 368px) {
+                iframe {
+                    padding-left: @(isAuthenticated ? "37%" : "55%") !important;
+                }
+            }
+
+          @@media (min-width: 768px) and (max-width: 1000px) 
+            {
+                iframe {
+                    padding-left: @(isAuthenticated ? "22%" : "37%") !important;
+                }
+
+            .sidenav {
+                position: absolute;
+                top: 60px;
+                left: 0;
+                width: 100%;
+                height: 300px;
+                overflow-y: auto;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            }
+
+            #layoutSidenav_content {
+                margin-left: 0;
+                padding-bottom: 0px;
+            }
+
+            #pageName {
+                display: flex;
+                justify-content: start;
+                margin-left: 2%;
+                font-size: 0.91rem;
+            }
+
+
+            .sidebar-nav, .menu-toggle {
+                display: block;
+            }
+
+            .menu-toggle {
+                top: 15px;
+                left: 15px;
+                background: none;
+                color: #000;
+                padding: 10px 15px;
+                border: none;
+                cursor: pointer;
+                font-weight: 600;
+                font-size: 16px;
+                z-index: 1050;
+                display: inline-block;
+                padding-left: 0px;
+                padding-top: 0px;
+                padding-bottom: 0px;
+                padding-right: 0px;
+            }
+
+            .d-lg-none {
+                display: block;
+            }
+
+            .sidebar-nav {
+                left: -70%;
+                height: 350px;
+                width: 100%;
+                max-width: 200px;
+            }
+
+                .sidebar-nav.show {
+                    left: 0;
+                    margin-top: -10px;
+                }
+            }
 
        
     </style>
@@ -333,12 +457,6 @@
                 <img id="logoImage" @* src="" *@ style="padding-left: 10px; opacity:100%" />
             </div>
             <div class="page-name" id="pageName">
-                @*   @{
-                string formattedPageName = !string.IsNullOrEmpty(pagename)
-                ? char.ToUpper(pagename.Replace(".html", " ")[0]) + pagename.Replace(".html", " ").Substring(1)
-                : "";
-                } *@
-                @*    @pagename *@
             </div>
      
 
@@ -382,9 +500,47 @@
                @*  <input id="pag" type="hidden" name="name" value="@pagename" /> *@
                 <input id="HomePag" type="hidden" name="homePageName" value="@homePageName" />
                 <input type="hidden" value="@isUser" id="isUser" />
+                @if (isAuthenticated && (isAdmin || !isUser))
+                {
+                    <button id="openMenu" class="menu-toggle">☰</button>
+                }
             </div>
+
+           
         </nav>
-        
+
+
+
+            <nav id="menu" class="sidebar-nav">
+                @*  <div class="inner"> *@
+                <ul>
+                    @*   <div class="sidenav-menu-heading">Admin</div>
+                    <li><a class="nav-link" href="/@tenantName/Information/AddTenant">  <div class="nav-link-icon"><i data-feather="file"></i></div>Information</a></li>
+                    <li><a class="nav-link" href="/@tenantName/User/ManageUsers">    <div class="nav-link-icon"><i data-feather="users"></i></div>User Management</a></li>
+                    <li><a class="nav-link" href="/@tenantName/TimeSlot/Calendar"> <div class="nav-link-icon"><i data-feather="calendar"></i></div>Pickup Slots</a></li> *@
+                    <nav class="sidenav shadow-right sidenav-light">
+                        <div class="sidenav-menu">
+                            <div class="nav accordion" id="accordionSidenav">
+                                <div class="sidenav-menu-heading">Admin</div>
+                                <a class="nav-link" href="/@tenantName/Information/AddTenant">
+                                    <div class="nav-link-icon"><i data-feather="file"></i></div>
+                                    Information
+                                </a>
+                                <a class="nav-link" href="/@tenantName/User/ManageUsers">
+                                    <div class="nav-link-icon"><i data-feather="users"></i></div>
+                                    User Management
+                                </a>
+                                <a class="nav-link" href="/@tenantName/TimeSlot/Calendar">
+                                    <div class="nav-link-icon"><i data-feather="calendar"></i></div>
+                                    Pickup Slots
+                                </a>
+                            </div>
+                        </div>
+                    </nav>
+                </ul>
+                
+            </nav>
+
         <div id="layoutSidenav_content">
             <main id="iframe">
                 @* <iframe src="" id="urlFrameId"></iframe> *@
@@ -398,9 +554,54 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.9.0/feather.min.js"></script>
     @section Scripts {
         <script>
+            feather.replace(); // Initialize Feather Icons
+
+            // // Toggle sidebar visibility
+            // document.getElementById('openMenu').addEventListener('click', function () {
+            //     document.getElementById('menu').classList.add('show');
+            // });
+
+            // // Close sidebar when clicking the close button
+            // document.getElementById('closeMenu').addEventListener('click', function () {
+            //     document.getElementById('menu').classList.remove('show');
+            // });
+            $(document).ready(function () {
+                // Toggle sidebar visibility when menu toggle is clicked
+                $(".menu-toggle").click(function (event) {
+                    event.stopPropagation(); // Prevent event propagation to the document
+                    $(".sidebar-nav").toggleClass("show"); // Toggle 'show' class to open/close sidenav
+                });
+
+                // Stop propagation for clicks inside the sidebar
+                $(".sidebar-nav").click(function (event) {
+                    event.stopPropagation(); // Prevent event propagation to the document
+                });
+
+                // Hide sidebar when clicking outside of it
+                $(document).click(function () {
+                    $(".sidebar-nav").removeClass("show"); // Remove 'show' class to hide sidenav
+                });
+
+                // Hide sidebar when clicking on the element with id "urlFrameId"
+                $("#urlFrameId").on("click", function () {
+                    $(".sidebar-nav").removeClass("show"); // Remove 'show' class to hide sidenav
+                });
+            });
+
+
+        </script>
+        <script>
+           
            
 
             $(document).ready(function () {
+
+               
+                // $(".menu-toggle").click(function () {
+                //     $(".sidebar-nav").toggleClass("show"); // Toggle 'show' class to open/close sidenav
+                // });
+
+
                 var isAdmin = '@isAdmin.ToString().ToLower()'; // Convert boolean to lowercase string
                 var isAuthenticated = '@isAuthenticated.ToString().ToLower()'; // Convert boolean to lowercase string
                 if (isAdmin === 'false' && isAuthenticated === 'true') {

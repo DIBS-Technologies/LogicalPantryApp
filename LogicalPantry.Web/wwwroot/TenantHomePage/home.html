@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nature-Themed Responsive Page</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            color: #333;
+            background-color: #eef2f3;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Header */
+        header {
+            background: #2e8b57;
+            color: #fff;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 1rem;
+        }
+
+            nav ul li a {
+                color: #fff;
+                font-weight: bold;
+                transition: color 0.3s ease;
+            }
+
+                nav ul li a:hover {
+                    color: #f4a261;
+                }
+
+        /* Hero Section */
+        .hero {
+            background: url('https://source.unsplash.com/random/1200x800?nature,forest') center/cover no-repeat;
+            color: #fff;
+            height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 1rem;
+        }
+
+            .hero h2 {
+                font-size: 2.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .hero p {
+                font-size: 1.2rem;
+                max-width: 600px;
+            }
+
+            .hero button {
+                margin-top: 1rem;
+                padding: 0.8rem 1.5rem;
+                background: #f4a261;
+                color: #fff;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 1rem;
+                transition: background 0.3s ease;
+            }
+
+                .hero button:hover {
+                    background: #e76f51;
+                }
+
+        /* Features Section */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            padding: 2rem;
+            background: #fff;
+        }
+
+        .feature {
+            background: #eef2f3;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            text-align: center;
+            padding: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+            .feature img {
+                width: 100%;
+                height: auto;
+                margin-bottom: 1rem;
+            }
+
+            .feature h3 {
+                font-size: 1.4rem;
+                margin-bottom: 0.5rem;
+            }
+
+            .feature p {
+                font-size: 1rem;
+                color: #555;
+            }
+
+            .feature:hover {
+                transform: translateY(-5px);
+            }
+
+        /* Footer */
+        footer {
+            background: #2e8b57;
+            color: #fff;
+            padding: 1rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header>
+        <h1>Nature Bliss</h1>
+        <nav>
+            <ul>
+                <li><a href="#">Home</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Gallery</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h2>Discover the Beauty of Nature</h2>
+        <p>Experience the serenity of lush landscapes, vibrant forests, and the calming embrace of nature.</p>
+        <button>Explore More</button>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="feature">
+            <img src="https://source.unsplash.com/random/600x400?nature,mountain" alt="Mountains">
+            <h3>Breathtaking Mountains</h3>
+            <p>Escape to the peaks and feel the world below.</p>
+        </div>
+        <div class="feature">
+            <img src="https://source.unsplash.com/random/600x400?nature,river" alt="Rivers">
+            <h3>Serene Rivers</h3>
+            <p>Relax by flowing waters and embrace tranquility.</p>
+        </div>
+        <div class="feature">
+            <img src="https://source.unsplash.com/random/600x400?nature,forest" alt="Forests">
+            <h3>Lush Forests</h3>
+            <p>Step into the heart of nature and explore the greenery.</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        &copy; 2024 Nature Bliss. All rights reserved.
+    </footer>
+
+</body>
+</html>
