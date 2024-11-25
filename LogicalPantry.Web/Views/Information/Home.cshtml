@@ -364,6 +364,9 @@
                 padding-left: @(isAuthenticated ? "34%" : "51%");
             }
 
+            .user-padding {
+                padding-left: 27%;
+            }
             /* .nav-fixed #layoutSidenav #layoutSidenav_content {
               
                    margin-left: 0px; 
@@ -373,8 +376,10 @@
             /* Media Query for max-width: 468px */
             @@media (max-width: 368px) {
                 iframe {
-                    padding-left: @(isAuthenticated ? "37%" : "55%") !important;
+                    padding-left: @(isAuthenticated ? "38%" : "55%") !important;
                 }
+
+           
             }
 
           @@media (min-width: 768px) and (max-width: 1000px) 
@@ -443,9 +448,14 @@
                     left: 0;
                     margin-top: -10px;
                 }
+
+            .user-padding {
+                padding-left: 19%;
+            }
             }
 
        
+
     </style>
 
 </head>
@@ -542,8 +552,10 @@
             </nav>
 
         <div id="layoutSidenav_content">
-            <main id="iframe">
-                @* <iframe src="" id="urlFrameId"></iframe> *@
+     
+
+            <main id="iframe" class="@(isAuthenticated && isUser && !isAdmin ? "user-padding" : "")">
+               
             </main>
         </div>
     </div>
