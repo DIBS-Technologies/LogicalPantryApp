@@ -181,6 +181,36 @@ namespace LogicalPantry.Services.TimeSlotSignupService
             }
         }
 
+        public async Task<(bool success, string message)> DeleteTimeSlotSignUp(TimeSlotSignupDto dto)
+        {
 
+            try
+            {
+
+                if (dto == null)
+                {
+                    return (false, "Invalid time slot signup data.");
+
+                }
+
+                var timeslotSignUp = await dataContext.TimeSlotSignups
+                    .FirstOrDefaultAsync(s => s.TimeSlotId == dto.TimeSlotId && s.UserId == dto.UserId);
+
+                if (timeslotSignUp != null) 
+                {
+                    dataContext.TimeSlotSignups.Remove(timeslotSignUp);
+                    await dataContext.SaveChangesAsync();
+
+                }
+
+                return (true, "Your deregistration for this time slot was successful");
+                      
+            }
+            catch(Exception ex)
+            {
+                return (false, "Error adding time slot signup: " + ex.Message);
+            }
+            
+        }
     }
 }

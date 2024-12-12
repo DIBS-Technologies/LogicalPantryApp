@@ -417,9 +417,21 @@
                 padding-right: 0px;
                 padding-top: 0px;
             }
-
           
         }
+
+        /* Apply custom styling for the cancel (Deregister) button */
+        .swal2-popup .swal2-cancel {
+            background-color: red !important; /* Set the button color to red */
+            color: white !important; /* Set the text color to white */
+            border: none !important; /* Remove any border */
+        }
+
+            /* Optional: Apply a hover effect */
+            .swal2-popup .swal2-cancel:hover {
+                background-color: darkred !important;
+            }
+
     </style>
 </head>
 <header class="page-header page-header-compact page-header-light border-bottom bg-white mb-4 .pgaeheader">
@@ -479,74 +491,142 @@
                 var events = @Html.Raw(Json.Serialize(Model.Events));
 
 
-                $('#calendar').Calendar({
-                    locale: 'en',
-                    weekday: {
-                        timeline: {
-                            intervalMinutes: 60,
-                            fromHour: 7,
-                            toHour: 23
-                        }
+                // $('#calendar').Calendar({
+                //     locale: 'en',
+                //     weekday: {
+                //         timeline: {
+                //             intervalMinutes: 60,
+                //             fromHour: 7,
+                //             toHour: 23
+                //         }
+                //     },
+                //     events: events,
+                //     view: 'week',
+                //     defaultView: {
+                //         largeScreen: 'week',
+                //         smallScreen: 'day',
+                //         smallScreenThreshold: 1000
+                //     },
+                //     weekday: {
+                //         timeline: {
+                //             fromHour: 7,
+                //             toHour: 23,
+                //             intervalMinutes: 60,
+                //             format: 'HH:mm',
+                //             heightPx: 50,
+                //             autoResize: true
+                //         },
+                //         dayline: {
+                //             weekdays: [0, 1, 2, 3, 4, 5, 6],
+                //             format: 'MM/DD',
+                //             heightPx: 31,
+                //             month: {
+                //                 format: 'MMMM YYYY',
+                //                 heightPx: 30,
+                //                 weekFormat: 'w'
+                //             }
+                //         }
+                //     },
+                //     month: {
+                //         format: 'MMMM YYYY',
+                //         heightPx: 31,
+                //         weekline: {
+                //             format: 'w',
+                //             heightPx: 80
+                //         },
+                //         dayheader: {
+                //             weekdays: [0, 1, 2, 3, 4, 5, 6],
+                //             format: 'dddd',
+                //             heightPx: 30
+                //         },
+                //         day: {
+                //             format: 'MM/DD'
+                //         }
+                //     },
+                //     unixTimestamp: moment().format('X'),
+                //     event: {
+                //         hover: {
+                //             delay: 500000
+                //         }
+                //     },
+                //     categories: {
+                //         enable: true,
+                //         hover: {
+                //             delay: 500
+                //         }
+                //     }
+
+
+
+                // }).init();
+
+                 $('#calendar').Calendar({
+                locale: 'en',
+                weekday: {
+                    timeline: {
+                        intervalMinutes: 60,
+                        fromHour: 1, // Adjusted from 9 to 7
+                        toHour: 24
+                    }
+                },
+                events: events,
+                view: 'week',
+                defaultView: {
+                    largeScreen: 'week',
+                    smallScreen: 'day',
+                    smallScreenThreshold: 1000
+                },
+                weekday: {
+                    timeline: {
+                        fromHour: 1,
+                        toHour: 24,
+                        intervalMinutes: 60,
+                        format: 'HH:mm',
+                        heightPx: 50,
+                        autoResize: true
                     },
-                    events: events,
-                    view: 'week',
-                    defaultView: {
-                        largeScreen: 'week',
-                        smallScreen: 'day',
-                        smallScreenThreshold: 1000
-                    },
-                    weekday: {
-                        timeline: {
-                            fromHour: 7,
-                            toHour: 23,
-                            intervalMinutes: 60,
-                            format: 'HH:mm',
-                            heightPx: 50,
-                            autoResize: true
-                        },
-                        dayline: {
-                            weekdays: [0, 1, 2, 3, 4, 5, 6],
-                            format: 'MM/DD',
-                            heightPx: 31,
-                            month: {
-                                format: 'MMMM YYYY',
-                                heightPx: 30,
-                                weekFormat: 'w'
-                            }
-                        }
-                    },
-                    month: {
-                        format: 'MMMM YYYY',
+                    dayline: {
+                        weekdays: [0, 1, 2, 3, 4, 5, 6],
+                        format: 'MM/DD',
                         heightPx: 31,
-                        weekline: {
-                            format: 'w',
-                            heightPx: 80
-                        },
-                        dayheader: {
-                            weekdays: [0, 1, 2, 3, 4, 5, 6],
-                            format: 'dddd',
-                            heightPx: 30
-                        },
-                        day: {
-                            format: 'MM/DD'
-                        }
-                    },
-                    unixTimestamp: moment().format('X'),
-                    event: {
-                        hover: {
-                            delay: 500000
-                        }
-                    },
-                    categories: {
-                        enable: true,
-                        hover: {
-                            delay: 500
+                        month: {
+                            format: 'MMMM YYYY',
+                            heightPx: 30,
+                            weekFormat: 'w'
                         }
                     }
+                },
+                month: {
+                    format: 'MMMM YYYY',
+                    heightPx: 31,
+                    weekline: {
+                        format: 'w',
+                        heightPx: 80
+                    },
+                    dayheader: {
+                        weekdays: [0, 1, 2, 3, 4, 5, 6],
+                        format: 'dddd',
+                        heightPx: 30
+                    },
+                    day: {
+                        format: 'MM/DD'
+                    }
+                },
+                unixTimestamp: moment().format('X'),
+                event: {
+                    hover: {
+                        delay: 5000000
+                    },
 
+                },
+               categories: {
+                enable: true,
+                hover: {
+                  delay: 500
+                }
+              }
 
-
-                }).init();
+            }).init();
 
 
                 // Handle calendar event click and prevent default behavior
@@ -558,6 +638,16 @@
 
                     var startTimeISO = new Date(startTime * 1000).toISOString();
                     var endTimeISO = new Date(endTime * 1000).toISOString();
+
+                                  // Save event details in the temporary object
+                        tempEventStorage = {
+                            startTime: startTimeISO,
+                            endTime: endTimeISO,
+                            timeSlotName: timeSlotName
+                        };
+
+                        // Save event details in localStorage
+                        localStorage.setItem('eventDetails', JSON.stringify(tempEventStorage));
 
                     // Retrieve time slot ID based on the event details
                     $.ajax({
@@ -626,52 +716,257 @@
 
             });
            
-            function showMessage(message, isError) {
-                var modalTitle = 'Success';
-                var modalClass = 'success';
+            // function showMessage(message, isError) {
+            //     var modalTitle = 'Success';
+            //     var modalClass = 'success';
 
-                if (message.includes('You have already signed up for this time slot.')) {
-                    modalTitle = 'Warning';
-                    modalClass = 'warning'; // Change to warning for this specific message
-                } else if (message.includes('Slot is full please select different slot.')) {
-                    modalTitle = 'Warning';
-                    modalClass = 'warning'; // Change to warning for this specific message
-                } else if (message.includes('Successfully signed up for the time slot.')) {
-                    modalTitle = 'Success';
-                    modalClass = 'success';
-                } else if (isError) {
-                    modalTitle = 'Error';
-                    modalClass = 'error';
-                }
+            //     if (message.includes('You have already signed up for this time slot.')) {
+            //         modalTitle = 'Warning';
+            //         modalClass = 'warning'; // Change to warning for this specific message
+            //     } else if (message.includes('Slot is full please select different slot.')) {
+            //         modalTitle = 'Warning';
+            //         modalClass = 'warning'; // Change to warning for this specific message
+            //     } else if (message.includes('Successfully signed up for the time slot.')) {
+            //         modalTitle = 'Success';
+            //         modalClass = 'success';
+            //     } else if (isError) {
+            //         modalTitle = 'Error';
+            //         modalClass = 'error';
+            //     }
 
-                console.log(message);
+            //     console.log(message);
 
-                Swal.fire({
-                    title: modalTitle,
-                    text: message,
-                    icon: modalClass,
-                    showConfirmButton: true,
-                    customClass: {
-                        container: 'swal-container',
-                        popup: 'swal-popup',
-                        title: 'swal-title',
-                        content: 'swal-content'
-                    },
-                    didClose: function () {
-                        // Restore the scroll behavior after the modal is hidden
-                        $('body').css({
-                            'overflow-y': 'auto',
-                            'overflow-x': 'hidden'
-                        });
-                    }
-                });
+            //     Swal.fire({
+            //         title: modalTitle,
+            //         text: message,
+            //         icon: modalClass,
+            //         showConfirmButton: true,
+            //         customClass: {
+            //             container: 'swal-container',
+            //             popup: 'swal-popup',
+            //             title: 'swal-title',
+            //             content: 'swal-content'
+            //         },
+            //         didClose: function () {
+            //             // Restore the scroll behavior after the modal is hidden
+            //             $('body').css({
+            //                 'overflow-y': 'auto',
+            //                 'overflow-x': 'hidden'
+            //             });
+            //         }
+            //     });
 
-                // Prevent horizontal scroll bar
-                $('body').css({
-                    'overflow-y': 'auto',
-                    'overflow-x': 'hidden'
-                });
+            //     // Prevent horizontal scroll bar
+            //     $('body').css({
+            //         'overflow-y': 'auto',
+            //         'overflow-x': 'hidden'
+            //     });
+            // }
+
+
+        //   function showMessage(message, isError) {
+        //     var modalTitle = 'Success';
+        //     var modalClass = 'success';
+        //    var showCancel = true;
+        //     if (message.includes('You have already signed up for this time slot.')) {
+        //         modalTitle = 'Warning';
+        //         modalClass = 'warning'; // Change to warning for this specific message
+        //     } else if (message.includes('Slot is full please select different slot.')) {
+        //         modalTitle = 'Warning';
+        //         modalClass = 'warning'; // Change to warning for this specific message
+        //     } else if (message.includes('Successfully signed up for the time slot.')) {
+        //         modalTitle = 'Success';
+        //         modalClass = 'success';
+        //     } else if (isError) {
+        //         modalTitle = 'Error';
+        //         modalClass = 'error';
+        //     }
+
+        //     console.log(message);
+
+        //    Swal.fire({
+        //     title: modalTitle,
+        //     text: message,
+        //     icon: modalClass,
+        //     showConfirmButton: true,
+        //     // showCancelButton: true,
+        //     showCancelButton: showCancel,
+        //     cancelButtonText: 'Deregister', // Adds a deregister button
+        //     customClass: {
+        //         container: 'swal-container',
+        //         popup: 'swal-popup',
+        //         title: 'swal-title',
+        //         content: 'swal-content',
+        //         confirmButton: 'swal-confirm-button', // For styling the confirm button
+        //         cancelButton: 'swal-cancel-button' // Custom class for the cancel button
+        //     },
+        //     didClose: function () {
+        //         // Restore the scroll behavior after the modal is hidden
+        //         $('body').css({
+        //             'overflow-y': 'auto',
+        //             'overflow-x': 'hidden'
+        //         });
+        //     }
+        // }).then((result) => {
+            
+        //     if (result.dismiss === Swal.DismissReason.cancel) {
+        //         // Call the controller method to deregister
+        //         deregisterTimeSlot();
+        //         console.log("function call deregister");
+        //     }
+        // });
+
+
+
+        //     // Prevent horizontal scroll bar
+        //     $('body').css({
+        //         'overflow-y': 'auto',
+        //         'overflow-x': 'hidden'
+        //     });
+        // }
+
+
+
+           function showMessage(message, isError) {
+            var modalTitle = 'Success';
+            var modalClass = 'success';
+            var showCancel = true; // Default to showing the cancel button
+
+            if (message.includes('You have already signed up for this time slot.')) {
+                modalTitle = 'Warning';
+                modalClass = 'warning'; // Change to warning for this specific message
+            } else if (message.includes('Slot is full please select different slot.')) {
+                modalTitle = 'Warning';
+                modalClass = 'warning'; // Change to warning for this specific message
+                 showCancel = false; // Hide the cancel button for this message as well
+            } else if (message.includes('Successfully signed up for the time slot.')) {
+                modalTitle = 'Success';
+                modalClass = 'success';
+                showCancel = false; // Hide the cancel button (Deregister) for this message
+            } else if (message.includes('Your deregistration for this time slot was successful')) {
+                modalTitle = 'Success';
+                modalClass = 'success';
+                showCancel = false; // Hide the cancel button for this message as well
+            } else if (isError) {
+                modalTitle = 'Error';
+                modalClass = 'error';
             }
+
+            console.log(message);
+
+            Swal.fire({
+                title: modalTitle,
+                text: message,
+                icon: modalClass,
+                showConfirmButton: true,
+                showCancelButton: showCancel, // Show or hide the cancel button based on condition
+                cancelButtonText: 'Deregister', // Adds a deregister button
+                customClass: {
+                    container: 'swal-container',
+                    popup: 'swal-popup',
+                    title: 'swal-title',
+                    content: 'swal-content',
+                    confirmButton: 'swal-confirm-button', // For styling the confirm button
+                    cancelButton: 'swal-cancel-button' // Custom class for the cancel button
+                },
+                didClose: function () {
+                    // Restore the scroll behavior after the modal is hidden
+                    $('body').css({
+                        'overflow-y': 'auto',
+                        'overflow-x': 'hidden'
+                    });
+                }
+            }).then((result) => {
+                if (result.dismiss === Swal.DismissReason.cancel) {
+                    // Call the controller method to deregister
+                    deregisterTimeSlot();
+                    console.log("function call deregister");
+                }
+            });
+
+            // Prevent horizontal scroll bar
+            $('body').css({
+                'overflow-y': 'auto',
+                'overflow-x': 'hidden'
+            });
+        }
+
+
+        function deregisterTimeSlot() {
+                  // Retrieve event details from localStorage
+            var savedEventDetails = JSON.parse(localStorage.getItem('eventDetails'));
+
+                    if (savedEventDetails) {
+                        // Extract values from the saved event details
+                        var startTimeISO = savedEventDetails.startTime;
+                        var endTimeISO = savedEventDetails.endTime;
+                        var timeSlotName = savedEventDetails.timeSlotName;
+                    }
+
+                      $.ajax({
+                        url: 'GetTimeSlotId',
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({
+                            StartTime: startTimeISO,
+                            EndTime: endTimeISO,
+                            TimeSlotName: timeSlotName
+                        }),
+                        success: function (response) {
+                            // $('#modal-content').css('display', 'None');
+                            if (response && response.timeSlotId ) {
+                                console.log("" + response.maxUsers);
+                                // Get user email from the claims
+                                var userEmail = $('#Email').val();
+
+                                // Retrieve user ID based on email
+                                $.ajax({
+                                    url: '/@tenantName/User/GetUserIdByEmail',
+                                    type: 'POST',
+                                    contentType: 'application/json',
+                                    data: JSON.stringify({ Email: userEmail }),
+                                    success: function (userResponse) {
+
+                                        if (userResponse && userResponse.userId) {
+                                            // Sign up for the time slot
+                                            $.ajax({
+                                                url: '/@tenantName/TimeSlotSignup/DeleteTimeSlotSignUps',
+                                                type: 'POST',
+                                                contentType: 'application/json',
+                                                data: JSON.stringify({
+                                                    TimeSlotId: response.timeSlotId,
+                                                    UserId: userResponse.userId,
+                                                    MaxNumberOfUsers: response.maxUsers,
+                                                    Attended: false
+                                                }),
+                                                // localStorage.removeItem('eventDetails'),
+                                                success: function (signupResponse) {
+                                                    showMessage(signupResponse.message);
+
+                                                },
+                                                error: function (xhr, status, error) {
+                                                    var response = xhr.responseJSON;
+                                                    showMessage(response ? response.message : error, true);
+                                                }
+                                            });
+                                        } else {
+                                            showMessage('User not found.', true);
+                                        }
+                                    },
+                                    error: function (xhr, status, error) {
+                                        showMessage('Something went wrong. Please try again later.' + error, true);
+                                    }
+                                });
+                            } else {
+                                showMessage('Time slot not found.', true);
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            showMessage('Something went wrong. Please try again later.' + error, true);
+                        }
+                    });
+        }
+
         });
     </script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

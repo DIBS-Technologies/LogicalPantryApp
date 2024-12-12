@@ -102,6 +102,41 @@ namespace LogicalPantry.Web.Controllers
             }
         }
 
+        [HttpPost("DeleteTimeSlotSignUps")]
+        public async Task<IActionResult> DeleteTimeSlotSignUps([FromBody] TimeSlotSignupDto dto)
+        {
+            _logger.LogInformation("DeleteTimeSlotSignUps method call started.");
+
+            if(dto == null)
+            {
+                return BadRequest(new {success = false, message = "Invalid data" });
+            }
+
+            try
+            {
+                var (success, message) = await _timeSlotSignupService.DeleteTimeSlotSignUp(dto);
+
+                if (success)
+                {
+                    _logger.LogInformation("DeleteTimeSlotSignUps method call ended.");
+                    return Ok(new { success = true, message = message });
+                }
+                else
+                {
+                    // Use Conflict (409) for cases where there is a conflict (e.g., duplicate sign-up)
+                    return Conflict(new { success = false, message = message });
+                }
+            }
+            catch (Exception ex)
+            {
+                // Log exception
+                // Example: logger.LogError(ex, "Exception occurred in AddTimeSlotSignUps.");
+                _logger.LogCritical($"Internal server error: {ex.Message}, Stack Trace: {ex.StackTrace}");
+                return StatusCode(500, new { success = false, message = "Exception occurred: " + ex.Message });
+            }
+           
+        }
+
 
 
     }

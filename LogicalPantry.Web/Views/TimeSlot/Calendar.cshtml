@@ -362,8 +362,8 @@
                 weekday: {
                     timeline: {
                         intervalMinutes: 60,
-                        fromHour: 7, // Adjusted from 9 to 7
-                        toHour: 23
+                        fromHour: 1, // Adjusted from 9 to 7
+                        toHour: 24
                     }
                 },
                 events: events,
@@ -375,8 +375,8 @@
                 },
                 weekday: {
                     timeline: {
-                        fromHour: 7,
-                        toHour: 23,
+                        fromHour: 1,
+                        toHour: 24,
                         intervalMinutes: 60,
                         format: 'HH:mm',
                         heightPx: 50,
@@ -655,10 +655,10 @@
                         const startMinutes = startDateTimeInput2.getMinutes();
 
                         // Validate that the time is after 7:00 AM
-                        if (startHours < 7 || (startHours === 7 && startMinutes < 0)) {
-                            $('#startError').text('Please select a start time after 7 AM.');
-                            isValid = false;
-                        }
+                        // if (startHours < 7 || (startHours === 7 && startMinutes < 0)) {
+                        //     $('#startError').text('Please select a start time after 7 AM.');
+                        //     isValid = false;
+                        // }
                     }
                 
         
