@@ -715,117 +715,7 @@
 
 
             });
-           
-            // function showMessage(message, isError) {
-            //     var modalTitle = 'Success';
-            //     var modalClass = 'success';
-
-            //     if (message.includes('You have already signed up for this time slot.')) {
-            //         modalTitle = 'Warning';
-            //         modalClass = 'warning'; // Change to warning for this specific message
-            //     } else if (message.includes('Slot is full please select different slot.')) {
-            //         modalTitle = 'Warning';
-            //         modalClass = 'warning'; // Change to warning for this specific message
-            //     } else if (message.includes('Successfully signed up for the time slot.')) {
-            //         modalTitle = 'Success';
-            //         modalClass = 'success';
-            //     } else if (isError) {
-            //         modalTitle = 'Error';
-            //         modalClass = 'error';
-            //     }
-
-            //     console.log(message);
-
-            //     Swal.fire({
-            //         title: modalTitle,
-            //         text: message,
-            //         icon: modalClass,
-            //         showConfirmButton: true,
-            //         customClass: {
-            //             container: 'swal-container',
-            //             popup: 'swal-popup',
-            //             title: 'swal-title',
-            //             content: 'swal-content'
-            //         },
-            //         didClose: function () {
-            //             // Restore the scroll behavior after the modal is hidden
-            //             $('body').css({
-            //                 'overflow-y': 'auto',
-            //                 'overflow-x': 'hidden'
-            //             });
-            //         }
-            //     });
-
-            //     // Prevent horizontal scroll bar
-            //     $('body').css({
-            //         'overflow-y': 'auto',
-            //         'overflow-x': 'hidden'
-            //     });
-            // }
-
-
-        //   function showMessage(message, isError) {
-        //     var modalTitle = 'Success';
-        //     var modalClass = 'success';
-        //    var showCancel = true;
-        //     if (message.includes('You have already signed up for this time slot.')) {
-        //         modalTitle = 'Warning';
-        //         modalClass = 'warning'; // Change to warning for this specific message
-        //     } else if (message.includes('Slot is full please select different slot.')) {
-        //         modalTitle = 'Warning';
-        //         modalClass = 'warning'; // Change to warning for this specific message
-        //     } else if (message.includes('Successfully signed up for the time slot.')) {
-        //         modalTitle = 'Success';
-        //         modalClass = 'success';
-        //     } else if (isError) {
-        //         modalTitle = 'Error';
-        //         modalClass = 'error';
-        //     }
-
-        //     console.log(message);
-
-        //    Swal.fire({
-        //     title: modalTitle,
-        //     text: message,
-        //     icon: modalClass,
-        //     showConfirmButton: true,
-        //     // showCancelButton: true,
-        //     showCancelButton: showCancel,
-        //     cancelButtonText: 'Deregister', // Adds a deregister button
-        //     customClass: {
-        //         container: 'swal-container',
-        //         popup: 'swal-popup',
-        //         title: 'swal-title',
-        //         content: 'swal-content',
-        //         confirmButton: 'swal-confirm-button', // For styling the confirm button
-        //         cancelButton: 'swal-cancel-button' // Custom class for the cancel button
-        //     },
-        //     didClose: function () {
-        //         // Restore the scroll behavior after the modal is hidden
-        //         $('body').css({
-        //             'overflow-y': 'auto',
-        //             'overflow-x': 'hidden'
-        //         });
-        //     }
-        // }).then((result) => {
-            
-        //     if (result.dismiss === Swal.DismissReason.cancel) {
-        //         // Call the controller method to deregister
-        //         deregisterTimeSlot();
-        //         console.log("function call deregister");
-        //     }
-        // });
-
-
-
-        //     // Prevent horizontal scroll bar
-        //     $('body').css({
-        //         'overflow-y': 'auto',
-        //         'overflow-x': 'hidden'
-        //     });
-        // }
-
-
+         
 
            function showMessage(message, isError) {
             var modalTitle = 'Success';
@@ -892,10 +782,10 @@
         }
 
 
+        
         function deregisterTimeSlot() {
                   // Retrieve event details from localStorage
             var savedEventDetails = JSON.parse(localStorage.getItem('eventDetails'));
-
                     if (savedEventDetails) {
                         // Extract values from the saved event details
                         var startTimeISO = savedEventDetails.startTime;
@@ -911,9 +801,12 @@
                             StartTime: startTimeISO,
                             EndTime: endTimeISO,
                             TimeSlotName: timeSlotName
+                            
                         }),
                         success: function (response) {
                             // $('#modal-content').css('display', 'None');
+                            localStorage.removeItem('eventDetails');
+
                             if (response && response.timeSlotId ) {
                                 console.log("" + response.maxUsers);
                                 // Get user email from the claims
@@ -926,11 +819,12 @@
                                     contentType: 'application/json',
                                     data: JSON.stringify({ Email: userEmail }),
                                     success: function (userResponse) {
-
+                                        var savedEventDetails = JSON.parse(localStorage.getItem('eventDetails'));
+                                        console.log("Saved events", savedEventDetails);
                                         if (userResponse && userResponse.userId) {
                                             // Sign up for the time slot
                                             $.ajax({
-                                                url: '/@tenantName/TimeSlotSignup/DeleteTimeSlotSignUps',
+                                                url: '/@tenantName/TimeSlotSignup/DeRegisterUserForTimeSlot',
                                                 type: 'POST',
                                                 contentType: 'application/json',
                                                 data: JSON.stringify({
@@ -956,6 +850,7 @@
                                     error: function (xhr, status, error) {
                                         showMessage('Something went wrong. Please try again later.' + error, true);
                                     }
+                                    
                                 });
                             } else {
                                 showMessage('Time slot not found.', true);

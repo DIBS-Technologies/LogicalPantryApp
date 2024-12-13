@@ -102,8 +102,10 @@ namespace LogicalPantry.Web.Controllers
             }
         }
 
-        [HttpPost("DeleteTimeSlotSignUps")]
-        public async Task<IActionResult> DeleteTimeSlotSignUps([FromBody] TimeSlotSignupDto dto)
+      
+        [Authorize(Roles = $"{UserRoleEnum.User}")]
+        [HttpPost("DeRegisterUserForTimeSlot")]
+        public async Task<IActionResult> DeRegisterUserForTimeSlot([FromBody] TimeSlotSignupDto dto)
         {
             _logger.LogInformation("DeleteTimeSlotSignUps method call started.");
 
@@ -114,7 +116,7 @@ namespace LogicalPantry.Web.Controllers
 
             try
             {
-                var (success, message) = await _timeSlotSignupService.DeleteTimeSlotSignUp(dto);
+                var (success, message) = await _timeSlotSignupService.DeRegisterUserForTimeSlot(dto);
 
                 if (success)
                 {

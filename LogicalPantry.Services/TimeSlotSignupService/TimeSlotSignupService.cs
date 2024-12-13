@@ -181,21 +181,29 @@ namespace LogicalPantry.Services.TimeSlotSignupService
             }
         }
 
-        public async Task<(bool success, string message)> DeleteTimeSlotSignUp(TimeSlotSignupDto dto)
+
+        /// <summary>
+        /// DeRegister user for time slot.
+        /// </summary>
+        /// <param name="dto">The time slot sign-up data.</param>
+        /// <returns>A tuple with a boolean indicating success and a string message.</returns>
+        public async Task<(bool success, string message)> DeRegisterUserForTimeSlot(TimeSlotSignupDto dto)
         {
 
             try
             {
-
+                // Validate input
                 if (dto == null)
                 {
                     return (false, "Invalid time slot signup data.");
 
                 }
 
+                //find time slot based on timeslotId and userId.
                 var timeslotSignUp = await dataContext.TimeSlotSignups
                     .FirstOrDefaultAsync(s => s.TimeSlotId == dto.TimeSlotId && s.UserId == dto.UserId);
 
+                //If timeslotSignUp not equal to null then delete timeslotsignUp.
                 if (timeslotSignUp != null) 
                 {
                     dataContext.TimeSlotSignups.Remove(timeslotSignUp);

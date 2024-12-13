@@ -33,6 +33,7 @@ namespace LogicalPantry.Services.TimeSlotSignupService
         /// <returns>A task that represents the asynchronous operation. The task result is a tuple containing a boolean indicating success and a string message with the result of the operation.</returns>
         Task<(bool success, string message)> AddTimeSlotSignUp(TimeSlotSignupDto dto);
 
-        Task<(bool success, string message)> DeleteTimeSlotSignUp(TimeSlotSignupDto dto);
+
+        Task<(bool success, string message)> DeRegisterUserForTimeSlot(TimeSlotSignupDto dto);
     }
 }
