@@ -102,7 +102,13 @@ namespace LogicalPantry.Web.Controllers
             }
         }
 
-      
+        
+        //Added by kunal karne - 17-12-2024
+        /// <summary>
+        /// Deregister user from specific timeslot.
+        /// </summary>
+        /// <param name="dto">The details of the time slot sign-up.</param>
+        /// <returns>Returns a response indicating the success or failure of the sign-up operation.</returns>
         [Authorize(Roles = $"{UserRoleEnum.User}")]
         [HttpPost("DeRegisterUserForTimeSlot")]
         public async Task<IActionResult> DeRegisterUserForTimeSlot([FromBody] TimeSlotSignupDto dto)

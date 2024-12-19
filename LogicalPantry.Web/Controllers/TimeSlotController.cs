@@ -10,6 +10,7 @@ using Azure.Core;
 using Azure;
 using Microsoft.AspNetCore.Authorization;
 using LogicalPantry.Web.Helper;
+using Newtonsoft.Json;
 
 namespace LogicalPantry.Web.Controllers
 {
@@ -114,7 +115,34 @@ namespace LogicalPantry.Web.Controllers
                 return BadRequest("Invalid time slot.");
             }
 
+            //Added by kunal karne for getting time slot based on Id - 17-12-2024.
+            if (Id != null)
+            {
+                //Getting timeslot based on Id.
+                var timeslot = _timeSlotService.GetTimeSlotById(Id);
+
+                if (timeslot != null)
+                {
+                    var startdate = timeslot.Result.StartTime;
+                    var endDate = timeslot.Result.EndTime;
+
+                    //Save StartDate time and end time in tempData.
+                    string startDateTime = startdate.ToString("MMM dd hh:mm tt");
+                    string Endtime = endDate.ToString("h:mm tt");
+                    TempData["startTime"] = startDateTime;
+                    TempData["endTime"] = Endtime;
+                }
+            }
+            //End by kunal karne
+
             var response = await _userSercvice.GetUsersbyTimeSlotId(Id);
+
+            // Serialize the response object to JSON
+            string responseJson = JsonConvert.SerializeObject(response, Formatting.Indented);
+
+            // Log the serialized response
+            _logger.LogInformation("Retrieved user: {ResponseJson}", responseJson);
+
             if (response.Success && response.Data != null)
             {
                 //Log the ending of the Index method execution.
@@ -123,7 +151,7 @@ namespace LogicalPantry.Web.Controllers
                 @TempData["SuccessMessageBatch"] = "Changes Saved Successfully";
                 //return View(response.Data.ToList()); 
                 //return Redirect(url);
-                 return View(response.Data.ToList());
+                return View(response.Data.ToList());
             }
             else
             {
@@ -131,12 +159,71 @@ namespace LogicalPantry.Web.Controllers
                 //return NotFound("Users not found for the specified time slot.");
             }
 
+            //var TenantDisplayName = HttpContext.Session.GetString("TenantDisplayName");
+            //ViewBag.PageName = TenantDisplayName;
+            //// Log the starting of the Index method execution.
+            //_logger.LogInformation("EditTimeSlotUser Get method call started");
+            //if (Id == 0)
+            //{
+            //    return BadRequest("Invalid time slot.");
+            //}
+
+            ////Added by kunal karne for getting time slot based on Id - 17-12-2024.
+            //if (Id != null)
+            //{
+            //    //Getting timeslot based on Id.
+            //    var timeslot = _timeSlotService.GetTimeSlotById(Id);
+
+            //    if (timeslot != null)
+            //    {
+            //        var startdate = timeslot.Result.StartTime;
+            //        var endDate = timeslot.Result.EndTime;
+
+            //        //Save StartDate time and end time in tempData.
+            //        string startDateTime = startdate.ToString("MMM dd hh:mm tt");
+            //        string Endtime = endDate.ToString("h:mm tt");
+            //        TempData["startTime"] = startDateTime;
+            //        TempData["endTime"] = Endtime;
+            //    }
+            //}
+            ////End by kunal karne
+
+            //var response = await _userSercvice.GetUsersbyTimeSlotId(Id);
+
+            //// Serialize the response object to JSON
+            //string responseJson = JsonConvert.SerializeObject(response, Formatting.Indented);
+
+            //// Log the serialized response
+            //_logger.LogInformation("Retrieved user: {ResponseJson}", responseJson);
+
+            //if (response.Success && response.Data != null)
+            //{
+            //    //Log the ending of the Index method execution.
+            //    _logger.LogInformation("EditTimeSlotUser method call started.");
+            //    @TempData["MessageClass"] = "alert-success";
+            //    @TempData["SuccessMessageBatch"] = "Changes Saved Successfully";
+            //    //return View(response.Data.ToList()); 
+            //    //return Redirect(url);
+            //    return View(response.Data.ToList());
+            //}
+            //else
+            //{
+            //    return View(response.Data.ToList());
+            //    //return NotFound("Users not found for the specified time slot.");
+            //}
+
         }                 
         private long ToUnixTimestamp(DateTime dateTime)
         {
-            _logger.LogInformation("ToUnixTimestamp method call started.");
-            _logger.LogInformation("ToUnixTimestamp method call ended.");
-            return ((DateTimeOffset)dateTime).ToUnixTimeSeconds();
+            //_logger.LogInformation("ToUnixTimestamp method call started.");
+            //_logger.LogInformation("ToUnixTimestamp method call ended.");
+            //return ((DateTimeOffset)dateTime).ToUnixTimeSeconds();
+
+            
+    _logger.LogInformation("ToUnixTimestamp method call started.");
+    long timestamp = ((DateTimeOffset)dateTime).ToUnixTimeSeconds();
+    _logger.LogInformation("ToUnixTimestamp method call ended.");
+    return timestamp;
 
         }
 
@@ -164,7 +251,9 @@ namespace LogicalPantry.Web.Controllers
             {
                 startTime = DateTime.Parse(request.StartTime.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
                 endTime = DateTime.Parse(request.EndTime.ToString("yyyy-MM-ddTHH:mm:ss.fffZ"));
-                TempData["startTime"] = startTime;
+
+
+                _logger.LogInformation($"Event details: Start={startTime}, End={endTime}, Title={request.TimeSlotName}");
 
             }
             catch (FormatException ex)
@@ -215,6 +304,7 @@ namespace LogicalPantry.Web.Controllers
             // Fetch events from the database
             // var events = await _timeSlotService.GetAllEventsAsync();
             var events = await _timeSlotService.GetAllEventsByTenantIdAsync(tenantId.Value);
+            _logger.LogInformation("{@events}", events);
             // Log the number of events fetched
             _logger.LogInformation($"Fetched {events.Count()} events from the database.");
 
@@ -233,7 +323,8 @@ namespace LogicalPantry.Web.Controllers
                 Category = e.EventType 
             }).ToList();
 
-
+            _logger.LogInformation("{@message}", calendarEvents);
+ 
             // Log the number of events mapped
             _logger.LogInformation($"Mapped {calendarEvents.Count} events to calendar event model.");
 
@@ -241,6 +332,9 @@ namespace LogicalPantry.Web.Controllers
             {
                 Events = calendarEvents
             };
+            _logger.LogInformation("{@message}", model);
+
+
             _logger.LogInformation("Calendar method call ended.");
             return View(model);
         }
@@ -315,6 +409,11 @@ namespace LogicalPantry.Web.Controllers
             {
                 // Call the service to update the event
                 var success = await _timeSlotService.UpdateTimeSlotAsync(timeSlotDto);
+
+                string responseJson = JsonConvert.SerializeObject(success, Formatting.Indented);
+                // Log the serialized response
+                _logger.LogInformation("Update Event Success Message: {ResponseJson}", responseJson);
+
                 if (success)
                 {
                     _logger.LogInformation("Event updated successfully.");

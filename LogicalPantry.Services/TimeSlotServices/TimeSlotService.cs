@@ -199,6 +199,35 @@ namespace LogicalPantry.Services.TimeSlotServices
         }
 
 
+        /// <summary>
+        /// Getting time slot in the database based on Id.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous operation. The task result contains a boolean indicating the success of the operation.</returns>
+        public async Task<TimeSlotDto> GetTimeSlotById(int id)
+        {
+            //Get time slot based on Id.
+            var timeslot = await _context.TimeSlots
+                     .AsNoTracking()
+                     .FirstOrDefaultAsync(t => t.Id == id);
+
+
+            if(timeslot == null)
+            {
+                return null;
+            }
+
+            // Map the timeslot entity to TimeSlotDto
+            var timeslots = new TimeSlotDto
+            {
+                StartTime = timeslot.StartTime,
+                EndTime = timeslot.EndTime
+            };
+
+            return timeslots;
+           
+        }
+
+
 
 
 

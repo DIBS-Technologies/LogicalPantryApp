@@ -55,6 +55,14 @@ namespace LogicalPantry.Services.TimeSlotServices
         Task<TimeSlotDto> GetTimeSlotDetailsAsync(DateTime? startTime, DateTime? endTime, string title);
 
 
-        
+
+        /// <summary>
+        /// Retrieves detailed information for a time slot based on the provided ID.
+        /// </summary>
+        /// <param name="Id">The Id of the time slot.</param>
+        /// <returns>A task that represents the asynchronous operation. The task result contains a <see cref="TimeSlotDto"/> with the time slot details.</returns>
+        Task<TimeSlotDto> GetTimeSlotById(int id);
+
+
     }
 }

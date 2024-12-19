@@ -347,7 +347,9 @@ namespace LogicalPantry.Services.InformationService
         /// </summary>
         /// <param name="tenantName"></param>
         /// <returns></returns>
-        public async Task<ServiceResponse<TenantDto>> GetTenantPageNameForUserAsync(string tenantName)
+        public async Task<ServiceResponse<TenantDto>> GetTenantPageNameForUserAsync(string tenantName) 
+        
+        
         {
             var response = new ServiceResponse<TenantDto>();
            // var pageName1 = "account-billing";

@@ -17,8 +17,8 @@
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="~/css/StyleSheet.css">
-   @*  <script src="~/lib/jquery/dist/jquery.min.js"></script> *@
-   @*  <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> *@
+    @*  <script src="~/lib/jquery/dist/jquery.min.js"></script> *@
+    @*  <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> *@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 
@@ -35,7 +35,7 @@
         #layoutSidenav{
         margin-top: -3%;
         }
-   
+
 
         /* New CSS */
         .dropdown select {
@@ -53,7 +53,7 @@
             gap: 10px;
         }
 
-    
+
         /* Button hover effect */
         .btn.btn-sm.btn-light.btn-move-calendar:hover {
             background-color: #f0f0f0;
@@ -84,11 +84,11 @@
             display: flex;
             justify-content: center;
             margin-bottom: -10px;
-          
+
         }
 
 
-      
+
 
         .page-header-compact .page-header-content .page-header-title {
             font-size: 1.5rem;
@@ -96,8 +96,8 @@
 
         .calendar-header {
             margin: 20px auto;
-           
-           
+
+
             align-items: center;
             width: 100%;
            /*  max-width: 1200px; */
@@ -134,7 +134,7 @@
             flex-shrink: 0; /* Prevent footer from shrinking */
         }
 
-        
+
         .pt-2, .py-2 {
             padding-top: 1rem !important;
         }
@@ -156,7 +156,7 @@
         /* .calendar-timeline
         {
             padding-top: 29px;
-           
+
         } */
 
         .calendar .calendar-events .calendar-event {
@@ -172,7 +172,7 @@
         }
 
 
-     
+
         /* Styles applied only when an event is clicked */
         .event-active .modal.fade {
             display: block !important;
@@ -205,7 +205,7 @@
             }
 
             .calendar-header .d-flex {
-               
+
                 gap: 1px;
             }
 
@@ -221,7 +221,7 @@
     <div class="container-fluid">
         <div class="calendar-header">
             @*  <h3>TimeSlot </h3> *@
-           
+
             <div class="d-flex align-items-center" style="
                  display: flex;
                  justify-content: end;">
@@ -237,8 +237,8 @@
                 <div id="calendar"></div>
             </div>
         </div>
-       
-    
+
+
         <div class="modal fade" id="eventModal" tabindex="-1" role="dialog" aria-labelledby="eventModalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
                 <div class="modal-content">
@@ -339,7 +339,7 @@
             </div>
     </div>
 
- 
+
 
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -348,23 +348,59 @@
     <script src="~/jquery.touchswipe/jquery.touchswipe.min.js"></script>
     <link rel="stylesheet" href="~/css/jquery-calendar.min.css">
     <script src="~/js/jquery-calendar.min.js"></script>
-        
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.46/moment-timezone.min.js" integrity="sha512-Ne/lsUAQFATS+KrR4oPYWUtbM3C0I7eIORtGaC+xOdO/V1g3rfSzUwjsLd9/MkFw6iEqafr78LwrK75iZc3Emw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
          <script>
-         
-            
-                $(document).ready(function () {
-                    var events = @Html.Raw(Json.Serialize(Model.Events));
+
+
+       // Function to convert Unix timestamp to a given time zone
+            function convertToTimeZone(unixTimestamp, timezone) {
+                debugger;
+                return moment.unix(unixTimestamp).tz(timezone).format('YYYY-MM-DD HH:mm:ss');
+            }
+                 debugger;
+          $(document).ready(function () {
+
+                    debugger;
+                    var userTimezone = 'IST';
+                     moment.tz.setDefault(userTimezone);
+
+                     var events = @Html.Raw(Json.Serialize(Model.Events));
+
+                     events = events.map(function(event) {     
+                         event.start = convertToTimeZone(event.start, userTimezone);     
+                         event.end = convertToTimeZone(event.end, userTimezone); return event; 
+                     });
+
+
+
+                     console.log("events", events);
                      //var buttonHtml = '<button type="button" class="btn btn-success" id="addEventBtn">Add Event</button>';
                     // $('.nav-fixed .container').append(buttonHtml);
 
+
+                    // Apply moment.js to convert timestamps to UTC and return Unix timestamps
+                        //events = events.map(function(event) {
+                        //     event.start = moment.unix(event.start).utc()('UTC');  
+                        //     event.end = moment.unix(event.end).tz('UTC');     
+                        //     return event;
+                        // });
+
+
+
+
+
+
             $('#calendar').Calendar({
                 locale: 'en',
+                timeZone:userTimezone,
                 weekday: {
                     timeline: {
                         intervalMinutes: 60,
                         fromHour: 1, // Adjusted from 9 to 7
                         toHour: 24
                     }
+
                 },
                 events: events,
                 view: 'week',                    
@@ -409,7 +445,7 @@
                         format: 'MM/DD'
                     }
                 },
-                unixTimestamp: moment().format('X'),
+                // unixTimestamp: moment().format('X'),
                 event: {
                     hover: {
                         delay: 5000000
@@ -429,9 +465,9 @@
 
                     $('#eventModal').modal('show');                  
                    // $('body').addClass('event-active'); // Add class when the event is
-                   
+
             });
-                
+
 
                 // $('#toggleEditMode').on('click', function () {
                 //     isEditMode = !isEditMode; // Toggle the edit mode state
@@ -481,7 +517,7 @@
                 updateEditMode();
 
                 $('#calendar').on('Calendar.event-click', function (event, instance, elem, evt) {
-                  
+
                     $('#editEndError').text('');
                     $('#editStartError').text('');
                     $('#editMaxUsersError').text('');
@@ -512,7 +548,7 @@
                                 // Call the EditTimeSlotUser method using an HTTP GET request
                                 // $('body').removeClass('event-active'); // Ensure the class is removed when adding an event
                                 //window.location.href = 'EditTimeSlotUser?id=' + response.timeSlotId;
-                         
+
                                 if (isEditMode) {
                                     // If edit mode is on, show the modal for editing
                                     var eventId = response.timeSlotId; // Assuming your event has an ID field
@@ -522,10 +558,12 @@
                                     var eventType = evt.category;
                                     var eventMaxUsers = response.maxUsers || 1;
 
-
+                                    debugger;
                                     // Format the Date objects to 'YYYY-MM-DDTHH:mm' for datetime-local input
                                     var formattedStartTime = formatDateForDateTimeLocalInput(eventStart);
                                     var formattedEndTime = formatDateForDateTimeLocalInput(eventEnd);
+                                       console.log("formattedStartTime", formattedStartTime);
+                                                console.log("formattedEndTime", formattedEndTime);
 
                                     // Set the values in the edit modal
                                     $('#editEventStart').val(formattedStartTime); // Set formatted start time
@@ -598,11 +636,11 @@
                 var selectedEventTitle = selectedOption.data('title');
             }
 
-                
+
 
 
             $('#saveEventBtn').on('click', function (e) {
-            
+
                  e.preventDefault();
 
                 // Clear previous validation messages
@@ -650,7 +688,7 @@
                         $('#startError').text('Please select a future date.');
                         isValid = false;
                     } else {
-                     
+
                         const startHours = startDateTimeInput2.getHours();
                         const startMinutes = startDateTimeInput2.getMinutes();
 
@@ -660,8 +698,8 @@
                         //     isValid = false;
                         // }
                     }
-                
-        
+
+
 
                     // Validate End Date (only the date, not the time)
                     const endDateTime = new Date($('#eventEnd').val().trim());
@@ -679,7 +717,7 @@
                         $('#endError').text('Please select a future date.');
                         isValid = false;
                     }  else if (endDateTime < startDateTime) {
-                 
+
                         $('#endError').text('End date must be after the start date.');
                         isValid = false;
                     } else {
@@ -695,21 +733,21 @@
                             $('#endError').text('Please add a single day entry only. The end date must be the same day.');
                             isValid = false;
                         }
-                        
+
                     }
 
 
-                   
+
                 //If all fields are valid, submit the form
                 if (isValid) {
-                 
+
                         var eventData = {
                             timeSlotName: $('#eventTitle').val(),
                             startTime: $('#eventStart').val(),
                             endTime: $('#eventEnd').val(),
                             eventType: $('#eventType').val(),
                             maxNumberOfUsers: $("#eventMaxUsers").val(),
-                            
+
                         };
 
                         $.ajax({
@@ -739,9 +777,9 @@
 
 
 
-                       
+
                 }
-                   
+
             });
 
                 // // Save the edited event when the user clicks "Save Changes"
@@ -760,7 +798,7 @@
 
                 //         StartTime: $('#editEventStart').val(),
                 //         EndTime: $('#editEventEnd').val(),
-                        
+
 
                 //         EventType: $('#editEventType').val(),
                 //         MaxNumberOfUsers: parseInt($('#editEventMaxUsers').val(), 10)
@@ -824,9 +862,11 @@
                     const now = new Date();
                     now.setHours(0, 0, 0, 0); // Reset time to 00:00:00
 
+                    debugger
                     // Validate Start Date
                     const startDateTime = new Date($('#editEventStart').val().trim());
                     const startDateTimeInput1 = $('#editEventStart').val();
+                       console.log("startDateTimeInput1", startDateTimeInput1);
                     const startDateTimeInput2 = new Date(startDateTimeInput1);
                     if (isNaN(startDateTime)) {
                         $('#editStartError').text('Start date is required.');
@@ -848,9 +888,15 @@
                     }
 
                     // Validate End Date
+
+                       debugger
+
+
                     const endDateTime = new Date($('#editEventEnd').val().trim());
                     const endDateTimeInput1 = $('#editEventEnd').val();
                     const endDateTimeInput2 = new Date(endDateTimeInput1);
+                  console.log("endDateTimeInput2", endDateTimeInput2);
+
                     if (isNaN(endDateTime)) {
                         $('#editEndError').text('End date is required.');
                         isValid = false;
@@ -862,7 +908,7 @@
                         isValid = false;
                      } 
                     else {
-               
+
                         const endHours = endDateTimeInput2.getHours();
                         const endMinutes = endDateTimeInput2.getMinutes();
                         const startHours = startDateTimeInput2.getHours();
@@ -918,9 +964,9 @@
                 // $('#eventModal').on('hidden.bs.modal', function () {
                 //    // $('body').removeClass('event-active'); // Remove the class when modal is closed
                 //     $('body').removeClass('modal.fade'); // Remove the class when modal is closed D
-                 
+
                 // });
-              
+
                 function formatDateForDateTimeLocalInput(date) {
                     var year = date.getFullYear();
                     var month = ('0' + (date.getMonth() + 1)).slice(-2); // Months are 0-indexed
@@ -941,7 +987,7 @@
             .calendar-timeline{             
                 padding-top: 31px;
                 margin-top: 70px;
-            
+
             }
     </style>
 </body>
